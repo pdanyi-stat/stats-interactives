@@ -557,14 +557,29 @@ html{scroll-padding-top:58px}
   <!-- ============ 8 DUMMIES ============ -->
   <section class="part" id="s8" aria-labelledby="h8">
     <p class="kick">Step 8 · Module 7: dummy variables <span class="lpmflag">Linear probability model</span></p>
-    <h2 id="h8">Sex, class and age together</h2>
-    <p class="lede">Class has three categories, so it gets two dummies, and the class left out is the reference. Each dummy shifts the line up or down; age sets the slope. Six groups, six parallel lines.</p>
+    <h2 id="h8">Three classes, two dummies, then everything together</h2>
+    <p class="lede">Class has three categories, so it gets two dummies. The class left out is the reference: the constant is its level, and each coefficient is a gap from it. Then add sex and age, and each dummy shifts a line up or down: six groups, six parallel lines.</p>
     <a class="refresh" href="7-dummy-variables.html">Refresh: Module 7 →</a>
   </section>
   <figure>
-    <div class="ctlrow">
+    <div class="fighead"><h2><span class="step">8a</span>Three classes, two dummies, one reference group</h2></div>
+    <div class="ctlrow" style="margin-top:8px">
       <div class="ctl"><span class="lab" id="rl8">Reference class</span><div class="seg" role="radiogroup" aria-labelledby="rl8" id="ref8"></div></div>
-      <div class="toggles"><label><input type="checkbox" id="trap8"> Try all three class dummies</label></div>
+      <div class="toggles"><label><input type="checkbox" id="ctl8"> Hold sex and age constant</label><label><input type="checkbox" id="trap8"> Try all three class dummies</label></div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="key"><span><i class="sw" style="height:0;width:18px;border-top:2px dashed var(--ink);border-radius:0"></i>reference level (the constant)</span><span><i class="sw" style="background:var(--s2)"></i>coefficient = gap from the reference</span><span><i class="sw" style="background:var(--ink)"></i><span id="lvlKey">class survival rate</span></span></div>
+        <div class="chart" id="cR8"></div>
+      </div>
+      <div class="side"><div class="box"><h4>Reading the coefficients</h4><div class="tblwrap"><table class="ct" id="tabR8"></table></div><p class="say" id="sayR8" style="font-size:13.5px"></p></div></div>
+    </div>
+    <section class="card" style="margin-top:12px"><h3>Output</h3><pre class="stata" id="oR8"></pre></section>
+  </figure>
+  <figure>
+    <div class="fighead"><h2><span class="step">8b</span>Sex, class and age together: parallel lines</h2></div>
+    <div class="ctlrow" style="margin-top:8px">
+      <div class="ctl"><span class="lab" id="rl8b">Reference class</span><div class="seg" role="radiogroup" aria-labelledby="rl8b" id="ref8b"></div></div>
     </div>
     <div class="terms" id="terms8"></div>
     <div class="grid2" style="margin-top:6px">
@@ -599,7 +614,8 @@ html{scroll-padding-top:58px}
         <li>In Step 3, pick <b>First class</b> and switch from 95% to 99%. Which numbers in the hand calculation change?</li>
         <li>In Step 4, pick <b>Traveling alone</b>. The survival rates differ by 20 points, yet λ is almost 0. Why?</li>
         <li>In Step 5, test <b>lower vs. upper class</b>. You reject H₀, but does the result support H₁?</li>
-        <li>In Step 8, build a 2-year-old girl in first class, then a 75-year-old man in lower class. What goes wrong?</li>
+        <li>In Step 8a, switch the reference class from Lower to First. Which numbers change, and which stay the same? Then tick <b>Hold sex and age constant</b>: do the class gaps shrink?</li>
+        <li>In Step 8b, build a 2-year-old girl in first class, then a 75-year-old man in lower class. What goes wrong?</li>
       </ol>
     </section>
     <section>
@@ -730,7 +746,7 @@ const ys=ix=>ix.map(i=>S[i]);
 const ageIx=idx(i=>A[i]!==null);
 const CL={1:'First',2:'Middle',3:'Lower'};
 const fareMed=(()=>{const v=R.fare.filter(x=>x!==null).sort((a,b)=>a-b),n=v.length;return n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2;})();
-const st={dv:'survived',n2:25,draws:[],v3:'s',g3:'all',lv3:95,iv:'female',q:0,x6:40,cf7:false,cc7:false,ref8:3,trap8:false,sx8:0,pc8:3,a8:30};
+const st={dv:'survived',n2:25,draws:[],v3:'s',g3:'all',lv3:95,iv:'female',q:0,x6:40,cf7:false,cc7:false,ref8:3,trap8:false,ctl8:false,sx8:0,pc8:3,a8:30};
 $('#dataChips').innerHTML=`<span class="chip"><b>${com(N)}</b> passengers</span><span class="chip"><b>${com(S.filter(v=>v===1).length)}</b> survived (${pc(mean(S))})</span><span class="chip"><b>${com(S.filter(v=>v===0).length)}</b> died</span><span class="chip">age known for <b>${com(ageIx.length)}</b></span>`;
 
 /* ============ 1 DESCRIBE ============ */
@@ -1153,16 +1169,86 @@ function renderDum(){
   $('#o8').innerHTML=L.join('\n');
   $('#girl8').textContent=pc(pred8(F8,1,1,2),0);
 }
-seg('#ref8',[[3,'Lower'],[2,'Middle'],[1,'First']],st.ref8,v=>{st.ref8=+v;renderDum();});
+function setRef(v){st.ref8=+v;for(const id of ['ref8','ref8b']){const r=$('#'+id+'_'+st.ref8);if(r)r.checked=true;}renderRef8();renderDum();}
+seg('#ref8',[[3,'Lower'],[2,'Middle'],[1,'First']],st.ref8,setRef);
+seg('#ref8b',[[3,'Lower'],[2,'Middle'],[1,'First']],st.ref8,setRef);
+$('#ctl8').addEventListener('change',e=>{st.ctl8=e.target.checked;renderRef8();});
 seg('#sx8',[[0,'Male'],[1,'Female']],st.sx8,v=>{st.sx8=+v;renderDum();});
 seg('#pc8',[[1,'First'],[2,'Middle'],[3,'Lower']],st.pc8,v=>{st.pc8=+v;renderDum();});
-$('#trap8').addEventListener('change',e=>{st.trap8=e.target.checked;const sg=$('#ref8');
-  if(st.trap8){st.prevRef=st.ref8;st.ref8=3;$('#ref8_3').checked=true;sg.classList.add('dis');sg.style.opacity=.45;sg.style.pointerEvents='none';}
-  else{st.ref8=st.prevRef||3;$('#ref8_'+st.ref8).checked=true;sg.classList.remove('dis');sg.style.opacity='';sg.style.pointerEvents='';}renderDum();});
+$('#trap8').addEventListener('change',e=>{st.trap8=e.target.checked;
+  if(st.trap8){st.prevRef=st.ref8;st.ref8=3;}else{st.ref8=st.prevRef||3;}
+  for(const id of ['ref8','ref8b']){const sg=$('#'+id);$('#'+id+'_'+st.ref8).checked=true;sg.style.opacity=st.trap8?.45:'';sg.style.pointerEvents=st.trap8?'none':'';}
+  renderRef8();renderDum();});
 function setA8(v){if(!isFinite(v))return;st.a8=Math.max(0,Math.min(80,Math.round(v)));$('#a8').value=st.a8;$('#a8r').value=st.a8;renderDum();}
 $('#a8').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){st.a8=Math.max(0,Math.min(80,Math.round(v)));$('#a8r').value=st.a8;renderDum();}});
 $('#a8r').addEventListener('input',e=>setA8(+e.target.value));
 
+
+/* ---- 8a: reference-group chart ---- */
+const fAll=F, cAll={1:C.map(c=>c===1?1:0),2:C.map(c=>c===2?1:0),3:C.map(c=>c===3?1:0)};
+const mF=mean(fA7), mAge=mean(ageV);
+function renderRef8(){
+  const ctl=st.ctl8, ref=st.trap8?3:st.ref8, others=[1,2,3].filter(c=>c!==ref);
+  const y=ctl?yA:S, D=ctl?cA:cAll, cls=ctl?ageIx.map(i=>C[i]):C;
+  const cols=others.map(c=>D[c]); if(ctl) cols.push(fA7,ageV);
+  const f=ols(cols,y), K=f.b.length, k0=others.length;
+  const adj=ctl?f.b[k0]*mF+f.b[k0+1]*mAge:0;
+  const level=c=>{let v=f.b[K-1]+adj;const j=others.indexOf(c);if(j>=0)v+=f.b[j];return v;};
+  const rate=c=>{let s=0,n=0;for(let i=0;i<y.length;i++)if(cls[i]===c){s+=y[i];n++;}return {p:s/n,n};};
+  // unadjusted (all passengers) for comparison
+  const fRaw=ols(others.map(c=>cAll[c]),S);
+  const {svg,W,H}=frame($('#cR8'),0.62,300,420,'Class dummies as gaps from a reference class'), m={l:44,r:14,t:18,b:44};
+  const xs=k=>m.l+(W-m.l-m.r)*(k+0.5)/3, yS=v=>H-m.b-(v+0.07)/1.14*(H-m.t-m.b);
+  yGrid(svg,W,m,yS,[0,.25,.5,.75,1],v=>(v*100)+'%');
+  const defs=el('defs',{},svg),mk=el('marker',{id:'arr8',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:css('--s2')},mk);
+  const g=el('g',{},svg), ix=ctl?ageIx:null;
+  for(let i=0;i<y.length;i++){const c=cls[i],k=c-1,isRef=c===ref,id=ix?ix[i]:i;
+    el('circle',{cx:xs(k)+jit(id,(W-m.l-m.r)/3*0.42),cy:yS(y[i])+jit2(id,16),r:1.8,fill:isRef?css('--ink-2'):css('--s1'),'fill-opacity':.3},g);}
+  const refY=level(ref);
+  el('line',{x1:m.l,x2:W-m.r,y1:yS(refY),y2:yS(refY),stroke:css('--ink'),'stroke-width':1.75,'stroke-dasharray':'6 4'},svg);
+  const colW=(W-m.l-m.r)/3, hw=Math.min(30,colW*0.2), narrowR=colW<130;
+  [1,2,3].forEach(c=>{const k=c-1,X=xs(k),isRef=c===ref,lv=level(c),rt=rate(c);
+    txt(svg,X,H-m.b+18,CL[c]+(isRef?' (ref.)':''),{'text-anchor':'middle',class:'mlab',fill:isRef?css('--ink'):css('--ink-2')});
+    txt(svg,X,H-m.b+33,'n = '+com(rt.n),{'text-anchor':'middle',class:'tick',style:'font:400 11.5px var(--font-body)',fill:css('--muted')});
+    el('line',{x1:X-hw,x2:X+hw,y1:yS(lv),y2:yS(lv),stroke:css('--ink'),'stroke-width':3.5},svg);
+    const hit=el('rect',{x:X-hw-4,y:yS(lv)-8,width:2*hw+8,height:16,fill:'transparent'},svg);
+    bindTip(hit,()=>`<b>${CL[c]} class</b>${isRef?' (reference)':''}<br>${ctl?'adjusted level':'survival rate'} ${pc(lv)} · n = ${com(rt.n)}`);
+    if(!isRef){const j=others.indexOf(c),b=f.b[j];
+      const ax=X+hw+8;
+      if(Math.abs(yS(lv)-yS(refY))>9) el('line',{x1:ax,x2:ax,y1:yS(refY),y2:yS(lv),stroke:css('--s2'),'stroke-width':3,'marker-end':'url(#arr8)'},svg);
+      if(narrowR) txt(svg,ax,lv>refY?yS(lv)-9:yS(lv)+18,sgnf(b,3),{'text-anchor':'middle',class:'mlab halo',fill:css('--s2-ink')});
+      else txt(svg,ax+6,(yS(refY)+yS(lv))/2+4,sgnf(b,3),{class:'mlab halo',fill:css('--s2-ink')});}
+    else txt(svg,X,yS(lv)+18,(ctl?'level ':narrowR?'const. ':'constant = ')+d3(lv),{'text-anchor':'middle',class:'mlab halo',fill:css('--ink')});
+  });
+  txt(svg,4,12,'↑ survived (0 = no, 1 = yes)',{class:'axlab'});
+  $('#lvlKey').textContent=ctl?'adjusted level (average age and sex mix)':'class survival rate';
+  // table
+  let h=`<tr><th>Class</th><th>N</th><th>${ctl?'Adj. level':'Rate'}</th><th>Coef.</th><th>p</th></tr>`;
+  [1,2,3].forEach(c=>{const isRef=c===ref,j=others.indexOf(c),rt=rate(c);
+    h+=`<tr class="${isRef?'tot':''}"><td>${CL[c]}${isRef?' (ref.)':''}</td><td>${com(rt.n)}</td><td>${d3(ctl?level(c):rt.p)}</td><td class="${isRef?'mut':''}">${isRef?'— in constant':sgnf(f.b[j],3)}</td><td class="${isRef?'mut':''}">${isRef?'':sig(f.p[j])}</td></tr>`;});
+  if(ctl) h+=`<tr><td>female</td><td></td><td></td><td>${sgnf(f.b[k0],3)}</td><td>${sig(f.p[k0])}</td></tr><tr><td>age</td><td></td><td></td><td>${sgnf(f.b[k0+1],4)}</td><td>${sig(f.p[k0+1])}</td></tr>`;
+  $('#tabR8').innerHTML=h;
+  const gaps=others.map((c,j)=>`${CL[c]} ${f.b[j]<0?'−':'+'}${pts(f.b[j])} pts`).join(', ');
+  let s=st.trap8?'<b>All three class dummies requested:</b> Stata dropped lower, so lower class is the reference. first + middle + lower = 1 for every passenger, the same column as the constant. ':'';
+  if(!ctl){
+    s+=`The constant (${d3(f.b[K-1])}) is the ${CL[ref].toLowerCase()} class's survival rate. Each coefficient is that class's rate minus it: ${gaps}. R² = ${f.r2.toFixed(3)} whichever class is the reference.`;
+    if(ref!==2){const j=others.indexOf(ref===3?1:3);s+=` The ${pts(f.b[j])}-point First–Lower gap is the same gap Step 5 tested (lower vs. upper class).`;}
+  } else {
+    const rawGaps=others.map((c,j)=>`${CL[c]} ${sgnf(fRaw.b[j],3)} → ${sgnf(f.b[j],3)}`).join('; ');
+    s+=`Holding sex and age constant, each coefficient is the predicted gap from the ${CL[ref].toLowerCase()} class for passengers of the same sex and age: ${gaps}. Levels are shown at the average age (${mAge.toFixed(1)}) and sex mix (${pc(mF,0)} women). Compared with class alone: ${rawGaps}. The class gaps barely move, so sex and age don't explain them away. Uses the ${com(ageIx.length)} passengers with known age.`;
+  }
+  $('#sayR8').innerHTML=s;
+  // stata
+  let L;
+  const extra=ctl?' female age':'';
+  if(!st.trap8){L=anova(f,`. regress survived ${ref===1?'i':'ib'+ref}.pclass${extra}`);L.unshift('<span class="dim">* pclass is coded 1 = First, 2 = Middle, 3 = Lower</span>');
+    L.push(pad('pclass',12)+' |');others.forEach((c,j)=>L.push(crow(CL[c],f,j,'d')));L.push(pad('',12)+' |');}
+  else{L=anova(f,`. regress survived first middle lower${extra}`);L.splice(1,0,'note: lower omitted because of collinearity.');L.unshift('<span class="dim">* first, middle, lower: one 0/1 dummy per class</span>');
+    L.push(crow('first',f,0,'d'),crow('middle',f,1,'d'),pad('lower',12)+' |'+pad('0',11)+'  (omitted)');}
+  if(ctl)L.push(crow('female',f,k0,''),crow('age',f,k0+1,''));
+  L.push(crow('_cons',f,K-1,''),'-'.repeat(78));
+  $('#oR8').innerHTML=L.join('\n');
+}
 /* ---------- drawer, resize ---------- */
 const drawer=$('#drawer');let lastFocus=null;
 function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}
@@ -1172,7 +1258,7 @@ $('#closeFx').addEventListener('click',closeFx);$('#scrim').addEventListener('cl
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('formulas-open'))closeFx();});
 document.addEventListener('pointerdown',e=>{if(!(e.target instanceof SVGElement))hideTip();});
 $('#x6').value=st.x6;$('#x6r').value=st.x6;$('#a8').value=st.a8;$('#a8r').value=st.a8;
-function renderAll(){renderDesc();renderSamp();renderCI();renderPRE();renderTest();renderWorst();renderReg6();renderCtl();renderDum();}
+function renderAll(){renderDesc();renderSamp();renderCI();renderPRE();renderTest();renderWorst();renderReg6();renderCtl();renderRef8();renderDum();}
 let rz=0;if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;cancelAnimationFrame(rz);rz=requestAnimationFrame(renderAll);}}).observe($('main'));}else addEventListener('resize',renderAll);
 if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',renderAll);
 new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
