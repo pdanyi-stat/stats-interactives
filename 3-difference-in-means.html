@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Difference in Means</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#f6f6f3;
+  --surface:#fdfdfc;
+  --ink:#121212;
+  --ink-2:#4f4e4a;
+  --muted:#85837d;
+  --grid:#e4e3dc;
+  --axis:#bebdb4;
+  --line:rgba(18,18,18,.12);
+  --accent:#c8102e;          /* masthead rule, kicker */
+  --pop:#8d8b84;             /* population bars */
+  --s1:#2a78d6;              /* sample means (blue) */
+  --s1-ink:#1c5cab;
+  --s2:#eb6834;              /* the current sample (orange) */
+  --s2-ink:#b8481c;
+  --code-bg:#f1f0eb;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+    --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+    --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+  --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+  --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 3 additions ---- */
+.ctl .seg{justify-self:start}
+.chart canvas{display:block}
+.status{display:flex;flex-wrap:wrap;gap:6px 8px;margin:4px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip .dot{width:8px;height:8px;border-radius:50%}
+.callout{font-size:14px;color:var(--ink-2);border-left:3px solid var(--s2);padding:2px 0 2px 10px;margin:6px 0 0;max-width:80ch}
+.callout b{color:var(--ink)}
+.pop{font-size:14px;color:var(--ink-2);margin:0;max-width:90ch}
+.pop b{color:var(--ink);font-weight:600}
+.tally{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+@media (max-width:620px){.tally{grid-template-columns:1fr}}
+.tally > div{background:var(--page);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.tally .k{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.tally .v{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.tally .s{font-size:12.5px;color:var(--ink-2)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:16px}
+@media (min-width:901px){.two pre.stata{font-size:11.5px}}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.sw.g1{background:var(--s1)} .sw.g2{background:var(--s2)}
+.sw.zero{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.band{background:var(--grid)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 3: </span><b>Difference in means</b></span><a href="4-pre-measures.html" aria-label="Next: PRE measures">Next →</a></nav>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Interactive 3 of 7</p>
+    <h1>Difference in means</h1>
+    <p class="dek">Do two groups really differ, or is the gap in our sample just luck of the draw? Draw samples from real surveys, compare the two group means on one axis, and then repeat the sampling until the distribution of the difference shows whether zero is a plausible value.</p>
+    <ul class="modnav" aria-label="Modules in this series">
+      <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
+      <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
+      <li aria-current="page"><a href="3-difference-in-means.html">3 Difference in means</a></li>
+      <li><a href="4-pre-measures.html">4 PRE measures</a></li>
+      <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
+      <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
+      <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="controls" aria-label="Simulation controls">
+    <div class="ctl" style="flex:1 1 320px">
+      <label class="lab" for="comp">Comparison</label>
+      <select id="comp" style="width:100%"></select>
+    </div>
+    <div class="ctl">
+      <span class="lab" id="nlab">n per group</span>
+      <div class="seg" role="radiogroup" aria-labelledby="nlab" id="nseg"></div>
+    </div>
+    <div class="ctl">
+      <span class="lab" id="alab">Significance level <span style="text-transform:none">α</span></span>
+      <div class="seg" role="radiogroup" aria-labelledby="alab" id="aseg"></div>
+    </div>
+    <div class="ctl">
+      <span class="lab">Draw samples</span>
+      <div class="btns">
+        <button class="primary" id="d1">Draw 1</button>
+        <button id="run" aria-pressed="false">Run</button>
+        <button id="d100">+100</button>
+        <button id="d1000">+1,000</button>
+        <button id="clear">Clear</button>
+      </div>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="equal" checked> Assume equal variances</label>
+      <label><input type="checkbox" id="h0"> Make H₀ true (both groups from the same pool)</label>
+    </div>
+  </section>
+
+  <p class="pop" id="popInfo"></p>
+
+  <figure>
+    <div class="fighead">
+      <h2><span class="step">A</span>This sample: two group means on one axis</h2>
+      <button class="linkish fxbtn" data-open-formulas><i>Σ</i> Formulas</button>
+    </div>
+    <p class="sub">Each curve is the estimated sampling distribution of one group's mean, centered on x̄ with spread s/√n. The shaded part of each curve, and the bracket below it, is that group's <span class="lvl">95</span>% confidence interval.</p>
+    <div class="key"><span><i class="sw g1"></i><span id="k1"></span></span><span><i class="sw g2"></i><span id="k2"></span></span></div>
+    <div class="status" id="aStatus"></div>
+    <div class="chart" id="aChart"></div>
+    <p class="callout" id="aNote"></p>
+  </figure>
+
+  <figure>
+    <div class="fighead"><h2><span class="step">B</span>Repeat it: the sampling distribution of the difference</h2></div>
+    <p class="sub">Every draw computes one difference, x̄₁ − x̄₂, and drops it onto the axis. The shaded band holds the middle <span class="lvl">95</span>% of all differences so far. The black line marks zero, the value the null hypothesis claims.</p>
+    <div class="key"><span><i class="sw" style="background:var(--s1)"></i>differences from your samples</span><span><i class="sw band"></i><span>middle <b class="lvl" style="font-weight:inherit">95</b>%</span></span><span><i class="sw line"></i>normal curve from theory</span><span><i class="sw zero"></i>H₀: difference = 0</span><span><i class="sw" style="background:var(--s2);border-radius:50%"></i>this sample, with its CI</span></div>
+    <div class="status" id="bStatus"></div>
+    <div class="chart" id="bChart"></div>
+    <div class="tally" id="tally"></div>
+  </figure>
+
+  <div class="two">
+    <figure>
+      <div class="fighead"><h2><span class="step">C</span>The t test for this sample</h2></div>
+      <p class="sub">If H₀ were true, t would follow this curve. The orange tails show how often chance alone would produce a t at least this far from zero: that area is the p-value.</p>
+      <div class="status" id="cStatus"></div>
+      <div class="chart" id="cChart"></div>
+    </figure>
+    <section style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0">
+      <h2 style="margin:0 0 8px;font-size:17px;font-weight:600">Output: the latest sample</h2>
+      <pre class="stata" id="stata"></pre>
+    </section>
+  </div>
+
+  <div class="learn">
+    <section>
+      <h2>Try this</h2>
+      <ol>
+        <li>Start with <b>Euroscepticism</b> at n = 10 and press <b>Run</b>. The differences pile up far from zero. Then try n = 5: does zero creep into the band?</li>
+        <li>Switch to <b>Pinochet support: women vs. men</b>, a small real gap. At n = 25 the test rarely rejects. Raise n to 250 and watch the rejection rate climb.</li>
+        <li>Turn on <b>Make H₀ true</b>. The differences now center on zero, and the test still rejects about 5% of the time. Those are false positives.</li>
+        <li>Use <b>Blair ratings</b> at n = 25 and watch the middle tally. The two group CIs often overlap even when the difference is significant.</li>
+        <li>Change α from .05 to .01. Intervals widen and rejections become rarer, under H₀ and when there is a real gap.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Check yourself</h2>
+      <details>
+        <summary>The two groups' 95% CIs overlap a little. Can the difference still be significant?</summary>
+        <p>Yes. The standard error of a difference is √(SE₁² + SE₂²), which is smaller than SE₁ + SE₂. So two intervals can overlap while the interval for the difference excludes zero. If the intervals do not overlap at all, the difference is significant; if they overlap, test the difference directly.</p>
+      </details>
+      <details>
+        <summary>H₀ is true. At α = .05, how often will the test reject?</summary>
+        <p>About 5% of the time. That is what α means: the false-positive (Type I error) rate you accept in advance. Turn on “Make H₀ true” to check.</p>
+      </details>
+      <details>
+        <summary>The true gap is the same at n = 25 and n = 250. Why does the test reject far more often at 250?</summary>
+        <p>The standard error shrinks with √n, so the distribution of differences tightens around the true gap and pulls away from zero. The share of samples that reject is the test's power.</p>
+      </details>
+      <details>
+        <summary>p = .03. Is there a 3% chance the null hypothesis is true?</summary>
+        <p>No. p is the probability of seeing a difference at least this large if H₀ were true. It is a statement about the data given H₀, not about H₀ given the data.</p>
+      </details>
+      <details>
+        <summary>When should you drop “Assume equal variances”?</summary>
+        <p>When the groups' standard deviations differ noticeably, as with Euroscepticism (Conservatives 2.6, Labour 3.3). The Welch version, Stata's <code>unequal</code> option, is the safer default. With equal group sizes the two versions give nearly identical answers.</p>
+      </details>
+    </section>
+  </div>
+
+  <footer class="src">
+    Data: British Election Panel Study 1997–2001 (BEPS, 1,525 respondents) and the 1988 Chilean plebiscite survey by FLACSO (2,700 respondents), both from the <i>carData</i> R package (Fox &amp; Weisberg), via <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>.
+    Each full survey is treated as the population; samples are drawn from it without replacement. Respondents with missing values on the outcome are dropped.
+    “Make H₀ true” pools both groups and draws each sample from the pool, so the true difference is exactly zero.
+  </footer>
+<nav class="pager" aria-label="Previous and next"><a href="2-confidence-intervals.html"><span class="k">← Previous · Module 2</span><span class="t">Confidence intervals</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="4-pre-measures.html"><span class="k">Next · Module 4 →</span><span class="t">PRE measures</span></a></nav>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="fxTitle" aria-hidden="true">
+  <div class="top"><h2 id="fxTitle">Formulas</h2><button id="closeFx">Close</button></div>
+  <div class="fx">
+    <h3>The estimate and the null hypothesis</h3>
+    <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><msub><mrow/><mn>1</mn></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><msub><mrow/><mn>2</mn></msub><mspace width="1.2em"/><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msub><mi>μ</mi><mn>1</mn></msub><mo>−</mo><msub><mi>μ</mi><mn>2</mn></msub><mo>=</mo><mn>0</mn></math>
+  </div>
+  <div class="fx">
+    <h3>Standard error of the difference (unequal variances)</h3>
+    <math display="block"><mi>SE</mi><mo>=</mo><msqrt><mrow><mfrac><msubsup><mi>s</mi><mn>1</mn><mn>2</mn></msubsup><msub><mi>n</mi><mn>1</mn></msub></mfrac><mo>+</mo><mfrac><msubsup><mi>s</mi><mn>2</mn><mn>2</mn></msubsup><msub><mi>n</mi><mn>2</mn></msub></mfrac></mrow></msqrt><mo>=</mo><msqrt><mrow><msubsup><mi>SE</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>SE</mi><mn>2</mn><mn>2</mn></msubsup></mrow></msqrt></math>
+    <p>Always smaller than SE₁ + SE₂, which is why overlapping CIs can hide a significant difference.</p>
+  </div>
+  <div class="fx">
+    <h3>Pooled version (equal variances)</h3>
+    <math display="block"><msubsup><mi>s</mi><mi>p</mi><mn>2</mn></msubsup><mo>=</mo><mfrac><mrow><mo>(</mo><msub><mi>n</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><msubsup><mi>s</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><mo>(</mo><msub><mi>n</mi><mn>2</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><msubsup><mi>s</mi><mn>2</mn><mn>2</mn></msubsup></mrow><mrow><msub><mi>n</mi><mn>1</mn></msub><mo>+</mo><msub><mi>n</mi><mn>2</mn></msub><mo>−</mo><mn>2</mn></mrow></mfrac><mspace width="1em"/><mi>SE</mi><mo>=</mo><msub><mi>s</mi><mi>p</mi></msub><msqrt><mrow><mfrac><mn>1</mn><msub><mi>n</mi><mn>1</mn></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mn>2</mn></msub></mfrac></mrow></msqrt></math>
+    <p>Degrees of freedom: n₁ + n₂ − 2.</p>
+  </div>
+  <div class="fx">
+    <h3>Test statistic and interval</h3>
+    <math display="block"><mi>t</mi><mo>=</mo><mfrac><mrow><mo>(</mo><mover><mi>x</mi><mo>‾</mo></mover><msub><mrow/><mn>1</mn></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><msub><mrow/><mn>2</mn></msub><mo>)</mo><mo>−</mo><mn>0</mn></mrow><mi>SE</mi></mfrac><mspace width="1.2em"/><mo>(</mo><mover><mi>x</mi><mo>‾</mo></mover><msub><mrow/><mn>1</mn></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><msub><mrow/><mn>2</mn></msub><mo>)</mo><mo>±</mo><msup><mi>t</mi><mo>*</mo></msup><mo>·</mo><mi>SE</mi></math>
+    <p>Reject H₀ at level α when |t| exceeds the critical value t*, which is exactly when the (1 − α) interval for the difference excludes zero.</p>
+  </div>
+  <div class="fx">
+    <h3>Welch–Satterthwaite degrees of freedom</h3>
+    <math display="block"><mi>df</mi><mo>=</mo><mfrac><msup><mrow><mo>(</mo><msubsup><mi>s</mi><mn>1</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>1</mn></msub><mo>+</mo><msubsup><mi>s</mi><mn>2</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>2</mn></msub><mo>)</mo></mrow><mn>2</mn></msup><mrow><mfrac><msup><mrow><mo>(</mo><msubsup><mi>s</mi><mn>1</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>1</mn></msub><mo>)</mo></mrow><mn>2</mn></msup><mrow><msub><mi>n</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn></mrow></mfrac><mo>+</mo><mfrac><msup><mrow><mo>(</mo><msubsup><mi>s</mi><mn>2</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>2</mn></msub><mo>)</mo></mrow><mn>2</mn></msup><mrow><msub><mi>n</mi><mn>2</mn></msub><mo>−</mo><mn>1</mn></mrow></mfrac></mrow></mfrac></math>
+    <p>Used when variances are not assumed equal. Usually not a whole number.</p>
+  </div>
+  <div class="fx">
+    <h3>Effect size (Cohen's d)</h3>
+    <math display="block"><mi>d</mi><mo>=</mo><mfrac><mrow><msub><mi>μ</mi><mn>1</mn></msub><mo>−</mo><msub><mi>μ</mi><mn>2</mn></msub></mrow><mi>σ</mi></mfrac></math>
+    <p>The gap in standard-deviation units. Roughly 0.2 is small, 0.5 medium, 0.8 large. A tiny d can still be “significant” with a big enough n.</p>
+  </div>
+</aside>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script id="data" type="application/json">[{"id":"euro","title":"Euroscepticism: Conservative vs. Labour voters","var":"europe","by":"vote","g":["Con","Lab"],"gl":["Conservative voters","Labour voters"],"scale":"1–11, higher = more Eurosceptic","src":"BEPS","a":[9,2,9,3,11,6,10,9,11,11,6,8,8,8,2,8,9,8,7,5,6,3,10,11,5,6,6,8,11,11,11,11,11,8,8,11,11,8,6,11,5,4,2,11,7,11,6,10,11,8,10,7,3,8,11,8,11,11,10,10,11,4,9,11,10,9,10,11,11,11,9,10,11,6,10,11,11,11,9,11,9,11,10,8,11,8,9,10,9,10,11,5,6,4,10,11,11,11,7,8,9,11,11,11,8,6,3,9,3,11,5,11,10,7,4,8,11,9,11,3,10,9,6,11,5,7,9,6,11,11,10,7,7,7,4,8,11,3,7,5,11,11,11,11,5,4,11,6,11,9,10,11,5,3,8,1,10,9,11,8,11,10,9,11,9,11,10,7,3,11,4,8,9,11,11,11,7,9,11,11,6,11,2,11,10,11,4,3,10,11,9,11,7,11,8,11,11,6,7,7,9,7,11,11,11,10,11,6,11,11,11,10,11,11,5,11,7,8,8,6,10,11,7,10,11,11,6,3,10,1,7,9,10,8,8,5,11,11,10,9,11,7,7,4,8,10,11,10,11,6,5,1,9,10,11,11,10,8,7,11,6,11,10,11,9,5,8,9,3,11,9,11,11,11,11,11,11,6,11,6,11,10,9,11,11,9,11,7,8,9,7,11,5,10,9,11,11,11,8,11,10,1,9,10,11,6,5,11,11,11,11,9,8,8,11,11,10,11,11,11,4,8,4,11,5,6,11,11,9,8,10,4,4,10,11,11,11,11,8,9,10,9,10,5,9,8,6,11,11,11,8,3,11,8,9,10,5,11,9,11,6,11,7,6,9,11,11,4,6,10,8,7,10,11,6,9,11,11,9,9,11,9,11,11,9,8,8,11,7,11,11,11,3,11,11,10,11,11,11,5,8,7,10,11,11,9,7,4,8,7,8,9,11,4,8,11,9,6,11,10,11,4,11,11,11,4,11,9,10,10,2,11,5,6,6,6,2,7,10,11,9,11,11,9,9,11,10,1,6,6,11,9,6,8,11,7,11,8,11,8,11,11],"b":[5,3,4,6,4,1,11,11,7,9,10,8,11,5,8,7,1,5,7,1,6,2,1,1,6,6,1,1,6,7,3,11,6,4,8,1,4,4,1,4,9,1,11,1,4,1,6,8,11,6,7,6,8,11,3,11,2,5,6,6,3,8,5,3,5,4,4,1,6,5,5,10,11,6,3,6,8,4,1,11,4,3,8,5,11,6,4,11,1,5,11,6,2,3,7,4,7,6,1,4,1,3,6,6,8,6,6,3,6,6,8,1,4,4,11,11,6,6,4,3,4,3,5,3,2,2,2,5,5,7,7,3,4,5,9,6,8,8,5,6,8,10,4,6,1,6,7,6,5,6,9,3,4,8,1,6,1,11,1,6,3,2,4,9,9,7,3,11,1,1,6,11,6,1,2,6,11,2,9,11,4,2,1,11,7,4,6,9,11,10,6,7,6,10,1,2,6,1,5,5,5,4,5,4,1,11,5,2,10,11,4,11,7,1,1,8,5,6,11,1,7,10,3,1,11,11,8,11,11,6,1,11,2,6,11,8,3,1,5,6,7,6,1,3,7,11,8,2,2,5,8,3,8,1,6,11,10,6,8,4,8,8,6,1,4,5,11,6,3,11,1,4,3,6,11,5,3,7,11,11,4,10,5,4,3,11,10,4,1,11,11,11,8,11,6,11,3,6,11,5,11,11,1,2,1,2,4,10,2,3,3,11,3,1,5,2,11,6,9,11,9,6,4,4,1,5,3,4,2,6,9,7,2,4,5,5,3,1,9,9,6,9,2,9,8,2,1,5,1,5,8,5,3,10,6,2,6,6,5,5,3,10,8,6,3,4,4,5,10,4,11,11,9,8,10,11,9,11,9,1,6,9,8,9,1,8,2,2,3,6,7,6,9,2,1,5,2,4,2,6,5,6,3,8,3,3,7,5,6,6,1,2,4,10,2,11,9,2,11,4,4,2,8,3,11,10,11,10,11,6,6,5,1,4,11,11,11,7,5,4,11,4,11,3,9,6,1,5,3,4,4,10,11,7,3,2,6,5,5,3,6,10,11,11,6,3,6,3,9,11,8,6,5,10,2,11,11,6,1,8,4,2,1,5,3,7,1,3,2,2,1,6,4,4,9,9,1,6,10,6,6,7,7,1,3,4,3,3,11,11,1,6,6,5,9,6,6,6,4,4,1,2,6,4,4,11,11,6,11,10,11,1,11,7,4,2,9,6,3,4,1,11,3,1,6,6,2,4,3,7,7,2,5,5,5,3,4,1,1,3,10,5,11,2,6,11,3,11,1,11,3,3,10,3,9,6,3,4,5,4,4,9,5,11,11,2,1,4,4,6,11,4,6,3,4,10,1,3,5,6,5,6,5,11,9,11,9,11,8,1,11,7,8,11,1,6,11,6,2,11,1,6,6,11,6,2,7,11,9,2,6,11,6,11,6,6,1,4,11,9,11,6,10,5,6,3,6,1,11,11,9,3,1,6,2,1,8,1,4,9,1,5,10,3,3,3,11,8,1,2,10,6,6,11,11,3,5,1,11,11,4,1,1,8,6,11,3,7,11,11,6,1,2,3,5,8,4,7,3,3,5,1,3,2,11,5,6,1,4,5,6,4,11,8,4,11,4,11,5,2]},{"id":"blair","title":"Rating of Tony Blair: Labour vs. Lib Dem voters","var":"blair","by":"vote","g":["Labour","Lib Dem"],"gl":["Labour voters","Lib Dem voters"],"scale":"1–5, higher = more favorable","src":"BEPS","a":[4,5,2,1,4,4,4,5,1,4,4,2,2,4,1,5,4,1,4,4,4,4,4,5,4,2,2,4,4,2,4,4,4,4,4,4,4,4,5,4,4,5,4,5,4,1,5,4,4,4,4,4,4,4,5,4,4,4,4,4,4,4,2,4,4,4,4,5,4,5,4,2,5,4,4,4,1,4,5,2,4,2,4,4,5,4,4,4,4,5,4,4,4,4,4,2,4,4,2,4,5,4,4,4,4,4,5,4,4,2,4,5,5,4,5,2,4,4,4,4,4,4,4,4,4,4,5,2,4,4,4,2,2,4,4,5,4,2,4,4,5,5,4,4,2,4,4,2,4,4,5,5,2,2,2,4,5,5,4,5,5,2,4,2,4,4,4,2,4,4,4,2,1,4,4,4,4,4,4,1,4,4,4,4,5,5,4,4,5,2,4,4,5,2,5,5,4,5,4,4,4,5,5,5,4,4,4,4,4,5,4,4,2,4,4,4,5,4,4,4,4,5,4,4,4,4,4,4,5,4,5,4,4,4,5,4,4,4,4,2,1,5,4,4,4,5,2,4,4,4,4,4,4,4,2,4,4,5,4,4,4,4,2,5,4,2,5,5,5,2,4,4,5,4,4,2,2,2,4,4,4,4,4,4,4,1,4,4,4,2,2,4,2,4,4,4,5,4,4,4,2,4,4,2,2,5,4,2,4,4,4,4,4,4,4,5,4,4,4,2,4,1,5,4,4,4,4,4,4,4,5,5,4,2,4,4,4,4,4,2,4,4,4,5,4,4,4,4,5,4,4,2,5,4,4,5,4,5,5,4,2,5,4,4,4,4,4,4,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,4,4,4,4,4,5,4,4,4,4,4,4,4,4,4,4,4,4,5,2,4,4,4,5,2,4,2,5,4,5,4,5,4,4,4,4,4,2,4,4,4,2,4,5,4,5,4,4,2,2,4,4,5,4,4,5,4,2,4,4,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,2,4,2,5,4,5,4,4,4,4,4,2,4,5,4,5,5,4,2,4,5,2,4,2,5,1,5,4,4,4,4,4,4,2,4,4,4,4,5,4,1,4,4,4,4,5,2,5,2,4,5,4,4,4,4,4,5,4,5,5,4,5,4,2,1,4,4,4,4,5,2,5,4,4,2,4,5,4,5,4,4,4,4,2,4,5,4,4,4,4,4,2,4,5,4,5,5,4,2,4,5,4,4,4,4,2,4,2,4,4,4,4,4,4,4,5,4,4,4,5,4,4,4,4,5,4,4,4,4,4,1,4,5,5,4,4,4,4,4,2,5,5,4,4,2,4,4,4,5,4,4,4,5,4,2,4,4,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,2,5,2,4,5,5,2,4,2,4,4,5,1,4,4,2,4,4,2,5,5,4,5,2,4,4,5,4,5,4,5,5,4,1,4,4,5,4,4,4,4,4,4,2,2,4,2,5,4,5,4,4,4,4,5,4,4,4,2,4,2,4,4,2,5,4,5,4,5,4,5,4,2,4,4,4,5,4,4,4,5,4,2,4,5],"b":[4,4,2,4,4,2,4,4,4,4,4,4,4,2,4,4,4,2,2,2,1,4,4,2,4,4,4,2,2,2,2,2,2,4,4,4,2,4,2,4,2,4,4,2,2,4,2,4,4,4,4,4,4,4,2,4,4,4,4,1,2,2,2,4,4,4,2,5,4,2,4,1,4,2,4,4,1,2,4,2,4,1,4,4,4,4,5,4,4,4,4,4,4,4,4,4,4,2,5,4,4,1,4,1,4,4,2,2,5,4,5,4,4,4,4,2,4,4,4,4,2,1,4,5,2,4,4,2,4,4,4,4,1,4,2,4,2,4,2,2,4,4,5,4,2,2,4,4,4,4,1,4,4,4,2,4,2,4,4,4,4,4,4,2,4,4,2,2,2,4,2,4,2,4,4,2,2,4,4,4,4,4,2,4,2,4,4,4,4,4,2,4,4,5,2,4,4,2,4,4,2,4,2,4,4,4,4,4,4,4,4,4,4,2,4,4,4,2,1,4,4,4,2,2,4,2,4,4,4,4,4,4,4,2,1,2,4,2,2,4,1,4,4,4,4,4,2,2,2,1,2,4,2,4,2,5,4,4,1,4,4,4,4,5,4,4,4,4,2,4,1,4,2,4,2,1,4,4,1,4,2,4,4,4,2,2,2,5,4,2,4,4,2,2,4,4,2,1,4,4,2,4,4,2,4,4,4,2,2,2,4,1,4,2,2,2,4,2,4,4,2,2,4,4,4,4,4,2,2,2,4,2,4,2,4,4,4,4,2,4,1,4,4]},{"id":"sqedu","title":"Support for Pinochet’s regime: primary vs. post-secondary education","var":"statusquo","by":"educ","g":["Primary","Post-sec"],"gl":["Primary education","Post-secondary education"],"scale":"standardized scale, higher = more support for the status quo","src":"Chile","a":[1.008,1.231,-1.032,-1.047,-1.013,-1.296,1.366,1.323,1.526,1.336,0.155,-0.351,1.432,0.111,0.721,0.522,0.8,1.489,1.327,1.548,1.332,0.88,1.044,-0.832,1.588,0.905,-1.192,1.023,0.224,0.114,1.023,-1.186,1.599,0.281,0.108,-0.977,0.719,1.275,-1.304,-0.122,-1.174,-0.705,1.548,1.432,1.398,-1.296,-1.032,0.685,-1.22,-0.366,0.417,1.608,1.518,-0.519,1.548,1.588,1.596,1.19,1.453,-0.127,0.835,0.013,1.562,-0.784,0.995,0.374,1.334,0.434,1.621,1.588,1.202,-1.296,-0.387,1.196,-0.046,1.414,1.211,1.51,0.987,1.057,0.154,-1.104,0.022,1.332,0.15,-1.296,1.365,0.57,-0.185,1.516,1.437,0.238,-1.14,1.251,0.62,-1.191,1.235,1.242,1.377,0.571,-1.14,-0.33,-1.035,-0.206,0.968,0.827,1.076,-0.533,-1.296,-0.829,-1.197,-0.072,1.377,1.225,1.41,0.905,-1.23,0.406,-1.296,-0.132,-0.462,-0.937,-0.897,-1.119,-1.23,0.211,0.071,0.514,0.095,1.176,1.372,1.017,0.056,-0.698,-1.273,1.212,0.533,1.334,-0.962,1.08,0.322,1.037,-0.53,-1.296,-1.121,-0.364,-1.263,0.08,-1.296,-1.258,-1.296,1.588,1.156,1.259,1.598,-1.296,-1.107,-1.296,-1.296,-0.756,0.362,-0.728,1.47,1.548,0.155,-0.995,0.181,-0.362,-1.122,1.192,-0.729,-1.094,0.001,1.253,-0.985,-0.648,1.447,-0.591,1.137,-1.296,-0.279,-1.096,1.469,-1.296,-1.296,0.756,-1.296,0.116,0.116,-0.968,-0.93,-0.918,-1.296,-0.568,1.473,1.192,-1.296,0.416,-1.296,-1.007,0.035,0.543,-0.694,-1.182,0.127,0.044,-1.017,-1.296,1.508,-1.296,-1.177,-1.296,-1.296,-1.296,-1.296,1.323,0.513,-0.863,0.351,1.588,1.121,1.221,-0.211,1.296,-1.14,0.08,-1.135,-0.349,-0.55,1.133,-1.289,1.007,-0.135,-1.296,0.003,1.43,1.588,1.403,-1.296,1.437,-1.092,-1.296,1.195,0.989,0.851,-1.296,-0.262,-1.217,1.548,1.462,-0.136,-1.173,-1.296,0.978,1.511,-0.694,-0.935,0.556,0.783,0.078,-0.274,-0.568,1.588,0.493,1.588,1.392,0.946,0.566,-1.14,1.588,0.898,1.242,-0.54,-1.225,1.568,1.085,-0.243,0.393,0.41,0.321,1.334,-1.296,1.489,0.906,0.82,1.011,-0.927,1.258,0.808,1.588,-1.296,0.97,1.508,0.192,1.299,-0.625,-1.296,-0.612,0.843,0.786,1.687,-1.263,-0.809,1.42,-1.064,-0.169,0.606,0.361,0.133,1.039,-0.529,-1.119,1.392,-0.804,1.472,0.279,-1.011,0.59,-1.191,-0.553,-1.26,1.293,1.138,-1.296,-1.296,-1.296,1.588,-1.803,-1.296,-1.145,0.784,-1.152,0.946,0.423,-0.322,0.447,1.224,0.069,-0.081,-0.781,0.269,1.176,1.476,0.962,0.8,1.569,-1.145,1.127,-1.296,0.803,0.243,1.588,-1.07,0.152,-0.976,0.632,0.359,1.437,0.322,-1.259,-0.824,1.55,0.574,0.719,-0.258,0.411,1.001,1.28,0.753,-0.768,-1.296,0.692,1.36,1.32,1.47,1.358,1.309,1.081,0.758,1.476,0.659,1.405,-1.229,1.456,0.764,1.048,0.406,0.44,1.588,1.588,1.437,1.588,1.588,1.338,0.934,-1.223,1.557,0.91,-0.024,-1.296,-1.296,1.548,0.549,1.174,0.859,1.27,0.659,-0.099,1.251,0.699,0.463,0.996,0.235,1.004,0.665,1.253,-0.609,-0.891,-0.972,1.048,0.205,-1.262,1.308,-0.728,0.825,1.438,-0.402,-1.161,1.149,1.097,0.863,1.019,0.831,-1.086,-0.965,0.935,1.554,1.588,1.255,0.077,1.513,0.013,-1.146,0.75,0.384,0.39,0.962,0.401,1.588,1.397,0.311,-0.785,1.274,0.998,0.153,1.095,0.109,-0.87,-0.979,0.136,-0.073,0.146,-0.916,1.392,1.183,-0.796,-0.049,0.139,0.123,-0.431,0.258,1.588,1.469,1.359,1.476,-1.035,0.326,0.644,-0.073,0.531,0.53,1.403,-0.155,1.06,1.043,-0.887,0.02,-0.282,-1.296,0.356,-1.296,-0.222,-1.099,-1.223,-1.102,-1.296,0.557,-1.052,0.345,-1.296,1.588,0.439,-0.16,-1.101,1.475,-0.056,-0.909,0.478,-1.273,0.25,0.389,-0.112,-0.279,0.741,-1.092,-0.487,-0.792,-1.296,-1.12,-0.912,-0.766,-0.609,-0.443,1.469,1.688,0.323,0.245,1.588,0.904,0.179,1.588,-0.968,0.273,-1.075,0.956,0.135,-0.254,-0.724,0.812,-0.622,-1.296,-0.152,-0.932,1.481,0.937,1.255,1.293,1.4,1.242,-1.296,1.185,-0.868,-1.058,1.22,0.954,0.345,0.948,1.226,1.39,1.593,1.195,1.352,1.475,-0.984,1.504,1.203,0.064,1.456,0.672,1.588,1.588,1.315,1.353,0.077,1.13,1.3,0.502,0.1,0.023,1.588,1.588,0.229,-0.277,0.277,0.365,1.47,-1.296,0.951,-1.157,1.29,0.909,-0.709,0.146,1.264,0.98,1.585,-0.352,-0.203,-0.444,0.113,-0.553,-0.873,-1.125,0.653,-0.688,-0.037,1.363,1.699,1.325,0.239,-0.723,0.599,1.588,0.578,0.673,-0.977,1.574,1.41,1.588,0.516,-1.007,0.201,-1.296,-1.129,0.979,0.098,1.064,1.588,-0.542,0.894,1.152,1.434,0.192,-0.366,-0.357,-0.23,0.102,1.368,0.163,1.549,0.958,1.502,0.477,-0.902,-1.296,1.286,1.373,0.36,1.404,-1.296,1.432,1.267,0.859,0.132,1.141,1.46,0.503,1.395,0.4,1.51,1.547,0.677,-0.828,0.494,0.522,-0.841,-1.257,-1.296,0.731,-0.891,-1.183,1.095,1.343,1.278,-0.097,0.706,-0.844,-0.13,-1.007,0.115,-0.365,1.492,-0.662,0.85,1.002,1.448,1.588,-1.143,1.326,1.172,1.399,1.317,-0.77,-1.23,-1.158,1.588,1.162,1.35,1.322,-0.7,0.407,1.16,1.206,1.237,-0.118,1.005,1.403,0.747,-1.265,0.29,-0.829,-0.411,-1.296,-0.304,1.326,-1.05,0.615,1.517,0.986,-0.253,0.662,0.342,0.797,0.31,-0.98,1.315,0.224,-1.15,1.588,-0.975,-1.296,-1.296,1.27,0.928,0.451,0.499,-1.111,-0.49,-1.121,1.448,0.304,0.027,0.85,-1.063,0.063,1.225,0.148,1.553,1.293,1.143,-1.296,0.655,-1.073,-0.684,1.209,-1.262,-1.296,-0.775,-1.296,-0.895,-1.172,1.588,0.695,1.332,-0.244,0.967,-1.07,0.775,0.468,-0.406,0.682,0.383,0.83,0.74,-1.296,1.326,-0.479,0.659,-1.296,1.257,-1.04,-0.681,-0.619,-1.13,1.554,-0.579,-1.12,-1.085,1.427,1.428,0.146,-0.732,-1.164,-0.031,-0.709,-1.296,-1.22,0.947,-0.551,0.479,-0.159,-1.303,-1.296,-0.256,0.82,-1.078,-0.69,1.588,0.322,-1.296,0.758,-0.718,0.902,0.003,-1.197,-1.052,-0.98,-1.125,1.356,1.191,0.386,-0.8,-0.413,0.383,0.816,1.293,1.478,-1.296,1.035,-0.538,-0.94,-1.18,-1.296,-1.305,-1.218,0.886,1.011,-0.73,-0.046,-0.18,0.043,0.546,-0.251,0.558,0.418,0.535,-1.296,0.724,-0.559,-1.126,-0.865,-0.052,0.583,-0.325,-1.195,-0.496,-0.172,1.548,1.027,-1.296,-1.296,-1.296,-0.988,-0.107,-1.296,-1.003,-0.405,-1.296,-0.704,1.154,0.311,-0.51,0.043,1.189,-1.296,0.908,0.07,-0.237,-0.164,0.136,0.557,-0.887,-0.635,-1.104,0.366,-0.4,-1.296,-1.135,-1.047,-0.629,-1.296,-0.429,-0.771,-0.256,1.522,-1.218,1.588,1.365,1.519,1.588,-0.914,1.381,0.39,1.373,0.1,-1.107,-1.071,0.999,-0.975,-1.262,-1.186,-0.162,-0.972,0.87,0.202,-1.296,1.554,1.278,-0.059,-1.036,-0.209,-1.258,-1.23,1.38,-1.263,-0.27,0.165,1.445,-1.067,0.118,1.428,0.501,-0.976,1.548,1.515,0.519,-0.056,0.195,0.964,-1.206,-1.101,-1.22,-1.117,-1.193,0.182,0.145,-1.218,-1.218,0.335,-1.218,1.537,0.207,-1.179,-0.929,-1.296,1.299,-0.917,-1.296,-0.297,-0.764,1.549,-0.452,1.288,1.331,-1.105,-0.397,-1.296,-1.141,-1.105,-0.981,1.4,0.94,0.646,-0.362,1.588,0.191,-1.14,-1.081,0.692,-1.296,-0.996,-1.296,-1.039,-1.18,-1.23,1.32,-1.218,-1.14,0.187,-1.296,0.514,-1.105,-1.296,-0.161,1.461,-0.002,1.21,-1.296,-1.078,-1.296,-0.98,0.8,1.109,-0.767,0.81,1.178,0.2,-0.253,-1.143,0.437,-1.208,1.49,1.399,-0.881,1.096,1.487,0.04,0.813,0.19,0.027,0.888,0.516,0.737,1.261,1.346,0.471,0.131,-1.258,0.338,0.84,1.508,0.472,0.59,0.143,-1.068,-1.296,-1.185,0.28,-1.296,-1.296,1.452,-0.947,-1.067,-1.082,1.31,-0.741,1.207,1.588,1.593,0.147,0.627,0.966,-1.163,-1.221,1.281,-1.229,0.722,0.732,0.288,-0.387,0.432,0.738,0.388,0.125,-0.156,-1.3,1.416,-0.54,1.128,-0.986,1.294,1.436,-0.824,-0.117,-0.339,0.788,0.829,1.33,0.338,-1.296,-1.025,-1.195,1.542,1.549,1.35,-1.331,-1.258,0.355,-0.586,1.431,1.441,-0.178,1.461,0.854,-0.334,-0.614,-1.262,1.329,1.42],"b":[-1.296,-0.786,1.434,1.49,-0.856,1.456,1.615,-0.893,-1.296,1.51,0.965,0.155,1.169,-1.296,1.404,-1.101,1.332,0.231,-0.526,-1.107,-1.304,0.273,-1.296,1.483,-1.108,-0.712,0.675,0.256,1.238,-0.422,-0.275,1.459,-1.296,-1.013,-0.886,-1.22,-0.998,1.483,1.279,-1.1,1.442,-0.729,1.416,1.449,-1.258,-0.471,1.363,-0.717,0.328,0.982,-0.598,-0.588,-0.825,-0.83,-0.762,-1.296,1.014,-0.72,-1.18,-0.896,-1.23,-1.296,-0.819,-0.959,-1.296,-1.296,-0.216,1.438,-1.081,0.774,-1.08,-1.296,1.293,0.42,0.309,1.444,-1.182,-0.633,-1.296,-1.296,-1.035,-0.643,0.863,-0.221,-0.975,-0.276,0.842,1.387,-0.811,-1.296,-1.069,-0.166,1.134,-1.189,-0.128,1.588,-0.881,0.19,-0.045,-1.14,-1.225,-1.293,-1.258,0.649,-1.074,0.141,1.308,-0.727,1.346,0.013,-0.974,-1.023,1.443,-0.982,1.404,-0.675,-0.752,-0.732,-1.141,-0.968,-1.296,0.328,-1.267,-1.296,-1.053,-0.129,0.795,-1.218,-1.18,-0.704,0.356,1.491,0.064,-0.195,1.411,-0.716,-0.47,-1.006,-1.083,-0.014,-0.645,-0.838,-0.548,-1.258,-1.191,-1.296,1.432,-0.549,0.199,1.485,1.154,-0.861,0.25,-0.504,-0.313,-0.32,0.806,-1.296,-0.713,0.217,0.405,0.05,-0.935,-0.803,-1.035,0.309,0.519,-0.561,-1.22,-1.194,0.378,1.345,-1.22,-0.811,1.327,-1.152,0.965,-0.852,0.759,-1.056,-0.081,-1.117,-1.041,-1.067,-1.067,-1.079,-1.205,-1.257,-1.296,-0.929,-1.061,1.386,-0.902,0.589,-0.795,-1.296,0.432,-1.296,-0.511,0.067,-0.188,-1.041,0.846,1.175,1.215,0.913,1.47,-0.267,1.365,-1.296,-1.229,-0.081,0.624,1.437,0.2,-1.296,1.017,-1.23,1.588,1.588,1.294,-1.14,-0.93,-1.14,-1.035,0.669,-1.05,-0.158,1.126,1.548,1.548,1.355,-1.042,0.414,-0.149,-0.613,1.068,1.034,-0.325,2.049,1.477,-0.992,1.273,0.123,-0.834,-0.67,1.003,1.588,0.441,1.362,-1.03,-0.162,-1.296,0.203,1.245,-0.93,-0.302,-0.583,-1.034,-1.296,-0.405,-1.059,0.712,1.299,-0.363,-1.152,-0.507,-0.898,-1.296,-1.066,1.476,0.883,1.472,-0.832,-0.043,-1.296,-0.765,-1.257,-0.253,-0.575,-0.554,0.549,-0.823,0.287,1.1,-1.296,-0.279,1.153,-1.218,-1.223,-1.001,-1.03,0.319,0.172,-0.77,1.331,-1.224,-1.304,-0.594,-0.935,0.001,-1.14,-0.96,-1.04,-0.542,-0.66,0.116,-1.263,-1.296,-1.152,-0.863,1.415,0.06,-0.321,-0.88,0.447,1.365,0.157,-1.726,1.515,1.4,-1.069,-1.218,-1.14,-0.919,-1.177,1.446,-0.67,-1.029,-0.555,-0.909,-1.231,0.105,-1.296,-0.862,-0.929,1.588,0.075,-1.296,-1.22,-1.18,-1.296,-1.14,-1.296,-1.023,-1.296,-1.296,-0.956,-0.497,0.823,-1.078,-1.218,-0.974,-0.896,-1.216,-1.218,1.477,-1.217,-1.198,-1.296,-1.148,0.128,-0.796,-0.891,0.493,-0.709,1.513,0.836,1.456,-1.119,1.269,1.168,-1.103,-1.22,0.182,-0.871,-1.013,-1.296,-0.681,0.913,-0.838,1.404,-1.043,0.928,-1.296,1.555,0.543,0.863,1.398,1.043,-0.314,1.442,-0.294,0.825,-1.105,1.344,1.217,0.811,-1.296,1.394,0.139,-1.14,1.443,-0.667,-1.296,-1.257,-1.218,1.519,-0.31,0.64,1.22,0.771,1.298,1.39,-1.061,0.434,1.153,-0.938,-0.016,0.973,0.948,0.472,-0.011,1.332,1.326,-0.232,0.294,-1.113,-0.986,-0.63,1.514,0.007,-0.459,1.141,-0.416,-1.099,1.24,-1.081,-0.595,-0.73,-1.296,-0.894,-0.738,-1.152,0.544,-1.296,-0.438,-0.271,0.355,-0.578,1.111,-1.146,1.285,-1.296,1.318,1.299,-0.609,1.382]},{"id":"know","title":"Political knowledge: men vs. women","var":"polknow","by":"gender","g":["Male","Female"],"gl":["Men","Women"],"scale":"0–3 correct answers on party positions toward Europe","src":"BEPS","a":[2,2,2,2,2,0,2,2,0,0,0,2,2,2,2,2,0,2,2,2,2,3,2,2,0,2,0,3,2,0,2,2,2,2,0,3,2,3,2,2,3,2,3,0,0,0,0,0,2,2,0,2,0,2,0,0,0,2,2,2,2,2,2,0,3,3,0,0,2,0,0,2,2,2,3,3,2,3,3,3,3,2,2,2,0,2,0,3,3,3,2,0,3,3,2,2,2,3,0,0,0,3,2,2,2,0,3,2,2,3,0,3,3,3,2,0,2,2,0,2,3,2,2,2,2,2,1,2,3,2,0,2,2,2,3,2,3,3,3,3,0,2,3,0,2,2,2,1,0,2,3,3,2,3,2,0,0,2,2,2,2,3,0,0,2,2,3,0,3,2,0,0,3,2,2,2,2,3,2,3,2,2,0,2,2,1,3,0,2,2,3,2,0,2,2,2,0,2,2,3,3,0,0,0,2,2,0,2,3,2,0,2,2,2,3,3,3,2,3,2,3,3,2,2,0,2,2,2,2,3,2,0,2,3,2,0,2,3,2,2,0,1,2,3,3,2,0,3,2,0,3,3,2,2,2,3,0,0,1,2,2,3,2,0,0,2,0,3,3,2,3,3,2,2,2,2,3,0,2,2,2,2,3,2,3,2,2,0,2,2,2,3,2,2,2,2,2,3,2,2,2,0,2,2,2,2,0,2,2,2,2,0,2,2,2,0,3,2,2,3,0,0,2,3,2,1,2,0,3,0,2,3,3,3,2,3,2,3,0,3,2,0,2,0,3,2,2,3,2,0,2,2,3,0,0,2,2,0,2,2,3,2,3,0,2,2,2,0,3,2,2,3,3,2,3,2,2,2,0,2,2,2,2,2,2,0,2,2,3,2,0,2,2,0,3,2,2,2,0,3,2,2,3,0,3,3,2,0,2,2,3,0,3,3,3,2,0,0,2,3,0,2,2,2,0,0,0,0,2,0,2,2,3,3,2,3,2,2,3,3,2,2,2,2,0,2,2,2,2,2,2,1,0,3,2,0,0,3,0,2,0,0,0,2,2,0,3,1,2,2,2,2,3,2,0,2,0,2,0,0,0,0,1,2,0,1,2,3,0,0,2,2,2,2,2,2,0,2,3,2,2,0,3,0,0,3,2,2,0,0,0,2,0,0,3,2,2,3,3,2,2,2,0,2,2,2,3,3,3,0,2,2,3,2,2,3,2,3,3,0,0,0,3,0,2,0,2,2,3,2,2,2,2,0,0,2,2,3,0,2,2,2,0,2,3,2,3,3,0,2,0,2,2,2,2,0,3,2,0,0,0,2,2,3,2,2,3,3,3,2,3,2,2,0,0,3,3,0,2,0,2,3,2,0,0,2,0,0,0,2,0,3,0,2,2,2,3,2,2,3,1,3,3,3,0,2,2,2,3,2,2,3,2,2,2,0,2,0,0,3,3,2,3,2,0,3,3,3,3,2,0,2,0,2,2,0,2,3,0,2,0,0,1,0,2,0,2,2,2,2,0,2,3,2,2,1,2,1,3,2,2,0,2,2,2,2,3,0,2,2,2,3,3,2,3,2,0,2,3,2,2,2,0,1,2,2,2,2,2,3,2,2,2],"b":[2,0,0,0,2,0,2,0,2,2,2,0,2,2,2,2,2,3,0,0,2,0,0,0,2,3,2,0,0,2,0,2,0,0,2,0,3,0,2,0,2,0,0,0,0,2,0,2,2,3,0,3,2,2,2,0,0,0,0,2,3,2,2,0,0,2,2,0,0,3,2,2,0,2,0,2,0,2,0,2,0,2,2,2,2,2,2,0,0,0,0,2,2,2,3,0,2,2,2,2,2,3,3,0,2,0,2,2,0,0,0,2,2,2,2,3,2,0,0,0,2,1,1,0,2,0,0,2,2,1,2,0,0,0,1,2,2,0,2,0,2,0,3,2,0,0,0,0,0,2,2,0,0,0,0,0,2,0,2,2,3,0,0,2,0,0,0,0,3,0,0,0,0,2,2,0,2,2,2,1,3,0,0,0,0,2,0,2,2,1,2,2,0,0,0,0,2,0,0,0,2,2,0,2,2,3,2,3,2,0,3,3,2,3,2,2,0,2,2,2,2,2,1,3,0,2,2,0,2,2,0,2,2,3,2,2,3,2,2,3,2,2,2,2,2,2,3,2,0,0,0,2,0,2,0,3,3,0,2,2,2,2,2,3,2,2,2,2,0,0,0,2,2,0,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,0,2,2,2,2,0,2,2,2,2,2,0,2,2,2,2,2,3,3,2,2,0,0,2,2,0,2,2,2,2,2,3,2,0,0,0,2,2,3,2,2,2,3,2,3,0,2,1,2,2,2,3,0,2,2,2,2,2,0,0,2,2,2,0,0,3,0,0,2,0,2,2,2,2,3,2,2,0,2,2,3,2,2,2,2,0,2,2,3,2,2,2,2,0,0,2,0,2,1,2,2,2,0,0,2,3,2,2,3,1,0,0,2,2,0,0,1,0,2,0,2,0,3,2,0,3,2,2,2,3,2,2,2,2,2,3,0,2,3,0,2,2,2,2,2,3,3,3,3,3,2,2,2,2,0,2,0,3,3,0,2,2,2,0,2,0,2,2,2,0,0,1,2,2,1,2,2,2,2,2,2,2,2,2,0,2,3,0,2,2,3,2,0,0,0,0,3,2,3,2,2,2,0,2,0,2,3,0,0,3,2,2,1,2,0,2,2,2,2,0,0,2,2,3,2,2,0,2,0,0,2,3,1,0,0,2,0,2,0,0,1,2,2,2,2,2,3,2,0,2,2,0,0,2,2,3,1,0,2,1,2,2,2,2,2,2,0,2,0,2,2,3,2,3,0,0,0,0,0,0,0,0,0,2,0,2,2,0,2,2,0,0,2,0,3,2,2,2,2,0,3,2,2,2,2,2,0,0,3,2,2,2,2,0,0,0,0,3,2,0,3,2,2,0,0,0,2,0,2,0,0,2,2,0,0,2,3,2,2,2,3,0,2,2,0,0,0,0,2,0,2,0,0,0,2,2,2,3,2,1,2,0,0,2,0,2,3,0,2,0,3,0,2,0,2,2,2,2,0,0,2,2,0,0,2,0,3,2,3,0,2,2,2,2,2,2,2,2,2,3,0,1,2,0,2,2,0,2,2,1,2,0,2,0,0,2,2,0,2,0,0,0,0,2,2,0,2,0,0,1,3,0,0,2,2,2,0,2,2,0,3,2,2,2,2,0,0,2,2,0,2,0,0,2,0,0,2,0,0,0,2,0,3,2,3,2,0,2,0,0,2,2,0,2,2,2,0,2,0,2,2,2,2,0,2,0,0,0,2,0,2,0,0,0,2,0,2,2,2,2,2,0,0,1,2,2,2,2,2,3,0,0,3,3,2,2,2,2,0,2,0]},{"id":"sqsex","title":"Support for Pinochet’s regime: women vs. men","var":"statusquo","by":"sex","g":["Female","Male"],"gl":["Women","Men"],"scale":"standardized scale, higher = more support for the status quo","src":"Chile","a":[1.231,-1.032,-1.105,-1.047,-1.113,-1.013,1.434,1.507,-0.856,-1.058,1.385,1.456,1.615,0.553,1.336,0.155,1.51,0.965,-0.351,0.721,1.002,1.404,0.8,0.532,1.489,1.548,1.332,1.034,1.246,1.596,0.808,-0.49,1.044,1.588,0.905,1.453,1.061,-1.304,-0.85,0.184,-0.992,1.588,-0.148,0.224,-1.146,-1.186,1.056,1.599,0.281,0.108,-0.977,0.152,-1.296,-1.304,-0.122,0.007,0.155,1.238,1.432,-1.296,1.588,-0.121,-0.275,1.398,-1.296,-1.296,0.685,-1.22,-1.296,-0.38,-0.467,-1.221,1.406,-0.998,1.483,1.441,1.588,1.279,-1.1,1.442,1.416,1.449,1.51,1.608,1.518,-0.342,1.548,1.371,1.596,-0.717,-1.143,0.549,1.19,-0.662,1.453,0.948,0.835,1.437,-0.784,0.995,0.982,1.334,-0.598,0.434,1.588,1.202,-1.296,1.444,0.022,0.651,0.579,1.211,1.51,0.154,1.057,-0.825,-0.83,1.449,0.15,-0.648,-1.078,-0.789,0.29,-1.296,1.365,0.57,1.516,-1.079,1.437,-1.152,0.238,1.251,0.62,-1.191,1.235,1.242,-1.18,-1.14,-0.33,0.29,0.968,0.827,1.076,-0.829,-0.072,-0.873,-1.23,1.225,-1.23,0.406,-0.462,-1.119,-1.23,0.211,0.514,0.095,1.176,1.017,0.056,1.461,-0.819,-0.698,-1.273,-1.03,1.212,0.533,1.334,-0.962,0.736,-0.781,0.322,-0.53,1.193,-1.296,-1.121,-0.364,-1.258,-1.296,-0.304,1.588,-1.296,-0.315,1.156,-0.897,0.995,-0.929,0.669,1.259,1.588,0.935,-1.107,-1.0,-1.144,-1.296,-1.151,-1.296,-1.296,-0.865,-0.728,1.548,0.155,0.453,-0.755,0.425,0.598,-1.122,-0.897,-0.299,0.309,1.253,0.116,1.447,-1.296,-0.279,-1.096,-1.118,1.056,-1.103,-1.296,-1.296,1.229,-1.296,-0.183,-0.216,0.298,-1.031,0.267,-1.211,0.116,0.298,-0.93,-1.276,1.298,0.313,-0.633,-1.296,-0.568,-1.279,-1.332,0.736,0.207,-1.296,-1.296,-0.656,-0.859,0.416,-1.007,0.035,0.543,1.239,0.586,-1.182,0.127,0.044,1.302,-1.017,0.279,0.146,-1.258,1.508,-0.975,1.387,-0.811,-1.296,1.345,-1.296,-1.296,1.234,-0.134,-1.069,-0.166,-0.908,-1.197,-1.189,-1.296,-1.258,-1.258,-0.083,-1.296,0.35,0.803,1.323,1.121,1.221,1.296,-0.81,-0.881,-1.135,-1.184,0.588,-0.879,1.215,1.015,-0.55,1.133,-1.289,1.007,1.064,-0.181,-1.296,0.761,0.003,-0.562,1.403,1.437,-1.092,-1.296,0.989,-1.296,1.247,-0.665,-1.293,-0.262,-1.217,1.548,-1.007,-1.279,1.462,-0.498,-0.989,-1.296,0.978,0.269,1.511,0.758,-1.074,0.928,0.511,1.112,-0.935,1.308,0.078,0.824,1.286,0.192,1.47,1.346,1.588,0.493,0.013,1.079,1.329,1.392,-0.927,0.946,1.588,1.242,0.617,1.085,0.393,0.41,-0.424,0.409,1.489,1.513,-1.305,-0.927,1.113,1.258,1.588,-0.701,0.97,1.508,0.192,-0.625,-1.219,1.404,-1.296,-0.612,0.843,0.638,0.342,0.167,0.03,0.786,1.687,-0.675,1.42,-0.965,-0.169,0.133,-0.968,1.039,0.328,-0.529,-1.267,1.392,1.472,-1.053,0.312,0.134,-1.114,-1.156,0.795,0.158,1.293,1.588,1.138,-1.18,0.984,-1.296,-0.813,1.588,-1.803,-1.296,-1.145,0.915,-1.152,0.946,-0.322,-0.799,0.447,1.491,0.064,1.411,-1.0,-1.006,-0.97,0.069,-0.781,0.269,1.476,-0.394,1.569,1.127,-0.922,0.243,1.588,0.152,0.632,0.814,0.359,-1.089,-0.838,0.322,0.049,0.78,-1.259,1.22,0.366,0.257,0.574,0.719,0.753,-0.768,1.32,0.692,1.32,0.902,1.081,0.758,1.405,1.555,1.502,0.764,0.406,0.44,1.588,1.588,1.178,0.688,1.338,1.355,0.537,0.91,0.343,-1.296,-1.296,1.548,0.928,0.549,1.27,0.407,0.969,-0.099,0.699,0.813,0.235,-0.549,0.665,0.21,1.31,-0.609,-0.269,-0.891,-0.972,-0.861,-1.262,-0.788,0.825,0.25,0.246,-1.161,1.407,1.149,0.863,-1.086,-0.965,1.554,1.404,1.437,-0.931,0.11,0.816,0.077,0.013,0.909,0.401,1.588,1.555,-0.405,1.397,0.311,1.404,-0.313,-0.785,1.274,1.095,0.109,0.136,1.276,0.146,1.548,1.438,1.213,1.362,-0.796,-1.296,-0.713,-0.034,0.217,1.588,1.469,1.359,-1.293,0.05,-0.887,-1.078,0.116,0.326,-1.063,1.266,-0.051,1.258,0.644,-0.073,0.53,-1.14,-1.09,-0.155,1.043,-0.887,-1.194,0.378,1.345,0.02,-1.031,-0.282,-1.307,-1.296,-1.019,1.359,-1.296,-1.186,0.356,-0.222,-0.861,-1.223,0.759,-0.721,-1.296,0.557,-1.052,-0.434,-1.041,1.398,-1.0,1.071,0.256,1.588,0.439,-0.909,0.478,-0.758,-0.673,-1.067,-1.079,-1.273,-1.0,-0.716,1.432,-1.296,1.338,0.389,0.816,-0.112,-1.061,-0.279,-0.803,1.386,0.589,-1.296,-0.408,-1.296,1.432,-0.766,-0.609,1.275,1.035,-0.389,-1.009,0.245,-1.009,0.904,1.588,-0.996,-1.075,0.135,-1.049,-1.217,-0.254,-0.724,-0.622,-1.223,-1.296,-0.152,-0.932,0.937,1.255,1.588,1.4,1.242,0.357,-0.868,1.22,0.954,1.184,1.226,1.39,1.332,1.475,-0.984,1.203,0.064,1.456,1.175,0.242,1.215,1.194,1.588,0.913,1.47,1.315,0.077,1.13,1.3,0.502,0.023,1.279,1.588,1.365,-1.296,1.588,0.277,0.365,-1.296,1.29,-1.217,0.418,-0.269,0.909,0.146,1.264,1.585,-0.352,-0.203,-0.83,0.323,-0.444,0.915,0.328,0.2,0.182,-1.296,-1.296,0.061,1.017,0.278,-0.553,-0.873,0.471,0.653,-0.037,1.192,1.699,-1.17,0.595,1.325,1.515,-0.723,1.588,0.192,1.588,1.41,0.516,0.17,-1.129,0.098,0.657,1.064,0.894,1.152,-0.81,-0.416,-0.113,1.434,0.192,-0.366,-0.23,1.561,1.368,0.163,1.549,0.958,-0.672,0.477,-1.269,-1.05,-0.902,-1.296,-0.158,1.548,0.681,1.404,-1.296,1.267,0.859,-1.042,0.132,0.503,0.522,0.4,1.51,1.547,0.494,0.522,0.926,-1.257,-1.296,1.009,1.092,-0.149,-0.891,1.068,-1.258,1.095,1.343,1.278,-0.097,0.146,-1.007,0.115,1.432,1.034,0.438,-0.365,1.492,-0.662,-1.077,1.033,1.002,1.448,1.242,-1.143,1.326,0.992,1.477,1.317,-1.23,1.588,1.588,1.35,-0.655,-1.107,1.371,-0.7,1.273,1.206,1.237,0.29,-0.118,-0.67,1.003,1.005,0.224,-1.265,0.29,0.552,-1.296,-0.304,1.326,-1.05,0.986,0.467,-0.253,-1.259,0.797,0.441,0.85,-0.98,1.315,0.224,-0.162,-1.296,-1.186,-1.048,1.588,-0.975,-1.045,-0.438,0.616,0.928,-0.034,-1.296,-1.109,-0.26,0.499,-0.583,0.88,0.627,-0.302,-0.49,1.448,0.304,0.192,-1.296,-0.405,-1.059,1.588,-0.758,-0.376,0.85,0.601,-1.063,0.063,-0.363,1.225,1.214,-1.019,-0.091,-1.107,-0.898,-1.296,0.162,1.293,1.143,1.476,0.883,-0.11,0.942,1.365,0.633,1.209,-1.262,-0.775,0.139,-1.172,-0.043,1.332,1.419,0.967,-1.296,-1.07,1.605,0.751,1.403,-0.395,1.246,0.682,0.482,-1.264,0.383,-1.305,0.83,-0.3,1.326,-0.479,1.416,-0.823,-1.296,0.007,1.257,1.1,0.292,-0.279,-1.18,1.153,2.021,-1.218,-1.04,-0.681,-1.13,1.588,1.554,0.227,-0.579,-1.12,0.535,0.934,-1.263,0.146,0.911,-0.947,-0.404,-0.732,0.705,0.717,-0.709,-1.296,-1.22,-0.926,-0.551,0.479,1.329,-1.308,0.527,-1.296,-0.256,-0.806,-1.176,0.82,0.319,-0.69,0.172,0.758,-0.718,-1.273,0.902,-1.224,0.003,-1.121,0.882,-1.052,-0.98,-1.125,1.191,0.386,-0.8,-0.413,0.383,1.293,0.128,-1.296,0.457,1.035,1.437,-1.305,-1.218,0.886,-1.258,1.052,-0.18,-1.024,0.546,-0.251,0.386,-1.047,0.894,0.439,-0.127,1.004,-0.422,-0.559,-1.296,-1.177,-1.126,-1.225,-0.601,-0.052,0.583,-1.296,-0.325,-0.496,-0.935,0.001,0.253,1.351,1.548,-0.353,1.027,-1.15,0.304,-1.296,-1.257,-1.296,-0.736,1.245,-0.107,-1.296,-1.003,-0.357,-1.296,0.116,0.343,-1.263,1.261,-1.296,-1.296,0.592,-1.081,1.154,-1.296,1.588,0.311,-0.51,-1.296,0.908,0.06,0.07,1.109,-0.164,-0.225,0.136,0.557,-0.635,0.366,-0.564,-1.135,-1.047,-0.629,-1.296,-0.429,-0.771,-0.88,-1.296,-1.296,0.157,-1.296,1.588,-1.726,1.519,1.588,0.802,1.143,1.515,0.39,-0.378,-0.932,1.373,-1.296,-0.25,-1.069,0.154,-0.738,-1.186,0.87,-1.296,-1.296,-0.928,0.513,-0.785,1.404,-0.059,-1.036,-1.158,-1.23,-1.14,-1.296,1.38,-0.27,-1.067,0.118,-1.164,1.428,-0.976,1.548,-0.056,0.195,0.964,1.051,-1.206,-1.22,-1.117,-1.193,0.1,0.145,-1.108,0.335,-1.296,1.537,1.475,-1.05,-1.179,0.931,1.153,-1.296,-0.297,-0.764,-1.296,0.92,-1.257,-1.279,-0.362,-0.605,-0.67,1.331,-1.105,-0.397,-1.296,-0.909,-0.981,-1.296,0.94,-0.308,0.261,-0.862,0.646,-0.1,-0.755,-0.362,-0.794,0.075,0.042,-1.257,1.588,-1.296,0.191,-0.748,-1.108,-0.449,-1.14,-0.119,1.016,-1.296,-1.258,-1.296,-0.996,-1.296,-1.296,-0.329,-1.146,-0.787,-1.039,-1.18,0.13,-1.14,-0.929,-1.296,-1.296,-1.006,1.32,-1.041,-1.296,-0.956,-0.64,0.187,-0.684,-0.161,1.461,-0.612,-0.497,1.588,-0.002,0.86,1.21,-1.218,-0.974,1.588,-1.218,-1.078,-1.237,-0.49,0.569,-1.296,0.596,-1.216,1.477,-1.217,-1.148,0.128,-1.075,-0.891,-0.709,0.792,0.341,-0.98,1.351,1.178,0.2,-1.289,-1.117,1.513,0.836,0.437,-1.208,1.49,0.29,-0.881,-1.074,-1.158,0.04,-1.218,-0.584,-1.22,-0.784,0.19,-1.258,-0.169,-1.146,-0.089,-1.103,0.182,-0.66,0.885,1.554,-1.013,-1.296,-0.681,1.404,-1.043,0.928,0.863,1.398,1.043,-0.314,-0.294,1.015,-0.629,-1.105,-0.799,-1.481,0.027,-1.026,-1.219,0.811,-1.296,-1.001,-0.195,0.888,0.516,-1.14,1.073,-1.296,-1.257,-0.942,-0.401,-1.218,0.904,0.64,1.135,0.847,0.771,1.39,-0.952,1.153,-0.938,0.973,0.948,0.737,1.346,0.138,-0.159,0.471,0.131,-0.011,1.147,-0.232,0.294,-0.63,1.514,0.007,-1.273,-0.459,-0.57,-1.04,-0.843,-1.099,-1.081,-1.258,-0.694,0.338,-1.296,-0.894,0.633,1.588,-0.726,1.508,0.693,0.472,0.59,0.089,-1.152,-1.296,-1.185,0.28,-1.296,1.255,-1.296,-1.296,-0.883,0.867,0.881,-0.947,-0.135,-1.067,-1.082,-0.271,-0.236,1.504,0.467,-0.324,0.309,1.111,0.288,1.35,1.207,-1.258,1.593,1.285,0.147,0.966,-1.163,-1.221,-0.704,1.281,0.722,0.71,0.732,1.286,0.288,-0.387,-0.577,1.085,-1.296,0.125,-0.638,-0.156,-0.676,1.416,-0.54,-0.525,1.128,0.134,1.436,1.614,-0.339,0.788,1.443,-0.09,0.957,0.338,-1.296,1.477,1.299,-0.609,1.542,1.549,1.35,0.355,-0.586,1.441,-0.178,0.873,1.222,-0.334,-0.614,1.329,1.42],"b":[1.008,-1.296,-0.786,-1.296,1.366,1.028,1.49,-1.142,-0.907,1.323,1.548,1.526,-0.893,-1.296,0.155,1.169,-1.296,1.432,0.264,0.111,-1.152,0.522,0.497,1.327,0.88,-0.424,-1.04,-1.101,-0.372,1.35,1.332,-0.832,0.528,0.231,-0.526,-1.107,0.273,-1.296,-0.03,1.483,-0.591,-1.192,1.023,-1.108,-1.125,0.114,1.023,-0.712,-0.523,-0.668,0.719,0.675,1.275,-0.716,-1.174,-0.705,-0.717,1.548,-0.783,0.256,-0.306,1.255,-0.422,0.099,1.459,-1.296,-1.032,-1.013,-0.886,-1.22,-0.403,-0.709,-0.366,-1.296,-0.729,0.417,-1.258,-0.471,-0.519,1.588,1.363,-1.104,-1.039,1.404,-0.127,0.328,0.013,1.562,-0.162,0.374,1.621,1.394,1.416,-0.387,-0.588,-0.669,1.196,-0.046,-0.959,1.414,0.987,1.057,0.347,-1.104,0.022,-0.911,1.332,-0.762,-0.896,-1.296,-0.924,-0.602,-0.185,0.071,0.757,0.009,1.348,1.014,-0.72,-1.14,0.124,-0.563,1.377,0.571,-0.896,-0.951,-1.035,-0.206,-0.533,-1.296,-1.197,1.555,-0.526,1.377,1.41,0.905,-1.296,-0.132,-1.003,-0.937,-0.897,-1.296,-0.187,0.071,-1.266,1.372,0.778,-1.001,-1.296,0.483,-1.296,-0.959,-1.187,-0.876,1.08,1.037,-1.258,-1.296,1.516,-1.296,-0.619,-1.263,0.08,-1.296,-1.296,-1.195,-1.14,-1.218,-0.216,1.438,-1.036,-0.645,0.668,-1.081,0.774,1.598,-1.07,-1.296,-0.663,-1.141,-1.296,-1.08,-1.296,-0.756,0.362,1.47,-1.141,-0.989,-0.995,0.181,-0.362,1.192,-0.729,-1.094,0.612,0.001,-1.189,1.293,1.107,0.42,1.444,-0.985,-0.648,-0.591,1.137,1.469,1.07,-1.258,-1.296,0.756,-1.111,-1.296,-1.182,0.766,-1.296,0.116,-0.968,-0.918,-1.296,1.372,-1.296,-0.944,0.535,1.473,1.192,-1.296,-1.296,1.095,-1.296,-1.035,-0.751,-1.296,0.049,-0.694,-1.076,-0.643,-0.984,-1.154,0.863,0.873,-0.849,-0.221,-1.296,-1.223,-1.304,-0.276,0.842,-1.177,-1.296,-0.803,1.398,1.309,-0.54,1.134,-0.326,-0.128,0.293,1.588,-0.685,-1.296,-0.925,-0.979,0.513,-0.863,0.351,1.588,-0.211,1.487,-1.14,-0.087,0.08,0.19,-0.349,1.332,-0.045,-1.14,-0.554,-1.037,-0.27,-0.768,-0.135,0.282,1.43,-0.096,1.588,-1.296,-1.225,-1.263,-0.609,1.195,0.851,-1.223,-0.539,0.754,1.438,0.908,-1.258,0.734,-1.053,-0.651,-0.136,0.649,-1.173,-0.799,1.383,0.141,0.471,-0.694,0.556,0.783,-0.274,0.963,0.459,-0.727,-1.119,-0.292,-0.568,-1.22,-1.229,1.588,-0.974,1.588,-0.703,0.566,-1.14,0.898,-0.54,-1.225,1.568,-0.243,-1.296,0.321,-0.403,1.334,-1.296,-1.296,-1.146,0.906,0.82,1.011,0.125,-1.023,0.808,1.01,0.428,-1.296,-0.634,1.443,1.299,-1.012,-1.296,-0.982,0.062,1.332,0.876,0.165,-1.263,-0.809,-1.064,0.243,-0.752,0.606,0.361,-0.732,-1.141,-1.296,-1.119,-1.296,-0.804,0.279,-1.011,0.59,-0.129,-1.191,-0.553,-1.26,0.274,-1.218,0.299,-0.704,-1.296,-1.296,-1.296,1.22,0.743,0.909,0.784,0.423,-0.792,1.088,0.356,1.224,-0.195,-0.619,-1.073,-0.716,-0.47,-0.993,-0.081,1.176,0.962,0.8,-0.74,-1.083,-1.145,-1.296,0.803,0.298,-0.014,-1.07,-0.976,-0.645,0.719,1.092,1.437,-0.548,-1.258,0.096,-1.007,-0.824,1.55,-0.823,-0.256,-0.258,0.411,1.001,1.28,0.024,-1.296,1.36,1.47,1.358,1.309,0.399,0.655,1.476,0.659,-1.229,1.456,0.587,1.048,-0.954,1.437,1.588,1.588,-1.191,0.934,-1.223,-0.881,1.557,-0.024,1.294,-1.296,-1.296,1.432,1.174,1.164,0.859,-0.74,0.659,1.251,0.463,0.996,1.004,1.253,-1.296,0.199,1.485,1.154,1.048,0.205,1.308,-0.728,-1.183,1.438,-1.104,-0.83,-0.402,-0.504,1.097,0.714,1.019,0.831,-1.007,0.935,0.978,1.332,1.588,1.255,-0.618,1.329,1.513,-1.146,-0.941,0.75,0.384,0.39,0.962,-0.69,1.365,0.163,1.253,-0.32,0.998,0.153,-0.87,-0.979,-0.081,0.806,-0.073,-0.969,0.245,-0.916,1.392,-0.37,1.183,-0.049,0.139,0.123,-0.431,0.258,-1.197,1.476,0.405,-1.152,0.988,-0.169,-0.935,-1.035,-0.803,-1.035,0.309,0.519,0.531,1.403,-0.561,-0.929,1.06,-0.168,-1.22,-1.22,-0.811,-1.033,1.327,-1.152,-0.973,0.437,0.965,-0.481,-1.106,-1.296,-0.783,-0.852,-0.698,-1.099,0.012,-1.102,-1.056,-0.081,-1.041,-1.296,-1.212,-1.117,-1.067,0.345,-1.296,-0.29,-0.16,-0.979,-1.101,1.475,-0.056,1.227,-0.881,-1.205,-1.257,-0.929,0.25,0.741,-1.199,-1.092,-0.487,-0.902,-0.792,1.555,-1.12,-0.795,-0.912,-0.443,1.469,1.688,0.323,1.588,0.179,-0.862,-0.968,0.273,0.118,-1.146,-0.211,0.956,-0.884,-1.042,0.432,-1.296,0.812,-0.514,-0.511,1.481,0.007,1.293,-0.2,-1.296,1.185,-1.058,0.345,0.367,0.067,-0.188,0.948,1.359,1.593,1.195,1.352,1.273,-1.041,1.504,1.443,0.846,-1.229,0.672,1.213,1.588,0.837,-0.267,-0.69,1.353,-1.155,0.1,1.476,1.084,-1.229,0.229,-0.277,1.298,-0.282,1.47,0.951,-1.157,-0.332,1.508,1.01,1.487,-0.081,0.825,-0.709,0.98,-0.854,0.624,1.437,-0.072,1.126,-1.086,1.014,-0.936,0.113,-1.223,-0.489,-1.23,-1.125,-0.688,-1.041,1.363,-1.064,-0.967,1.366,0.239,-0.335,0.508,0.599,1.588,0.578,-0.439,0.673,-0.977,1.574,1.588,-1.007,0.201,1.294,-1.296,0.439,-1.296,0.979,-1.119,0.574,0.32,1.588,-0.542,1.266,-0.052,0.302,1.001,-0.357,0.102,-0.435,-1.218,-1.14,-0.93,-0.986,-1.14,1.502,-1.035,0.669,0.524,0.605,1.286,1.126,1.548,1.373,1.355,0.36,1.714,1.432,0.414,1.141,1.46,1.366,1.395,0.677,-0.828,1.013,0.775,1.406,-0.841,-1.257,-0.613,0.841,0.731,-1.183,-0.929,-0.751,0.96,-0.559,0.706,-0.844,-0.13,-1.14,-1.153,1.059,-0.325,0.85,-0.171,1.432,-0.935,-1.19,-0.842,1.588,2.049,1.123,0.663,-1.002,1.172,1.399,-0.77,-1.158,1.162,1.322,0.125,-0.992,-1.182,0.407,1.16,0.997,0.123,-0.834,-0.427,1.588,-0.839,1.403,0.343,0.747,-0.829,-0.411,0.615,1.517,0.662,1.252,-0.892,0.342,-0.783,0.31,0.755,1.362,-1.03,0.93,0.673,0.016,-1.15,1.437,-1.296,-1.22,-1.296,0.766,1.27,-1.065,0.451,0.203,-1.055,-1.296,1.245,-1.111,-0.505,-0.93,1.588,-1.121,-0.583,-1.034,0.712,1.299,-0.93,-0.79,0.027,0.919,-1.022,-1.152,0.148,-0.507,-0.121,1.259,1.553,-1.066,-1.296,0.655,0.362,0.424,0.354,1.41,-1.073,0.027,-0.927,-0.684,1.472,-1.296,-0.832,1.371,-1.296,-1.042,-0.895,1.588,-0.626,0.695,1.246,-0.244,-1.296,-0.765,-1.257,-0.253,0.27,0.775,-0.575,-0.554,-0.196,0.468,-0.406,-1.185,0.549,-1.116,-0.183,0.74,-1.296,-1.296,0.727,0.659,-1.257,0.287,-0.624,-1.129,1.51,-1.296,-0.436,-0.189,-0.831,-0.619,-0.147,1.508,-1.223,-1.085,1.427,-1.296,1.428,-1.001,-1.03,-1.047,-0.087,-1.164,-0.447,0.181,-0.031,-1.296,0.947,-0.277,1.205,1.153,-0.159,0.127,-1.113,-1.303,0.664,-0.952,-1.078,0.005,0.241,-0.77,1.588,0.322,-1.296,-1.296,-0.61,1.331,-1.304,1.198,-1.296,-1.296,-1.197,0.155,0.601,1.356,1.026,-1.296,0.816,0.878,1.478,-1.218,-0.538,-0.94,-1.18,-1.296,-0.71,1.011,-0.73,-0.046,-1.296,0.043,0.132,0.558,-1.191,0.418,0.535,-1.296,-0.848,0.724,0.221,-1.304,-0.804,-0.865,-1.068,-0.594,-1.344,-1.195,-0.172,-1.258,-1.158,-1.14,-0.96,-1.103,-1.04,-0.463,-1.074,-1.296,0.145,-1.296,-0.542,-0.373,-0.66,-0.988,-0.459,-1.311,-0.405,-0.704,-1.14,-0.102,-0.969,-1.296,-1.152,-1.035,1.299,-0.829,-0.863,1.2,1.588,-0.78,0.043,-1.296,1.189,-1.23,1.415,0.032,-0.359,-0.237,-0.321,1.612,-0.887,-1.104,-1.296,-0.4,-0.667,-1.296,-1.296,0.457,-0.256,1.588,-0.036,0.447,1.365,1.522,0.478,-1.218,1.365,-0.896,-0.914,1.381,1.4,1.469,0.492,-1.21,0.1,-1.107,-1.071,0.999,-0.975,-1.262,-0.162,-0.972,1.176,0.202,1.554,1.168,-0.674,1.278,-0.209,-1.258,-1.218,-1.258,-1.263,0.165,-0.8,1.445,0.501,1.256,0.2,1.515,0.519,-0.86,-0.97,-0.884,-0.074,-1.101,0.398,0.182,-1.218,-1.218,1.121,-1.218,-1.218,-1.041,1.043,-1.182,-0.919,-1.044,-1.147,0.207,1.187,-0.929,1.185,1.232,1.299,-0.917,-1.296,1.549,-0.149,-0.452,-0.427,-1.177,1.446,1.288,-1.029,-0.555,-1.296,-1.141,-1.105,-1.231,0.105,-1.296,1.4,1.532,-0.652,1.481,1.337,-0.929,-1.042,1.588,1.266,-1.105,0.047,-1.22,-0.923,-1.258,1.404,-1.258,-1.081,0.692,0.57,-1.183,-1.296,-0.811,-1.296,-1.18,-1.14,-0.935,0.271,-1.007,-1.296,-1.023,-0.013,-1.23,-0.896,-1.218,-1.14,-1.218,-1.296,0.514,-0.379,-1.105,-1.296,0.954,0.617,-0.908,0.823,1.548,0.451,-1.078,-0.896,-0.429,-0.778,0.157,-1.296,-0.575,-1.296,0.13,-1.041,-1.218,-1.219,-1.198,-1.296,-0.796,0.493,-1.02,-0.202,0.8,1.109,0.564,-0.767,0.81,-0.253,-1.105,-1.143,-0.541,1.456,-0.705,1.399,1.096,-0.403,1.487,0.209,-0.66,0.813,-1.273,-0.317,-0.793,-1.119,1.269,0.532,1.168,-1.22,0.494,0.516,-0.871,1.384,0.913,0.041,-0.838,-1.296,1.555,0.543,1.442,0.825,1.344,0.468,1.217,1.394,0.139,-0.152,1.443,-0.667,-1.03,1.519,-0.31,1.271,1.22,1.298,-1.061,0.434,-0.016,0.472,1.261,1.476,-1.296,1.438,1.332,1.326,-1.113,-0.986,0.985,1.141,-0.416,1.24,0.018,-0.595,-0.73,-0.502,-1.296,-1.112,-0.29,0.84,1.125,0.637,0.672,1.548,1.062,0.143,-1.068,-0.738,-1.296,-1.296,-0.658,-1.269,1.452,-1.257,0.544,-1.296,-0.438,-0.033,1.31,-0.741,-0.698,0.355,-1.065,-0.967,-0.578,-1.296,-0.995,-0.153,-1.146,-0.779,1.008,1.588,0.627,1.477,1.588,0.764,0.131,-1.296,-1.229,0.162,0.833,0.149,1.21,-0.509,-0.713,0.432,0.738,0.388,-1.089,-0.597,-0.572,-1.3,0.759,0.805,0.084,-0.986,1.294,-0.824,-0.117,0.829,-1.744,1.243,-0.436,0.168,1.33,-1.025,1.318,-0.499,0.517,-1.195,-1.331,-1.258,1.431,1.517,1.461,0.854,-0.002,-1.262,0.183,1.382]}]</script>
+<script>
+(function(){
+"use strict";
+const COMPS=JSON.parse(document.getElementById('data').textContent);
+const $=s=>document.querySelector(s);
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- math ---------- */
+function lgamma(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function betacf(a,b,x){const MAXIT=300,EPS=3e-14,FPMIN=1e-300;let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;let h=d;
+  for(let m=1;m<=MAXIT;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;d=1/d;h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<EPS)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b;}
+function tcdf(t,df){const x=df/(df+t*t);const tail=0.5*ibeta(x,df/2,0.5);return t>=0?1-tail:tail;}
+function tpdf(t,df){return Math.exp(lgamma((df+1)/2)-lgamma(df/2)-0.5*Math.log(df*Math.PI)-(df+1)/2*Math.log(1+t*t/df));}
+const tqCache=new Map();
+function tinv(p,df){df=df>=30?Math.round(df*2)/2:Math.round(df*10)/10;const k=p.toFixed(5)+'|'+df;if(tqCache.has(k))return tqCache.get(k);let lo=0,hi=1000;for(let i=0;i<90;i++){const mid=(lo+hi)/2;if(tcdf(mid,df)<p)lo=mid;else hi=mid;}const r=(lo+hi)/2;tqCache.set(k,r);return r;}
+const npdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
+function moments(v){let s=0;for(const x of v)s+=x;const m=s/v.length;let ss=0;for(const x of v)ss+=(x-m)*(x-m);return {m,sd:Math.sqrt(ss/v.length)};}
+
+/* ---------- populations ---------- */
+for(const c of COMPS){ c.pool=c.a.concat(c.b); c.A=moments(c.a); c.B=moments(c.b); c.P=moments(c.pool);
+  const sp=Math.sqrt(((c.a.length-1)*c.A.sd**2+(c.b.length-1)*c.B.sd**2)/(c.a.length+c.b.length-2)); c.d=(c.A.m-c.B.m)/sp; }
+const sel=$('#comp');
+COMPS.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.title;sel.appendChild(o);});
+
+const NS=[5,10,25,50,100,250], AL=[0.10,0.05,0.01];
+const st={comp:'euro',n:25,alpha:0.05,equal:true,h0:false,S:[],landed:0,anims:[],tw:null,disp:null,timer:null};
+const comp=()=>COMPS.find(c=>c.id===st.comp);
+function truth(){const c=comp(); if(st.h0) return {m1:c.P.m,m2:c.P.m,s1:c.P.sd,s2:c.P.sd}; return {m1:c.A.m,m2:c.B.m,s1:c.A.sd,s2:c.B.sd};}
+
+function drawFrom(arr,n){ // without replacement, partial Fisher-Yates on a scratch index
+  const N=arr.length; if(!drawFrom.idx||drawFrom.idx.length!==N){drawFrom.idx=new Int32Array(N);for(let i=0;i<N;i++)drawFrom.idx[i]=i;}
+  const ix=drawFrom.idx; let s=0; const out=new Array(n);
+  for(let i=0;i<n;i++){const j=i+Math.floor(Math.random()*(N-i));const t=ix[i];ix[i]=ix[j];ix[j]=t;out[i]=arr[ix[i]];}
+  return out;
+}
+function sampleOnce(){
+  const c=comp(), n=st.n;
+  let g1,g2;
+  if(st.h0){ const both=drawFrom(c.pool,2*n); g1=both.slice(0,n); g2=both.slice(n); }
+  else { g1=drawFrom(c.a,n); drawFrom.idx=null; g2=drawFrom(c.b,n); drawFrom.idx=null; }
+  const sum=v=>v.reduce((a,b)=>a+b,0);
+  const m1=sum(g1)/n, m2=sum(g2)/n;
+  const v1=g1.reduce((a,x)=>a+(x-m1)**2,0)/(n-1), v2=g2.reduce((a,x)=>a+(x-m2)**2,0)/(n-1);
+  const all=g1.concat(g2), mc=(m1+m2)/2, vc=all.reduce((a,x)=>a+(x-mc)**2,0)/(2*n-1);
+  return [m1,m2,Math.sqrt(v1),Math.sqrt(v2),Math.sqrt(vc)];
+}
+function test(S){
+  const [m1,m2,s1,s2]=S, n=st.n, a=st.alpha;
+  let se,df;
+  if(st.equal){ const sp2=((n-1)*s1*s1+(n-1)*s2*s2)/(2*n-2); se=Math.sqrt(sp2*(2/n)); df=2*n-2; }
+  else { const a1=s1*s1/n, a2=s2*s2/n; se=Math.sqrt(a1+a2); df=(a1+a2)**2/((a1*a1)/(n-1)+(a2*a2)/(n-1)); if(!isFinite(df)) df=2*n-2; }
+  const d=m1-m2, t=se>0? d/se : (d===0?0:Infinity), tc=tinv(1-a/2,df);
+  const p= isFinite(t)? 2*(1-tcdf(Math.abs(t),df)) : 0;
+  const tg=tinv(1-a/2,n-1), se1=s1/Math.sqrt(n), se2=s2/Math.sqrt(n);
+  const ci1=[m1-tg*se1,m1+tg*se1], ci2=[m2-tg*se2,m2+tg*se2];
+  const overlap= ci1[0]<=ci2[1] && ci2[0]<=ci1[1];
+  return {m1,m2,s1,s2,se1,se2,ci1,ci2,overlap,d,se,df,t,tc,p,lo:d-tc*se,hi:d+tc*se,reject:p<a};
+}
+
+/* ---------- drawing helpers ---------- */
+const COL={};
+function readColors(){const cs=getComputedStyle(document.documentElement);['--ink','--ink-2','--muted','--grid','--axis','--surface','--page','--s1','--s1-ink','--s2','--s2-ink','--line'].forEach(k=>COL[k]=cs.getPropertyValue(k).trim());}
+function rgba(hex,a){hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
+const FONT='"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+function canvasIn(box,h){let c=box.querySelector('canvas');if(!c){c=document.createElement('canvas');box.appendChild(c);}const W=Math.max(280,box.clientWidth),dpr=window.devicePixelRatio||1;
+  if(c.width!==Math.round(W*dpr)||c.height!==Math.round(h*dpr)){c.width=Math.round(W*dpr);c.height=Math.round(h*dpr);c.style.width=W+'px';c.style.height=h+'px';}
+  const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,h);return {c,ctx,W,H:h};}
+function niceStep(r,t){const raw=r/Math.max(1,t),p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return(f<1.5?1:f<3?2:f<7?5:10)*p;}
+function ticks(lo,hi,t){const s=niceStep(hi-lo,t);const o=[];for(let x=Math.ceil(lo/s-1e-9)*s;x<=hi+1e-9;x+=s)o.push(+x.toFixed(10));return o;}
+function fmtTick(v,step){const d=step>=1?0:Math.min(3,Math.ceil(-Math.log10(step)));return v.toFixed(d).replace(/^-0(\.0+)?$/,'0');}
+function text(ctx,s,x,y,o={}){ctx.font=`${o.w||400} ${o.size||11.5}px ${FONT}`;ctx.fillStyle=o.color||COL['--muted'];ctx.textAlign=o.align||'center';ctx.textBaseline=o.base||'alphabetic';ctx.fillText(s,x,y);}
+function xAxis(ctx,xs,lo,hi,y,W,ml,mr){
+  ctx.strokeStyle=COL['--axis'];ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ml,y+.5);ctx.lineTo(W-mr,y+.5);ctx.stroke();
+  const tk=ticks(lo,hi,Math.max(3,Math.floor((W-ml-mr)/72))), step=tk.length>1?tk[1]-tk[0]:1;
+  for(const t of tk){const x=Math.round(xs(t))+.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+4);ctx.stroke();text(ctx,fmtTick(t,step),x,y+16);}
+}
+const tip=$('#tip');
+function showTip(h,e){tip.innerHTML=h;tip.classList.add('on');const r=tip.getBoundingClientRect();let x=e.clientX+12,y=e.clientY-r.height-10;if(x+r.width>innerWidth-8)x=e.clientX-r.width-12;if(y<8)y=e.clientY+16;tip.style.left=Math.max(8,x)+'px';tip.style.top=y+'px';}
+function hideTip(){tip.classList.remove('on');}
+const f3=v=>Math.abs(v)>=100?v.toFixed(1):v.toFixed(2);
+const pfmt=p=>p<0.0001?'< .0001':p.toFixed(4).replace(/^0/,'');
+
+/* ---------- panel A ---------- */
+function rangeA(){const c=comp(),T=truth(),se=Math.max(T.s1,T.s2)/Math.sqrt(st.n);const ctr=(T.m1+T.m2)/2,half=Math.abs(T.m1-T.m2)/2+4.6*se;return [ctr-half,ctr+half];}
+function drawA(P){
+  const box=$('#aChart'); const H=st.n?262:262; const {ctx,W}=canvasIn(box,H);
+  const m={l:14,r:14,t:30,b:92}, yb=H-m.b;
+  const [lo,hi]=rangeA(); const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  // gridlines
+  const tk=ticks(lo,hi,Math.max(3,Math.floor((W-m.l-m.r)/72)));
+  ctx.strokeStyle=COL['--grid'];ctx.lineWidth=1;for(const t of tk){const x=Math.round(xs(t))+.5;ctx.beginPath();ctx.moveTo(x,m.t-6);ctx.lineTo(x,yb);ctx.stroke();}
+  if(!P){ xAxis(ctx,xs,lo,hi,yb,W,m.l,m.r); return; }
+  const c=comp();
+  const peak=Math.max(npdf(0,0,P.se1),npdf(0,0,P.se2)); const ys=v=>yb-v/peak*(yb-m.t)*0.86;
+  const groups=[{m:P.m1,se:P.se1,ci:P.ci1,col:COL['--s1'],ink:COL['--s1-ink'],lab:c.g[0]},{m:P.m2,se:P.se2,ci:P.ci2,col:COL['--s2'],ink:COL['--s2-ink'],lab:c.g[1]}];
+  for(const g of groups){
+    const N=260, x0=lo, x1=hi;
+    // full curve fill
+    ctx.beginPath();ctx.moveTo(xs(x0),yb);for(let i=0;i<=N;i++){const x=x0+(x1-x0)*i/N;ctx.lineTo(xs(x),ys(npdf(x,g.m,g.se)));}ctx.lineTo(xs(x1),yb);ctx.closePath();ctx.fillStyle=rgba(g.col,0.08);ctx.fill();
+    // CI fill
+    const a=Math.max(lo,g.ci[0]), b=Math.min(hi,g.ci[1]);
+    if(b>a){ctx.beginPath();ctx.moveTo(xs(a),yb);for(let i=0;i<=N;i++){const x=a+(b-a)*i/N;ctx.lineTo(xs(x),ys(npdf(x,g.m,g.se)));}ctx.lineTo(xs(b),yb);ctx.closePath();ctx.fillStyle=rgba(g.col,0.26);ctx.fill();}
+  }
+  for(const g of groups){
+    ctx.beginPath();for(let i=0;i<=300;i++){const x=lo+(hi-lo)*i/300;const y=ys(npdf(x,g.m,g.se));i?ctx.lineTo(xs(x),y):ctx.moveTo(xs(x),y);}ctx.strokeStyle=g.col;ctx.lineWidth=2;ctx.stroke();
+    const px=xs(g.m);ctx.beginPath();ctx.moveTo(px,ys(npdf(g.m,g.m,g.se)));ctx.lineTo(px,yb);ctx.strokeStyle=g.col;ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+  }
+  // mean labels: left group anchors right, right group anchors left
+  const ord=groups.slice().sort((a,b)=>a.m-b.m);
+  ord.forEach((g,i)=>{const px=xs(g.m), py=ys(npdf(g.m,g.m,g.se))-8; const al=i===0?'right':'left'; const dx=i===0?-4:4;
+    text(ctx,`${g.lab}: x̄ = ${f3(g.m)}`,Math.min(W-4,Math.max(4,px+dx)),Math.max(12,py),{align:al,w:600,size:12.5,color:g.ink});});
+  xAxis(ctx,xs,lo,hi,yb,W,m.l,m.r);
+  // CI brackets
+  const rows=[yb+36,yb+56];
+  groups.forEach((g,i)=>{const y=rows[i]+.5;const a=xs(Math.max(lo,g.ci[0])),b=xs(Math.min(hi,g.ci[1]));
+    ctx.strokeStyle=g.col;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a,y);ctx.lineTo(b,y);ctx.stroke();
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a,y-5);ctx.lineTo(a,y+5);ctx.moveTo(b,y-5);ctx.lineTo(b,y+5);ctx.stroke();
+    ctx.beginPath();ctx.arc(xs(g.m),y,4,0,7);ctx.fillStyle=g.col;ctx.fill();
+    const lbl=`${g.lab} ${Math.round((1-st.alpha)*100)}% CI`; const room=W-m.r-b;
+    if(room>110) text(ctx,lbl,b+8,y+4,{align:'left',size:12,color:g.ink}); else text(ctx,lbl,a-8,y+4,{align:'right',size:12,color:g.ink});
+  });
+  // overlap zone
+  const oa=Math.max(P.ci1[0],P.ci2[0]), ob=Math.min(P.ci1[1],P.ci2[1]);
+  if(ob>oa){const xa=xs(Math.max(lo,oa)),xb=xs(Math.min(hi,ob));ctx.fillStyle=rgba(COL['--ink'],0.09);ctx.fillRect(xa,rows[0]-10,Math.max(1,xb-xa),rows[1]-rows[0]+20);
+    ctx.strokeStyle=COL['--ink-2'];ctx.lineWidth=1;ctx.setLineDash([2,2]);ctx.beginPath();ctx.moveTo(xa+.5,rows[0]-10);ctx.lineTo(xa+.5,rows[1]+10);ctx.moveTo(xb-.5,rows[0]-10);ctx.lineTo(xb-.5,rows[1]+10);ctx.stroke();ctx.setLineDash([]);
+    text(ctx,'overlap',(xa+xb)/2,rows[1]+24,{w:600,size:12,color:COL['--ink-2']});}
+}
+function statusA(R){
+  const L=Math.round((1-st.alpha)*100);
+  if(!R){$('#aStatus').innerHTML='';$('#aNote').innerHTML='';return;}
+  $('#aStatus').innerHTML=`<span class="chip ${R.overlap?'':'strong'}">${L}% CIs ${R.overlap?'overlap':'do not overlap'}</span><span class="chip">difference ${f3(R.d)}, p = ${pfmt(R.p)}</span><span class="chip ${R.reject?'strong':''}">${R.reject?'Reject H₀':'Fail to reject H₀'} at α = ${String(st.alpha).replace(/^0/,'')}</span>`;
+  let note='';
+  if(R.overlap && R.reject) note='<b>Overlap, yet significant.</b> The intervals overlap but the test rejects. Overlap is a conservative rule of thumb; the test of the difference (panels B and C) is the real check.';
+  else if(!R.overlap) note='<b>No overlap.</b> When the two intervals do not overlap, the difference is always significant at this level.';
+  else note='<b>Overlap, not significant.</b> The data are consistent with no difference between the groups. That is not proof the groups are equal.';
+  $('#aNote').innerHTML=note;
+}
+
+/* ---------- panel B ---------- */
+let geomB=null;
+function drawB(now){
+  const box=$('#bChart'); const H=300; const {ctx,W}=canvasIn(box,H);
+  const m={l:46,r:16,t:34,b:56}, yb=H-m.b;
+  const T=truth(), D=T.m1-T.m2, SEd=Math.sqrt(T.s1**2+T.s2**2)/Math.sqrt(st.n);
+  let lo=Math.min(0,D)-4.4*SEd, hi=Math.max(0,D)+4.4*SEd;
+  const w=niceStep(hi-lo,42); lo=Math.floor(lo/w)*w; hi=Math.ceil(hi/w)*w; const k=Math.round((hi-lo)/w);
+  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  const L=st.landed; const counts=new Array(k).fill(0); let out=0;
+  const diffs=[];
+  for(let i=0;i<L;i++){const d=st.S[i][0]-st.S[i][1]; diffs.push(d); const b=Math.floor((d-lo)/w); if(b<0||b>=k){out++;continue;} counts[b]++;}
+  const curve=L>0? (x=>L*w*npdf(x,D,SEd)) : null;
+  let ymax=Math.max(4,...counts, curve? curve(D):0);
+  const yt=ticks(0,ymax*1.1,4), ytop=Math.max(yt[yt.length-1],ymax*1.1);
+  const ys=v=>yb-v/ytop*(yb-m.t);
+  geomB={lo,w,k,xs,counts,m,yb,W,L};
+  // y grid
+  ctx.strokeStyle=COL['--grid'];ctx.lineWidth=1;
+  for(const t of yt){ if(t>ytop)continue; const y=Math.round(ys(t))+.5; ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(W-m.r,y);ctx.stroke(); text(ctx,String(t),m.l-7,y+4,{align:'right'}); }
+  text(ctx,'Samples',4,12,{align:'left'});
+  // middle band
+  let band=null;
+  if(L>=40){ const s=diffs.slice().sort((a,b)=>a-b); const q=p=>s[Math.min(s.length-1,Math.max(0,Math.round(p*(s.length-1))))]; band=[q(st.alpha/2),q(1-st.alpha/2)];
+    const a=xs(Math.max(lo,band[0])), b=xs(Math.min(hi,band[1])); ctx.fillStyle=rgba(COL['--ink'],0.07); ctx.fillRect(a,m.t-14,b-a,yb-m.t+14);
+    text(ctx,`middle ${Math.round((1-st.alpha)*100)}%`,(a+b)/2,m.t-18,{size:11.5,color:COL['--ink-2'],w:500}); }
+  // bars
+  const bw=(W-m.l-m.r)/k, gap=bw>6?1:0.5;
+  let lastBin=-1; if(L>0){const d=st.S[L-1][0]-st.S[L-1][1]; lastBin=Math.floor((d-lo)/w);}
+  for(let i=0;i<k;i++){const c=counts[i]; if(!c) continue; const x=xs(lo+i*w)+gap, y=ys(c), bh=yb-y, ww=Math.max(1,bw-2*gap), r=Math.min(3,ww/3,bh);
+    ctx.fillStyle= i===lastBin? COL['--s2'] : COL['--s1'];
+    ctx.beginPath();ctx.moveTo(x,yb);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.lineTo(x+ww-r,y);ctx.quadraticCurveTo(x+ww,y,x+ww,y+r);ctx.lineTo(x+ww,yb);ctx.closePath();ctx.fill();}
+  // curve
+  if(curve){ctx.beginPath();for(let i=0;i<=300;i++){const x=lo+(hi-lo)*i/300;const y=ys(curve(x));i?ctx.lineTo(xs(x),y):ctx.moveTo(xs(x),y);}ctx.strokeStyle=COL['--ink-2'];ctx.lineWidth=1.75;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);}
+  // zero line
+  const z=Math.round(xs(0))+.5; ctx.strokeStyle=COL['--ink'];ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(z,m.t-6);ctx.lineTo(z,yb);ctx.stroke();
+  const zr=z<m.l+70; // label sits beside the line, inside the plot's headroom, so it never meets the band label above
+  text(ctx,'H₀: 0',z+(zr?6:-6),m.t+10,{align:zr?'left':'right',w:600,size:12.5,color:COL['--ink']});
+  xAxis(ctx,xs,lo,hi,yb,W,m.l,m.r);
+  text(ctx,`difference in means, ${comp().g[0]} − ${comp().g[1]}`,W-m.r,yb+30,{align:'right',size:11.5});
+  // current sample CI
+  if(st.S.length){ const R=test(st.S[st.S.length-1]); const y=yb+44.5; const a=xs(Math.max(lo,R.lo)), b=xs(Math.min(hi,R.hi));
+    ctx.strokeStyle=COL['--s2'];ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a,y);ctx.lineTo(b,y);ctx.stroke();ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a,y-5);ctx.lineTo(a,y+5);ctx.moveTo(b,y-5);ctx.lineTo(b,y+5);ctx.stroke();
+    if(R.d>=lo&&R.d<=hi){ctx.beginPath();ctx.arc(xs(R.d),y,4.5,0,7);ctx.fillStyle=COL['--s2'];ctx.fill();}
+    if(W-m.r-b>90) text(ctx,'this sample',b+8,y+4,{align:'left',size:11.5,color:COL['--s2-ink'],w:500});
+    else text(ctx,'this sample',a-8,y+4,{align:'right',size:11.5,color:COL['--s2-ink'],w:500}); }
+  // falling dots
+  for(const an of st.anims){ const p=Math.min(1,(now-an.t0)/an.dur); const e=p<1? 1-Math.pow(1-p,3):1;
+    const b=Math.floor((an.d-lo)/w); const targetY= (b>=0&&b<k)? ys(counts[b])-6 : yb-6;
+    const y=(m.t-10)+e*(targetY-(m.t-10)); const x=xs(Math.min(hi,Math.max(lo,an.d)));
+    ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fillStyle=COL['--s2'];ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=COL['--surface'];ctx.stroke(); }
+  // status
+  const lev=Math.round((1-st.alpha)*100);
+  let html='';
+  if(L>=40&&band){ const inside=band[0]<=0&&band[1]>=0;
+    html+=`<span class="chip ${inside?'':'strong'}">0 is ${inside?'inside':'outside'} the middle ${lev}% of the differences</span>`; }
+  else html+=`<span class="chip">Draw at least 40 samples to see the middle ${lev}%</span>`;
+  if(out) html+=`<span class="chip">${out} beyond the edges</span>`;
+  if(st.S.length){ const R=test(st.S[st.S.length-1]); html+=`<span class="chip">this sample: ${f3(R.d)}, ${lev}% CI ${f3(R.lo)} to ${f3(R.hi)}</span>`; }
+  $('#bStatus').innerHTML=html;
+}
+$('#bChart').addEventListener('pointermove',e=>{ if(!geomB) return; const r=e.currentTarget.getBoundingClientRect(); const x=e.clientX-r.left;
+  const v=geomB.lo+(x-geomB.m.l)/(geomB.W-geomB.m.l-geomB.m.r)*(geomB.k*geomB.w); const b=Math.floor((v-geomB.lo)/geomB.w);
+  if(b<0||b>=geomB.k||x<geomB.m.l){hideTip();return;} const a=geomB.lo+b*geomB.w; const c=geomB.counts[b];
+  showTip(`Differences ${f3(a)} to ${f3(a+geomB.w)}<br>${c} sample${c===1?'':'s'}${geomB.L?` (${(100*c/geomB.L).toFixed(1)}%)`:''}`,e); });
+$('#bChart').addEventListener('pointerleave',hideTip);
+
+/* ---------- panel C ---------- */
+function drawC(R){
+  const box=$('#cChart'); const H=220; const {ctx,W}=canvasIn(box,H);
+  const m={l:14,r:14,t:30,b:30}, yb=H-m.b;
+  if(!R){ $('#cStatus').innerHTML=''; return; }
+  const df=R.df, span=Math.min(9,Math.max(4.2,Math.abs(R.t)+1)), lo=-span, hi=span;
+  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r); const pk=tpdf(0,df); const ys=v=>yb-v/pk*(yb-m.t)*0.92;
+  const at=Math.abs(R.t);
+  // tails
+  ctx.fillStyle=rgba(COL['--s2'],0.45);
+  for(const side of [-1,1]){ const a=side<0?lo:Math.min(hi,at), b=side<0?Math.max(lo,-at):hi; if(b<=a) continue;
+    ctx.beginPath();ctx.moveTo(xs(a),yb);for(let i=0;i<=120;i++){const x=a+(b-a)*i/120;ctx.lineTo(xs(x),ys(tpdf(x,df)));}ctx.lineTo(xs(b),yb);ctx.closePath();ctx.fill(); }
+  // curve
+  ctx.beginPath();for(let i=0;i<=300;i++){const x=lo+(hi-lo)*i/300;const y=ys(tpdf(x,df));i?ctx.lineTo(xs(x),y):ctx.moveTo(xs(x),y);}ctx.strokeStyle=COL['--ink'];ctx.lineWidth=2;ctx.stroke();
+  // critical values
+  ctx.strokeStyle=COL['--ink-2'];ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+  for(const s of [-1,1]){const x=Math.round(xs(s*R.tc))+.5;ctx.beginPath();ctx.moveTo(x,m.t-4);ctx.lineTo(x,yb);ctx.stroke();}
+  ctx.setLineDash([]);
+  if(R.t<0) text(ctx,`critical t = ±${R.tc.toFixed(2)}`,xs(R.tc)+4,m.t-10,{align:'left',size:11.5,color:COL['--ink-2']});
+  else text(ctx,`critical t = ±${R.tc.toFixed(2)}`,xs(-R.tc)-4,m.t-10,{align:'right',size:11.5,color:COL['--ink-2']});
+  // observed t
+  const tx=xs(Math.max(lo,Math.min(hi,R.t)));ctx.strokeStyle=COL['--s2'];ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(tx,m.t-4);ctx.lineTo(tx,yb);ctx.stroke();
+  const al=tx>W-90?'right':tx<90?'left':'center';
+  text(ctx,`t = ${R.t.toFixed(2)}${Math.abs(R.t)>hi?' →':''}`,tx+(al==='left'?4:al==='right'?-4:0),m.t-10,{align:al,w:600,size:12.5,color:COL['--s2-ink']});
+  xAxis(ctx,xs,lo,hi,yb,W,m.l,m.r);
+  const a=String(st.alpha).replace(/^0/,'');
+  $('#cStatus').innerHTML=`<span class="chip">t = ${R.t.toFixed(3)}, df = ${st.equal?R.df:R.df.toFixed(1)}</span><span class="chip ${R.reject?'strong':''}">p = ${pfmt(R.p)} ${R.reject?'<':'≥'} α = ${a}</span>`;
+}
+
+/* ---------- Stata output ---------- */
+function pad(s,w){s=String(s);return s.length>=w?s:' '.repeat(w-s.length)+s;}
+function rpad(s,w){s=String(s);return s.length>=w?s:s+' '.repeat(w-s.length);}
+function fnum(v){if(!isFinite(v))return '.';let t=String(Number(v.toPrecision(7)));if(t.startsWith('0.'))t=t.slice(1);else if(t.startsWith('-0.'))t='-'+t.slice(2);return t;}
+function stata(R,S){
+  const c=comp(), n=st.n, L=Math.round((1-st.alpha)*100);
+  if(!R){$('#stata').textContent='';return;}
+  const tg=tinv(1-st.alpha/2,n-1), tc2=tinv(1-st.alpha/2,2*n-1);
+  const sc=S[4], mc=(R.m1+R.m2)/2, sec=sc/Math.sqrt(2*n);
+  const row=(g,o,mn,se,sd,lo,hi)=>pad(g,8)+' |'+pad(o,8)+pad(fnum(mn),12)+pad(fnum(se),12)+pad(sd===''?'':fnum(sd),12)+pad(fnum(lo),12)+pad(fnum(hi),12);
+  const dash='-'.repeat(78), mid='---------+'+'-'.repeat(68);
+  const opt=(st.equal?'':' unequal')+(L!==95?` level(${L})`:'');
+  const tline=`t = ${pad(R.t.toFixed(4),8)}`;
+  const dfl=st.equal? `Degrees of freedom = ${pad(R.df,8)}` : `Satterthwaite's degrees of freedom = ${pad(R.df.toFixed(4),8)}`;
+  const left1=`    diff = mean(${c.g[0]}) - mean(${c.g[1]})`;
+  const pLess=tcdf(R.t,R.df), pGreater=1-pLess;
+  const lines=[
+    `<span class="cmd">. ttest ${c.var}, by(${c.by})${opt}</span>`,'',
+    `Two-sample t test with ${st.equal?'equal':'unequal'} variances`,
+    dash,
+    pad('Group',8)+' |'+pad('Obs',8)+pad('Mean',12)+pad('Std. err.',12)+pad('Std. dev.',12)+pad(`[${L}% conf. interval]`,24),
+    mid,
+    row(c.g[0],n,R.m1,R.se1,R.s1,R.ci1[0],R.ci1[1]),
+    row(c.g[1],n,R.m2,R.se2,R.s2,R.ci2[0],R.ci2[1]),
+    mid,
+    row('Combined',2*n,mc,sec,sc,mc-tc2*sec,mc+tc2*sec),
+    mid,
+    `<span class="hl">${pad('diff',8)} |${pad('',8)}${pad(fnum(R.d),12)}${pad(fnum(R.se),12)}${pad('',12)}${pad(fnum(R.lo),12)}${pad(fnum(R.hi),12)}</span>`,
+    dash,
+    rpad(left1,78-tline.length)+tline,
+    rpad('H0: diff = 0',78-dfl.length)+dfl,
+    '',
+    '    Ha: diff &lt; 0                 Ha: diff != 0                 Ha: diff &gt; 0',
+    ` Pr(T &lt; t) = ${pfs(pLess)}         <span class="hl">Pr(|T| &gt; |t|) = ${pfs(R.p)}</span>          Pr(T &gt; t) = ${pfs(pGreater)}`
+  ];
+  $('#stata').innerHTML=lines.join('\n');
+}
+function pfs(p){return p<0.00005?'0.0000':p.toFixed(4);}
+
+/* ---------- orchestration ---------- */
+function targetA(){ if(!st.S.length) return null; const R=test(st.S[st.S.length-1]); return {m1:R.m1,m2:R.m2,se1:R.se1,se2:R.se2,ci1:R.ci1.slice(),ci2:R.ci2.slice()}; }
+function lerp(a,b,t){return a+(b-a)*t;}
+function lerpA(a,b,t){return {m1:lerp(a.m1,b.m1,t),m2:lerp(a.m2,b.m2,t),se1:lerp(a.se1,b.se1,t),se2:lerp(a.se2,b.se2,t),ci1:[lerp(a.ci1[0],b.ci1[0],t),lerp(a.ci1[1],b.ci1[1],t)],ci2:[lerp(a.ci2[0],b.ci2[0],t),lerp(a.ci2[1],b.ci2[1],t)]};}
+let rafId=0;
+function frame(now){
+  rafId=0; let busy=false;
+  // tween A
+  if(st.tw){ const p=Math.min(1,(now-st.tw.t0)/st.tw.dur); const e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; st.disp=lerpA(st.tw.from,st.tw.to,e); if(p>=1) st.tw=null; else busy=true; }
+  drawA(st.disp);
+  // land finished anims
+  const still=[]; for(const an of st.anims){ if(now-an.t0>=an.dur){ st.landed=Math.max(st.landed,an.idx+1); } else still.push(an); }
+  st.anims=still; if(still.length) busy=true;
+  drawB(now);
+  if(busy) rafId=requestAnimationFrame(frame);
+}
+function kick(){ if(!rafId) rafId=requestAnimationFrame(frame); }
+function refreshText(){
+  const R=st.S.length? test(st.S[st.S.length-1]) : null;
+  statusA(R); drawC(R); stata(R,st.S[st.S.length-1]); tally();
+}
+function addSamples(k,animate){
+  for(let i=0;i<k;i++) st.S.push(sampleOnce());
+  const to=targetA();
+  if(animate && !reduce){
+    const idx=st.S.length-1;
+    if(!st.anims.length) st.landed=idx; // everything before this sample is already on the pile
+    st.anims.push({idx, d:st.S[idx][0]-st.S[idx][1], t0:performance.now(), dur:650});
+    st.tw={from:st.disp||to, to, t0:performance.now(), dur:420};
+  } else { st.landed=st.S.length; st.anims=[]; st.disp=to; st.tw=null; }
+  refreshText(); kick();
+}
+function tally(){
+  const M=st.S.length; let rej=0, ovsig=0, sig=0;
+  for(const S of st.S){ const R=test(S); if(R.reject){ rej++; if(R.overlap) ovsig++; } }
+  const a=String(st.alpha).replace(/^0/,'');
+  const label= st.h0 ? 'False positives: H₀ is true here, so this should be about '+Math.round(st.alpha*100)+'%' : 'This is the test’s power for a true gap of '+f3(comp().A.m-comp().B.m);
+  $('#tally').innerHTML=`
+    <div><div class="k">Samples drawn</div><div class="v">${M.toLocaleString('en-US')}</div><div class="s">n = ${st.n} per group</div></div>
+    <div><div class="k">Rejected H₀ at <span style="text-transform:none">α</span> = ${a}</div><div class="v">${M?(100*rej/M).toFixed(1)+'%':'–'}</div><div class="s">${label}</div></div>
+    <div><div class="k">CIs overlapped, yet significant</div><div class="v">${rej?(100*ovsig/rej).toFixed(1)+'%':'–'}</div><div class="s">of the rejections; overlap is not the test</div></div>`;
+}
+function popInfo(){
+  const c=comp(), T=truth();
+  const lev=Math.round((1-st.alpha)*100);
+  document.querySelectorAll('.lvl').forEach(e=>e.textContent=lev);
+  $('#k1').textContent=c.gl[0]; $('#k2').textContent=c.gl[1];
+  $('#popInfo').innerHTML = st.h0
+    ? `<b>H₀ made true.</b> Both groups are drawn from the same pool of ${c.pool.length.toLocaleString('en-US')} respondents (${c.src}), so the true difference is 0. Scale: ${c.scale}.`
+    : `<b>Population (full ${c.src} survey):</b> ${c.gl[0]} μ = ${f3(c.A.m)} (N = ${c.a.length.toLocaleString('en-US')}), ${c.gl[1]} μ = ${f3(c.B.m)} (N = ${c.b.length.toLocaleString('en-US')}). True difference ${f3(c.A.m-c.B.m)}, Cohen's d = ${c.d.toFixed(2)}. Scale: ${c.scale}.`;
+}
+function reset(){ stopRun(); st.S=[]; st.landed=0; st.anims=[]; st.tw=null; st.disp=null; popInfo(); addSamples(1,false); }
+function stopRun(){ if(st.timer){clearInterval(st.timer);st.timer=null;} $('#run').setAttribute('aria-pressed','false'); $('#run').textContent='Run'; }
+
+/* controls */
+function segment(id,vals,cur,fmt,on){const box=$(id);vals.forEach(v=>{const i=document.createElement('input');i.type='radio';i.name=id;i.id=id.slice(1)+String(v).replace('.','');i.value=v;if(v===cur)i.checked=true;const l=document.createElement('label');l.htmlFor=i.id;l.textContent=fmt(v);box.append(i,l);i.addEventListener('change',()=>on(v));});}
+segment('#nseg',NS,st.n,v=>v,v=>{st.n=v;reset();});
+segment('#aseg',AL,st.alpha,v=>String(v).replace(/^0/,''),v=>{st.alpha=v;popInfo();st.disp=targetA();refreshText();kick();});
+sel.addEventListener('change',()=>{st.comp=sel.value;reset();});
+$('#equal').addEventListener('change',e=>{st.equal=e.target.checked;st.disp=targetA();refreshText();kick();});
+$('#h0').addEventListener('change',e=>{st.h0=e.target.checked;reset();});
+$('#d1').addEventListener('click',()=>addSamples(1,true));
+$('#d100').addEventListener('click',()=>addSamples(100,false));
+$('#d1000').addEventListener('click',()=>addSamples(1000,false));
+$('#clear').addEventListener('click',()=>{stopRun();st.S=[];st.landed=0;st.anims=[];st.tw=null;st.disp=null;refreshText();kick();});
+$('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run').setAttribute('aria-pressed','true'); $('#run').textContent='Pause'; addSamples(1,true); st.timer=setInterval(()=>addSamples(1,true),reduce?120:340); });
+
+const drawer=$('#drawer');let lastFocus=null;
+function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}
+function closeFx(){document.body.classList.remove('formulas-open');drawer.setAttribute('aria-hidden','true');if(lastFocus)lastFocus.focus();}
+document.querySelectorAll('[data-open-formulas]').forEach(b=>b.addEventListener('click',openFx));
+$('#closeFx').addEventListener('click',closeFx);$('#scrim').addEventListener('click',closeFx);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('formulas-open'))closeFx();});
+document.addEventListener('pointerdown',e=>{if(!(e.target instanceof HTMLCanvasElement))hideTip();});
+
+readColors();
+const redraw=()=>{readColors();refreshText();kick();};
+let rz=0;
+if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;cancelAnimationFrame(rz);rz=requestAnimationFrame(redraw);}}).observe($('main'));}else addEventListener('resize',redraw);
+if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',redraw);
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* start in a working state */
+popInfo(); addSamples(149,false); addSamples(1,false);
+})();
+</script>
+</body>
+</html>

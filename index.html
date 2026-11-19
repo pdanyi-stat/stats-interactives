@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistical Methods Interactives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#f6f6f3;
+  --surface:#fdfdfc;
+  --ink:#121212;
+  --ink-2:#4f4e4a;
+  --muted:#85837d;
+  --grid:#e4e3dc;
+  --axis:#bebdb4;
+  --line:rgba(18,18,18,.12);
+  --accent:#c8102e;          /* masthead rule, kicker */
+  --pop:#8d8b84;             /* population bars */
+  --s1:#2a78d6;              /* sample means (blue) */
+  --s1-ink:#1c5cab;
+  --s2:#eb6834;              /* the current sample (orange) */
+  --s2-ink:#b8481c;
+  --code-bg:#f1f0eb;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+    --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+    --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+  --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+  --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- hub ---- */
+.how{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0;padding:0;list-style:none;font-size:14px;color:var(--ink-2)}
+.how li::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:2px}
+.mods{display:grid;gap:12px}
+.mod{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:6px 16px;align-items:center;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;transition:border-color .15s,transform .15s}
+.mod:hover{border-color:var(--ink-2)}
+.mod:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.mod .num{font:700 30px/1 var(--font-body);color:var(--accent);font-variant-numeric:tabular-nums}
+.mod h2{margin:0;font-size:19px;line-height:1.25}
+.mod p{margin:3px 0 0;font-size:14.5px;color:var(--ink-2);max-width:78ch}
+.mod .data{display:block;margin-top:4px;font-size:12.5px;color:var(--muted)}
+.mod .go{font-size:14px;font-weight:600;color:var(--s1-ink);white-space:nowrap}
+.mod.ex{margin-left:56px;border-style:dashed;background:var(--page)}
+.mod.ex .num{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+@media (max-width:640px){.mod{grid-template-columns:40px minmax(0,1fr)}.mod .go{grid-column:2}.mod.ex{margin-left:20px}.mod .num{font-size:24px}}
+.groups{display:grid;gap:22px}
+.gh{margin:0 0 8px;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Interactive modules</p>
+    <h1>See the statistics move</h1>
+    <p class="dek">Seven interactive modules for undergraduate statistical methods, built on real political data: election returns, national surveys, and the 2004 National Election Study. Draw samples, drag points, flip switches, and watch the ideas behind the formulas.</p>
+    <ul class="how">
+      <li>Works on phones, tablets and laptops</li>
+      <li>Formulas behind every <b style="color:var(--ink)">Σ Formulas</b> button</li>
+      <li>Stata-style output on every page</li>
+      <li>“Try this” and “Check yourself” at the bottom of each module</li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="groups">
+    <section>
+      <p class="gh">Inference: from samples to populations</p>
+      <div class="mods">
+        <a class="mod" href="1-sampling-distributions.html"><span class="num">1</span><div><h2>Sampling distributions</h2><p>Draw thousands of samples and watch the sample means pile into a bell centered on the truth. Why the standard error shrinks with √n.</p><span class="data">Data: 2016 and 2020 county election returns</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="2-confidence-intervals.html"><span class="num">2</span><div><h2>Confidence intervals</h2><p>Build hundreds of intervals and count how many capture the true mean, then test whether the final 2016 polls' margins of error held up.</p><span class="data">Data: county returns; 2016 presidential polls</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="3-difference-in-means.html"><span class="num">3</span><div><h2>Difference in means</h2><p>Two groups' means and confidence intervals on one axis, then the animated sampling distribution of the difference and the t test.</p><span class="data">Data: British Election Panel Study; 1988 Chilean plebiscite survey</span></div><span class="go">Open →</span></a>
+      </div>
+    </section>
+    <section>
+      <p class="gh">Association: how much does knowing X help?</p>
+      <div class="mods">
+        <a class="mod" href="4-pre-measures.html"><span class="num">4</span><div><h2>PRE measures: lambda, gamma, r²</h2><p>One guessing game at three levels of measurement. Start with a handful of voters, then scale up to full survey tables.</p><span class="data">Data: 2004 NES; British Election Panel Study; Chilean plebiscite; counties</span></div><span class="go">Open →</span></a>
+      </div>
+    </section>
+    <section>
+      <p class="gh">Regression</p>
+      <div class="mods">
+        <a class="mod" href="5-bivariate-regression.html"><span class="num">5</span><div><h2>Bivariate regression</h2><p>Least squares you can drag, the equation in plain words, predictions and marginal-effect triangles, and why a significance test turns a bell curve 90°.</p><span class="data">Data: state 2016 vote; Florida 2000; midterm elections</span></div><span class="go">Open →</span></a>
+        <a class="mod ex" href="5b-partisans-and-the-first-lady.html"><span class="num">Worked example</span><div><h2>Partisans and the First Lady</h2><p>A full bivariate analysis, step by step: do feelings toward the parties shape ratings of Laura Bush? With a replication for Hillary Clinton.</p><span class="data">Data: 2004 NES feeling thermometers</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="6-multiple-regression.html"><span class="num">6</span><div><h2>Multiple regression</h2><p>What “holding constant” does to the data, why slopes shrink, grow or flip when you add a control, and how R² and adjusted R² respond.</p><span class="data">Data: state 2016 vote and demographics</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="7-dummy-variables.html"><span class="num">7</span><div><h2>Dummy variables</h2><p>A 0/1 switch whose slope is a difference in means, parallel lines when you add a control, and four regions with three dummies.</p><span class="data">Data: state 2016 vote by Census region</span></div><span class="go">Open →</span></a>
+      </div>
+    </section>
+  </div>
+
+  <footer class="src">
+    Data sources: county presidential returns compiled by Tony McGovern (tonmcg/US_County_Level_Election_Results_08-24); FiveThirtyEight's 2016 poll and state data; the British Election Panel Study and the 1988 Chilean plebiscite survey (carData); Florida 2000 county returns (carData); OpenIntro's midterm elections data; and the 2004 American National Election Study. Most datasets accessed through the Rdatasets collection.
+  </footer>
+</main>
+</body>
+</html>

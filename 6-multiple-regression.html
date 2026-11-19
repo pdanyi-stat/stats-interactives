@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multiple Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#f6f6f3;
+  --surface:#fdfdfc;
+  --ink:#121212;
+  --ink-2:#4f4e4a;
+  --muted:#85837d;
+  --grid:#e4e3dc;
+  --axis:#bebdb4;
+  --line:rgba(18,18,18,.12);
+  --accent:#c8102e;          /* masthead rule, kicker */
+  --pop:#8d8b84;             /* population bars */
+  --s1:#2a78d6;              /* sample means (blue) */
+  --s1-ink:#1c5cab;
+  --s2:#eb6834;              /* the current sample (orange) */
+  --s2-ink:#b8481c;
+  --code-bg:#f1f0eb;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+    --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+    --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+  --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+  --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 6 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; --q1:#cde2fb; --q2:#86b6ef; --q3:#3987e5; --q4:#1c5cab; --q5:#0d366b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-b1{color:var(--s2-ink);font-weight:600}
+.k-b2{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--ink-2);font-weight:600}
+.chart svg{display:block}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:92ch}
+.steps b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:92px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1)}
+.calc{font-family:var(--font-mono);font-size:13px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.big{font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ramp{display:inline-block;width:70px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--q1),var(--q3),var(--q5))}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.ghost{height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0}
+/* filled equation */
+.terms{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;margin-top:6px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:17px;font-weight:600;padding:3px 8px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.b1{border-color:var(--s2);color:var(--s2-ink)} .term .t.b2{border-color:var(--s1);color:var(--s1-ink)} .term .t.v{border-color:var(--ink)} .term .t.op{border:0;padding:3px 0;color:var(--ink-2)}
+.term .n{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);line-height:1.2;max-width:14ch}
+/* OVB */
+.ovb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:center}
+@media (max-width:860px){.ovb{grid-template-columns:1fr}}
+.decomp{font-size:15px;display:grid;gap:8px}
+.decomp .eqn{font-family:var(--font-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.verdict{display:inline-block;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;background:var(--ink);color:var(--surface)}
+/* model builder */
+.ivlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;margin:6px 0 10px}
+.ivlist label{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+.ivlist input{accent-color:var(--s1);width:16px;height:16px;margin:0}
+.fitbars{display:grid;gap:10px;margin-top:6px}
+.fb .lab{font-size:13.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.fb .lab b{color:var(--ink)}
+.track{height:16px;border-radius:4px;background:var(--page);border:1px solid var(--line);position:relative;overflow:hidden}
+.fill{height:100%;background:var(--s1);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fill.adj{background:var(--s2)}
+.ghostmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55;transition:left .5s}
+@media (prefers-reduced-motion: reduce){.fill,.ghostmark{transition:none}}
+pre.stata .b1{color:var(--s2-ink);font-weight:600}
+pre.stata .b2{color:var(--s1-ink);font-weight:600}
+pre.stata .ns{color:var(--muted)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 6: </span><b>Multiple regression</b></span><a href="7-dummy-variables.html" aria-label="Next: Dummy variables">Next →</a></nav>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Interactive 6 of 7</p>
+    <h1>Multiple regression</h1>
+    <p class="dek">A bivariate slope mixes the effect of X with everything that travels with X. Adding a control variable separates them. See what “holding constant” does to the data, why slopes shrink, grow or flip, and how R² and adjusted R² respond as a model grows.</p>
+    <ul class="modnav" aria-label="Modules in this series">
+      <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
+      <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
+      <li><a href="3-difference-in-means.html">3 Difference in means</a></li>
+      <li><a href="4-pre-measures.html">4 PRE measures</a></li>
+      <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
+      <li aria-current="page"><a href="6-multiple-regression.html">6 Multiple regression</a></li>
+      <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="controls" aria-label="Variables">
+    <div class="ctl" style="flex:1 1 300px"><label class="lab" for="story">Story</label><select id="story" style="width:100%"></select></div>
+    <div class="ctl"><label class="lab" for="x1">Focus IV, X₁</label><select id="x1"></select></div>
+    <div class="ctl"><label class="lab" for="x2">Control, X₂</label><select id="x2"></select></div>
+    <button class="linkish fxbtn" data-open-formulas style="align-self:center"><i>Σ</i> Formulas</button>
+  </section>
+  <p style="margin:-8px 0 0;font-size:14px;color:var(--ink-2)">DV (Y) throughout: <b style="color:var(--ink)">Trump's share of the 2016 presidential vote</b>, in each of the 50 states and D.C.</p>
+
+  <!-- A -->
+  <figure>
+    <div class="fighead"><h2><span class="step">A</span>What “holding X₂ constant” does to the data</h2></div>
+    <ol class="steps">
+      <li><b>Predict Y from X₂</b> and keep each state's leftover: the part of its Trump share that X₂ can't account for.</li>
+      <li><b>Predict X₁ from X₂</b> and keep those leftovers too: the part of X₁ that doesn't simply travel with X₂.</li>
+      <li><b>Plot leftovers against leftovers.</b> The slope of that cloud is exactly X₁'s coefficient in the multiple regression. Toggle below and watch the states slide.</li>
+    </ol>
+    <div class="row" style="margin:10px 0 6px">
+      <div class="seg" role="radiogroup" aria-label="View" id="view"></div>
+    </div>
+    <div class="key"><span><span class="ramp"></span><span id="rampLab">X₂: low → high</span></span><span><i class="sw ols"></i><span id="lineLab">fitted slope</span></span><span><i class="sw ghost"></i><span id="ghostLab">the other slope, for comparison</span></span></div>
+    <div class="chips" id="aChips"></div>
+    <div class="chart" id="aChart"></div>
+    <figcaption id="aCap"></figcaption>
+  </figure>
+
+  <!-- B -->
+  <section class="card">
+    <h3><span class="step">B</span>Why the slope changed: omitted variable bias</h3>
+    <div class="ovb">
+      <div class="chart" id="path"></div>
+      <div class="decomp" id="decomp"></div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <figure>
+    <div class="fighead"><h2><span class="step">C</span>The equation, parallel lines, and predictions</h2></div>
+    <p class="sub">With two IVs the model is ŷ = <span class="k-b1">β₁</span>X₁ + <span class="k-b2">β₂</span>X₂ + <span class="k-cons">constant</span> (y = mx + b with one more term). Fix X₂ at any value and you get a line for X₁; every such line has the same slope, β₁. Slide X₂ and the line moves up or down without tilting.</p>
+    <div class="terms" id="terms"></div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <div class="key"><span><span class="ramp"></span>states, shaded by X₂</span><span><i class="sw ols"></i>prediction line at your X₂</span><span><i class="sw ghost"></i>lines at low, average, high X₂</span></div>
+        <div class="chart" id="cChart"></div>
+      </div>
+      <div class="side">
+        <div class="box">
+          <h4>Set the values</h4>
+          <div class="row"><label for="v1" id="v1Lab">X₁</label><input type="number" id="v1" step="any"><input type="range" id="v1r" aria-label="X1 value"></div>
+          <div class="row" style="margin-top:8px"><label for="v2" id="v2Lab">X₂</label><input type="number" id="v2" step="any"><input type="range" id="v2r" aria-label="X2 value"></div>
+          <div class="calc" id="pCalc"></div>
+          <p class="say" id="pSay"></p>
+        </div>
+        <div class="box">
+          <h4>Change X₁, hold X₂ where you set it</h4>
+          <div class="row"><label for="mFrom">From</label><select id="mFrom"></select><label for="mTo">to</label><select id="mTo"></select></div>
+          <div class="big" id="mBig" style="margin-top:8px"></div>
+          <div class="calc" id="mCalc"></div>
+          <p class="say" id="mSay"></p>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <!-- D -->
+  <figure>
+    <div class="fighead"><h2><span class="step">D</span>Build a bigger model</h2></div>
+    <p class="sub">Tick IVs to add them. R² can only go up when you add a variable, even a useless one. Adjusted R² charges a penalty for each IV and goes down when a variable doesn't earn its place. Try adding pure random noise.</p>
+    <div class="ivlist" id="ivlist"></div>
+    <div class="grid2">
+      <div>
+        <div class="row" style="justify-content:space-between"><h4 style="margin:0;font-size:15px">Coefficients with 95% CIs</h4><div class="seg" role="radiogroup" aria-label="Coefficient units" id="units"></div></div>
+        <div class="chart" id="coefChart"></div>
+        <p class="say" id="coefNote" style="font-size:13px"></p>
+      </div>
+      <div class="side">
+        <div class="box"><h4>Fit</h4><div class="fitbars" id="fit"></div><p class="say" id="fitSay" style="font-size:13.5px"></p></div>
+      </div>
+    </div>
+  </figure>
+
+  <section class="card">
+    <h3>Output</h3>
+    <pre class="stata" id="stata"></pre>
+  </section>
+
+  <div class="learn">
+    <section>
+      <h2>Try this</h2>
+      <ol>
+        <li>Pick <b>Explained away</b>. White poverty looks like a strong predictor of Trump's share, until you hold income constant. Watch the cloud flatten in panel A.</li>
+        <li>Pick <b>The sign flips</b>. More high school graduates looks bad for Trump, yet holding income constant the slope turns positive. Panel B shows where the bivariate slope came from.</li>
+        <li>In panel C, slide X₂. The line moves but never tilts. The change you get from moving X₁ is the same whatever X₂ is.</li>
+        <li>In panel D, add <b>Random noise</b>. R² rises a little; adjusted R² falls. Click <b>Reroll noise</b> a few times.</li>
+        <li>Add all seven IVs and switch to <b>per 1 SD</b>. Which variable has the biggest effect on a common scale?</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Check yourself</h2>
+      <details>
+        <summary>What does “holding income constant” mean for these 51 states?</summary>
+        <p>We compare states as if they had the same median income. Statistically, we use only the variation in X₁ that is not predictable from income, which is what panel A plots. It is not the same as an experiment: anything left out of the model can still be doing the work.</p>
+      </details>
+      <details>
+        <summary>The bivariate slope of white poverty is 2.66; holding income constant it is 0.93. What happened?</summary>
+        <p>Poorer white populations tend to be in lower-income states, and lower income itself predicts a higher Trump share. Much of white poverty's bivariate slope was really income's effect riding along. Bivariate slope = direct slope + (income's slope × how much income moves with white poverty).</p>
+      </details>
+      <details>
+        <summary>When does leaving out X₂ not bias β₁?</summary>
+        <p>When X₂ doesn't affect Y (β₂ = 0) or when X₂ is unrelated to X₁ (δ = 0). Omitted variable bias needs both: the left-out variable must matter for Y and travel with X₁.</p>
+      </details>
+      <details>
+        <summary>Why can R² rise when you add random noise?</summary>
+        <p>Least squares will use any variable to shave off a little error in this particular sample, even pure chance. Adjusted R² = 1 − (1 − R²)(n − 1)/(n − k − 1) subtracts a penalty per IV, so it rises only if the new variable improves the fit by more than chance would.</p>
+      </details>
+      <details>
+        <summary>Can you compare coefficients across IVs measured in different units?</summary>
+        <p>Not directly: a 1-point change in unemployment and a $1,000 change in income aren't comparable. Standardized coefficients (Stata's <code>beta</code> option) express each effect per 1-SD change in X, in SDs of Y, which puts them on a common scale.</p>
+      </details>
+    </section>
+  </div>
+
+  <footer class="src">
+    Data: FiveThirtyEight's <i>hate_crimes</i> state data (Trump's 2016 vote share; metro share, 2015; median household income, 2016; white poverty rate, 2015; non-white share, 2015; adults with a high school degree, 2009; unemployment, Sept. 2016; Gini index, 2015), via the <i>fivethirtyeight</i> R package and <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>. N = 51 (50 states and D.C.).
+    “Random noise” is a standard normal variable generated in your browser.
+  </footer>
+<nav class="pager" aria-label="Previous and next"><a href="5b-partisans-and-the-first-lady.html"><span class="k">← Previous · Worked example</span><span class="t">Partisans and the First Lady</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="7-dummy-variables.html"><span class="k">Next · Module 7 →</span><span class="t">Dummy variables</span></a></nav>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="fxTitle" aria-hidden="true">
+  <div class="top"><h2 id="fxTitle">Formulas</h2><button id="closeFx">Close</button></div>
+  <div class="fx"><h3>The model</h3>
+    <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><msub><mi>X</mi><mn>2</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>β</mi><mi>k</mi></msub><msub><mi>X</mi><mi>k</mi></msub><mo>+</mo><mtext>constant</mtext></math>
+    <p>Each β is the predicted change in Y for a 1-unit change in that X, holding every other X in the model constant.</p></div>
+  <div class="fx"><h3>Holding constant, step by step (Frisch–Waugh–Lovell)</h3>
+    <math display="block"><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><mtext>slope of </mtext><msub><mi>e</mi><mrow><mi>Y</mi><mo>|</mo><msub><mi>X</mi><mn>2</mn></msub></mrow></msub><mtext> on </mtext><msub><mi>e</mi><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>|</mo><msub><mi>X</mi><mn>2</mn></msub></mrow></msub></math>
+    <p>Residualize Y and X₁ on X₂, then regress leftovers on leftovers. That is panel A.</p></div>
+  <div class="fx"><h3>Omitted variable bias</h3>
+    <math display="block"><msub><mi>b</mi><mtext>bivariate</mtext></msub><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><mo>·</mo><mi>δ</mi></math>
+    <p>δ is the slope from regressing X₂ on X₁. Exact for least squares in any sample.</p></div>
+  <div class="fx"><h3>Adjusted R²</h3>
+    <math display="block"><msubsup><mi>R</mi><mtext>adj</mtext><mn>2</mn></msubsup><mo>=</mo><mn>1</mn><mo>−</mo><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>R</mi><mn>2</mn></msup><mo>)</mo><mfrac><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><mrow><mi>n</mi><mo>−</mo><mi>k</mi><mo>−</mo><mn>1</mn></mrow></mfrac></math>
+    <p>k is the number of IVs. Each added IV costs a degree of freedom.</p></div>
+  <div class="fx"><h3>Standardized coefficient (Stata: beta)</h3>
+    <math display="block"><msubsup><mi>β</mi><mi>j</mi><mo>*</mo></msubsup><mo>=</mo><msub><mi>β</mi><mi>j</mi></msub><mo>·</mo><mfrac><msub><mi>s</mi><msub><mi>X</mi><mi>j</mi></msub></msub><msub><mi>s</mi><mi>Y</mi></msub></mfrac></math>
+    <p>The change in Y, in standard deviations, for a 1-SD change in X<sub>j</sub>.</p></div>
+  <div class="fx"><h3>Tests</h3>
+    <p>Each coefficient: t = β<sub>j</sub>/SE with n − k − 1 degrees of freedom. Whole model: F tests whether all slopes are zero at once.</p></div>
+</aside>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script id="data" type="application/json">{"y":[63.0,53.0,50.0,60.0,33.0,44.0,41.0,42.0,4.0,49.0,51.0,30.0,59.0,39.0,57.0,52.0,57.0,63.0,58.0,45.0,35.0,34.0,48.0,45.0,58.0,57.0,57.0,60.0,46.0,47.0,42.0,40.0,37.0,51.0,64.0,52.0,65.0,41.0,49.0,40.0,55.0,62.0,61.0,53.0,47.0,33.0,45.0,38.0,69.0,48.0,70.0],"states":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"abbr":["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"V":[{"k":"metro","var":"metro_pct","name":"Population in metro areas","short":"metro share","u":"%","v":[64.0,63.0,90.0,69.0,97.0,80.0,94.0,90.0,100.0,96.0,82.0,76.0,70.0,90.0,79.0,60.0,64.0,56.0,81.0,54.0,97.0,97.0,87.0,75.0,45.0,78.0,34.0,60.0,87.0,63.0,100.0,69.0,94.0,76.0,50.0,75.0,59.0,87.0,87.0,100.0,79.0,51.0,82.0,92.0,82.0,35.0,89.0,86.0,55.0,69.0,31.0]},{"k":"income","var":"income_k","name":"Median household income ($1,000s)","short":"median income","u":"k","v":[42.28,67.63,49.25,44.92,60.49,60.94,70.16,57.52,68.28,46.14,49.56,71.22,53.44,54.92,48.06,57.81,53.44,42.79,42.41,51.71,76.17,63.15,52.0,67.24,35.52,56.63,51.1,56.87,49.88,73.4,65.24,46.69,54.31,46.78,60.73,49.64,47.2,58.88,55.17,58.63,44.93,53.05,43.72,53.88,63.38,60.71,66.16,59.07,39.55,58.08,55.69]},{"k":"wpov","var":"white_pov","name":"White poverty rate","short":"white poverty rate","u":"%","v":[12.0,6.0,9.0,12.0,9.0,7.0,6.0,8.0,4.0,11.0,9.0,7.0,11.0,7.0,12.0,9.0,11.0,17.0,12.0,12.0,6.0,8.0,9.0,5.0,14.0,7.0,10.0,7.0,8.0,6.0,7.0,10.0,10.0,10.0,9.0,10.0,10.0,10.0,9.0,8.0,9.0,8.0,13.0,8.0,8.0,10.0,7.0,9.0,14.0,9.0,9.0]},{"k":"nonwhite","var":"nonwhite_pct","name":"Non-white population","short":"non-white share","u":"%","v":[35.0,42.0,49.0,26.0,61.0,31.0,30.0,37.0,63.0,46.0,48.0,81.0,16.0,37.0,20.0,15.0,25.0,15.0,42.0,9.0,50.0,27.0,24.0,18.0,44.0,20.0,10.0,21.0,50.0,9.0,44.0,62.0,42.0,38.0,15.0,21.0,35.0,26.0,24.0,28.0,36.0,17.0,27.0,56.0,19.0,6.0,38.0,31.0,7.0,22.0,15.0]},{"k":"hs","var":"hs_pct","name":"Adults with a high school degree","short":"high school share","u":"%","v":[82.1,91.4,84.2,82.4,80.6,89.3,88.6,87.4,87.1,85.3,83.9,90.4,88.4,86.4,86.6,91.4,89.7,81.7,82.2,90.2,89.0,89.0,87.9,91.5,80.4,86.8,90.8,89.8,83.9,91.3,87.4,82.8,84.7,84.3,90.1,87.6,85.6,89.1,87.9,84.7,83.6,89.9,83.1,79.9,90.4,91.0,86.6,89.7,82.8,89.8,91.8]},{"k":"unemp","var":"unemp_pct","name":"Unemployment rate","short":"unemployment","u":"%","v":[6.0,6.4,6.3,5.2,5.9,4.0,5.2,4.9,6.7,5.2,5.8,3.4,4.2,5.4,4.4,3.6,4.4,5.0,6.0,4.4,5.1,4.6,5.0,3.8,6.1,5.3,4.1,2.9,6.7,3.4,5.6,6.8,5.1,5.8,2.8,4.5,4.4,6.2,5.3,5.4,5.7,3.5,5.7,4.2,3.6,3.7,4.3,5.2,7.3,4.3,4.0]},{"k":"gini","var":"gini","name":"Income inequality (Gini × 100)","short":"inequality","u":"","v":[47.2,42.2,45.5,45.8,47.1,45.7,48.6,44.0,53.2,47.4,46.8,43.3,43.3,46.5,44.0,42.7,44.5,46.6,47.5,43.7,44.3,47.5,45.1,44.0,46.8,45.5,43.5,43.2,44.8,42.5,46.4,46.4,49.9,46.4,43.3,45.2,45.4,44.9,46.1,46.7,46.1,44.2,46.8,46.9,41.9,44.4,45.9,44.1,45.1,43.0,42.3]}]}</script>
+<script>
+(function(){
+"use strict";
+const DAT=JSON.parse(document.getElementById('data').textContent);
+const Y=DAT.y, N=Y.length, V=DAT.V, VK=Object.fromEntries(V.map(v=>[v.k,v]));
+const $=s=>document.querySelector(s);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NSVG='http://www.w3.org/2000/svg';
+function el(t,a,p){const e=document.createElementNS(NSVG,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function niceStep(r,t){const raw=r/Math.max(1,t),p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return(f<1.5?1:f<3?2:f<7?5:10)*p;}
+function ticks(lo,hi,t){const s=niceStep(hi-lo,t);const o=[];for(let x=Math.ceil(lo/s-1e-9)*s;x<=hi+1e-9;x+=s)o.push(+x.toFixed(10));return o;}
+const tip=$('#tip');
+function showTip(h,e){tip.innerHTML=h;tip.classList.add('on');const r=tip.getBoundingClientRect();let x=e.clientX+12,y=e.clientY-r.height-10;if(x+r.width>innerWidth-8)x=e.clientX-r.width-12;if(y<8)y=e.clientY+16;tip.style.left=Math.max(8,x)+'px';tip.style.top=y+'px';}
+function hideTip(){tip.classList.remove('on');}
+function bindTip(n,fn){n.addEventListener('pointerenter',e=>showTip(fn(),e));n.addEventListener('pointermove',e=>showTip(fn(),e));n.addEventListener('pointerdown',e=>showTip(fn(),e));n.addEventListener('pointerleave',hideTip);}
+const cf=v=>{const a=Math.abs(v);return a>=100?v.toFixed(1):a>=10?v.toFixed(2):a>=1?v.toFixed(3):v.toFixed(4);};
+const sgn=v=>v<0?'−'+cf(-v):cf(v);
+const nice=v=>{const a=Math.abs(v);return a>=100?a.toFixed(0):a>=10?a.toFixed(1):a.toFixed(2);};
+const fx=(k,v)=>k==='income'?'$'+v.toFixed(1)+'k':k==='gini'?v.toFixed(1):k==='noise'?v.toFixed(2):v.toFixed(1)+'%';
+const unitOne={metro:'1-point increase in metro share',income:'$1,000 increase in median income',wpov:'1-point increase in white poverty',nonwhite:'1-point increase in non-white share',hs:'1-point increase in high school graduates',unemp:'1-point increase in unemployment',gini:'1-point increase in the Gini index'};
+
+/* ---------- stats ---------- */
+function lgamma(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function betacf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-300)d=1e-300;d=1/d;let h=d;for(let m=1;m<=300;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-14)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b;}
+function tcdf(t,df){const x=df/(df+t*t);const tail=0.5*ibeta(x,df/2,0.5);return t>=0?1-tail:tail;}
+function tinv(p,df){let lo=0,hi=200;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(tcdf(m,df)<p)lo=m;else hi=m;}return (lo+hi)/2;}
+function fsurv(F,d1,d2){return ibeta(d2/(d2+d1*F),d2/2,d1/2);}
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+const sd=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/(a.length-1));};
+function invert(A){const n=A.length,M=A.map((r,i)=>r.concat(Array.from({length:n},(_,j)=>i===j?1:0)));
+  for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;[M[c],M[p]]=[M[p],M[c]];const d=M[c][c];if(Math.abs(d)<1e-12)return null;
+    for(let j=0;j<2*n;j++)M[c][j]/=d;for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c];if(f)for(let j=0;j<2*n;j++)M[r][j]-=f*M[c][j];}}
+  return M.map(r=>r.slice(n));}
+function ols(cols,y){ // cols: arrays of X; returns b (const last), se, etc.
+  const n=y.length,k=cols.length,p=k+1; const X=Array.from({length:n},(_,i)=>cols.map(c=>c[i]).concat(1));
+  const XtX=Array.from({length:p},()=>new Array(p).fill(0)),Xty=new Array(p).fill(0);
+  for(let i=0;i<n;i++){const r=X[i];for(let a=0;a<p;a++){Xty[a]+=r[a]*y[i];for(let b=0;b<p;b++)XtX[a][b]+=r[a]*r[b];}}
+  const inv=invert(XtX); if(!inv) return null;
+  const b=inv.map(r=>r.reduce((s,v,j)=>s+v*Xty[j],0));
+  let sse=0;const my=mean(y);let sst=0;const res=[];for(let i=0;i<n;i++){const yh=X[i].reduce((s,v,j)=>s+v*b[j],0);const e=y[i]-yh;res.push(e);sse+=e*e;sst+=(y[i]-my)**2;}
+  const df=n-p, s2=sse/df, se=inv.map((r,j)=>Math.sqrt(s2*r[j])), t=b.map((v,j)=>v/se[j]), pv=t.map(v=>2*(1-tcdf(Math.abs(v),df)));
+  const r2=1-sse/sst, adj=1-(1-r2)*(n-1)/df, F=k?((sst-sse)/k)/s2:NaN;
+  return {b,se,t,p:pv,df,sse,sst,r2,adj,F,pF:k?fsurv(F,k,df):NaN,k,n,res,tc:tinv(0.975,df),rmse:Math.sqrt(s2)};
+}
+
+/* ---------- state ---------- */
+const STORIES=[
+  {id:'flip',title:'The sign flips: high school graduates, holding income constant',x1:'hs',x2:'income'},
+  {id:'away',title:'Explained away: white poverty, holding income constant',x1:'wpov',x2:'income'},
+  {id:'shrink',title:'Shrinks but survives: income, holding metro share constant',x1:'income',x2:'metro'},
+  {id:'grow',title:'Gets stronger: unemployment, holding income constant',x1:'unemp',x2:'income'},
+  {id:'custom',title:'Choose your own X₁ and X₂'}];
+const st={x1:'wpov',x2:'income',view:'raw',t:0,anim:0,v1:null,v2:null,from:'mean',to:'max',tri:null,triAnim:0,sel:new Set(['metro','income']),units:'raw',noise:null,prev:null};
+const sStory=$('#story'),sX1=$('#x1'),sX2=$('#x2');
+STORIES.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.title;sStory.appendChild(o);});
+V.forEach(v=>{for(const s of [sX1,sX2]){const o=document.createElement('option');o.value=v.k;o.textContent=v.name;s.appendChild(o);}});
+function genNoise(){const z=[];for(let i=0;i<N;i++){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();z.push(Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v));}st.noise=z;}
+genNoise();
+
+function core(){
+  const X1=VK[st.x1].v, X2=VK[st.x2].v;
+  const biv=ols([X1],Y), ctl=ols([X1,X2],Y), d=ols([X1],X2);
+  const ey=ols([X2],Y).res, ex=ols([X2],X1).res;
+  const mx1=mean(X1),my=mean(Y);
+  return {X1,X2,biv,ctl,delta:d.b[0],px:ex.map(e=>e+mx1),py:ey.map(e=>e+my),mx1,my,mx2:mean(X2)};
+}
+
+/* ---------- A ---------- */
+function colorFor(v,lo,hi){const q=Math.max(0,Math.min(1,(v-lo)/((hi-lo)||1)));const stops=['--q1','--q2','--q3','--q4','--q5'].map(css);const k=Math.min(3,Math.floor(q*4));const f=q*4-k;return mix(stops[k],stops[k+1],f);}
+function mix(a,b,f){const h=s=>parseInt(s.replace('#',''),16);const A=h(a),B=h(b);const c=s=>Math.round(((A>>s)&255)*(1-f)+((B>>s)&255)*f);return `rgb(${c(16)},${c(8)},${c(0)})`;}
+function axes(svg,o){
+  const g=el('g',{class:'tick'},svg);
+  for(const t of ticks(o.ylo,o.yhi,5)){el('line',{x1:o.m.l,x2:o.W-o.m.r,y1:o.ys(t),y2:o.ys(t),stroke:css('--grid')},g);const tx=el('text',{x:o.m.l-7,y:o.ys(t)+4,'text-anchor':'end'},g);tx.textContent=t+'%';}
+  for(const t of ticks(o.xlo,o.xhi,Math.max(3,Math.floor((o.W-o.m.l-o.m.r)/80)))){el('line',{x1:o.xs(t),x2:o.xs(t),y1:o.H-o.m.b,y2:o.H-o.m.b+4,stroke:css('--axis')},g);const tx=el('text',{x:o.xs(t),y:o.H-o.m.b+17,'text-anchor':'middle'},g);tx.textContent=o.xt(t);}
+  el('line',{x1:o.m.l,x2:o.W-o.m.r,y1:o.H-o.m.b,y2:o.H-o.m.b,stroke:css('--axis')},svg);
+  const xl=el('text',{x:o.W-o.m.r,y:o.H-6,'text-anchor':'end',class:'axlab'},svg);xl.textContent=o.xl;
+  const yl=el('text',{x:4,y:11,class:'axlab'},svg);yl.textContent=o.yl;
+}
+const xtick=k=>v=>k==='income'?'$'+v+'k':k==='gini'?String(v):v+'%';
+function renderA(){
+  const c=core(), box=$('#aChart'); box.innerHTML='';
+  const W=Math.max(300,box.clientWidth),H=Math.round(Math.min(470,Math.max(320,W*0.55))),m={l:46,r:16,t:16,b:44};
+  const allx=c.X1.concat(c.px), ally=Y.concat(c.py);
+  let xlo=Math.min(...allx),xhi=Math.max(...allx),ylo=Math.min(...ally),yhi=Math.max(...ally);
+  const ppx=(xhi-xlo)*.05,ppy=(yhi-ylo)*.07; xlo-=ppx;xhi+=ppx;ylo-=ppy;yhi+=ppy;
+  const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+  const t=st.t, partial=t>0.5;
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Scatter of Trump share against X1, raw or holding X2 constant'},box);
+  axes(svg,{W,H,m,xs,ys,xlo,xhi,ylo,yhi,xt:xtick(st.x1),xl:(t>0.5?'X₁ net of X₂ (leftover + mean): ':'')+VK[st.x1].name+' →',yl:'↑ '+(t>0.5?'Trump share net of X₂ (leftover + mean)':'Trump vote share, 2016')});
+  // lines: raw slope and partial slope, both through means
+  const lineAt=(b)=>[xs(xlo),ys(c.my+b*(xlo-c.mx1)),xs(xhi),ys(c.my+b*(xhi-c.mx1))];
+  const bRaw=c.biv.b[0], bPar=c.ctl.b[0]; const bNow=bRaw+(bPar-bRaw)*t;
+  const ghostB=partial?bRaw:bPar; const gl=lineAt(ghostB);
+  el('line',{x1:gl[0],y1:gl[1],x2:gl[2],y2:gl[3],stroke:css('--muted'),'stroke-width':2,'stroke-dasharray':'6 4'},svg);
+  const ln=lineAt(bNow); el('line',{x1:ln[0],y1:ln[1],x2:ln[2],y2:ln[3],stroke:css('--s2'),'stroke-width':3},svg);
+  const x2lo=Math.min(...c.X2),x2hi=Math.max(...c.X2);
+  const pg=el('g',{},svg);
+  for(let i=0;i<N;i++){ const x=c.X1[i]+(c.px[i]-c.X1[i])*t, y=Y[i]+(c.py[i]-Y[i])*t;
+    const ci=el('circle',{cx:xs(x),cy:ys(y),r:5.5,fill:colorFor(c.X2[i],x2lo,x2hi),stroke:css('--surface'),'stroke-width':1.2},pg);
+    bindTip(ci,()=>`<b>${DAT.states[i]}</b><br>${VK[st.x1].short}: ${fx(st.x1,c.X1[i])} · ${VK[st.x2].short}: ${fx(st.x2,c.X2[i])}<br>Trump ${Y[i].toFixed(1)}%`); }
+  const sig=c.ctl.p[0]<0.05;
+  $('#aChips').innerHTML=`<span class="chip">bivariate slope <b>${sgn(bRaw)}</b></span><span class="chip">holding ${VK[st.x2].short} constant <b class="k-b1">${sgn(bPar)}</b> (p ${c.ctl.p[0]<0.001?'< .001':'= '+c.ctl.p[0].toFixed(3).replace(/^0/,'')})</span><span class="chip ${partial?'strong':''}">${partial?'Showing: leftovers vs. leftovers':'Showing: raw data'}</span>`;
+  $('#rampLab').textContent=`${VK[st.x2].short}: low → high`;
+  $('#lineLab').textContent= partial?`slope holding ${VK[st.x2].short} constant`:'bivariate slope';
+  $('#ghostLab').textContent= partial?'bivariate slope, for comparison':`slope holding ${VK[st.x2].short} constant, for comparison`;
+  $('#aCap').textContent = partial
+    ? `Each state now sits at its leftover values, shifted back to the means so the axes stay in familiar units. What remains is variation in ${VK[st.x1].short} among states with similar ${VK[st.x2].short}.`
+    : `Color shows ${VK[st.x2].short}. If dark and light states sit in different corners, the two IVs travel together and the bivariate slope mixes their effects.`;
+}
+function setView(v){ st.view=v; const target=v==='partial'?1:0; if(reduce){st.t=target;renderA();return;} const from=st.t,t0=performance.now(); cancelAnimationFrame(st.anim);
+  const stp=now=>{const p=Math.min(1,(now-t0)/1100),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; st.t=from+(target-from)*e; renderA(); if(p<1)st.anim=requestAnimationFrame(stp);}; st.anim=requestAnimationFrame(stp); }
+
+/* ---------- B: path diagram + decomposition ---------- */
+function renderB(){
+  const c=core(), b1=c.ctl.b[0], b2=c.ctl.b[1], dl=c.delta, bv=c.biv.b[0], ind=b2*dl;
+  const box=$('#path'); box.innerHTML='';
+  const W=Math.max(280,Math.min(460,box.clientWidth)),H=220;
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Path diagram'},box);
+  const defs=el('defs',{},svg);
+  for(const [id,col] of [['ah1',css('--s2')],['ah2',css('--s1')],['ah3',css('--ink-2')]]){const mk=el('marker',{id,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:col},mk);}
+  const node=(x,y,txt,sub)=>{el('rect',{x:x-62,y:y-22,width:124,height:44,rx:8,fill:css('--page'),stroke:css('--ink'),'stroke-width':1.5},svg);const a=el('text',{x,y:y-3,'text-anchor':'middle',class:'mlab',fill:css('--ink')},svg);a.textContent=txt;const b=el('text',{x,y:y+13,'text-anchor':'middle',class:'axlab'},svg);b.textContent=sub;};
+  const L={x:70,y:170},R={x:W-70,y:170},T={x:W/2,y:40};
+  el('line',{x1:L.x+62,y1:L.y,x2:R.x-64,y2:R.y,stroke:css('--s2'),'stroke-width':3,'marker-end':'url(#ah1)'},svg);
+  el('line',{x1:T.x+30,y1:T.y+22,x2:R.x-20,y2:R.y-24,stroke:css('--s1'),'stroke-width':2.5,'marker-end':'url(#ah2)'},svg);
+  el('line',{x1:L.x+20,y1:L.y-24,x2:T.x-30,y2:T.y+24,stroke:css('--ink-2'),'stroke-width':2,'marker-end':'url(#ah3)','marker-start':'url(#ah3)','stroke-dasharray':'5 4'},svg);
+  node(L.x,L.y,'X₁',VK[st.x1].short); node(R.x,R.y,'Y','Trump share'); node(T.x,T.y,'X₂',VK[st.x2].short);
+  const lab=(x,y,t,col,anchor='middle')=>{const e=el('text',{x,y,'text-anchor':anchor,class:'mlab',fill:col},svg);e.textContent=t;};
+  lab(W/2,L.y-8,'β₁ = '+sgn(b1),css('--s2-ink'));
+  lab((T.x+R.x)/2+18,(T.y+R.y)/2-6,'β₂ = '+sgn(b2),css('--s1-ink'),'start');
+  lab((L.x+T.x)/2-16,(L.y+T.y)/2-6,'δ = '+sgn(dl),css('--ink-2'),'end');
+  let verdict;
+  if(Math.sign(bv)!==Math.sign(b1)) verdict='Sign flip';
+  else if(Math.abs(b1)<Math.abs(bv)) verdict=c.ctl.p[0]>=0.05?'Explained away':'Shrinks';
+  else verdict='Grows (X₂ was masking it)';
+  $('#decomp').innerHTML=`
+    <div><span class="verdict">${verdict}</span></div>
+    <div class="eqn">bivariate slope = <span class="k-b1">direct β₁</span> + <span class="k-b2">β₂</span> × δ</div>
+    <div class="eqn">${sgn(bv)} = <span class="k-b1">${sgn(b1)}</span> + (<span class="k-b2">${sgn(b2)}</span> × ${sgn(dl)})</div>
+    <div class="eqn">${sgn(bv)} = <span class="k-b1">${sgn(b1)}</span> + ${ind<0?'('+sgn(ind)+')':sgn(ind)}</div>
+    <p class="say" style="margin:0">δ: each ${unitOne[st.x1]||'unit of X₁'} goes with ${sgn(dl)} in ${VK[st.x2].short}. β₂: each unit of ${VK[st.x2].short} moves Trump share by ${sgn(b2)} points. So ${sgn(ind)} of the bivariate slope was really <b>${VK[st.x2].short}</b> riding along with ${VK[st.x1].short}. Remove it and ${sgn(b1)} remains.</p>`;
+}
+
+/* ---------- C: equation, parallel lines, prediction ---------- */
+function anchors(k,arr){const s=arr.slice().sort((a,b)=>a-b);return {min:s[0],max:s[s.length-1],mean:mean(arr),m1sd:mean(arr)-sd(arr),p1sd:mean(arr)+sd(arr)};}
+const aName={min:'the minimum',max:'the maximum',mean:'the average',m1sd:'one SD below average',p1sd:'one SD above average',v1:'your X₁ value'};
+function setupC(){
+  const X1=VK[st.x1].v,X2=VK[st.x2].v;
+  st.v1=+mean(X1).toFixed(1); st.v2=+mean(X2).toFixed(1);
+  for(const [id,arr,v] of [['1',X1,st.v1],['2',X2,st.v2]]){ const lo=Math.min(...arr),hi=Math.max(...arr),pad=(hi-lo)*.05;
+    const r=$('#v'+id+'r'); r.min=(lo-pad).toFixed(1); r.max=(hi+pad).toFixed(1); r.step=0.1; r.value=v; $('#v'+id).value=v; }
+  $('#v1Lab').textContent=VK[st.x1].short+' (X₁)'; $('#v2Lab').textContent=VK[st.x2].short+' (X₂)';
+  const opts=[['min','the minimum'],['m1sd','mean − 1 SD'],['mean','the mean'],['p1sd','mean + 1 SD'],['max','the maximum'],['v1','your X₁ value']];
+  for(const id of ['#mFrom','#mTo']){const s=$(id);s.innerHTML='';opts.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;s.appendChild(o);});}
+  $('#mFrom').value=st.from; $('#mTo').value=st.to; st.tri=null;
+}
+let Cg=null;
+function renderC(animate){
+  const c=core(),f=c.ctl,b1=f.b[0],b2=f.b[1],b0=f.b[2], box=$('#cChart'); box.innerHTML='';
+  const W=Math.max(300,box.clientWidth),H=Math.round(Math.min(430,Math.max(300,W*0.62))),m={l:46,r:16,t:16,b:44};
+  const X1=c.X1,X2=c.X2; let xlo=Math.min(...X1),xhi=Math.max(...X1),ylo=Math.min(...Y),yhi=Math.max(...Y);const ppx=(xhi-xlo)*.05,ppy=(yhi-ylo)*.08;xlo-=ppx;xhi+=ppx;ylo-=ppy;yhi+=ppy;
+  const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Parallel prediction lines'},box);
+  axes(svg,{W,H,m,xs,ys,xlo,xhi,ylo,yhi,xt:xtick(st.x1),xl:VK[st.x1].name+' (X₁) →',yl:'↑ Trump vote share, 2016 (Y)'});
+  const defs=el('defs',{},svg),cp=el('clipPath',{id:'cclip'},defs);el('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},cp);
+  const x2lo=Math.min(...X2),x2hi=Math.max(...X2);
+  const pg=el('g',{},svg); for(let i=0;i<N;i++){const ci=el('circle',{cx:xs(X1[i]),cy:ys(Y[i]),r:4.5,fill:colorFor(X2[i],x2lo,x2hi),'fill-opacity':.75},pg);bindTip(ci,()=>`<b>${DAT.states[i]}</b><br>${VK[st.x1].short}: ${fx(st.x1,X1[i])} · ${VK[st.x2].short}: ${fx(st.x2,X2[i])}<br>Trump ${Y[i].toFixed(1)}%`);}
+  const lg=el('g',{'clip-path':'url(#cclip)'},svg);
+  const s2=X2.slice().sort((a,b)=>a-b), q=p=>s2[Math.floor(p*(N-1))];
+  [[q(0.1),'low'],[mean(X2),'avg'],[q(0.9),'high']].forEach(([v,l])=>{ el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(b0+b2*v+b1*xlo),y2:ys(b0+b2*v+b1*xhi),stroke:colorFor(v,x2lo,x2hi),'stroke-width':1.75,'stroke-dasharray':'6 4'},lg);
+    if(l!=='avg'){ const tx=el('text',{x:m.l+6,y:ys(b0+b2*v+b1*(xlo+(xhi-xlo)*0.03))+(l==='high'?(b2<0?14:-6):(b2<0?-6:14)),'text-anchor':'start',class:'axlab'},svg); tx.textContent=`${l} ${VK[st.x2].short} (${fx(st.x2,v)})`; } });
+  el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(b0+b2*st.v2+b1*xlo),y2:ys(b0+b2*st.v2+b1*xhi),stroke:css('--s2'),'stroke-width':3},lg);
+  const triG=el('g',{},svg), prG=el('g',{},svg);
+  Cg={xs,ys,triG,prG,m,H,W,b0,b1,b2};
+  const A1=anchors(st.x1,X1); const get=k=>k==='v1'?st.v1:A1[k];
+  const target={x1:get(st.from),x2:get(st.to)};
+  if(animate&&st.tri&&!reduce){const from={...st.tri},t0=performance.now();cancelAnimationFrame(st.triAnim);const stp=now=>{const p=Math.min(1,(now-t0)/550),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;st.tri={x1:from.x1+(target.x1-from.x1)*e,x2:from.x2+(target.x2-from.x2)*e};drawTri();if(p<1)st.triAnim=requestAnimationFrame(stp);};st.triAnim=requestAnimationFrame(stp);}
+  else{st.tri=target;drawTri();}
+  drawPred(); textC();
+}
+function drawTri(){ if(!Cg) return; const {xs,ys,triG,b0,b1,b2}=Cg; triG.innerHTML=''; const {x1,x2}=st.tri; const yv=x=>b0+b1*x+b2*st.v2;
+  const X1=xs(x1),X2=xs(x2),Y1=ys(yv(x1)),Y2=ys(yv(x2));
+  el('path',{d:`M${X1},${Y1}L${X2},${Y1}L${X2},${Y2}Z`,fill:css('--s2'),'fill-opacity':.14},triG);
+  el('line',{x1:X1,x2:X2,y1:Y1,y2:Y1,stroke:css('--ink-2'),'stroke-width':2},triG);
+  el('line',{x1:X2,x2:X2,y1:Y1,y2:Y2,stroke:css('--s2'),'stroke-width':3.5},triG);
+  for(const [x,y] of [[X1,Y1],[X2,Y2]]) el('circle',{cx:x,cy:y,r:5,fill:css('--s2'),stroke:css('--surface'),'stroke-width':2},triG);
+  const dy=yv(x2)-yv(x1);
+  if(Math.abs(Y2-Y1)>14){const right=X2<Cg.W-150;const t=el('text',{x:X2+(right?8:-8),y:(Y1+Y2)/2+4,'text-anchor':right?'start':'end',class:'mlab',fill:css('--s2-ink')},triG);t.textContent='Δŷ = '+(dy>0?'+':'−')+nice(dy);} }
+function drawPred(){ const {xs,ys,prG,m,H,b0,b1,b2}=Cg; prG.innerHTML=''; const y=b0+b1*st.v1+b2*st.v2; const X=xs(st.v1),Yp=ys(y);
+  el('path',{d:`M${X},${H-m.b}L${X},${Yp}L${m.l},${Yp}`,fill:'none',stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'4 3'},prG);
+  el('circle',{cx:X,cy:Yp,r:6,fill:css('--ink'),stroke:css('--surface'),'stroke-width':2},prG);
+  const t=el('text',{x:m.l+6,y:Yp-6,class:'mlab',fill:css('--ink')},prG); t.textContent='ŷ = '+y.toFixed(1)+'%'; }
+function textC(){
+  const c=core(),f=c.ctl,b1=f.b[0],b2=f.b[1],b0=f.b[2];
+  const term=(txt,cls,n)=>`<div class="term"><span class="t ${cls}">${txt}</span>${n?`<span class="n">${n}</span>`:''}</div>`, op=s=>`<div class="term"><span class="t op">${s}</span></div>`;
+  $('#terms').innerHTML=term('Predicted Trump share','v','ŷ · DV')+op('=')+term(sgn(b1),'b1','β₁')+op('×')+term(VK[st.x1].short,'v','X₁ · focus IV')+op(b2<0?'−':'+')+term(cf(Math.abs(b2)),'b2','β₂')+op('×')+term(VK[st.x2].short,'v','X₂ · control')+op(b0<0?'−':'+')+term(cf(Math.abs(b0)),'','constant · _cons');
+  const y=b0+b1*st.v1+b2*st.v2;
+  $('#pCalc').innerHTML=`ŷ = <span class="k-b1">${sgn(b1)}</span>×${st.v1} ${b2<0?'−':'+'} <span class="k-b2">${cf(Math.abs(b2))}</span>×${st.v2} ${b0<0?'−':'+'} ${cf(Math.abs(b0))} = <b>${y.toFixed(1)}</b>`;
+  $('#pSay').innerHTML=`A state with ${VK[st.x1].short} ${fx(st.x1,st.v1)} and ${VK[st.x2].short} ${fx(st.x2,st.v2)} has a predicted Trump share of <b>${y.toFixed(1)}%</b>.`;
+  const A1=anchors(st.x1,c.X1), get=k=>k==='v1'?st.v1:A1[k]; const x1=get(st.from),x2=get(st.to),dx=x2-x1,dy=b1*dx;
+  $('#mBig').textContent='Δŷ = '+(dy>0?'+':dy<0?'−':'')+nice(dy);
+  $('#mCalc').innerHTML=`Δŷ = <span class="k-b1">β₁</span> × Δx₁ = <span class="k-b1">${sgn(b1)}</span> × ${dx.toFixed(2)} = ${dy<0?'−':''}${nice(dy)}`;
+  $('#mSay').innerHTML=Math.abs(dx)<1e-9?'Pick two different values.':`Holding ${VK[st.x2].short} at ${fx(st.x2,st.v2)}, moving from ${aName[st.from]} ${VK[st.x1].short} (${fx(st.x1,x1)}) to ${aName[st.to]} (${fx(st.x1,x2)}) predicts a <b>${nice(dy)}-point ${dy<0?'decrease':'increase'}</b> in Trump share. Slide X₂: the answer doesn't change.`;
+}
+for(const id of ['1','2']){
+  $('#v'+id).addEventListener('input',e=>{const v=parseFloat(e.target.value);if(!isFinite(v))return;st['v'+id]=v;$('#v'+id+'r').value=v;id==='2'?renderC(false):(drawPred(),(st.from==='v1'||st.to==='v1')&&renderC(false),textC());});
+  $('#v'+id+'r').addEventListener('input',e=>{st['v'+id]=+(+e.target.value).toFixed(1);$('#v'+id).value=st['v'+id];id==='2'?renderC(false):(drawPred(),(st.from==='v1'||st.to==='v1')&&renderC(false),textC());});
+}
+$('#mFrom').addEventListener('change',e=>{st.from=e.target.value;renderC(true);});
+$('#mTo').addEventListener('change',e=>{st.to=e.target.value;renderC(true);});
+
+/* ---------- D: model builder ---------- */
+const ivl=$('#ivlist');
+V.concat([{k:'noise',name:'Random noise (pure chance)'}]).forEach(v=>{const lab=document.createElement('label');lab.innerHTML=`<input type="checkbox" value="${v.k}" ${st.sel.has(v.k)?'checked':''}> ${v.name}`;ivl.appendChild(lab);lab.querySelector('input').addEventListener('change',e=>{snapPrev();e.target.checked?st.sel.add(v.k):st.sel.delete(v.k);renderD();stata();});});
+const rr=document.createElement('button');rr.textContent='Reroll noise';rr.style.justifySelf='start';rr.addEventListener('click',()=>{if(st.sel.has('noise'))snapPrev();genNoise();if(st.sel.has('noise')){renderD();stata();}});ivl.appendChild(rr);
+function snapPrev(){const cur=model().f;st.prev=cur?{r2:cur.r2,adj:cur.adj}:{r2:0,adj:0};}
+const useg=$('#units');[['raw','raw units'],['sd','per 1 SD']].forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name='units';i.id='u'+v;i.value=v;if(v===st.units)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;useg.append(i,lb);i.addEventListener('change',()=>{st.units=v;renderD();stata();});});
+const order=()=>V.map(v=>v.k).concat(['noise']).filter(k=>st.sel.has(k));
+const colOf=k=>k==='noise'?st.noise:VK[k].v;
+const nameOf=k=>k==='noise'?'Random noise':VK[k].name;
+const varOf=k=>k==='noise'?'noise':VK[k].var;
+function model(){ const ks=order(); return {ks,f:ks.length?ols(ks.map(colOf),Y):null}; }
+function renderD(){
+  const {ks,f}=model(), box=$('#coefChart'); box.innerHTML='';
+  const fitBox=$('#fit');
+  const sdy=sd(Y);
+  const prev=st.prev;
+  const r2=f?f.r2:0, adj=f?f.adj:0;
+  fitBox.innerHTML=`<div class="fb"><div class="lab"><span>R²</span><b>${r2.toFixed(3)}</b></div><div class="track"><div class="fill" style="width:${Math.max(0,r2)*100}%"></div>${prev?`<span class="ghostmark" style="left:${Math.max(0,prev.r2)*100}%"></span>`:''}</div></div>
+    <div class="fb"><div class="lab"><span>Adjusted R²</span><b>${adj.toFixed(3)}</b></div><div class="track"><div class="fill adj" style="width:${Math.max(0,adj)*100}%"></div>${prev?`<span class="ghostmark" style="left:${Math.max(0,prev.adj)*100}%"></span>`:''}</div></div>`;
+  let say=`${ks.length} IV${ks.length===1?'':'s'}, n = ${N}.`;
+  if(prev){ const dr=r2-prev.r2, da=adj-prev.adj; const f4=v=>Math.abs(v)<0.001?Math.abs(v).toFixed(4):Math.abs(v).toFixed(3); say+=` Last change: R² ${dr>=0?'+':'−'}${f4(dr)}, adjusted R² ${da>=0?'+':'−'}${f4(da)}.`+(dr>0&&da<0?' The new variable didn’t earn its keep.':''); }
+  say+=' The tick marks show the previous model.';
+  $('#fitSay').textContent=say;
+  if(!f){ box.innerHTML='<p class="say">Tick at least one IV.</p>'; $('#coefNote').textContent=''; return; }
+  const rows=ks.map((k,j)=>{const s=st.units==='sd'?sd(colOf(k))/sdy:1;return {k,b:f.b[j]*s,lo:(f.b[j]-f.tc*f.se[j])*s,hi:(f.b[j]+f.tc*f.se[j])*s,p:f.p[j]};});
+  const W=Math.max(300,box.clientWidth),rh=34,m={l:Math.min(210,W*0.42),r:16,t:10,b:34},H=m.t+rows.length*rh+m.b;
+  let lo=Math.min(0,...rows.map(r=>r.lo)),hi=Math.max(0,...rows.map(r=>r.hi));const pd=(hi-lo)*.06;lo-=pd;hi+=pd;
+  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Coefficient plot'},box);
+  const g=el('g',{class:'tick'},svg);
+  for(const t of ticks(lo,hi,Math.max(3,Math.floor((W-m.l-m.r)/70)))){el('line',{x1:xs(t),x2:xs(t),y1:m.t,y2:H-m.b,stroke:css('--grid')},g);const tx=el('text',{x:xs(t),y:H-m.b+16,'text-anchor':'middle'},g);tx.textContent=Math.abs(t)<1e-9?'0':String(+t.toFixed(3));}
+  el('line',{x1:xs(0),x2:xs(0),y1:m.t,y2:H-m.b,stroke:css('--ink'),'stroke-width':1.5},svg);
+  const xl=el('text',{x:W-m.r,y:H-4,'text-anchor':'end',class:'axlab'},svg);xl.textContent=st.units==='sd'?'SDs of Trump share per 1-SD change in X':'points of Trump share per 1-unit change in X';
+  rows.forEach((r,i)=>{const y=m.t+(i+.5)*rh, sig=r.p<0.05, col=sig?css('--s1'):css('--muted');
+    const nm=el('text',{x:m.l-10,y:y+4,'text-anchor':'end',class:'mlab',fill:sig?css('--ink'):css('--muted')},svg);nm.textContent=nameOf(r.k).replace(/ \(.*\)/,'');
+    el('line',{x1:xs(r.lo),x2:xs(r.hi),y1:y,y2:y,stroke:col,'stroke-width':3,'stroke-linecap':'round'},svg);
+    const ci=el('circle',{cx:xs(r.b),cy:y,r:6,fill:sig?css('--s1'):css('--surface'),stroke:col,'stroke-width':2},svg);
+    const hit=el('rect',{x:0,y:y-rh/2,width:W,height:rh,fill:'transparent'},svg);
+    bindTip(hit,()=>`<b>${nameOf(r.k)}</b><br>${st.units==='sd'?'β* (per SD)':'β'} = ${sgn(r.b)}<br>95% CI ${sgn(r.lo)} to ${sgn(r.hi)}<br>p = ${r.p<0.001?'< .001':r.p.toFixed(3)}`);});
+  $('#coefNote').textContent='Filled dots: p < .05, the interval excludes 0. Hollow gray dots: the 95% interval crosses 0, so we can’t rule out no effect, holding the other IVs constant.';
+}
+
+/* ---------- Stata ---------- */
+function pad(s,w){s=String(s);return s.length>=w?s:' '.repeat(w-s.length)+s;}
+function rpad(s,w){s=String(s);return s.length>=w?s:s+' '.repeat(w-s.length);}
+function fnum(v){if(!isFinite(v))return '.';let t=String(Number(v.toPrecision(7)));if(t.startsWith('0.'))t=t.slice(1);else if(t.startsWith('-0.'))t='-'+t.slice(2);return t;}
+function stata(){
+  const {ks,f}=model(); if(!f){$('#stata').textContent='. regress trump_pct\n(no IVs selected)';return;}
+  const n=N,k=ks.length,ssm=f.sst-f.sse,R=(l,v)=>'  '+rpad(l,16)+'='+pad(v,10),row=(s,ss,df,ms)=>pad(s,12)+' |'+pad(fnum(ss),12)+pad(df,11)+pad(fnum(ms),12);
+  const pf=p=>p<0.0005?'0.000':p.toFixed(3), beta=st.units==='sd', sdy=sd(Y);
+  const L=[`<span class="cmd">. regress trump_pct ${ks.map(varOf).join(' ')}${beta?', beta':''}</span>`,'',
+    rpad('      Source |       SS           df       MS',49)+R('Number of obs',n),
+    rpad('-------------+----------------------------------',49)+R(`F(${k}, ${f.df})`,f.F.toFixed(2)),
+    row('Model',ssm,k,ssm/k)+R('Prob > F',f.pF<0.00005?'0.0000':f.pF.toFixed(4)),
+    row('Residual',f.sse,f.df,f.sse/f.df)+R('R-squared',f.r2.toFixed(4)),
+    rpad('-------------+----------------------------------',49)+R('Adj R-squared',f.adj.toFixed(4)),
+    row('Total',f.sst,n-1,f.sst/(n-1))+R('Root MSE',f.rmse.toPrecision(5)),'','-'.repeat(78),
+    beta? '   trump_pct | Coefficient  Std. err.      t    P>|t|                     Beta' : '   trump_pct | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]',
+    '-------------+'+'-'.repeat(64)];
+  ks.forEach((key,j)=>{ const cls= key===st.x1&&st.sel.has(st.x2)?'b1':key===st.x2&&st.sel.has(st.x1)?'b2':(f.p[j]>=0.05?'ns':'');
+    const tail= beta? pad('',13)+pad(fnum(f.b[j]*sd(colOf(key))/sdy),12) : pad(fnum(f.b[j]-f.tc*f.se[j]),13)+pad(fnum(f.b[j]+f.tc*f.se[j]),12);
+    const line=pad(varOf(key),12)+' |'+pad(fnum(f.b[j]),11)+pad(fnum(f.se[j]),11)+pad(f.t[j].toFixed(2),9)+pad(pf(f.p[j]),8)+tail;
+    L.push(cls?`<span class="${cls}">${line}</span>`:line); });
+  const j=k; L.push(pad('_cons',12)+' |'+pad(fnum(f.b[j]),11)+pad(fnum(f.se[j]),11)+pad(f.t[j].toFixed(2),9)+pad(pf(f.p[j]),8)+(beta?pad('',13)+pad('.',12):pad(fnum(f.b[j]-f.tc*f.se[j]),13)+pad(fnum(f.b[j]+f.tc*f.se[j]),12)));
+  L.push('-'.repeat(78),'',`<span class="dim">* gray rows: p ≥ .05.  Colored rows: X₁ and X₂ from panels A–C, when both are in the model.</span>`);
+  $('#stata').innerHTML=L.join('\n');
+}
+
+/* ---------- wiring ---------- */
+const vseg=$('#view');[['raw','Raw relationship'],['partial','Holding X₂ constant']].forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name='view';i.id='vw'+v;i.value=v;if(v===st.view)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;vseg.append(i,lb);i.addEventListener('change',()=>setView(v));});
+function applyVars(){ if(st.x1===st.x2){ st.x2=V.find(v=>v.k!==st.x1).k; } sX1.value=st.x1; sX2.value=st.x2;
+  st.sel=new Set([st.x1,st.x2]); ivl.querySelectorAll('input').forEach(i=>i.checked=st.sel.has(i.value)); st.prev=null;
+  setupC(); renderA(); renderB(); renderC(false); renderD(); stata(); }
+sStory.addEventListener('change',()=>{const s=STORIES.find(s=>s.id===sStory.value); if(s.x1){st.x1=s.x1;st.x2=s.x2;} st.t=0; st.view='raw'; $('#vwraw').checked=true; applyVars();});
+sX1.addEventListener('change',()=>{st.x1=sX1.value;sStory.value='custom';st.t=0;$('#vwraw').checked=true;applyVars();});
+sX2.addEventListener('change',()=>{st.x2=sX2.value;sStory.value='custom';st.t=0;$('#vwraw').checked=true;applyVars();});
+
+const drawer=$('#drawer');let lastFocus=null;
+function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}
+function closeFx(){document.body.classList.remove('formulas-open');drawer.setAttribute('aria-hidden','true');if(lastFocus)lastFocus.focus();}
+document.querySelectorAll('[data-open-formulas]').forEach(b=>b.addEventListener('click',openFx));
+$('#closeFx').addEventListener('click',closeFx);$('#scrim').addEventListener('click',closeFx);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('formulas-open'))closeFx();});
+document.addEventListener('pointerdown',e=>{if(!(e.target instanceof SVGElement))hideTip();});
+const redraw=()=>{renderA();renderB();renderC(false);renderD();};
+let rz=0; if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;cancelAnimationFrame(rz);rz=requestAnimationFrame(redraw);}}).observe($('main'));}else addEventListener('resize',redraw);
+if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',redraw);
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+sStory.value='away'; st.x1='wpov'; st.x2='income'; applyVars();
+})();
+</script>
+</body>
+</html>
