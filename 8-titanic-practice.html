@@ -114,6 +114,7 @@ figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75
 .outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
 
 .tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
 .mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
 
 /* Stata-style output */
@@ -161,7 +162,7 @@ body.formulas-open .drawer{transform:none}
 .drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .fx{border-top:1px solid var(--line);padding:12px 0}
 .fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
-.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .fx p{margin:0;font-size:14px;color:var(--ink-2)}
 .fxbtn{display:inline-flex;gap:6px;align-items:center}
 .fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
@@ -169,6 +170,7 @@ body.formulas-open .drawer{transform:none}
 @media (prefers-reduced-motion: reduce){
   .drawer,.scrim,.tip{transition:none}
 }
+@media (max-width:520px){.fx math{font-size:17px}}
 
 /* ---- practice module additions ---- */
 :root{--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c3-ink:#0f7a54;--amber:#c98500;--amber-bg:#fff6dc;--amber-ink:#7a5200;--tag:#f5c400}
@@ -267,6 +269,7 @@ pre.stata .b1{color:var(--s1-ink);font-weight:600}
 .amberbox .inner ul{margin:0;padding-left:20px;display:grid;gap:4px}
 .lpmflag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--amber-ink);border:1px solid var(--amber);border-radius:5px;padding:1px 7px;margin-left:6px;vertical-align:2px;background:var(--amber-bg)}
 .warn{color:var(--s2-ink);font-weight:600}
+.why4{margin:0 0 10px;padding:8px 12px;border-left:3px solid var(--s1);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 6px 6px 0;font-size:14.5px;color:var(--ink)}
 .halo{paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
 .meter{position:relative;height:16px;border-radius:4px;background:var(--grid);margin:8px 0 2px;overflow:visible}
 .meter > span{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--s1)}
@@ -299,9 +302,45 @@ html{scroll-padding-top:58px}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
 
+
+:root{--amber:#c98500;--amber-bg:#fff6dc;--amber-ink:#7a5200;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+:root{ --q1:#e3eefc; --q2:#b7d3f6; --q3:#6da7ec; --q4:#2a78d6; --q5:#184f95; --q6:#0d366b; --dem:#2a78d6; --dem-ink:#1c5cab; --rep:#e34948; --rep-ink:#b02a2a; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --q1:#1d2a3b; --q2:#184f95; --q3:#256abf; --q4:#3987e5; --q5:#86b6ef; --q6:#cde2fb; --dem:#3987e5; --dem-ink:#86b6ef; --rep:#e66767; --rep-ink:#f08f8f; } }
+:root[data-theme="dark"]{ --q1:#1d2a3b; --q2:#184f95; --q3:#256abf; --q4:#3987e5; --q5:#86b6ef; --q6:#cde2fb; --dem:#3987e5; --dem-ink:#86b6ef; --rep:#e66767; --rep-ink:#f08f8f; }
+/* ---- First Lady, controlling for gender ---- */
+.amberbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:18px 18px 14px;position:relative;box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 18%,transparent);margin-top:10px}
+.amberbox .tag{position:absolute;top:-12px;left:14px;background:var(--tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+.amberbox h2{margin:2px 0 6px;font-size:clamp(20px,2.6vw,24px);line-height:1.25}
+.amberbox > p{margin:0 0 10px;max-width:75ch;color:var(--ink)}
+.amberbox .fn{font-size:12.5px;color:var(--ink-2)}
+.amberbox details.flx{border:1px solid var(--amber);border-radius:8px;background:var(--surface)}
+.amberbox details.flx > summary{padding:10px 14px;font-weight:700;font-size:16px;color:var(--amber-ink)}
+.amberbox details.flx[open] > summary{border-bottom:1px solid var(--line)}
+.flin{padding:12px 14px 14px;display:grid;gap:12px}
+.flin > *{min-width:0}
+.flgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.flgrid{grid-template-columns:minmax(0,1fr)}}
+.flgrid > *{min-width:0}
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:8px 14px;border-radius:7px;border:2px solid var(--amber)}
+.flback{display:inline-block;font-weight:600;font-size:14px;color:var(--amber-ink);text-decoration:none;border:1px solid var(--amber);border-radius:999px;padding:4px 12px;background:var(--amber-bg)}
+.flkey{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2)}
+.flkey span{display:inline-flex;align-items:center;gap:6px}
+.flkey i{display:inline-block;width:20px;height:0;border-top:3px solid}
+.flcalc{font-family:var(--font-mono);font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.flcalc .off{color:var(--muted);text-decoration:line-through}
+@media (max-width:520px){#flTerms .term .t{white-space:normal;max-width:100%}}
+#cTab{display:block;overflow-x:auto;max-width:100%}
+@media (max-width:520px){table.ct th,table.ct td{padding:5px 5px}}
 /* ---- phone fit ---- */
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
 </style>
 </head>
 <body>
@@ -311,7 +350,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <div class="wrap">
     <p class="kicker">Statistical methods · Practice module</p>
     <h1>Who survived the Titanic?</h1>
-    <p class="dek">One question, every technique. Work through the same survival questions as the labs, from describing the passengers to multiple regression with dummies. Notes are short; each step links back to its full module if you need a refresher.</p>
+    <p class="dek">This page applies every technique from Modules 1–7 to one question: who survived the Titanic? Work through the same survival questions as the labs, from describing the passengers to multiple regression with dummies. Notes are short; each step links back to its full module if you need a refresher.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
@@ -545,7 +584,12 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   </section>
   <figure>
     <div class="ctlrow"><div class="toggles"><label><input type="checkbox" id="cf7"> Control for sex (female)</label><label><input type="checkbox" id="cc7"> Control for class (first, middle dummies)</label></div></div>
-    <div class="grid2">
+    <div class="row" style="margin:0 0 6px"><div class="seg" role="radiogroup" aria-label="Step" id="lv7"></div></div>
+    <p class="say" id="lvSay" style="margin:0 0 6px;max-width:80ch"></p>
+    <div class="key"><span><i class="sw" style="background:var(--pop);border-radius:50%"></i>one passenger (jittered)</span><span><i class="sw" style="height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0"></i>bivariate line</span><span><i class="sw" style="height:0;width:18px;border-top:3px solid var(--s2);border-radius:0"></i>line through the leftovers</span></div>
+    <div class="chart" id="c7a"></div>
+    <p class="note" id="lvNote">Dots are nudged a little at random so 1,046 passengers don't pile into solid stripes. Every line is computed from the true values.</p>
+    <div class="grid2" style="margin-top:12px">
       <div>
         <div class="key"><span><i class="sw" style="background:var(--s2);border-radius:50%"></i>current model</span><span><i class="sw" style="background:var(--s1);border-radius:50%"></i>other models</span><span><i class="sw mu"></i>0 = no effect</span></div>
         <div class="chart" id="c7"></div>
@@ -561,15 +605,14 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <!-- ============ 8 DUMMIES ============ -->
   <section class="part" id="s8" aria-labelledby="h8">
     <p class="kick">Step 8 · Module 7: dummy variables <span class="lpmflag">Linear probability model</span></p>
-    <h2 id="h8">Three classes, two dummies, then everything together</h2>
-    <p class="lede">Class has three categories, so it gets two dummies. The class left out is the reference: the constant is its level, and each coefficient is a gap from it. Then add sex and age, and each dummy shifts a line up or down: six groups, six parallel lines.</p>
+    <h2 id="h8">Class dummies, then sex, class and age together</h2>
+    <p class="lede">Class has three categories, so it gets two dummies. The class left out is the reference: the constant is its level, and each coefficient is a gap from it. Then add sex and age, and each dummy shifts a line up or down: giving six parallel lines, one for each sex and class combination.</p>
     <a class="refresh" href="7-dummy-variables.html">Refresh: Module 7 →</a>
   </section>
   <figure>
-    <div class="fighead"><h2><span class="step">8a</span>Three classes, two dummies, one reference group</h2></div>
+    <div class="fighead"><h2><span class="step">8a</span>Class as dummy variables, with one reference class</h2></div>
     <div class="ctlrow" style="margin-top:8px">
       <div class="ctl"><span class="lab" id="rl8">Reference class</span><div class="seg" role="radiogroup" aria-labelledby="rl8" id="ref8"></div></div>
-      <div class="toggles"><label><input type="checkbox" id="ctl8"> Hold sex and age constant</label><label><input type="checkbox" id="trap8"> Try all three class dummies</label></div>
     </div>
     <div class="grid2">
       <div>
@@ -588,7 +631,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     <div class="terms" id="terms8"></div>
     <div class="grid2" style="margin-top:6px">
       <div>
-        <div class="key"><span><i class="sw c1"></i>First</span><span><i class="sw c2"></i>Middle</span><span><i class="sw c3"></i>Lower</span><span><i class="sw solid"></i>women</span><span><i class="sw dash"></i>men</span></div>
+        <div class="key"><span><i class="sw c1"></i>First</span><span><i class="sw c2"></i>Middle</span><span><i class="sw c3"></i>Lower</span><span><i class="sw solid"></i>women</span><span><i class="sw dash"></i>men</span><span><i class="sw" style="background:var(--pop);border-radius:50%"></i>passengers at 0 (died) or 1 (survived), jittered</span></div>
         <div class="chart" id="c8"></div>
         <p class="note" id="worst8"></p>
       </div>
@@ -619,7 +662,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
         <li>In Step 3, pick <b>First class</b> and switch from 95% to 99%. Which numbers in the hand calculation change?</li>
         <li>In Step 4, pick <b>Traveling alone</b>. The survival rates differ by 20 points, yet λ is almost 0. Why?</li>
         <li>In Step 5, test <b>lower vs. upper class</b>. You reject H₀, but does the result support H₁?</li>
-        <li>In Step 8a, switch the reference class from Lower to First. Which numbers change, and which stay the same? Then tick <b>Hold sex and age constant</b>: do the class gaps shrink?</li>
+        <li>In Step 8a, switch the reference class from Lower to First. Which numbers change, and which stay the same?</li>
         <li>In Step 8b, build a 2-year-old girl in first class, then a 75-year-old man in lower class. What goes wrong?</li>
       </ol>
     </section>
@@ -751,7 +794,7 @@ const ys=ix=>ix.map(i=>S[i]);
 const ageIx=idx(i=>A[i]!==null);
 const CL={1:'First',2:'Middle',3:'Lower'};
 const fareMed=(()=>{const v=R.fare.filter(x=>x!==null).sort((a,b)=>a-b),n=v.length;return n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2;})();
-const st={dv:'survived',n2:25,draws:[],v3:'s',g3:'all',lv3:95,iv:'female',q:0,x6:40,cf7:false,cc7:false,ref8:3,trap8:false,ctl8:false,sx8:0,pc8:3,a8:30};
+const st={dv:'survived',n2:25,draws:[],v3:'s',g3:'all',lv3:95,iv:'female',q:0,x6:40,cf7:false,cc7:true,ref8:3,trap8:false,ctl8:false,sx8:0,pc8:3,a8:30};
 $('#dataChips').innerHTML=`<span class="chip"><b>${com(N)}</b> passengers</span><span class="chip"><b>${com(S.filter(v=>v===1).length)}</b> survived (${pc(mean(S))})</span><span class="chip"><b>${com(S.filter(v=>v===0).length)}</b> died</span><span class="chip">age known for <b>${com(ageIx.length)}</b></span>`;
 
 /* ============ 1 DESCRIBE ============ */
@@ -898,13 +941,13 @@ seg('#lv3',[[90,'90%'],[95,'95%'],[99,'99%']],st.lv3,v=>{st.lv3=+v;renderCI();})
 
 /* ============ 4 ASSOCIATE ============ */
 const IV4={
-  female:{lab:'Sex',lev:'nom',vals:[[0,'Male'],[1,'Female']],get:i=>F[i]},
-  alone:{lab:'Traveling alone',lev:'nom',vals:[[0,'With family'],[1,'Alone']],get:i=>R.al[i]},
-  parch:{lab:'Parents or children aboard',lev:'nom',vals:[[0,'No'],[1,'Yes']],get:i=>R.par[i]>0?1:0},
-  pclass:{lab:'Class',lev:'ord',vals:[[1,'First'],[2,'Middle'],[3,'Lower']],get:i=>C[i],dir:'As class moves from First toward Lower'},
-  age5:{lab:'Age group',lev:'ord',vals:[[1,'0–5'],[2,'5–16'],[3,'16–30'],[4,'30–60'],[5,'60+']],get:i=>A5[i],dir:'Moving from the youngest group toward the oldest'},
-  faremed:{lab:'Fare above the median',lev:'ord',vals:[[0,'At or below'],[1,'Above']],get:i=>R.fare[i]===null?null:(R.fare[i]>fareMed?1:0),dir:'Moving from cheaper to pricier fares'},
-  onepct:{lab:'Top 1% of fares',lev:'ord',vals:[[0,'Rest'],[1,'Top 1%']],get:i=>R.op[i],dir:'Moving from the rest to the top 1%'}
+  female:{lab:'Sex',lev:'nom',why:'Sex is <b>nominal</b> (male and female have no order), and survived is a yes/no category, so we use <b>lambda</b>.',vals:[[0,'Male'],[1,'Female']],get:i=>F[i]},
+  alone:{lab:'Traveling alone',lev:'nom',why:'Traveling alone is <b>nominal</b> (alone and with family have no order), and survived is a yes/no category, so we use <b>lambda</b>.',vals:[[0,'With family'],[1,'Alone']],get:i=>R.al[i]},
+  parch:{lab:'Parents or children aboard',lev:'nom',why:'Having parents or children aboard is <b>nominal</b> (yes and no have no order here), and survived is a yes/no category, so we use <b>lambda</b>.',vals:[[0,'No'],[1,'Yes']],get:i=>R.par[i]>0?1:0},
+  pclass:{lab:'Class',lev:'ord',why:'Class is <b>ordinal</b> (First → Middle → Lower has an order), and survived can be ordered too (no → yes), so we use <b>gamma</b>.',vals:[[1,'First'],[2,'Middle'],[3,'Lower']],get:i=>C[i],dir:'As class moves from First toward Lower'},
+  age5:{lab:'Age group',lev:'ord',why:'Age group is <b>ordinal</b> (youngest → oldest), and survived can be ordered too (no → yes), so we use <b>gamma</b>.',vals:[[1,'0–5'],[2,'5–16'],[3,'16–30'],[4,'30–60'],[5,'60+']],get:i=>A5[i],dir:'Moving from the youngest group toward the oldest'},
+  faremed:{lab:'Fare above the median',lev:'ord',why:'Fare above the median is <b>ordinal</b> (cheaper → pricier), and survived can be ordered too (no → yes), so we use <b>gamma</b>.',vals:[[0,'At or below'],[1,'Above']],get:i=>R.fare[i]===null?null:(R.fare[i]>fareMed?1:0),dir:'Moving from cheaper to pricier fares'},
+  onepct:{lab:'Top 1% of fares',lev:'ord',why:'Top 1% of fares is <b>ordinal</b> (the rest → the top 1%), and survived can be ordered too (no → yes), so we use <b>gamma</b>.',vals:[[0,'Rest'],[1,'Top 1%']],get:i=>R.op[i],dir:'Moving from the rest to the top 1%'}
 };
 const LS=[[.10,'none'],[.20,'very weak'],[.30,'moderate'],[.40,'moderately strong'],[9,'strong']], GS=[[.25,'none'],[.50,'very weak'],[.75,'moderate'],[9,'strong']];
 const lab=(v,sc)=>sc.find(s=>Math.abs(v)<s[0])[1];
@@ -935,7 +978,7 @@ function renderPRE(){
       <p class="say">${dirTxt} Ignoring the sign, |γ| = ${d3(Math.abs(Gm))}: <b>${lab(Gm,GS)}</b> on the lab scale.${st.iv==='onepct'?' Only 17 passengers are in the top 1%, so this γ rests on very few people.':''}</p>`+scaleTbl(GS,Gm)+
       `<p class="say" style="font-size:13.5px">For comparison, lambda here is ${d3(L)}. Lambda tends to understate ordered relationships and gamma to overstate them, which is why the gamma scale is stricter. Cutoffs like these are conventions and vary by textbook.</p>`;
   }
-  $('#pre4').innerHTML=out;
+  $('#pre4').innerHTML=`<p class="why4">${V.why} <span style="color:var(--muted)">If both variables were interval-level, like age and fare, we'd use r².</span></p>`+out;
   $('#note4').innerHTML=`N = ${com(tot.n)}${tot.n<N?` (${com(N-tot.n)} passengers missing on ${V.lab.toLowerCase()})`:''}. Column percentages: read across a row to compare survival between groups. Underlined cells are each column's most common outcome.`;
 }
 selb('#iv4',Object.entries(IV4).map(([k,v])=>[k,v.lab+(v.lev==='nom'?' (nominal)':' (ordinal)')]),st.iv,v=>{st.iv=v;renderPRE();});
@@ -1113,9 +1156,58 @@ function renderCtl(){
   const nm=fit7(st.cf7,st.cc7).names, L=anova(f,(st.cc7?'. generate first = (pclass == 1)\n. generate middle = (pclass == 2)\n':'')+'. regress survived '+nm.join(' '));
   nm.forEach((n,j)=>L.push(crow(n,f,j,j===0?'b1':'',j===0)));L.push(crow('_cons',f,nm.length,''),'-'.repeat(78));$('#o7').innerHTML=L.join('\n');
 }
+
+/* ---- 7: animated leftovers ---- */
+const LV={step:'data',tx:0,ty:0,anim:0,els:null};
+const LVSTEP={data:[0,0],yl:[0,1],xl:[1,1],fit:[1,1]};
+function lvModel(){const cols=[];const names=[];if(st.cf7){cols.push(fA7);names.push('sex');}if(st.cc7){cols.push(c1A,c2A);names.push('class');}
+  const my=mean(yA),ma=mean(ageV);let ey,ex;
+  if(cols.length){const fy=ols(cols,yA),fx=ols(cols,ageV);const res=(f,v,c)=>v.map((y,i)=>{let h=f.b[f.b.length-1];for(let j=0;j<c.length;j++)h+=f.b[j]*c[j][i];return y-h;});ey=res(fy,yA,cols);ex=res(fx,ageV,cols);}
+  else{ey=yA.map(v=>v-my);ex=ageV.map(v=>v-ma);}
+  const bR=ols([ageV],yA).b[0], bC=ols([ex],ey).b[0];
+  return {ey,ex,my,ma,bR,bC,names};}
+function lvRender(){
+  const M=lvModel(), box=$('#c7a'); box.innerHTML='';
+  const W=Math.max(290,box.clientWidth),H=Math.round(Math.min(380,Math.max(260,W*0.5))),m={l:44,r:14,t:22,b:40};
+  const X=ageV.map((v,i)=>[v,M.ex[i]+M.ma]), Yy=yA.map((v,i)=>[v,M.ey[i]+M.my]);
+  let xlo=Math.min(0,...X.map(p=>p[1])),xhi=Math.max(80,...X.map(p=>p[1])),ylo=Math.min(-0.1,...Yy.map(p=>p[1]))-0.06,yhi=Math.max(1.1,...Yy.map(p=>p[1]))+0.06;
+  const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Survival against age: data, leftovers, and the controlled line'},box);
+  yGrid(svg,W,m,ys,[0,0.5,1].concat(ylo<-0.3?[-0.5]:[]).concat(yhi>1.3?[1.5]:[]),v=>v===0||v===1?String(v):v.toFixed(1));
+  xTicks(svg,H,m,xs,ticks(Math.ceil(xlo/10)*10,Math.floor(xhi/10)*10,Math.max(3,Math.floor((W-m.l-m.r)/60))),v=>v);
+  baseLine(svg,W,H,m);
+  const yl=txt(svg,4,12,'↑ survived (0 = no, 1 = yes)',{class:'axlab'}), xl=txt(svg,W-m.r,H-4,'age →',{class:'axlab','text-anchor':'end'});
+  const g=el('g',{},svg), dots=ageIx.map((id,k)=>el('circle',{r:1.8,fill:css('--pop'),'fill-opacity':.42},g));
+  const lineR=el('line',{stroke:css('--muted'),'stroke-width':2,'stroke-dasharray':'6 4'},svg), lineC=el('line',{stroke:css('--s2'),'stroke-width':3},svg);
+  const labC=txt(svg,0,0,'',{class:'mlab halo',fill:css('--s2-ink')}), labR=txt(svg,0,0,'',{class:'mlab halo',fill:css('--muted')});
+  LV.els={M,X,Yy,xs,ys,dots,lineR,lineC,labC,labR,xl,yl,xlo,xhi,W};
+  lvPlace(); lvText();
+}
+function lvPlace(){
+  const E=LV.els; if(!E) return; const {M,X,Yy,xs,ys,dots}=E, tx=LV.tx, ty=LV.ty;
+  dots.forEach((d,k)=>{const id=ageIx[k];const x=X[k][0]+(X[k][1]-X[k][0])*tx, y=Yy[k][0]+(Yy[k][1]-Yy[k][0])*ty;d.setAttribute('cx',xs(x).toFixed(1));d.setAttribute('cy',(ys(y)+jit2(id,14)).toFixed(1));});
+  const xm=M.ma, ym=M.my, a=E.xlo+2, b=E.xhi-2;
+  const set=(ln,bb)=>{ln.setAttribute('x1',xs(a));ln.setAttribute('x2',xs(b));ln.setAttribute('y1',ys(ym+bb*(a-xm)));ln.setAttribute('y2',ys(ym+bb*(b-xm)));};
+  set(E.lineR,M.bR); const showC=LV.step==='fit'; E.lineC.style.display=showC?'':'none'; if(showC) set(E.lineC,M.bC);
+  E.lineR.setAttribute('stroke-dasharray',LV.step==='data'?'':'6 4'); E.lineR.setAttribute('stroke',LV.step==='data'?css('--ink'):css('--muted'));
+  E.labR.textContent=`bivariate slope ${sgnf(M.bR,4)}`; E.labR.setAttribute('x',xs(b)-4); E.labR.setAttribute('y',ys(ym+M.bR*(b-xm))-8); E.labR.setAttribute('text-anchor','end');
+  E.labC.textContent=showC?`controlled slope ${sgnf(M.bC,4)}`:''; E.labC.setAttribute('x',xs(b)-4); E.labC.setAttribute('y',ys(ym+M.bC*(b-xm))+18); E.labC.setAttribute('text-anchor','end');
+  E.yl.textContent=ty>0.5?'↑ survival leftover (+ mean)':'↑ survived (0 = no, 1 = yes)'; E.xl.textContent=tx>0.5?'age leftover (+ mean) →':'age →';
+}
+function lvText(){ const M=LV.els?LV.els.M:lvModel(), ctl=M.names.length?M.names.join(' and '):null;
+  const T={data:`<b>1. The data.</b> Each passenger sits at 0 (died) or 1 (survived) by age. The line is the bivariate fit: slope <b>${sgnf(M.bR,4)}</b> per year.`,
+    yl:ctl?`<b>2. Survival leftovers.</b> Each passenger moves up or down by what ${ctl} already predict about surviving. What's left is the part of survival that ${ctl} can't explain. Women and first-class passengers, who were expected to survive, slide down; men in lower class slide up.`:`<b>2. Survival leftovers.</b> No controls are ticked, so each leftover is just a distance from the average survival rate. Tick sex or class above and replay this step.`,
+    xl:ctl?`<b>3. Age leftovers.</b> Each passenger slides sideways by what ${ctl} predict about their age. First-class passengers, who were older on average, slide left and lose that head start.`:`<b>3. Age leftovers.</b> With no controls, each age leftover is just a distance from the average age, so nothing changes shape.`,
+    fit:`<b>4. The line through the leftovers.</b> Its slope is <b>${sgnf(M.bC,4)}</b>${ctl?`, exactly age's coefficient holding ${ctl} constant (the highlighted row below)`:', the same as the bivariate slope, because nothing is held constant'}.`};
+  $('#lvSay').innerHTML=T[LV.step]; }
+function lvGo(step){ LV.step=step; const [tx1,ty1]=LVSTEP[step], tx0=LV.tx, ty0=LV.ty; cancelAnimationFrame(LV.anim); lvText();
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){LV.tx=tx1;LV.ty=ty1;lvPlace();return;}
+  const t0=performance.now(); const stp=now=>{const p=Math.min(1,(now-t0)/1000),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;LV.tx=tx0+(tx1-tx0)*e;LV.ty=ty0+(ty1-ty0)*e;lvPlace();if(p<1)LV.anim=requestAnimationFrame(stp);};LV.anim=requestAnimationFrame(stp);}
+seg('#lv7',[['data','1 Data'],['yl','2 Survival leftovers'],['xl','3 Age leftovers'],['fit','4 Controlled line']],LV.step,v=>lvGo(v));
+
 $('#cf7').checked=st.cf7;$('#cc7').checked=st.cc7;
-$('#cf7').addEventListener('change',e=>{st.cf7=e.target.checked;renderCtl();});
-$('#cc7').addEventListener('change',e=>{st.cc7=e.target.checked;renderCtl();});
+$('#cf7').addEventListener('change',e=>{st.cf7=e.target.checked;renderCtl();lvRender();});
+$('#cc7').addEventListener('change',e=>{st.cc7=e.target.checked;renderCtl();lvRender();});
 
 /* ============ 8 DUMMIES ============ */
 const CLN={1:'first',2:'middle',3:'lower'}, CCOL={1:'--c1',2:'--c2',3:'--c3'}, CINK={1:'--s1-ink',2:'--s2-ink',3:'--c3-ink'};
@@ -1138,6 +1230,7 @@ function renderDum(){
   txt(svg,m.l+6,yS(lo)-6,'impossible: below 0%',{class:'mlab',fill:css('--s2-ink')});
   xTicks(svg,H,m,xs,[0,20,40,60,80],v=>v);
   const defs=el('defs',{},svg),cp=el('clipPath',{id:'cp8'},defs);el('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},cp);
+  { const dg=el('g',{'clip-path':'url(#cp8)'},svg); ageIx.forEach(i=>el('circle',{cx:xs(A[i]),cy:yS(S[i])+jit2(i,16),r:1.5,fill:css('--pop'),'fill-opacity':.3},dg)); }
   const lg=el('g',{'clip-path':'url(#cp8)'},svg), ends=[];
   for(const sx of [1,0])for(const cl of [1,2,3]){const a=pred8(F8,sx,cl,0),z=pred8(F8,sx,cl,80);
     const ln=el('line',{x1:xs(0),x2:xs(80),y1:yS(a),y2:yS(z),stroke:css(CCOL[cl]),'stroke-width':2.5,'stroke-dasharray':sx?'':'7 5'},lg);
@@ -1185,13 +1278,10 @@ function renderDum(){
 function setRef(v){st.ref8=+v;for(const id of ['ref8','ref8b']){const r=$('#'+id+'_'+st.ref8);if(r)r.checked=true;}renderRef8();renderDum();}
 seg('#ref8',[[3,'Lower'],[2,'Middle'],[1,'First']],st.ref8,setRef);
 seg('#ref8b',[[3,'Lower'],[2,'Middle'],[1,'First']],st.ref8,setRef);
-$('#ctl8').addEventListener('change',e=>{st.ctl8=e.target.checked;renderRef8();});
+
 seg('#sx8',[[0,'Male'],[1,'Female']],st.sx8,v=>{st.sx8=+v;renderDum();});
 seg('#pc8',[[1,'First'],[2,'Middle'],[3,'Lower']],st.pc8,v=>{st.pc8=+v;renderDum();});
-$('#trap8').addEventListener('change',e=>{st.trap8=e.target.checked;
-  if(st.trap8){st.prevRef=st.ref8;st.ref8=3;}else{st.ref8=st.prevRef||3;}
-  for(const id of ['ref8','ref8b']){const sg=$('#'+id);$('#'+id+'_'+st.ref8).checked=true;sg.style.opacity=st.trap8?.45:'';sg.style.pointerEvents=st.trap8?'none':'';}
-  renderRef8();renderDum();});
+
 function setA8(v){if(!isFinite(v))return;st.a8=Math.max(0,Math.min(80,Math.round(v)));$('#a8').value=st.a8;$('#a8r').value=st.a8;renderDum();}
 $('#a8').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){st.a8=Math.max(0,Math.min(80,Math.round(v)));$('#a8r').value=st.a8;renderDum();}});
 $('#a8r').addEventListener('input',e=>setA8(+e.target.value));
@@ -1216,7 +1306,7 @@ function renderRef8(){
   const defs=el('defs',{},svg),mk=el('marker',{id:'arr8',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:css('--s2')},mk);
   const g=el('g',{},svg), ix=ctl?ageIx:null;
   for(let i=0;i<y.length;i++){const c=cls[i],k=c-1,isRef=c===ref,id=ix?ix[i]:i;
-    el('circle',{cx:xs(k)+jit(id,(W-m.l-m.r)/3*0.42),cy:yS(y[i])+jit2(id,16),r:1.8,fill:isRef?css('--ink-2'):css('--s1'),'fill-opacity':.3},g);}
+    el('circle',{cx:xs(k)+jit(id,(W-m.l-m.r)/3*0.42),cy:yS(y[i])+jit2(id,16),r:1.5,fill:css('--pop'),'fill-opacity':.28},g);}
   const refY=level(ref);
   el('line',{x1:m.l,x2:W-m.r,y1:yS(refY),y2:yS(refY),stroke:css('--ink'),'stroke-width':1.75,'stroke-dasharray':'6 4'},svg);
   const colW=(W-m.l-m.r)/3, hw=Math.min(30,colW*0.2), narrowR=colW<130;
@@ -1271,7 +1361,7 @@ $('#closeFx').addEventListener('click',closeFx);$('#scrim').addEventListener('cl
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('formulas-open'))closeFx();});
 document.addEventListener('pointerdown',e=>{if(!(e.target instanceof SVGElement))hideTip();});
 $('#x6').value=st.x6;$('#x6r').value=st.x6;$('#a8').value=st.a8;$('#a8r').value=st.a8;
-function renderAll(){renderDesc();renderSamp();renderCI();renderPRE();renderTest();renderWorst();renderReg6();renderCtl();renderRef8();renderDum();}
+function renderAll(){renderDesc();renderSamp();renderCI();renderPRE();renderTest();renderWorst();renderReg6();renderCtl();lvRender();renderRef8();renderDum();}
 let rz=0;if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;cancelAnimationFrame(rz);rz=requestAnimationFrame(renderAll);}}).observe($('main'));}else addEventListener('resize',renderAll);
 if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',renderAll);
 new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});

@@ -114,6 +114,7 @@ figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75
 .outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
 
 .tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
 .mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
 
 /* Stata-style output */
@@ -161,7 +162,7 @@ body.formulas-open .drawer{transform:none}
 .drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .fx{border-top:1px solid var(--line);padding:12px 0}
 .fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
-.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .fx p{margin:0;font-size:14px;color:var(--ink-2)}
 .fxbtn{display:inline-flex;gap:6px;align-items:center}
 .fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
@@ -344,6 +345,7 @@ html{scroll-padding-top:58px}
 /* ---- phone fit ---- */
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
 </style>
 </head>
 <body>
@@ -403,8 +405,8 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     </div>
   </section>
   <section aria-label="From the example to real tables" style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:6px 0 2px">
-    <h3 style="margin:0 0 4px;font-size:18px">Now the real tables: still lambda, still nominal</h3>
-    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">Same game, bigger tables. Y is still <b style="color:var(--ink)">nominal</b> (a vote choice has no built-in order), so lambda still applies and the strategy is unchanged: guess <b style="color:var(--ink)">the most common answer (the mode)</b>.</p>
+    <h3 style="margin:0 0 4px;font-size:18px">Lambda with real survey tables</h3>
+    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The steps are the same with larger tables. A vote choice is <b style="color:var(--ink)">nominal</b> (it has no built-in order), so lambda is the right measure, and the strategy does not change: guess <b style="color:var(--ink)">the most common answer (the mode)</b>.</p>
     <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;color:var(--ink-2);display:grid;gap:3px">
       <li><b style="color:var(--ink)">E₁</b>: wrong guesses when everyone gets the overall mode (the outlined total).</li>
       <li><b style="color:var(--ink)">E₂</b>: wrong guesses when each column gets its own mode (the blue cells).</li>
@@ -443,7 +445,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <section class="part" id="gamma" aria-labelledby="gh">
     <p class="kick">Ordinal · Gamma</p>
     <h2 id="gh">Do pairs line up?</h2>
-    <p class="lede">With ordered categories, gamma plays a different game. Pick two people at random. If one ranks higher on X, guess that the same person ranks higher on Y. Pairs that agree are <b style="color:var(--s1-ink)">concordant</b>, pairs that disagree are <b style="color:var(--miss-ink)">discordant</b>, and pairs tied on either variable are set aside.</p>
+    <p class="lede">With ordered categories, gamma asks a different question. Pick two people at random. If one ranks higher on X, guess that the same person ranks higher on Y. Pairs that agree are <b style="color:var(--s1-ink)">concordant</b>, pairs that disagree are <b style="color:var(--miss-ink)">discordant</b>, and pairs tied on either variable are set aside.</p>
   </section>
 
   <section class="card" aria-labelledby="gsimpleh" style="margin-top:4px">
@@ -459,8 +461,8 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     </div>
   </section>
   <section aria-label="From the example to real gamma tables" style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:6px 0 2px">
-    <h3 style="margin:0 0 4px;font-size:18px">Now the real tables: still gamma, still ordinal</h3>
-    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">Same pair game, much bigger. Both variables are still <b style="color:var(--ink)">ordinal</b>, and we still predict <b style="color:var(--ink)">order within pairs</b>, setting ties aside.</p>
+    <h3 style="margin:0 0 4px;font-size:18px">Gamma with real survey tables</h3>
+    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The pair comparison works the same way with thousands of respondents. Both variables are <b style="color:var(--ink)">ordinal</b>, and we again predict the <b style="color:var(--ink)">order within pairs</b>, setting ties aside.</p>
     <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;color:var(--ink-2);display:grid;gap:3px">
       <li><b style="color:var(--ink)">E₁</b>: half of the untied pairs, the coin flip.</li>
       <li><b style="color:var(--ink)">E₂</b>: the discordant pairs, where “higher on X, higher on Y” guesses wrong.</li>
@@ -520,8 +522,8 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     </div>
   </section>
   <section aria-label="From the example to the county data" style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:6px 0 2px">
-    <h3 style="margin:0 0 4px;font-size:18px">Now the real data: still r², still interval</h3>
-    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">Same game with 200 counties. Y is still an <b style="color:var(--ink)">interval</b> number, so errors are still squared distances.</p>
+    <h3 style="margin:0 0 4px;font-size:18px">r² with real county data</h3>
+    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The same calculation with 200 counties. Y is <b style="color:var(--ink)">interval</b>-level, so errors are squared distances.</p>
     <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;color:var(--ink-2);display:grid;gap:3px">
       <li><b style="color:var(--ink)">E₁</b>: squared errors when every county is guessed at the mean, ȳ. Stata calls it the <b style="color:var(--ink)">Total SS</b>.</li>
       <li><b style="color:var(--ink)">E₂</b>: squared errors when each county is guessed from the regression line. Stata calls it the <b style="color:var(--ink)">Residual SS</b>.</li>
@@ -820,15 +822,16 @@ function grender(){
       if(GS.hl!=null){ if(GS.hl===i){w+=2;op=1;} else op*=.25; }
       el('line',{class:'pline',x1:p.a.px,y1:p.a.py,x2:p.b.px,y2:p.b.py,stroke:col,'stroke-width':w,'stroke-dasharray':dash,opacity:op},lg);
       if(!tie&&s>=3){ const mx=(p.a.px+p.b.px)/2,my=(p.a.py+p.b.py)/2; const right=neg?p.kind==='dis':p.kind==='con';
-        const mk= s===3?'?':(right?'✓':'✗'); const fill= s===3?css('--surface'):(right?css('--s1'):css('--miss'));
-        if(GS.hl==null||GS.hl===i){ el('circle',{cx:mx,cy:my,r:9,fill,stroke:s===3?css('--ink-2'):css('--surface'),'stroke-width':1.5},lg); const t=el('text',{x:mx,y:my+4,'text-anchor':'middle',style:'font:700 11px var(--font-body)',fill:s===3?css('--ink'):'#fff'},lg); t.textContent=mk; } } });
+        const fl=s===3&&GS.flip?GS.flip[i]:null; const mk= s===3?(fl===null?'?':(fl?'✓':'✗')):(right?'✓':'✗'); const fill= s===3?(fl===null?css('--surface'):(fl?css('--s1'):css('--miss'))):(right?css('--s1'):css('--miss'));
+        if(GS.hl==null||GS.hl===i){ el('circle',{cx:mx,cy:my,r:9,fill,stroke:s===3&&fl===null?css('--ink-2'):css('--surface'),'stroke-width':1.5},lg); const t=el('text',{x:mx,y:my+4,'text-anchor':'middle',style:'font:700 11px var(--font-body)',fill:s===3&&fl===null?css('--ink'):'#fff'},lg); t.textContent=mk; } } });
   }
   GS.people.forEach(p=>{ el('circle',{cx:p.px,cy:p.py,r:15,fill:css('--surface'),stroke:css('--ink'),'stroke-width':2},svg); const t=el('text',{x:p.px,y:p.py+5,'text-anchor':'middle',style:'font:700 14px var(--font-body)',fill:css('--ink')},svg); t.textContent=p.id; });
   // pair chips
   const pl=$('#plist'); pl.innerHTML='';
   if(s>=2) GS.pairs.forEach((p,i)=>{ const tie=!(p.kind==='con'||p.kind==='dis'); const right=neg?p.kind==='dis':p.kind==='con';
-    const cls= tie?'tie': s===3?'unk': s>=4?(right?'con':'dis'):'';
-    const lab= tie?(p.kind==='tx'?'same party':p.kind==='ty'?'same ideology':'same both') : s===3?'coin flip' : s>=4?(right?'✓':'✗'):'';
+    const fl=s===3&&GS.flip?GS.flip[i]:null;
+    const cls= tie?'tie': s===3?(fl===null?'unk':(fl?'con':'dis')): s>=4?(right?'con':'dis'):'';
+    const lab= tie?(p.kind==='tx'?'same party':p.kind==='ty'?'same ideology':'same both') : s===3?(fl===null?'coin flip':'coin '+(fl?'✓':'✗')) : s>=4?(right?'✓':'✗'):'';
     const b=document.createElement('span'); b.className='pc '+cls; b.textContent=`${p.a.id}–${p.b.id}${lab?' · '+lab:''}`;
     b.addEventListener('pointerenter',()=>{GS.hl=i;grender();}); b.addEventListener('pointerleave',()=>{GS.hl=null;grender();}); pl.appendChild(b); });
   // text
@@ -837,19 +840,23 @@ function grender(){
   const T=$('#gtext'); let h='';
   if(s===1) h=`<h4>1. Meet the voters</h4><p>Each letter is one voter: a column for party, a row for ideology. Lambda guessed each person's category. <b>Gamma guesses order</b>: take any two voters, and predict which is more conservative.</p>`;
   if(s===2) h=`<h4>2. Pair them up, set ties aside</h4><p>Six voters make <b>${c.n} pairs</b>, one line each. A pair in the <b>same party</b> (vertical line) gives X no clue; a pair with the <b>same ideology</b> (flat line) has no order to predict. Gamma sets those <b>${c.t} tied pairs</b> aside (dashed).</p><p>That leaves <b>${c.u} pairs</b> that differ on both: the solid lines.</p>`;
-  if(s===3) h=`<h4>3. Guess without knowing X</h4><p>Pick one of the ${c.u} pairs. Who is more conservative? Without knowing their party you have <b>no basis for a guess</b>: you may as well flip a coin.</p><p>A coin flip is wrong <b>half the time</b>, on average. So the errors without X are</p><div class="math">E₁ = ${c.u} pairs ÷ 2 = <b>${f2(E1)}</b></div>`;
+  if(s===3){ const fr=GS.fr||{n:0,w:0}, cur=GS.flip?GS.pairs.reduce((a,p,i)=>a+((p.kind==='con'||p.kind==='dis')&&GS.flip[i]===false?1:0),0):null;
+    h=`<h4>3. Guess without knowing X</h4><p>Without X, lambda guessed Y's most common category (and r², next, will guess Y's mean). Gamma predicts something different: <b>which of two people is more conservative</b>. Knowing how ideology is spread across all six voters can't tell you that about two particular people. You know they differ, but either order is equally likely, so the best you can do is <b>50/50: a coin flip</b>.</p><p>A coin flip is wrong <b>half the time</b>, on average. So the errors without X are</p><div class="math">E₁ = ${c.u} pairs ÷ 2 = <b>${f2(E1)}</b></div>
+      <p><button id="gflip" ${c.u?'':'disabled'}>Flip a coin for every pair</button></p>
+      <p style="font-size:14px">${cur===null?'Each flip picks one voter in the pair as the more conservative one. Try it a few times.':`This round: <b>${cur} of ${c.u}</b> coin guesses were wrong. Over ${fr.n} round${fr.n===1?'':'s'}, the average is <b>${(fr.w/fr.n).toFixed(1)}</b> wrong, close to E₁ = ${f2(E1)}.`}</p>`; }
   if(s===4) h=`<h4>4. Guess using X</h4><p>Now use party. The rule: <b>${rule}</b>. On the chart, that means lines that slope ${neg?'down':'up'} are right guesses.</p><p><b style="color:var(--s1-ink)">✓ ${neg?c.nd:c.ns} pairs</b> follow the rule (${neg?'discordant':'concordant'}). <b style="color:var(--miss-ink)">✗ ${E2} pairs</b> break it (${neg?'concordant':'discordant'}). So the errors with X are</p><div class="math">E₂ = <b>${E2}</b></div><p style="font-size:13.5px">Hover or tap a pair below to see its line.</p>`;
   if(s===5) h=`<h4>5. Do the math</h4><div class="math">γ = (E₁ − E₂) / E₁<br>&nbsp;&nbsp;= (${f2(E1)} − ${E2}) / ${f2(E1)} = <b>${c.u?Math.abs(g).toFixed(2):'—'}</b>${neg?' (negative relationship: γ = −'+Math.abs(g).toFixed(2)+')':''}<br><br>same as (concordant − discordant) / (concordant + discordant)<br>&nbsp;&nbsp;= (${c.ns} − ${c.nd}) / (${c.ns} + ${c.nd}) = <b>${c.u?(g<0?'−':'')+Math.abs(g).toFixed(2):'—'}</b></div>
     <p>${c.u===0?'Every pair is tied: there is nothing for gamma to predict.':`Knowing party cuts our errors in ordering pairs on ideology by <b>${Math.round(100*Math.abs(g))}%</b>, compared with flipping a coin.`}</p>
     <p style="font-size:13.5px">With all ${PIALL.n} NES respondents who gave both a party and an ideology, γ = ${PIALL.g.toFixed(2).replace(/^0/,'')}. ${PIALL.tiePct}% of their pairs are tied and set aside, which is why gamma often looks strong in small tables.</p>`;
   T.innerHTML=h;
+  const fb=document.getElementById('gflip'); if(fb) fb.addEventListener('click',()=>{ GS.flip=GS.pairs.map(()=>Math.random()<0.5); const w=GS.pairs.reduce((a,p,i)=>a+((p.kind==='con'||p.kind==='dis')&&!GS.flip[i]?1:0),0); GS.fr=GS.fr||{n:0,w:0}; GS.fr.n++; GS.fr.w+=w; grender(); });
   document.querySelectorAll('#gsteps button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.s===s)));
 }
 const PIALL=(()=>{const n=PI.length;const ct={};PI.forEach(([x,y])=>{const k=x+','+y;ct[k]=(ct[k]||0)+1;});let ns=0,nd=0;const keys=Object.keys(ct).map(k=>k.split(',').map(Number));
   for(const [x1,y1] of keys)for(const [x2,y2] of keys){const a=ct[x1+','+y1],b=ct[x2+','+y2];if(x2>x1&&y2>y1)ns+=a*b;if(x2>x1&&y2<y1)nd+=a*b;}
   const all=n*(n-1)/2;return {n,g:(ns-nd)/(ns+nd),tiePct:Math.round(100*(all-ns-nd)/all)};})();
 document.querySelectorAll('#gsteps button').forEach(b=>b.addEventListener('click',()=>{GS.step=+b.dataset.s;GS.hl=null;grender();}));
-$('#gdraw').addEventListener('click',()=>{gdrawRandom();GS.step=1;GS.hl=null;grender();});
+$('#gdraw').addEventListener('click',()=>{gdrawRandom();GS.flip=null;GS.fr=null;GS.step=1;GS.hl=null;grender();});
 gpreset(); setTimeout(grender,0); // draw after the shared SVG helpers below are defined
 if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;grender();}}).observe($('#gstage'));}
 
@@ -912,7 +919,7 @@ function gupdate(){
   const neg=k.gam<0, E1=(k.ns+k.nd)/2, E2=neg?k.ns:k.nd;
   const fmtM=v=>v>=1e6?(v/1e6).toFixed(2)+'M':fmt(v);
   preBars($('#gpre'),{e1:E1,e2:E2,fmtE:fmtM,symbol:'γ',value:dec3(k.gam),
-    e1Label:`<b>Without X:</b> guess which of two untied people ranks higher on Y by coin flip → wrong on half of ${fmtM(k.ns+k.nd)} pairs`,
+    e1Label:`<b>Without X:</b> no basis to say which of two people ranks higher on Y, so guess 50/50 → wrong on half of ${fmtM(k.ns+k.nd)} untied pairs`,
     e2Label:`<b>With X:</b> guess “${neg?'higher X, lower Y':'higher X, higher Y'}” → wrong on the ${fmtM(E2)} ${neg?'concordant':'discordant'} pairs`,
     says:`Following X cuts errors in ordering pairs on Y by <b>${(100*Math.abs(k.gam)).toFixed(0)}%</b>.${neg?' The relationship is negative.':''} ${(100*k.ties/k.allPairs).toFixed(0)}% of all pairs were tied and ignored.`});
   scaleCard($('#gscale'),GAMSC,k.gam,'γ');

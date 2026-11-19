@@ -114,6 +114,7 @@ figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75
 .outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
 
 .tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
 .mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
 
 /* Stata-style output */
@@ -161,7 +162,7 @@ body.formulas-open .drawer{transform:none}
 .drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .fx{border-top:1px solid var(--line);padding:12px 0}
 .fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
-.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .fx p{margin:0;font-size:14px;color:var(--ink-2)}
 .fxbtn{display:inline-flex;gap:6px;align-items:center}
 .fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
@@ -256,9 +257,14 @@ html{scroll-padding-top:58px}
 /* ---- p-value reminder ---- */
 .pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
 .pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:9px 14px;border-radius:7px;border:2px solid var(--amber)}
+.fljumpbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.fljumpbox p{margin:0;font-size:14.5px;color:var(--ink);max-width:75ch}
 /* ---- phone fit ---- */
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
 </style>
 </head>
 <body>
@@ -286,7 +292,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     <section style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:4px 0 0">
       <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)">Replication</p>
       <h2 style="margin:4px 0 6px;font-size:clamp(22px,3vw,28px);line-height:1.2">Partisans and Hillary Clinton</h2>
-      <p style="margin:0;color:var(--ink-2);max-width:78ch">Same data, same steps, same comparison. Only the DV changes: the 2004 NES feeling thermometer for Hillary Clinton. Her own party is now the Democrats.</p>
+      <p style="margin:0;color:var(--ink-2);max-width:78ch">The data and steps are identical; only the DV changes: the 2004 NES feeling thermometer for Hillary Clinton. Her own party is now the Democrats.</p>
     </section>
     <div id="inst-hillary" style="display:grid;gap:22px;margin-top:12px"></div>
   </div>
@@ -309,7 +315,9 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     </details>
   </section>
 
-  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. <a href="3-difference-in-means.html#pvalue">Full explainer in Module 3 →</a></p>
+  <section class="fljumpbox" aria-label="Extended worked example"><p>Next: the same analysis holding gender constant. Women and men differ in their partisanship, so the Dummy variables module redoes every step of this page with a female dummy added, ending with both parties and gender in one model.</p><p><a class="fljump" href="7-dummy-variables.html#firstlady">★ Worked example, extended: the First Lady, controlling for gender →</a></p></section>
+
+  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="3-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="3-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -518,7 +526,7 @@ function makeInstance(root,d){
         <p><b>The slopes differ in size.</b> The Republican line is steeper (${f3(H.rep.b)} vs. ${f3(H.dem.b)}), and so is the gap between the average and the full partisan: ${H.rep.gap.toFixed(2)} points versus ${Math.abs(H.dem.gap).toFixed(2)}.</p>
         <p>One reading is that something about liking the Republican Party has a bigger impact on feelings about First Ladies. A more plausible reading: <b>when the First Lady belongs to your party, how strong a partisan you are matters a great deal</b> for how you feel about her. When she belongs to the other party, strong partisanship lowers your opinion of her, but it matters less.</p>
         <p class="op">“Love is stronger than hate.”</p>
-        <p style="font-size:14px">The op-ed version. Aren't we nice as partisans! Treat it as a preliminary conclusion: two bivariate regressions, one election, one First Lady.</p>`;
+        <p style="font-size:14px">The op-ed version. Aren't we nice as partisans! Treat this as a preliminary conclusion, since it rests on two bivariate regressions from a single election and a single First Lady.</p>`;
     } else {
       q('concl').innerHTML=`<h3 style="margin:0">What the replication shows</h3>
         <p><b>Both lines are statistically significant</b> again: feelings toward both parties are related to feelings about Hillary Clinton.</p>

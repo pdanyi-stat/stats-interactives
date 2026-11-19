@@ -114,6 +114,7 @@ figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75
 .outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
 
 .tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
 .mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
 
 /* Stata-style output */
@@ -161,7 +162,7 @@ body.formulas-open .drawer{transform:none}
 .drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .fx{border-top:1px solid var(--line);padding:12px 0}
 .fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
-.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .fx p{margin:0;font-size:14px;color:var(--ink-2)}
 .fxbtn{display:inline-flex;gap:6px;align-items:center}
 .fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
@@ -278,6 +279,7 @@ html{scroll-padding-top:58px}
 /* ---- phone fit ---- */
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
 </style>
 </head>
 <body>
@@ -337,7 +339,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <section class="part" aria-labelledby="bh">
     <p class="kick">Part 2 · Dummy plus a continuous IV</p>
     <h2 id="bh">A dummy shifts the line up or down: parallel lines</h2>
-    <p class="lede">Add metro share as a second IV. Plug in south = 0 and you get the non-South line; plug in south = 1 and the same line moves up or down by the South coefficient. Same slope, different intercepts. The model assumes the regional gap is the same at every metro share, which is why the two lines are parallel.</p>
+    <p class="lede">Add metro share as a second IV. Plug in south = 0 and you get the non-South line; plug in south = 1 and the same line moves up or down by the South coefficient. The lines share a slope but have different intercepts. The model assumes the regional gap is the same at every metro share, which is why the two lines are parallel.</p>
   </section>
   <figure>
     <div class="row" style="justify-content:flex-end;margin-bottom:4px"><button class="linkish fxbtn" data-open-formulas><i>Σ</i> Formulas</button></div>
@@ -368,7 +370,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <!-- ============ C ============ -->
   <section class="part" aria-labelledby="ch">
     <p class="kick">Part 3 · More than two categories</p>
-    <h2 id="ch">Four regions, three dummies, one reference group</h2>
+    <h2 id="ch">More than two categories: one dummy per region, minus a reference</h2>
     <p class="lede">A variable with k categories gets k − 1 dummies. The category left out is the reference: the constant is its mean, and every coefficient is a gap from it. Change the reference and the coefficients change, but the predictions don't.</p>
   </section>
   <figure>
@@ -391,7 +393,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <section class="amberbox" id="firstlady" aria-labelledby="flH">
     <span class="tag">Worked example, extended</span>
     <h2 id="flH">The First Lady, controlling for gender</h2>
-    <p>Might gender matter? A First Lady holds a gendered public role, and women and men differ in their partisanship: women have leaned more Democratic than men since the 1980s, and they still do.<sup>1</sup> <span id="flShare"></span> So take the worked example's regressions and add one dummy, <b>female</b> (1 = woman, 0 = man). Everything else is the same: same data, same steps, same questions.</p>
+    <p>Might gender matter? A First Lady holds a gendered public role, and women and men differ in their partisanship: women have leaned more Democratic than men since the 1980s, and they still do.<sup>1</sup> <span id="flShare"></span> So we redo the worked example, step by step, with one added dummy, <b>female</b> (1 = woman, 0 = man). The data and steps are otherwise identical to the worked example.</p>
     <details class="flx" id="flDetails">
       <summary>Open the replication: Laura Bush and Hillary Clinton</summary>
       <div class="flin">
@@ -400,12 +402,11 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
           <div class="seg" role="radiogroup" aria-label="Party thermometer" id="flK"></div>
           <a class="flback" id="flBack" href="5b-partisans-and-the-first-lady.html#inst-laura">↩ Refresh: the original analysis</a>
         </div>
-        <div class="terms" id="flTerms"></div>
-        <div class="flcalc" id="flLines"></div>
-        <div class="row"><span style="font-size:13px;color:var(--ink-2)">Step</span><div class="seg" role="radiogroup" aria-label="Step" id="flV"></div></div>
+        <div class="btns" id="flSteps" role="group" aria-label="Steps"></div>
+        <div id="flEq"><div class="terms" id="flTerms"></div><div class="flcalc" id="flLines"></div></div>
         <div class="flgrid">
           <div>
-            <div class="flkey"><span><i style="border-color:var(--s2)"></i>women (female = 1)</span><span><i style="border-color:var(--ink);border-top-style:dashed"></i>men (female = 0)</span><span><i style="border-color:var(--muted);border-top-style:dotted"></i>worked example, no gender control</span></div>
+            <div class="flkey" id="flKey"></div>
             <div class="chart" id="flChart"></div>
           </div>
           <div class="box" id="flPanel"></div>
@@ -416,7 +417,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
     <p class="fn" style="margin:10px 0 0"><sup>1</sup> Center for American Women and Politics, “Gender Gaps in Vote Choice and Party Identification,” <a href="https://cawp.rutgers.edu/data-voters">cawp.rutgers.edu/data-voters</a>; Pew Research Center, “Changing Partisan Coalitions in a Politically Divided Nation,” April 9, 2024 (among registered voters, 52% of men identify with or lean toward the Republican Party, 46% toward the Democratic Party).</p>
   </section>
 
-  <p class="pnote"><b>Reading p for a coefficient:</b> H₀ says the coefficient is 0. p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. <a href="3-difference-in-means.html#pvalue">Full explainer in Module 3 →</a></p>
+  <p class="pnote"><b>Reading p for a coefficient:</b> H₀ says the coefficient is 0. p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="3-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="3-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -464,11 +465,11 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="fxTitle" aria-hidden="true">
   <div class="top"><h2 id="fxTitle">Formulas</h2><button id="closeFx">Close</button></div>
   <div class="fx"><h3>One dummy</h3>
-    <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mi>D</mi><mo>+</mo><mtext>constant</mtext><mspace width="1em"/><mtext>constant</mtext><mo>=</mo><msub><mover><mi>y</mi><mo>‾</mo></mover><mrow><mi>D</mi><mo>=</mo><mn>0</mn></mrow></msub><mo>,</mo><mspace width=".5em"/><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><msub><mover><mi>y</mi><mo>‾</mo></mover><mrow><mi>D</mi><mo>=</mo><mn>1</mn></mrow></msub><mo>−</mo><msub><mover><mi>y</mi><mo>‾</mo></mover><mrow><mi>D</mi><mo>=</mo><mn>0</mn></mrow></msub></math>
+    <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mi>D</mi><mo>+</mo><mtext>constant</mtext></math><math display="block"><mtext>constant</mtext><mo>=</mo><msub><mover><mi>y</mi><mo>‾</mo></mover><mrow><mi>D</mi><mo>=</mo><mn>0</mn></mrow></msub><mo>,</mo><mspace width=".5em"/><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><msub><mover><mi>y</mi><mo>‾</mo></mover><mrow><mi>D</mi><mo>=</mo><mn>1</mn></mrow></msub><mo>−</mo><msub><mover><mi>y</mi><mo>‾</mo></mover><mrow><mi>D</mi><mo>=</mo><mn>0</mn></mrow></msub></math>
     <p>Its t test is the equal-variance two-sample t test.</p></div>
   <div class="fx"><h3>Dummy plus a continuous IV (parallel lines)</h3>
     <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mi>X</mi><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><mi>D</mi><mo>+</mo><mtext>constant</mtext></math>
-    <p>D = 0: ŷ = β₁X + constant. D = 1: ŷ = β₁X + (constant + β₂). Same slope, intercept shifted by β₂. β₂ is the gap between groups holding X constant; the model assumes that gap is the same at every value of X.</p></div>
+    <p>D = 0: ŷ = β₁X + constant. D = 1: ŷ = β₁X + (constant + β₂). The slope stays the same, and the intercept shifts by β₂. β₂ is the gap between groups holding X constant; the model assumes that gap is the same at every value of X.</p></div>
   <div class="fx"><h3>k categories</h3>
     <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>D</mi><mn>1</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>β</mi><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><msub><mi>D</mi><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mtext>constant</mtext></math>
     <p>constant = mean of the reference category; β<sub>j</sub> = mean of category j − reference mean. In Stata, <code>i.region</code> builds the dummies and <code>ib2.region</code> makes level 2 the reference.</p></div>
@@ -716,89 +717,114 @@ document.addEventListener('pointerdown',e=>{if(!(e.target instanceof SVGElement)
 
 /* ============ First Lady, controlling for gender ============ */
 const FL=JSON.parse(document.getElementById('fldata').textContent);
-const FLN={laura:'Laura Bush',hillary:'Hillary Clinton'}, FLV={laura:'laura_bush_therm',hillary:'hillary_therm'}, PTY={dem:{label:'Democratic Party',adj:'Democratic',v:'dem_therm'},rep:{label:'Republican Party',adj:'Republican',v:'rep_therm'}};
-const fl={d:'laura',k:'dem',view:'lines',pick:'mean',custom:50,sex:1};
-const qvar=n=>['--q1','--q2','--q3','--q4','--q5','--q6'].map(css);
+const FLN={laura:'Laura Bush',hillary:'Hillary Clinton'}, FLV={laura:'laura_bush_therm',hillary:'hillary_therm'}, PTY={dem:{label:'Democratic Party',adj:'Democratic',v:'dem_therm',pl:'Democrats'},rep:{label:'Republican Party',adj:'Republican',v:'rep_therm',pl:'Republicans'}};
+const OWN={laura:'rep',hillary:'dem'};
+const FSTEPS=[['look','1 Look at the data'],['bin','2 Bin the dots'],['lines','3 Add the lines'],['predict','4 Predict'],['gap','5 The gap'],['compare','6 Compare the parties'],['both','7 Both parties, one model']];
+const fl={d:'laura',k:'dem',view:'look',pick:'mean',custom:50,sex:1};
+const qvar=()=>['--q1','--q2','--q3','--q4','--q5','--q6'].map(css);
 function flRamp(t){const s=qvar();const u=Math.max(0,Math.min(1,t))*5,k=Math.min(4,Math.floor(u)),f=u-k;const h=c=>parseInt(c.replace('#',''),16);const A=h(s[k]),B=h(s[k+1]);const c=sh=>Math.round(((A>>sh)&255)*(1-f)+((B>>sh)&255)*f);return `rgb(${c(16)},${c(8)},${c(0)})`;}
 const abbr=v=>v.length>12?v.slice(0,10)+'~'+v.slice(-1):v;
-function flData(){const x=[],y=[],g=[];for(let i=0;i<FL.dem.length;i++){const xv=FL[fl.k][i],yv=FL[fl.d][i];if(xv==null||yv==null)continue;x.push(xv);y.push(yv);g.push(FL.female[i]);}return {x,y,g};}
+const r3=v=>+v.toFixed(3), s3=v=>(v<0?'−':'')+Math.abs(v).toFixed(3), s2=v=>(v<0?'−':'+')+Math.abs(v).toFixed(2);
+const prd=p=>p<0.001?'fewer than 1 time in 1,000':p<0.01?'about '+Math.round(p*1000)+' times in 1,000':'about '+(p*100).toFixed(1).replace(/\.0$/,'')+' times in 100';
+const pvs=p=>p<0.0005?'&lt; .001':'= '+p.toFixed(3).replace(/^0/,'');
+function flRows(d,k){const x=[],y=[],g=[];for(let i=0;i<FL.dem.length;i++){const xv=FL[k][i],yv=FL[d][i];if(xv==null||yv==null)continue;x.push(xv);y.push(yv);g.push(FL.female[i]);}return {x,y,g};}
+function flFit(d,k){const {x,y,g}=flRows(d,k),f=ols([x,g],y),f0=ols([x],y);const b1=r3(f.b[0]),b2=r3(f.b[1]),c=r3(f.b[2]),mx=+mean(x).toFixed(2),b0=r3(f0.b[0]),a0=r3(f0.b[1]);
+  return {x,y,g,f,f0,b1,b2,c,mx,b0,a0,gapC:b1*(100-mx),gap0:b0*(100-mx)};}
+function flBoth(d){const x1=[],x2=[],g=[],y=[];for(let i=0;i<FL.dem.length;i++){const a=FL.dem[i],b=FL.rep[i],v=FL[d][i];if(a==null||b==null||v==null)continue;x1.push(a);x2.push(b);g.push(FL.female[i]);y.push(v);}return {f:ols([x1,x2,g],y),n:y.length,m1:mean(x1),m2:mean(x2)};}
+function stataL(f,cmd,names,marks){const L=anova(f,cmd);const hi=L.findIndex(l=>l.includes('trump_pct |'));if(hi>=0)L[hi]=pad(abbr(FLV[fl.d]),12)+L[hi].slice(12);names.forEach((n,j)=>L.push(crow(abbr(n),f,j,marks[j]||'',marks[j]==='d')));L.push(crow('_cons',f,names.length,''),'-'.repeat(78));return L.join('\n');}
 function renderFL(){
-  const {x,y,g}=flData(), f=ols([x,g],y), f0=ols([x],y), b1=+f.b[0].toFixed(3), b2=+f.b[1].toFixed(3), c=+f.b[2].toFixed(3), mx=+mean(x).toFixed(2), f0b=+f0.b[0].toFixed(3), P=PTY[fl.k], nm=FLN[fl.d], s3=v=>(v<0?'−':'')+Math.abs(v).toFixed(3);
+  const nm=FLN[fl.d], P=PTY[fl.k], F=flFit(fl.d,fl.k), {x,y,g,f,f0,b1,b2,c,mx}=F, v=fl.view;
   { let w=0,wn=0,mm=0,mn=0;for(let i=0;i<FL.dem.length;i++){const d=FL.dem[i],r=FL.rep[i];if(d==null||r==null)continue;if(FL.female[i]){wn++;if(d>r)w++;}else{mn++;if(d>r)mm++;}}
     document.getElementById('flShare').textContent=`Among these 2004 NES respondents, ${Math.round(100*w/wn)}% of women rated the Democratic Party warmer than the Republican Party, compared with ${Math.round(100*mm/mn)}% of men.`; }
   const back=document.getElementById('flBack'); back.href='5b-partisans-and-the-first-lady.html#'+(fl.d==='laura'?'inst-laura':'hillary'); back.textContent=`↩ Refresh: the original ${nm} analysis`;
-  const A=v=>Math.abs(v).toFixed(3);
-  const term=(t,cls,n)=>`<div class="term"><span class="t ${cls}">${t}</span>${n?`<span class="n">${n}</span>`:''}</div>`,op=s=>`<div class="term"><span class="t op">${s}</span></div>`;
-  document.getElementById('flTerms').innerHTML=term(`Predicted rating of ${nm}`,'v','ŷ · DV')+op('=')+term(s3(b1),'b1','β₁')+op('×')+term(`feelings toward the ${P.label}`,'v','X₁ · IV')+op(b2<0?'−':'+')+term(A(b2),'d','β₂')+op('×')+term('female','v','X₂ · dummy, 0 or 1')+op(c<0?'−':'+')+term(A(c),'','constant');
-  document.getElementById('flLines').innerHTML=`<span style="color:var(--ink-2)">Men (female = 0):</span> ŷ = ${s3(b1)}x ${c<0?'−':'+'} ${A(c)}<br><span style="color:var(--s2-ink)">Women (female = 1):</span> ŷ = ${s3(b1)}x ${(c+b2)<0?'−':'+'} ${A(c+b2)} <span style="color:var(--muted)">(the constant plus ${A(b2)})</span>`;
+  const sb=document.getElementById('flSteps'); sb.innerHTML=''; FSTEPS.forEach(([k,l])=>{const b=document.createElement('button');b.textContent=l;b.setAttribute('aria-pressed',String(k===v));b.addEventListener('click',()=>{fl.view=k;renderFL();});sb.appendChild(b);});
+  // equation
+  const showEq=['lines','predict','gap'].includes(v); document.getElementById('flEq').style.display=showEq?'':'none';
+  const A=v2=>Math.abs(v2).toFixed(3);
+  const term=(t,cls,n)=>`<div class="term"><span class="t ${cls}">${t}</span>${n?`<span class="n">${n}</span>`:''}</div>`,op=t=>`<div class="term"><span class="t op">${t}</span></div>`;
+  if(showEq){document.getElementById('flTerms').innerHTML=term(`Predicted rating of ${nm}`,'v','ŷ · DV')+op('=')+term(s3(b1),'b1','β₁')+op('×')+term(`feelings toward the ${P.label}`,'v','X₁ · IV')+op(b2<0?'−':'+')+term(A(b2),'d','β₂')+op('×')+term('female','v','X₂ · dummy, 0 or 1')+op(c<0?'−':'+')+term(A(c),'','constant');
+    document.getElementById('flLines').innerHTML=`<span style="color:var(--ink-2)">Men (female = 0):</span> ŷ = ${s3(b1)}x ${c<0?'−':'+'} ${A(c)}<br><span style="color:var(--s2-ink)">Women (female = 1):</span> ŷ = ${s3(b1)}x ${(c+b2)<0?'−':'+'} ${A(c+b2)} <span style="color:var(--muted)">(the constant plus ${A(b2)})</span>`;}
   // chart
   const box=document.getElementById('flChart'); box.innerHTML='';
   const W=Math.max(280,box.clientWidth), H=Math.round(Math.min(460,Math.max(280,W*(W<520?1.0:0.78)))), m={l:44,r:14,t:26,b:44};
-  const xs=v=>m.l+(v+2.5)/105*(W-m.l-m.r), ys=v=>H-m.b-(v+2.5)/105*(H-m.t-m.b);
-  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`${nm} thermometer by ${P.label} thermometer, separate lines for women and men`},box);
+  const xs=v2=>m.l+(v2+2.5)/105*(W-m.l-m.r), ys=v2=>H-m.b-(v2+2.5)/105*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`${nm} thermometer by ${P.label} thermometer`},box);
   const gt=el('g',{class:'tick'},svg);
   for(let t=0;t<=100;t+=25){el('line',{x1:m.l,x2:W-m.r,y1:ys(t),y2:ys(t),stroke:css('--grid')},gt);const a=el('text',{x:m.l-7,y:ys(t)+4,'text-anchor':'end'},gt);a.textContent=t;const b=el('text',{x:xs(t),y:H-m.b+17,'text-anchor':'middle'},gt);b.textContent=t;}
   el('line',{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:css('--axis')},svg);
   const xl=el('text',{x:W-m.r,y:H-6,'text-anchor':'end',class:'axlab'},svg);xl.textContent=`Feelings toward the ${P.label} (X) →`;
-  const yl=el('text',{x:4,y:11,class:'axlab'},svg);yl.textContent=`↑ Feelings toward ${nm} (Y)`;
-  const Bn=new Map();for(let i=0;i<x.length;i++){const k=Math.round(x[i]/5)*5+','+Math.round(y[i]/5)*5;Bn.set(k,(Bn.get(k)||0)+1);}let mxc=1;Bn.forEach(v=>{if(v>mxc)mxc=v;});
-  const cw=(W-m.l-m.r)*5/105, ch=(H-m.t-m.b)*5/105, bg=el('g',{},svg);
-  for(const [k,cn] of Bn){const [bx,by]=k.split(',').map(Number);const r=el('rect',{x:xs(bx)-cw/2+0.5,y:ys(by)-ch/2+0.5,width:cw-1,height:ch-1,rx:1.5,fill:flRamp(Math.sqrt(cn/mxc))},bg);bindTip(r,()=>`X ≈ ${bx}, Y ≈ ${by}<br><b>${cn} respondent${cn>1?'s':''}</b>`);}
+  const yl=el('text',{x:4,y:12,class:'axlab'},svg);yl.textContent=`↑ Feelings toward ${nm} (Y)`;
   const halo='paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round';
-  el('line',{x1:xs(0),x2:xs(100),y1:ys(f0.b[1]),y2:ys(f0.b[1]+f0.b[0]*100),stroke:css('--muted'),'stroke-width':2,'stroke-dasharray':'2 4'},svg);
-  el('line',{x1:xs(0),x2:xs(100),y1:ys(c),y2:ys(c+b1*100),stroke:css('--ink'),'stroke-width':2.5,'stroke-dasharray':'7 5'},svg);
-  el('line',{x1:xs(0),x2:xs(100),y1:ys(c+b2),y2:ys(c+b2+b1*100),stroke:css('--s2'),'stroke-width':3},svg);
-  const refs=(xv,yv,col)=>{el('line',{x1:xs(xv),x2:xs(xv),y1:H-m.b,y2:ys(yv),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);el('line',{x1:m.l,x2:xs(xv),y1:ys(yv),y2:ys(yv),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);el('circle',{cx:xs(xv),cy:ys(yv),r:6,fill:col,stroke:css('--surface'),'stroke-width':2},svg);};
-  const lvl=sx=>c+b2*sx, pred=(xv,sx)=>lvl(sx)+b1*xv, colOf=sx=>sx?css('--s2'):css('--ink');
-  const pickX=()=>fl.pick==='mean'?+mx.toFixed(2):fl.pick==='max'?100:fl.pick==='min'?0:fl.custom;
   const T=(xx,yy,t,col,anc)=>{const e=el('text',{x:xx,y:yy,'text-anchor':anc||'start',class:'mlab',fill:col,style:halo},svg);e.textContent=t;};
-  if(fl.view==='lines'){
-    const xm=Math.min(90,Math.max(10,mx));
-    el('line',{x1:xs(xm),x2:xs(xm),y1:ys(pred(xm,0)),y2:ys(pred(xm,1)),stroke:css('--s2-ink'),'stroke-width':2.5},svg);
-    T(xs(xm)+8,(ys(pred(xm,0))+ys(pred(xm,1)))/2+4,`gap = β₂ = ${b2>=0?'+':'−'}${Math.abs(b2).toFixed(2)}`,css('--s2-ink'));
-  } else if(fl.view==='predict'){ const xv=pickX(), yv=pred(xv,fl.sex); refs(xv,yv,colOf(fl.sex)); T(m.l+5,ys(yv)-7,`ŷ = ${yv.toFixed(2)}`,css('--ink')); }
-  else { const sx=fl.sex, y1=pred(mx,sx), y2=pred(100,sx); refs(mx,y1,colOf(sx)); refs(100,y2,colOf(sx));
+  if(v==='look'){ const seen=new Map(); x.forEach((xv,i)=>{const kk=xv+','+y[i];seen.set(kk,(seen.get(kk)||0)+1);});
+    for(const [kk,cn] of seen){const [a,b]=kk.split(',').map(Number);const ci=el('circle',{cx:xs(a),cy:ys(b),r:3.6,fill:css('--s1')},svg);bindTip(ci,()=>`X = ${a}, Y = ${b}<br><b>${cn} respondent${cn>1?'s':''}</b> on this one dot`);} }
+  else { const Bn=new Map();for(let i=0;i<x.length;i++){const k=Math.round(x[i]/5)*5+','+Math.round(y[i]/5)*5;Bn.set(k,(Bn.get(k)||0)+1);}let mxc=1;Bn.forEach(q=>{if(q>mxc)mxc=q;});
+    const cw=(W-m.l-m.r)*5/105, ch=(H-m.t-m.b)*5/105, bg=el('g',{},svg);
+    for(const [k,cn] of Bn){const [bx,by]=k.split(',').map(Number);const r=el('rect',{x:xs(bx)-cw/2+0.5,y:ys(by)-ch/2+0.5,width:cw-1,height:ch-1,rx:1.5,fill:flRamp(Math.sqrt(cn/mxc))},bg);bindTip(r,()=>`X ≈ ${bx}, Y ≈ ${by}<br><b>${cn} respondent${cn>1?'s':''}</b>`);} }
+  let LB=b1, LC=c, LF=b2;
+  if(v==='both'){ const B=flBoth(fl.d), fb=B.f, ki=fl.k==='dem'?0:1, oi=1-ki, om=fl.k==='dem'?B.m2:B.m1; LB=fb.b[ki]; LF=fb.b[2]; LC=fb.b[3]+fb.b[oi]*om; }
+  const lineOn=!['look','bin'].includes(v);
+  if(lineOn){
+    if(v!=='both') el('line',{x1:xs(0),x2:xs(100),y1:ys(F.a0),y2:ys(F.a0+F.b0*100),stroke:css('--muted'),'stroke-width':2,'stroke-dasharray':'2 4'},svg);
+    el('line',{x1:xs(0),x2:xs(100),y1:ys(LC),y2:ys(LC+LB*100),stroke:css('--ink'),'stroke-width':2.5,'stroke-dasharray':'7 5'},svg);
+    el('line',{x1:xs(0),x2:xs(100),y1:ys(LC+LF),y2:ys(LC+LF+LB*100),stroke:css('--s2'),'stroke-width':3},svg); }
+  const lvl=sx=>c+b2*sx, pred=(xv,sx)=>lvl(sx)+b1*xv, colOf=sx=>sx?css('--s2'):css('--ink');
+  const refs=(xv,yv,col)=>{el('line',{x1:xs(xv),x2:xs(xv),y1:H-m.b,y2:ys(yv),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);el('line',{x1:m.l,x2:xs(xv),y1:ys(yv),y2:ys(yv),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);el('circle',{cx:xs(xv),cy:ys(yv),r:6,fill:col,stroke:css('--surface'),'stroke-width':2},svg);};
+  const pickX=()=>fl.pick==='mean'?mx:fl.pick==='max'?100:fl.pick==='min'?0:fl.custom;
+  if(v==='lines'){ const xm=Math.min(90,Math.max(10,mx)); el('line',{x1:xs(xm),x2:xs(xm),y1:ys(pred(xm,0)),y2:ys(pred(xm,1)),stroke:css('--s2-ink'),'stroke-width':2.5},svg); T(xs(xm)+8,(ys(pred(xm,0))+ys(pred(xm,1)))/2+4,`gap = β₂ = ${s2(b2)}`,css('--s2-ink')); }
+  if(v==='predict'){ const xv=pickX(), yv=pred(xv,fl.sex); refs(xv,yv,colOf(fl.sex)); T(m.l+5,ys(yv)-7,`ŷ = ${yv.toFixed(2)}`,css('--ink')); }
+  if(v==='gap'){ const sx=fl.sex, y1=pred(mx,sx), y2=pred(100,sx); refs(mx,y1,colOf(sx)); refs(100,y2,colOf(sx));
     el('path',{d:`M${xs(mx)},${ys(y1)}L${xs(100)},${ys(y1)}L${xs(100)},${ys(y2)}Z`,fill:css('--s2'),'fill-opacity':.18},svg);
     el('line',{x1:xs(100),x2:xs(100),y1:ys(y1),y2:ys(y2),stroke:css('--s2'),'stroke-width':4},svg);
-    T(xs(100)-8,(ys(y1)+ys(y2))/2+4,`gap = ${y2>y1?'+':'−'}${Math.abs(y2-y1).toFixed(2)}`,css('--s2-ink'),'end'); }
+    T(xs(100)-8,(ys(y1)+ys(y2))/2+4,`gap = ${s2(y2-y1)}`,css('--s2-ink'),'end'); }
+  const kw=`<span><i style="border-color:var(--s2)"></i>women (female = 1)</span><span><i style="border-color:var(--ink);border-top-style:dashed"></i>men (female = 0)</span>`;
+  document.getElementById('flKey').innerHTML= v==='look'?`<span><i style="border-color:var(--s1);border-top-width:8px;width:8px;border-radius:50%"></i>one or more respondents</span>`
+    : v==='bin'?`<span>darker cells = more respondents</span>` : kw+(v==='both'?`<span>lines hold the other party at its average</span>`:`<span><i style="border-color:var(--muted);border-top-style:dotted"></i>worked example, no gender control</span>`);
   // panel
-  const pr=p=>p<0.001?'fewer than 1 time in 1,000':p<0.01?'about '+Math.round(p*1000)+' times in 1,000':'about '+(p*100).toFixed(1).replace(/\.0$/,'')+' times in 100';
-  const pv=p=>p<0.0005?'&lt; .001':'= '+p.toFixed(3).replace(/^0/,'');
-  const who=sx=>sx?'women':'men', gapC=b1*(100-mx), gap0=f0b*(100-mx);
-  let h='';
-  if(fl.view==='lines'){
-    h=`<h4>1. Two parallel lines</h4><p class="say" style="margin:0">Holding feelings toward the ${P.label} constant, women rate ${nm} <b>${Math.abs(b2).toFixed(2)} points ${b2>=0?'warmer':'cooler'}</b> than men (p ${pv(f.p[1])}). If gender made no difference (H₀: β₂ = 0), a gap this large or larger would turn up ${pr(f.p[1])}, so we <b>${f.p[1]<0.05?'reject H₀':'fail to reject H₀'}</b>.</p>
-      <p class="say">The party slope barely moves: <b>${s3(f0b)}</b> in the worked example, <b>${s3(b1)}</b> holding gender constant. Gender shifts the whole line up or down, but it doesn't explain away the partisan pattern.</p>`;
-  } else if(fl.view==='predict'){
-    const xv=pickX(), yv=pred(xv,fl.sex);
-    h=`<h4>2. Predict a value</h4><div class="row" style="gap:8px 12px"><select id="flPick" aria-label="X value"><option value="mean">the average (${mx.toFixed(2)})</option><option value="max">the most extreme (100)</option><option value="min">the coldest (0)</option><option value="custom">a value I choose</option></select><div class="seg" role="radiogroup" aria-label="Gender" id="flSex"></div></div>
+  const N=x.length, pw=Math.round(100*mean(g)), who=sx=>sx?'women':'men';
+  let h='', stata='';
+  const nav=`<div class="row" style="margin-top:10px;gap:8px">${FSTEPS.findIndex(z=>z[0]===v)>0?'<button id="flPrev">← Back</button>':''}${FSTEPS.findIndex(z=>z[0]===v)<FSTEPS.length-1?'<button class="primary" id="flNext">Next step →</button>':''}</div>`;
+  if(v==='look') h=`<h4>1. Always look at your data</h4><p class="say" style="margin:0">The same ${N.toLocaleString('en-US')} respondents as the worked example, and now we also know each one's gender: ${pw}% are women. As before, thermometer answers bunch at round numbers, so one dot can hide dozens of people.</p>`;
+  if(v==='bin') h=`<h4>2. Bin the dots</h4><p class="say" style="margin:0">Group nearby answers into bins and shade each bin by how many respondents fall in it: darker means more people. Gender doesn't change the dots. It changes the line we fit through them, which is the next step.</p>`;
+  if(v==='lines') h=`<h4>3. Add the regression lines</h4><p class="say" style="margin:0">With a female dummy in the model, there are two lines with the same slope, one for women and one for men. Holding feelings toward the ${P.label} constant, women rate ${nm} <b>${Math.abs(b2).toFixed(2)} points ${b2>=0?'warmer':'cooler'}</b> than men (p ${pvs(f.p[1])}). If gender made no difference (H₀: β₂ = 0), a gap this large or larger would turn up ${prd(f.p[1])}, so we <b>${f.p[1]<0.05?'reject H₀':'fail to reject H₀'}</b>.</p><p class="say">The party slope barely moves: <b>${s3(F.b0)}</b> in the worked example, <b>${s3(b1)}</b> holding gender constant.</p>`;
+  if(v==='predict'){ const xv=pickX(), yv=pred(xv,fl.sex);
+    h=`<h4>4. Predict a value</h4><div class="row" style="gap:8px 12px"><select id="flPick" aria-label="X value"><option value="mean">the average (${mx.toFixed(2)})</option><option value="max">the most extreme (100)</option><option value="min">the coldest (0)</option><option value="custom">a value I choose</option></select><div class="seg" role="radiogroup" aria-label="Gender" id="flSex"></div></div>
       <div class="row" ${fl.pick==='custom'?'':'hidden'} style="margin-top:6px"><input type="number" id="flCx" min="0" max="100" step="1" value="${fl.custom}" aria-label="X value"><input type="range" id="flCxr" min="0" max="100" step="1" value="${fl.custom}" aria-label="X value slider"></div>
       <div class="flcalc" style="margin-top:6px">ŷ = ${s3(b1)} × ${xv} <span class="${fl.sex?'':'off'}">${b2<0?'−':'+'} ${A(b2)} × ${fl.sex}</span> ${c<0?'−':'+'} ${A(c)} = <b>${yv.toFixed(2)}</b></div>
-      <p class="say">${fl.sex?'A woman':'A man'} who rates the ${P.label} at ${xv} is predicted to rate ${nm} at <b>${yv.toFixed(2)}</b>.${fl.sex?'':' female = 0 switches the gender term off (struck through).'}</p>`;
-  } else {
-    h=`<h4>3. The average partisan vs. the full partisan</h4><div class="row"><div class="seg" role="radiogroup" aria-label="Gender" id="flSex"></div></div>
-      <div class="flcalc" style="margin-top:6px">average: ŷ at ${mx.toFixed(2)} = ${pred(mx,fl.sex).toFixed(2)}<br>extreme: ŷ at 100 = ${pred(100,fl.sex).toFixed(2)}<br>gap: ${s3(b1)} × (100 − ${mx.toFixed(2)}) = <b>${gapC>=0?'+':'−'}${Math.abs(gapC).toFixed(2)}</b></div>
-      <p class="say">Holding gender constant, the full ${P.adj} partisan rates ${nm} <b>${Math.abs(gapC).toFixed(2)} points ${gapC>=0?'higher':'lower'}</b> than the average partisan. Because the lines are parallel, the gap is the same for ${who(fl.sex)} and ${who(1-fl.sex)}. In the worked example, without gender, it was ${gap0>=0?'+':'−'}${Math.abs(gap0).toFixed(2)}.</p>`;
-  }
-  const P0=document.getElementById('flPanel'); P0.innerHTML=h;
+      <p class="say">${fl.sex?'A woman':'A man'} who rates the ${P.label} at ${xv} is predicted to rate ${nm} at <b>${yv.toFixed(2)}</b>.${fl.sex?'':' Setting female = 0 switches the gender term off (struck through).'}</p>`; }
+  if(v==='gap') h=`<h4>5. The average partisan vs. the full partisan</h4><div class="row"><div class="seg" role="radiogroup" aria-label="Gender" id="flSex"></div></div>
+      <div class="flcalc" style="margin-top:6px">average: ŷ at ${mx.toFixed(2)} = ${pred(mx,fl.sex).toFixed(2)}<br>extreme: ŷ at 100 = ${pred(100,fl.sex).toFixed(2)}<br>gap: ${s3(b1)} × (100 − ${mx.toFixed(2)}) = <b>${s2(F.gapC)}</b></div>
+      <p class="say">Holding gender constant, the full ${P.adj} partisan rates ${nm} <b>${Math.abs(F.gapC).toFixed(2)} points ${F.gapC>=0?'higher':'lower'}</b> than the average partisan. Because the lines are parallel, the gap is the same for ${who(fl.sex)} and ${who(1-fl.sex)}. In the worked example, without gender, it was ${s2(F.gap0)}.</p>`;
+  if(v==='compare'){ const D=flFit(fl.d,'dem'), R=flFit(fl.d,'rep'), own=OWN[fl.d], O=own==='rep'?R:D, X=own==='rep'?D:R, mxg=Math.max(Math.abs(D.gapC),Math.abs(R.gapC));
+    h=`<h4>6. Compare the parties, holding gender constant</h4><div class="tblwrap"><table class="ct"><tr><th></th><th>Democratic Party</th><th>Republican Party</th></tr>
+      <tr><td>Party slope</td><td>${s3(D.b1)}</td><td>${s3(R.b1)}</td></tr><tr><td>female</td><td>${s3(D.b2)} (p ${pvs(D.f.p[1])})</td><td>${s3(R.b2)} (p ${pvs(R.f.p[1])})</td></tr>
+      <tr><td>Gap, average → 100</td><td><b>${s2(D.gapC)}</b></td><td><b>${s2(R.gapC)}</b></td></tr><tr><td class="mut">Worked example gap</td><td class="mut">${s2(D.gap0)}</td><td class="mut">${s2(R.gap0)}</td></tr></table></div>
+      <div style="display:grid;gap:6px;margin-top:10px">${[['dem',D],['rep',R]].map(([k,Z])=>`<div><div style="display:flex;justify-content:space-between;font-size:13.5px"><span>Strong ${PTY[k].pl} like her ${Z.gapC>0?'more':'less'} by</span><b>${Math.abs(Z.gapC).toFixed(2)} points</b></div><div style="height:10px;background:var(--grid);border-radius:4px"><div style="height:10px;border-radius:4px;width:${100*Math.abs(Z.gapC)/mxg}%;background:${k===fl.k?'var(--s2)':'var(--axis)'}"></div></div></div>`).join('')}</div>
+      <p class="say">The worked example's conclusion holds with gender held constant: the gap is larger for her own party (${PTY[own].adj}, ${Math.abs(O.gapC).toFixed(2)} points) than for the other (${Math.abs(X.gapC).toFixed(2)}). Gender adds a separate, smaller shift: women rate ${nm} ${Math.min(D.b2,R.b2).toFixed(1)}–${Math.max(D.b2,R.b2).toFixed(1)} points warmer than men at the same party feeling.</p>`; }
+  if(v==='both'){ const B=flBoth(fl.d), fb=B.f;
+    h=`<h4>7. Both parties and gender in one model</h4><div class="flcalc">ŷ = ${s3(fb.b[0])} × Dem therm ${fb.b[1]<0?'−':'+'} ${A(fb.b[1])} × Rep therm ${fb.b[2]<0?'−':'+'} ${A(fb.b[2])} × female ${fb.b[3]<0?'−':'+'} ${A(fb.b[3])}</div>
+      <ul style="margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink-2);display:grid;gap:4px">
+      <li>Holding feelings toward the Republican Party and gender constant, each point warmer toward the Democratic Party changes the predicted rating of ${nm} by <b>${s3(fb.b[0])}</b> (p ${pvs(fb.p[0])}).</li>
+      <li>Holding feelings toward the Democratic Party and gender constant, each point warmer toward the Republican Party changes it by <b>${s3(fb.b[1])}</b> (p ${pvs(fb.p[1])}).</li>
+      <li>Holding both party feelings constant, women rate ${nm} <b>${Math.abs(fb.b[2]).toFixed(2)} points ${fb.b[2]>=0?'warmer':'cooler'}</b> than men (p ${pvs(fb.p[2])}).</li></ul>
+      <p class="say">Each slope here is smaller than its two-variable version (${s3(flFit(fl.d,'dem').b1)} and ${s3(flFit(fl.d,'rep').b1)}), because people who like one party tend to dislike the other: each party slope was partly carrying the other's effect. The chart shows the ${P.label} slope with the other party held at its average. N = ${B.n.toLocaleString('en-US')}; R² = ${fb.r2.toFixed(3)}.</p>`;
+    stata=stataL(fb,`. regress ${FLV[fl.d]} dem_therm rep_therm female`,['dem_therm','rep_therm','female'],['b1','b1','d']); }
+  if(!stata) stata=stataL(f,`. regress ${FLV[fl.d]} ${P.v} female`,[P.v,'female'],['b1','d']);
+  const P0=document.getElementById('flPanel'); P0.innerHTML=h+nav;
+  document.getElementById('flStata').innerHTML=stata;
   const sxBox=document.getElementById('flSex');
-  if(sxBox){[[1,'Women'],[0,'Men']].forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name='flSex';i.id='flSex'+v;i.value=v;if(v===fl.sex)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;sxBox.append(i,lb);i.addEventListener('change',()=>{fl.sex=v;renderFL();});});}
+  if(sxBox){[[1,'Women'],[0,'Men']].forEach(([vv,l])=>{const i=document.createElement('input');i.type='radio';i.name='flSex';i.id='flSex'+vv;i.value=vv;if(vv===fl.sex)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;sxBox.append(i,lb);i.addEventListener('change',()=>{fl.sex=vv;renderFL();});});}
   const pk=document.getElementById('flPick'); if(pk){pk.value=fl.pick;pk.addEventListener('change',()=>{fl.pick=pk.value;renderFL();});}
   const cx=document.getElementById('flCx'), cxr=document.getElementById('flCxr');
-  if(cx){cx.addEventListener('change',()=>{const v=parseFloat(cx.value);if(isFinite(v)){fl.custom=Math.max(0,Math.min(100,Math.round(v)));renderFL();}});cxr.addEventListener('input',()=>{fl.custom=+cxr.value;cx.value=fl.custom;renderFL();});}
-  // stata
-  const L=anova(f,`. regress ${FLV[fl.d]} ${P.v} female`);
-  const hi=L.findIndex(l=>l.includes('trump_pct |')); if(hi>=0) L[hi]=pad(abbr(FLV[fl.d]),12)+L[hi].slice(12);
-  L.push(crow(abbr(P.v),f,0,'b1'),crow('female',f,1,'d',true),crow('_cons',f,2,''),'-'.repeat(78));
-  document.getElementById('flStata').innerHTML=L.join('\n');
+  if(cx){cx.addEventListener('change',()=>{const vv=parseFloat(cx.value);if(isFinite(vv)){fl.custom=Math.max(0,Math.min(100,Math.round(vv)));renderFL();}});cxr.addEventListener('input',()=>{fl.custom=+cxr.value;cx.value=fl.custom;renderFL();});}
+  const ix=FSTEPS.findIndex(z=>z[0]===v), nb=document.getElementById('flNext'), pb=document.getElementById('flPrev');
+  if(nb) nb.addEventListener('click',()=>{fl.view=FSTEPS[ix+1][0];renderFL();}); if(pb) pb.addEventListener('click',()=>{fl.view=FSTEPS[ix-1][0];renderFL();});
 }
 seg('#flD',[['laura','Laura Bush'],['hillary','Hillary Clinton']],fl.d,v=>{fl.d=v;renderFL();});
 seg('#flK',[['dem','Democratic Party'],['rep','Republican Party']],fl.k,v=>{fl.k=v;renderFL();});
-seg('#flV',[['lines','1 Lines'],['predict','2 Predict'],['gap','3 The gap']],fl.view,v=>{fl.view=v;renderFL();});
 document.getElementById('flJump').addEventListener('click',()=>{document.getElementById('flDetails').open=true;});
 document.getElementById('flDetails').addEventListener('toggle',()=>{if(document.getElementById('flDetails').open)renderFL();});
 if(location.hash==='#firstlady'){document.getElementById('flDetails').open=true;}
-
 function renderAll(){renderA();renderB();renderC();if(document.getElementById('flDetails').open)renderFL();}
 let rz=0; if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;cancelAnimationFrame(rz);rz=requestAnimationFrame(renderAll);}}).observe($('main'));}else addEventListener('resize',renderAll);
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',renderAll);

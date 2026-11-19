@@ -114,6 +114,7 @@ figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75
 .outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
 
 .tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
 .mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
 
 /* Stata-style output */
@@ -161,7 +162,7 @@ body.formulas-open .drawer{transform:none}
 .drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .fx{border-top:1px solid var(--line);padding:12px 0}
 .fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
-.fx math{font-size:19px;display:block;margin:4px 0 6px;color:var(--ink)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .fx p{margin:0;font-size:14px;color:var(--ink-2)}
 .fxbtn{display:inline-flex;gap:6px;align-items:center}
 .fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
@@ -275,6 +276,7 @@ html{scroll-padding-top:58px}
 /* ---- phone fit ---- */
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
 </style>
 </head>
 <body>
@@ -389,11 +391,11 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
 
   <section class="amberbox wex" aria-labelledby="wexH">
     <span class="tag">Worked example</span>
-    <div><h3 id="wexH">Partisans and the First Lady</h3><p>Do feelings toward the parties shape how people rate Laura Bush? Walk through a full bivariate analysis of 2004 NES data, from binning an overplotted scatterplot to comparing two regressions, with a replication for Hillary Clinton. Real research, step by step: don't skip it.</p></div>
+    <div><h3 id="wexH">Partisans and the First Lady</h3><p>Do feelings toward the parties shape how people rate Laura Bush? Walk through a full bivariate analysis of 2004 NES data, from binning an overplotted scatterplot to comparing two regressions, with a replication for Hillary Clinton. This is a full analysis of real survey data, and it's worth working through.</p></div>
     <a class="wexgo" href="5b-partisans-and-the-first-lady.html">Open the worked example →</a>
   </section>
 
-  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. <a href="3-difference-in-means.html#pvalue">Full explainer in Module 3 →</a></p>
+  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="3-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="3-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -442,18 +444,18 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="fxTitle" aria-hidden="true">
   <div class="top"><h2 id="fxTitle">Formulas</h2><button id="closeFx">Close</button></div>
   <div class="fx"><h3>The model</h3>
-    <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><mtext>constant</mtext><mspace width="1em"/><mo>⟺</mo><mspace width="1em"/><mi>y</mi><mo>=</mo><mi>m</mi><mi>x</mi><mo>+</mo><mi>b</mi></math>
+    <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><mtext>constant</mtext></math><math display="block"><mo>⟺</mo></math><math display="block"><mi>y</mi><mo>=</mo><mi>m</mi><mi>x</mi><mo>+</mo><mi>b</mi></math>
     <p>Many textbooks write the constant as β₀ and put it first: ŷ = β₀ + β₁X₁.</p></div>
   <div class="fx"><h3>Least-squares slope and constant</h3>
-    <math display="block"><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></mfrac><mspace width="1em"/><mtext>constant</mtext><mo>=</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>−</mo><msub><mi>β</mi><mn>1</mn></msub><mover><mi>x</mi><mo>‾</mo></mover></math>
+    <math display="block"><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></mfrac></math><math display="block"><mtext>constant</mtext><mo>=</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>−</mo><msub><mi>β</mi><mn>1</mn></msub><mover><mi>x</mi><mo>‾</mo></mover></math>
     <p>These values minimize the sum of squared residuals, SSE = Σ(yᵢ − ŷᵢ)².</p></div>
   <div class="fx"><h3>Predicted change (marginal effect)</h3>
     <math display="block"><mi>Δ</mi><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mo>·</mo><mi>Δ</mi><mi>x</mi></math>
     <p>For a straight line the change depends only on how far X moves, not where it starts. Rise = slope × run.</p></div>
   <div class="fx"><h3>Fit</h3>
-    <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac><mspace width="1em"/><msup><mi>r</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mi>SSE</mi><mi>SST</mi></mfrac></math></div>
+    <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><msup><mi>r</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mi>SSE</mi><mi>SST</mi></mfrac></math></div>
   <div class="fx"><h3>Standard error of the slope and the t test</h3>
-    <math display="block"><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>SSE</mi><mo>/</mo><mo>(</mo><mi>n</mi><mo>−</mo><mn>2</mn><mo>)</mo></mrow></msqrt><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac><mspace width="1em"/><mi>t</mi><mo>=</mo><mfrac><mrow><msub><mi>β</mi><mn>1</mn></msub><mo>−</mo><mn>0</mn></mrow><mrow><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo></mrow></mfrac></math>
+    <math display="block"><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>SSE</mi><mo>/</mo><mo>(</mo><mi>n</mi><mo>−</mo><mn>2</mn><mo>)</mo></mrow></msqrt><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><mi>t</mi><mo>=</mo><mfrac><mrow><msub><mi>β</mi><mn>1</mn></msub><mo>−</mo><mn>0</mn></mrow><mrow><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo></mrow></mfrac></math>
     <p>More scatter around the line (bigger SSE) widens the bell of chance slopes; more spread in X narrows it. Under H₀: β₁ = 0, t follows a t distribution with n − 2 degrees of freedom. 95% CI: β₁ ± t*·SE.</p></div>
   <div class="fx"><h3>Why the bell lands on the right edge</h3>
     <math display="block"><msub><mi>y</mi><mtext>edge</mtext></msub><mo>=</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>+</mo><mi>b</mi><mo>·</mo><mo>(</mo><msub><mi>x</mi><mtext>edge</mtext></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></math>
