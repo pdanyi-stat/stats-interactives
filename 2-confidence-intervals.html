@@ -223,6 +223,44 @@ html{scroll-padding-top:58px}
 .pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
+
+
+/* ---- build one by hand ---- */
+.handgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.handgrid{grid-template-columns:minmax(0,1fr)}}
+.hcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.hcard h3{margin:0 0 8px;font-size:17px;font-weight:600}
+ol.hsteps{margin:0;padding-left:22px;display:grid;gap:7px;font-size:14.5px;font-variant-numeric:tabular-nums}
+ol.hsteps li::marker{color:var(--muted);font-weight:600}
+ol.hsteps .fm{font-family:var(--font-mono);font-size:13px;color:var(--ink);overflow-wrap:anywhere}
+ol.hsteps .why{display:block;color:var(--muted);font-size:13.5px}
+details.zflap{margin-top:12px;border:2px solid var(--s1);border-radius:8px;padding:0;background:var(--page)}
+details.zflap > summary{padding:9px 12px;font-weight:600;color:var(--s1-ink)}
+details.zflap[open] > summary{border-bottom:1px solid var(--line)}
+.zbody{padding:10px 12px 12px}
+.zp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.zp{grid-template-columns:minmax(0,1fr)}}
+.zp > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.zp .zn{font:600 12px var(--font-mono);color:var(--muted)}
+.zp p{margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+.zp > div.zfull{grid-column:1 / -1}
+.ztabw{overflow-x:auto}
+.zp p b{color:var(--ink)}
+table.ztab{border-collapse:collapse;font:500 12.5px var(--font-mono);margin:4px auto 0;font-variant-numeric:tabular-nums}
+table.ztab th,table.ztab td{padding:3px 6px;text-align:right;border:1px solid var(--line)}
+table.ztab th{color:var(--muted);font-weight:600;background:var(--page)}
+table.ztab .hr{background:color-mix(in srgb,var(--s2) 16%,transparent)}
+table.ztab .hit{background:var(--s2);color:#fff;font-weight:700}
+details.znest{margin-top:10px;border:1px dashed var(--axis);border-radius:8px}
+details.znest > summary{padding:8px 12px;font-weight:600}
+.znote{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.sprow{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin-bottom:8px}
+.spcalc{font-family:var(--font-mono);font-size:13px;color:var(--ink);margin:6px 0 0;overflow-wrap:anywhere;line-height:1.7}
+details.ring{border:2px solid var(--s2);border-radius:8px;padding:8px 12px!important;margin:6px 0;box-shadow:0 0 0 3px color-mix(in srgb,var(--s2) 18%,transparent)}
+details.ring summary{color:var(--s2-ink)}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 </style>
 </head>
 <body>
@@ -315,6 +353,44 @@ html{scroll-padding-top:58px}
         <pre class="stata" id="stata"></pre>
       </section>
 
+
+  <section class="part" id="byhand" aria-labelledby="bhH">
+    <p class="kick">Build one by hand</p>
+    <h2 id="bhH">The arithmetic behind every interval</h2>
+    <p class="lede">An interval is centered on the sample mean. We choose how confident to be, and that choice sets the critical value. The SD and n set the standard error. Here is your latest sample, worked step by step.</p>
+  </section>
+  <div class="handgrid">
+    <section class="hcard" aria-labelledby="hcH">
+      <h3 id="hcH">Your latest sample, by hand</h3>
+      <ol class="hsteps" id="hsteps"></ol>
+      <details class="zflap" id="zflap">
+        <summary>How did you get 1.96? Reading the z table</summary>
+        <div class="zbody">
+          <div class="zp" id="zp95"></div>
+          <details class="znest">
+            <summary>What if it's 99%? Let's take a look</summary>
+            <div class="zbody"><div class="zp" id="zp99"></div></div>
+          </details>
+          <p class="znote">Some textbooks print the area from 0 to z instead of everything to the left. With that kind of table, look up .475 for 95% (or .495 for 99%) and you land on the same z.</p>
+        </div>
+      </details>
+    </section>
+    <section class="hcard" aria-labelledby="spH">
+      <h3 id="spH">Why spread matters: SD → SE → width</h3>
+      <p class="say" style="margin:0 0 8px;font-size:14px;color:var(--ink-2)">Same variable (Biden's 2020 share), same n, same confidence. Only how alike the places are changes. More diverse populations have a bigger SD, so every sample is less certain.</p>
+      <div class="sprow">
+        <div class="ctl"><span class="lab" id="spgl">How alike are the places?</span><div class="seg" role="radiogroup" aria-labelledby="spgl" id="spg"></div></div>
+      </div>
+      <div class="sprow">
+        <div class="ctl"><span class="lab" id="spnl">n</span><div class="seg" role="radiogroup" aria-labelledby="spnl" id="spn"></div></div>
+        <div class="ctl"><span class="lab" id="spll">Confidence</span><div class="seg" role="radiogroup" aria-labelledby="spll" id="spl"></div></div>
+      </div>
+      <div class="chart" id="spChart"></div>
+      <div class="spcalc" id="spCalc"></div>
+      <p class="say" id="spSay" style="font-size:14px;color:var(--ink-2);margin:6px 0 0"></p>
+    </section>
+  </div>
+
   <section class="part" aria-labelledby="p2h">
     <p class="kick">Real data</p>
     <h2 id="p2h">Did the final 2016 polls capture the result?</h2>
@@ -358,6 +434,7 @@ html{scroll-padding-top:58px}
         <li>Set n = <b>5</b> and switch between <b>t</b> and <b>z</b>. With Biden vote share, z intervals capture μ only about 85% of the time; t intervals come close to 95%.</li>
         <li>Choose <b>Biden carried the county</b> with n = 5. Many samples contain no Biden counties, so the interval has zero width and misses. Compare n = 100.</li>
         <li>Choose <b>Total votes cast</b> with n = 10. Even t intervals miss about a third of the time. Extreme skew breaks the normal approximation the interval relies on.</li>
+        <li>In <b>Build one by hand</b>, switch from one state to the whole country. Same n, same confidence: why is the interval wider?</li>
         <li>In the poll section, compare <b>Nevada</b> with <b>Wisconsin</b> and <b>Ohio</b>.</li>
       </ol>
     </section>
@@ -371,9 +448,9 @@ html{scroll-padding-top:58px}
         <summary>Your interval for Biden share is 25.4 to 38.5. Is there a 95% probability that μ is in that range?</summary>
         <p>No. μ is a fixed number (33.27), so this particular interval either contains it or doesn't. The 95% is a property of the procedure: across many samples, 95% of intervals built this way capture μ.</p>
       </details>
-      <details>
-        <summary>Why are t intervals wider than z intervals, and why does that matter most when n is small?</summary>
-        <p>We estimate σ with the sample SD, s, and in small samples s is a shaky estimate. The t distribution has fatter tails to account for that extra uncertainty. As n grows, s settles down and t approaches z: t(99) = 1.98 versus z = 1.96.</p>
+      <details class="ring" open>
+        <summary>Why t and not z? (We use z in class; here's when t matters.)</summary>
+        <p>SE = SD / √n uses the <b>sample's</b> SD, which is itself an estimate, so there's a little extra uncertainty. The t distribution has fatter tails to cover it: its critical value is a bit bigger and the interval a bit wider. That matters most in small samples (n = 10: t = 2.26 vs. z = 1.96). Past about 30 the two are close (t = 2.05 at n = 30), and in the hundreds they're nearly identical (t = 1.98 at n = 100), which is why z works well for survey-sized data. Many researchers use t by default for that reason. Try the t/z switch at n = 5.</p>
       </details>
       <details>
         <summary>A poll of 800 voters reports Clinton 47, Trump 44, margin of error ±3.5. Is the 3-point lead outside the margin of error?</summary>
@@ -396,12 +473,12 @@ html{scroll-padding-top:58px}
   <div class="top"><h2 id="fxTitle">Formulas</h2><button id="closeFx">Close</button></div>
   <div class="fx">
     <h3>Confidence interval for a mean (t)</h3>
-    <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>±</mo><msubsup><mi>t</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><mo>*</mo></msubsup><mo>·</mo><mfrac><mi>s</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
-    <p>s is the sample standard deviation. t* comes from the t distribution with n − 1 degrees of freedom; for 95% and n = 25, t*(24) = 2.064.</p>
+    <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>±</mo><msubsup><mi>t</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><mo>*</mo></msubsup><mo>·</mo><mfrac><mi>SD</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
+    <p>SD is the sample's standard deviation. t* comes from the t distribution with n − 1 degrees of freedom; for 95% and n = 25, t*(24) = 2.064.</p>
   </div>
   <div class="fx">
     <h3>Large-sample (z) interval</h3>
-    <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>±</mo><msup><mi>z</mi><mo>*</mo></msup><mo>·</mo><mfrac><mi>s</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
+    <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>±</mo><msup><mi>z</mi><mo>*</mo></msup><mo>·</mo><mfrac><mi>SD</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
     <p>z* = 1.282, 1.645, 1.960, 2.576 for 80, 90, 95, 99%. Fine when n is large; too narrow when n is small.</p>
   </div>
   <div class="fx">
@@ -451,7 +528,7 @@ const POPS={
 for(const p of Object.values(POPS)){ const v=D[p.key]; let s=0; for(const x of v)s+=x; p.mu=s/N; p.values=v; }
 
 const NS=[2,5,10,25,50,100], LV=[80,90,95,99];
-const st={pop:'dem',n:25,lev:95,method:'t',S:[]}; // S: [mean, sd] per sample
+const st={pop:'dem',n:25,lev:95,method:'z',S:[]}; // S: [mean, sd] per sample
 const idx=new Int32Array(N); for(let i=0;i<N;i++) idx[i]=i;
 function sampleStats(n){
   const v=POPS[st.pop].values;
@@ -597,6 +674,7 @@ function render(){
       <div class="card ok"><b>Right:</b> “If we repeated this sampling many times, ${st.lev}% of intervals built this way would capture the true mean.” Panel B checks that claim.</div>
       <div class="card bad"><b>Wrong:</b> “There is a ${st.lev}% chance the true mean is between ${p.f(last.lo)} and ${p.f(last.hi)}.” The true mean is fixed; this interval ${hit?'does':'does not'} contain it, with certainty.</div>`;
   } else it.innerHTML='<div class="now">Draw a sample to see its interval.</div>';
+  renderHand(p,last);
 }
 
 /* ---- polls ---- */
@@ -640,7 +718,7 @@ function segment(id,vals,cur,fmt,on){
 }
 segment('#nseg',NS,st.n,v=>v,v=>{st.n=v; reset();});
 segment('#cseg',LV,st.lev,v=>v+'%',v=>{st.lev=v; render();});
-segment('#mseg',['t','z'],st.method,v=>v,v=>{st.method=v; render();});
+segment('#mseg',['z','t'],st.method,v=>v,v=>{st.method=v; render();});
 function syncMethod(){ const b=!!POPS[st.pop].binary; $('#mseg').classList.toggle('dis',b); $('#mnote').textContent=b?'Proportions use the Wald z interval.':''; }
 function reset(){ st.S=[]; draw(1); }
 $('#pop').addEventListener('change',e=>{ st.pop=e.target.value; syncMethod(); reset(); });
@@ -649,6 +727,98 @@ $('#d20').addEventListener('click',()=>draw(20));
 $('#d100').addEventListener('click',()=>draw(100));
 $('#d1000').addEventListener('click',()=>draw(1000));
 $('#clear').addEventListener('click',()=>{ st.S=[]; render(); });
+
+
+/* ---- build one by hand ---- */
+function erf(x){const t=1/(1+0.3275911*Math.abs(x));const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
+const Phi=z=>0.5*(1+erf(z/Math.SQRT2));
+const ZT={80:1.28,90:1.645,95:1.96,99:2.58};
+function decs(p){return p.key==='votes'?[0,0,0]:p.key==='won'?[3,4,3]:[2,3,2];}
+function renderHand(p,last){
+  const box=document.getElementById('hsteps'); if(!box) return;
+  if(!last){box.innerHTML='<li>Draw a sample above to work it by hand.</li>';return;}
+  const [dm,dse,dme]=decs(p), n=st.n, f=(v,d)=>(v<0?'−':'')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const S=st.S[st.S.length-1], m=+S[0].toFixed(dm);
+  const sd=p.binary?+Math.sqrt(S[0]*(1-S[0])).toFixed(dse):+S[1].toFixed(dm);
+  const rn=+Math.sqrt(n).toFixed(3), se=+(sd/rn).toFixed(dse);
+  const useT=!p.binary&&st.method==='t', li=LV.indexOf(st.lev);
+  const cv=useT?+C.t[String(n-1)][li].toFixed(3):ZT[st.lev], me=+(cv*se).toFixed(dme);
+  const tail=((100-st.lev)/200), tailS=String(+tail.toFixed(3)).replace(/^0/,''), look=String(+(1-tail).toFixed(3)).replace(/^0/,'');
+  box.innerHTML=[
+    `<b>Start at the center:</b> the sample ${p.binary?'proportion':'mean'}. <span class="fm">${p.binary?'p̂':'x̄'} = ${f(m,dm)}</span>`,
+    `<b>Spread and size:</b> <span class="fm">SD = ${f(sd,p.binary?dse:dm)}${p.binary?' (for a 0/1 variable, SD ≈ √(p̂(1 − p̂)))':''}, n = ${n}</span>`,
+    `<b>Standard error:</b> <span class="fm">SE = SD / √n = ${f(sd,p.binary?dse:dm)} / ${rn} = ${f(se,dse)}</span>`,
+    `<b>Choose the confidence level:</b> <span class="fm">${st.lev}% → ${useT?'t':'z'} = ${cv}</span><span class="why">${useT?`t with n − 1 = ${n-1} degrees of freedom (switch to z above to use the z table).`:`${100-st.lev}% left to be wrong, split into two tails of ${tailS}. A one-tailed z table: look up 1 − ${tailS} = ${look}.`}</span>`,
+    `<b>Margin of error:</b> <span class="fm">${useT?'t':'z'} × SE = ${cv} × ${f(se,dse)} = ${f(me,dme)}</span>`,
+    `<b>Center it on the ${p.binary?'proportion':'mean'}:</b> <span class="fm">${f(m,dm)} ± ${f(me,dme)} = ${f(m-me,dme)} to ${f(m+me,dme)}</span>`
+  ].map(x=>`<li>${x}</li>`).join('');
+}
+function zPanels(id,lev){
+  const box=document.getElementById(id); if(!box) return;
+  const tail=(100-lev)/200, z=ZT[lev], tS=String(tail).replace(/^0/,''), cum=String(+(1-tail).toFixed(3)).replace(/^0/,'');
+  const pic=(mode)=>{const W=240,H=118,m={l:8,r:8,t:16,b:22},lo=-3.6,hi=3.6,xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r),pk=Math.exp(0)/Math.sqrt(2*Math.PI),ys=v=>H-m.b-(v/pk)*(H-m.t-m.b);
+    const svg=document.createElementNS(NSVG,'svg');svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('width','100%');svg.setAttribute('role','img');
+    const pdf=v=>Math.exp(-v*v/2)/Math.sqrt(2*Math.PI);
+    const area=(a,b,col,op)=>{let d=`M${xs(a)},${ys(0)}`;for(let k=0;k<=60;k++){const v=a+(b-a)*k/60;d+=`L${xs(v).toFixed(1)},${ys(pdf(v)).toFixed(1)}`;}d+=`L${xs(b)},${ys(0)}Z`;el('path',{d,fill:col,'fill-opacity':op},svg);};
+    if(mode===1) area(-z,z,css('--s1'),.35);
+    if(mode===2){area(lo,-z,css('--s2'),.55);area(z,hi,css('--s2'),.55);area(-z,z,css('--pop'),.15);}
+    if(mode===3){area(lo,z,css('--s1'),.3);area(z,hi,css('--s2'),.55);}
+    let d='';for(let k=0;k<=120;k++){const v=lo+(hi-lo)*k/120;d+=(k?'L':'M')+xs(v).toFixed(1)+','+ys(pdf(v)).toFixed(1);}
+    el('path',{d,fill:'none',stroke:css('--ink'),'stroke-width':1.6},svg);
+    el('line',{x1:m.l,x2:W-m.r,y1:ys(0),y2:ys(0),stroke:css('--axis')},svg);
+    const T=(x,y,t,c,a)=>{const e=el('text',{x,y,'text-anchor':a||'middle',class:'mlab',fill:c||css('--ink'),style:'font-size:12px;paint-order:stroke;stroke:var(--surface);stroke-width:3px'},svg);e.textContent=t;};
+    for(const v of [-z,z]){el('line',{x1:xs(v),x2:xs(v),y1:ys(0),y2:ys(0)+5,stroke:css('--ink')},svg);}
+    T(xs(-z),H-4,'−'+z);T(xs(z),H-4,'+'+z);
+    if(mode===1) T(xs(0),ys(pdf(0))*0.5+ys(0)*0.5,lev+'%','var(--s1-ink)');
+    if(mode===2){T(m.l,ys(0)-30,'wrong low',css('--s2-ink'),'start');T(m.l,ys(0)-16,tS,css('--s2-ink'),'start');T(W-m.r,ys(0)-30,'wrong high',css('--s2-ink'),'end');T(W-m.r,ys(0)-16,tS,css('--s2-ink'),'end');}
+    if(mode===3){T(xs(-0.3),ys(0)-12,cum+' to the left','var(--s1-ink)');T(W-m.r,ys(0)-16,tS,css('--s2-ink'),'end');}
+    return svg;};
+  const rows=lev===95?[1.8,1.9,2.0]:[2.4,2.5,2.6], cols=lev===95?[.05,.06,.07]:[.07,.08,.09];
+  const hitR=lev===95?1.9:2.5, hitC=lev===95?.06:.08;
+  let tb='<table class="ztab"><tr><th>z</th>'+cols.map(c=>`<th class="${Math.abs(c-hitC)<1e-9?'hr':''}">${c.toFixed(2).replace(/^0/,'')}</th>`).join('')+'</tr>';
+  rows.forEach(r=>{tb+=`<tr><th class="${Math.abs(r-hitR)<1e-9?'hr':''}">${r.toFixed(1)}</th>`+cols.map(c=>{const v=Phi(r+c).toFixed(4).replace(/^0/,'');const hit=Math.abs(r-hitR)<1e-9&&Math.abs(c-hitC)<1e-9;const near=lev===99&&Math.abs(r-hitR)<1e-9&&Math.abs(c-.07)<1e-9;return `<td class="${hit?'hit':near?'hr':''}">${v}</td>`;}).join('')+'</tr>';});
+  tb+='</table>';
+  const cap=[
+    `<b>Pick a confidence level.</b> ${lev}% means we want the method to be right ${lev}% of the time: the middle of the curve.`,
+    `<b>That leaves ${100-lev}% to be wrong</b>, split in two. An interval can miss low or miss high, ${tS} each.`,
+    `<b>Our z table is one-tailed:</b> it gives all the area to the left of z. Left of the upper cutoff: ${lev/100} + ${tS} = <b>${cum}</b>.`,
+    lev===95?`<b>Find .9750 inside the table.</b> Read across to its row (1.9) and up to its column (.06): z = 1.9 + .06 = <b>1.96</b>.`
+            :`<b>Find .995.</b> It falls between .9949 (2.57) and .9951 (2.58); the usual choice is <b>2.58</b>. Higher confidence, bigger z, wider interval.`
+  ];
+  box.innerHTML='';
+  [1,2,3].forEach((md,k)=>{const d=document.createElement('div');d.innerHTML=`<span class="zn">${k+1}</span>`;d.appendChild(pic(md));d.insertAdjacentHTML('beforeend',`<p>${cap[k]}</p>`);box.appendChild(d);});
+  const d4=document.createElement('div');d4.innerHTML=`<span class="zn">4</span><div class="ztabw">${tb}</div><p>${cap[3]}</p>`;box.appendChild(d4);
+}
+const SPG={state:{lab:'Very alike: one state (Iowa)',short:'Iowa',f:n=>/, IA$/.test(n)},region:{lab:'Mixed: one region (Midwest)',short:'Midwest',f:n=>/, (IL|IN|MI|OH|WI|IA|KS|MN|MO|NE|ND|SD)$/.test(n)},nation:{lab:'Very different: the whole country',short:'U.S.',f:n=>true}};
+for(const k in SPG){const v=[];D.name.forEach((n,i)=>{if(SPG[k].f(n))v.push(D.dem[i]);});const m=v.reduce((a,b)=>a+b,0)/v.length;SPG[k].v=v;SPG[k].m=m;SPG[k].sd=Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/(v.length-1));}
+const sp={g:'state',n:25,lev:95};
+function renderSpread(){
+  const box=document.getElementById('spChart'); if(!box) return; box.innerHTML='';
+  const W=Math.max(280,box.clientWidth),H=250,m={l:84,r:12,t:10,b:30},lo=0,hi=100,xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'County spread and interval width for three groups'},box);
+  const g=el('g',{class:'tick'},svg);for(const t of [0,25,50,75,100]){el('line',{x1:xs(t),x2:xs(t),y1:m.t,y2:H-m.b,stroke:css('--grid')},g);const tx=el('text',{x:xs(t),y:H-m.b+16,'text-anchor':'middle'},g);tx.textContent=t+'%';}
+  const keys=['state','region','nation'], z=ZT[sp.lev], rh=(H-m.t-m.b)/3;
+  keys.forEach((k,j)=>{const G=SPG[k],on=k===sp.g,y0=m.t+rh*j,yc=y0+rh*0.38,yb=y0+rh*0.8;
+    const lab=el('text',{x:m.l-8,y:yc+4,'text-anchor':'end',class:'mlab',fill:on?css('--ink'):css('--muted')},svg);lab.textContent=G.short;
+    const lab2=el('text',{x:m.l-8,y:yb+4,'text-anchor':'end',class:'tick',style:'font:400 11px var(--font-body)',fill:css('--muted')},svg);lab2.textContent='SD '+G.sd.toFixed(1);
+    const step=Math.max(1,Math.floor(G.v.length/400));
+    G.v.forEach((v,i)=>{if(i%step)return;const h=Math.sin(i*12.9898+j*7.1)*43758.5453;el('circle',{cx:xs(v),cy:yc+((h-Math.floor(h))-.5)*rh*0.36,r:1.6,fill:on?css('--s1'):css('--pop'),'fill-opacity':on?.45:.3},svg);});
+    el('line',{x1:xs(G.m-G.sd),x2:xs(G.m+G.sd),y1:yc+rh*0.22,y2:yc+rh*0.22,stroke:on?css('--ink'):css('--axis'),'stroke-width':1.5},svg);
+    for(const v of [G.m-G.sd,G.m+G.sd])el('line',{x1:xs(v),x2:xs(v),y1:yc+rh*0.22-4,y2:yc+rh*0.22+4,stroke:on?css('--ink'):css('--axis'),'stroke-width':1.5},svg);
+    const me=z*G.sd/Math.sqrt(sp.n);
+    el('rect',{x:xs(G.m-me),y:yb-5,width:Math.max(2,xs(G.m+me)-xs(G.m-me)),height:10,rx:3,fill:on?css('--s2'):css('--axis'),'fill-opacity':on?.9:.6},svg);
+    const wl=el('text',{x:xs(G.m+me)+6,y:yb+4,class:'mlab',fill:on?css('--s2-ink'):css('--muted'),style:'font-size:11.5px'},svg);wl.textContent='±'+me.toFixed(1);
+  });
+  const G=SPG[sp.g], sd=+G.sd.toFixed(2), rn=+Math.sqrt(sp.n).toFixed(3), se=+(sd/rn).toFixed(3), me=+(z*se).toFixed(2);
+  document.getElementById('spCalc').innerHTML=`SE = SD / √n = ${sd} / ${rn} = ${se}<br>margin = z × SE = ${z} × ${se} = <b>${me}</b> points → interval width ${(2*me).toFixed(2)}`;
+  const st0=SPG.state,na=SPG.nation;
+  document.getElementById('spSay').innerHTML=`Dots are counties; the black bracket is ±1 SD; the orange bar is a ${sp.lev}% interval for a sample of ${sp.n}. The country's counties are about ${(na.sd/st0.sd).toFixed(1)}× as spread out as Iowa's, so with the same n and confidence its interval is ${(na.sd/st0.sd).toFixed(1)}× as wide. To get Iowa's precision for the whole country, you'd need about ${Math.round(sp.n*(na.sd/st0.sd)**2)} counties instead of ${sp.n}.`;
+}
+segment('#spg',['state','region','nation'],sp.g,v=>SPG[v].lab,v=>{sp.g=v;renderSpread();});
+segment('#spn',[10,25,100],sp.n,v=>v,v=>{sp.n=v;renderSpread();});
+segment('#spl',[90,95,99],sp.lev,v=>v+'%',v=>{sp.lev=v;renderSpread();});
+zPanels('zp95',95); zPanels('zp99',99); renderSpread();
+if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;renderSpread();}}).observe(document.getElementById('spChart'));}
 
 const drawer=$('#drawer'); let lastFocus=null;
 function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}

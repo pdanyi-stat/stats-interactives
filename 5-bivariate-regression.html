@@ -255,6 +255,26 @@ html{scroll-padding-top:58px}
 .pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
+
+
+/* ---- amber callout (shared look with the practice page) ---- */
+:root{--amber:#c98500;--amber-bg:#fff6dc;--amber-ink:#7a5200;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}
+.amberbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:18px 18px 16px;position:relative;box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 18%,transparent);margin-top:10px}
+.amberbox .tag{position:absolute;top:-12px;left:14px;background:var(--tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+.amberbox.wex{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+.amberbox.wex h3{margin:0 0 4px;font-size:19px}
+.amberbox.wex p{margin:0;font-size:14.5px;color:var(--ink);max-width:70ch}
+.amberbox .wexgo{font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;white-space:nowrap;padding:8px 14px;border-radius:7px}
+.amberbox .wexgo:hover{filter:brightness(1.05)}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 </style>
 </head>
 <body>
@@ -367,10 +387,13 @@ html{scroll-padding-top:58px}
     <pre class="stata" id="stata"></pre>
   </section>
 
-  <section class="card" style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between">
-    <div><h3 style="margin:0 0 4px">Worked example: Partisans and the First Lady</h3><p style="margin:0;font-size:14.5px;color:var(--ink-2);max-width:70ch">Do feelings toward the parties shape how people rate Laura Bush? Walk through a full bivariate analysis of 2004 NES data, from binning an overplotted scatterplot to comparing two regressions.</p></div>
-    <a href="5b-partisans-and-the-first-lady.html" style="font-weight:600;color:var(--s1-ink);white-space:nowrap">Open the worked example →</a>
+  <section class="amberbox wex" aria-labelledby="wexH">
+    <span class="tag">Worked example</span>
+    <div><h3 id="wexH">Partisans and the First Lady</h3><p>Do feelings toward the parties shape how people rate Laura Bush? Walk through a full bivariate analysis of 2004 NES data, from binning an overplotted scatterplot to comparing two regressions, with a replication for Hillary Clinton. Real research, step by step: don't skip it.</p></div>
+    <a class="wexgo" href="5b-partisans-and-the-first-lady.html">Open the worked example →</a>
   </section>
+
+  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. <a href="3-difference-in-means.html#pvalue">Full explainer in Module 3 →</a></p>
 
   <div class="learn">
     <section>

@@ -334,6 +334,16 @@ html{scroll-padding-top:58px}
 .pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
+
+
+.scale{border-collapse:collapse;font-size:13.5px;width:100%;font-variant-numeric:tabular-nums}
+.scale td{padding:4px 8px;border-bottom:1px solid var(--line)}
+.scale tr.on td{background:color-mix(in srgb,var(--s1) 14%,transparent);font-weight:600;color:var(--ink)}
+.xt-wrap{overflow-x:auto;max-width:100%}
+.stage{overflow-x:clip}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 </style>
 </head>
 <body>
@@ -418,6 +428,10 @@ html{scroll-padding-top:58px}
         <h3>Errors, before and after knowing X</h3>
         <div class="pre" id="lpre"></div>
       </section>
+      <section class="card">
+        <h3>How strong is that?</h3>
+        <div id="lscale"></div>
+      </section>
     </div>
   </div>
   <section class="card">
@@ -474,6 +488,10 @@ html{scroll-padding-top:58px}
       <section class="card">
         <h3>Errors, before and after knowing X (all pairs)</h3>
         <div class="pre" id="gpre"></div>
+      </section>
+      <section class="card">
+        <h3>How strong is that?</h3>
+        <div id="gscale"></div>
       </section>
     </div>
   </div>
@@ -631,6 +649,12 @@ const short=s=>s.split(' (')[0].slice(0,10);
 const dec3=v=>(v<0?'−':'')+Math.abs(v).toFixed(2).replace(/^0/,'');
 
 /* shared PRE bars */
+const LAMSC=[[.10,'none'],[.20,'very weak'],[.30,'moderate'],[.40,'moderately strong'],[9,'strong']], GAMSC=[[.25,'none'],[.50,'very weak'],[.75,'moderate'],[9,'strong']];
+function strengthOf(v,sc){return sc.find(z=>Math.abs(v)<z[0])[1];}
+function scaleCard(box,sc,v,sym){const lab=strengthOf(v,sc);let lo=0;const f2=x=>x.toFixed(2).replace(/^0/,'');
+  const rows=sc.map(z=>{const r=`<tr class="${z[1]===lab?'on':''}"><td>${f2(lo)}${z[0]>1?'+':'–'+f2(z[0]-.01)}</td><td>${z[1]}</td></tr>`;lo=z[0];return r;}).join('');
+  box.innerHTML=`<p class="say" style="margin:0 0 6px">${sym==='γ'?'Ignoring the sign, |γ|':'λ'} = <b>${f2(Math.abs(v))}</b>: <b>${lab}</b> on the lab scale.</p><table class="scale">${rows}</table>
+  <p class="say" style="margin:6px 0 0;font-size:13px;color:var(--muted)">Cutoffs like these are conventions and vary by textbook. ${sym==='γ'?'Gamma is read strictly because it ignores tied pairs and tends to run high.':'Lambda can understate a relationship, especially when one category dominates the DV.'}</p>`;}
 function preBars(box,o){
   // o: e1, e2, e1Label, e2Label, fmtE, symbol, value, says
   let html=box.dataset.ready?null:'';
@@ -699,7 +723,7 @@ function layoutStage(){
       <tr><th style="text-align:right">Republican</th><td class="${mw.guess?'':'modal'}">${mw.r}</td><td class="${mm.guess?'':'modal'}">${mm.r}</td><td class="${all.guess?'':'modal'}">${all.r}</td></tr></table>
       <div class="math">λ = (E₁ − E₂) / E₁<br>&nbsp;&nbsp;= (${E1} − ${E2}) / ${E1}<br>&nbsp;&nbsp;= ${E1-E2} / ${E1} = <b>${E1?lam.toFixed(2):'—'}</b></div>
       <p class="say" style="margin:0">${E1===0?'Everyone is in one party: there are no errors to reduce.':E1===E2?`<b>λ = 0.</b> Knowing gender didn't change any guess${mw.guess===mm.guess?`: ${pname(mw.guess)} is the most common party for both women and men`:''}, so no errors were saved. Lambda only rewards X when it changes the guess.`:`Knowing a voter's gender cuts our errors in guessing their party by <b>${Math.round(100*lam)}%</b>: ${E1-E2} fewer wrong guesses out of ${E1}.`}</p>
-      <p class="say" style="margin:0;font-size:13.5px">With all ${NESALL.n} Democratic and Republican identifiers in the 2004 NES, E₁ = ${NESALL.E1}, E₂ = ${NESALL.E2}, and λ = ${fr(NESALL.lam)}: a real but modest gender gap. Small samples bounce around; click <b>Draw a different 20</b> and watch.</p>`;
+      <p class="say" style="margin:0;font-size:13.5px">With all ${NESALL.n} Democratic and Republican identifiers in the 2004 NES, E₁ = ${NESALL.E1}, E₂ = ${NESALL.E2}, and λ = ${fr(NESALL.lam)}: “none” on the lab scale, even though women lean Democratic a bit more than men. Lambda only counts changes in the modal guess. Small samples bounce around; click <b>Draw a different 20</b> and watch.</p>`;
   } else html+=`<p class="say" style="margin:0">${SS.step===1?'With no information about anyone, the best single guess is <b>the most common party (the mode)</b>. Every voter of the other party is a wrong guess.':'Split by gender and guess <b>each group\'s most common party (its mode)</b>. Count the wrong guesses again.'}</p>`;
   $('#stally').innerHTML=html;
   document.querySelectorAll('#ssteps button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.s===SS.step)));
@@ -745,6 +769,7 @@ function lupdate(){
     e1Label:`<b>Without X:</b> guess the mode, “${modeName}”, for all ${fmt(k.N)} → ${fmt(k.E1)} wrong (${(100*k.E1/k.N).toFixed(1)}%)`,
     e2Label:`<b>With X:</b> guess each column's <b>mode</b> → ${fmt(k.E2)} wrong (${(100*k.E2/k.N).toFixed(1)}%)`,
     says: k.E1===0? 'No errors to reduce: everyone is in one category.' : sameMode ? `<b>No reduction.</b> “${modeName}” is the mode in every column, so knowing ${d.xlab.toLowerCase()} never changes the guess.` : `Knowing ${d.xlab.toLowerCase()} cuts errors in predicting ${d.ylab.toLowerCase()} by <b>${(100*k.lam).toFixed(0)}%</b>: ${fmt(k.E1-k.E2)} fewer wrong guesses.`});
+  scaleCard($('#lscale'),LAMSC,k.lam,'λ');
   $('#lnote').textContent=`Source: ${d.src==='Chile'?'1988 Chilean plebiscite survey':'British Election Panel Study'}. N = ${fmt(k.N)}.`;
   // Stata tabulate
   const cw=11, line='-----------+'+'-'.repeat(cw*d.cols.length)+'-+----------';
@@ -890,6 +915,7 @@ function gupdate(){
     e1Label:`<b>Without X:</b> guess which of two untied people ranks higher on Y by coin flip → wrong on half of ${fmtM(k.ns+k.nd)} pairs`,
     e2Label:`<b>With X:</b> guess “${neg?'higher X, lower Y':'higher X, higher Y'}” → wrong on the ${fmtM(E2)} ${neg?'concordant':'discordant'} pairs`,
     says:`Following X cuts errors in ordering pairs on Y by <b>${(100*Math.abs(k.gam)).toFixed(0)}%</b>.${neg?' The relationship is negative.':''} ${(100*k.ties/k.allPairs).toFixed(0)}% of all pairs were tied and ignored.`});
+  scaleCard($('#gscale'),GAMSC,k.gam,'γ');
   // Stata
   const cw=9, line='-----------+'+'-'.repeat(cw*d.cols.length)+'-+----------';
   const ct=d.cols.map((c,j)=>T.reduce((a,r)=>a+r[j],0)), rt=T.map(r=>r.reduce((a,b)=>a+b,0));

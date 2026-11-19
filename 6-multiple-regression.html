@@ -250,6 +250,18 @@ html{scroll-padding-top:58px}
 .pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#c98500;--amber-bg:#fff6dc;--amber-ink:#7a5200;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 </style>
 </head>
 <body>
@@ -359,6 +371,8 @@ html{scroll-padding-top:58px}
     <h3>Output</h3>
     <pre class="stata" id="stata"></pre>
   </section>
+
+  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. <a href="3-difference-in-means.html#pvalue">Full explainer in Module 3 →</a></p>
 
   <div class="learn">
     <section>

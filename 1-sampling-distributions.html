@@ -188,6 +188,10 @@ html{scroll-padding-top:58px}
 .pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
+
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 </style>
 </head>
 <body>

@@ -213,6 +213,29 @@ html{scroll-padding-top:58px}
 .pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
 @media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
 @media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#c98500;--amber-bg:#fff6dc;--amber-ink:#7a5200;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}
+
+/* ---- p-value callout ---- */
+.amberbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:18px 18px 14px;position:relative;box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 18%,transparent);margin-top:10px}
+.amberbox .tag{position:absolute;top:-12px;left:14px;background:var(--tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+.amberbox h2{margin:2px 0 6px;font-size:clamp(20px,2.6vw,24px);line-height:1.25}
+.amberbox > p{margin:0 0 10px;max-width:75ch;color:var(--ink)}
+.plive{background:var(--surface);border:1px solid var(--amber);border-radius:8px;padding:10px 14px;font-size:15px;color:var(--ink);margin:0 0 12px}
+.dshift{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 12px}
+@media (max-width:640px){.dshift{grid-template-columns:minmax(0,1fr)}}
+.dshift > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:2px;font-variant-numeric:tabular-nums}
+.dshift .from{font:600 20px var(--font-mono);color:var(--ink)}
+.dshift .how{font-size:13px;color:var(--muted)}
+.dshift .to{font-size:16px;font-weight:700;color:var(--amber-ink)}
+.amberbox ul{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2)}
+.amberbox ul b{color:var(--ink)}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 </style>
 </head>
 <body>
@@ -303,6 +326,25 @@ html{scroll-padding-top:58px}
     </section>
   </div>
 
+  <section class="amberbox" id="pvalue" aria-labelledby="pvH">
+    <span class="tag">Key idea</span>
+    <h2 id="pvH">Reading a p-value</h2>
+    <p>Every test asks the same question: <b>if H₀ were true and nothing were really going on, how often would chance alone give us a difference this large or larger?</b> The p-value is that “how often.”</p>
+    <div class="plive" id="pLive"></div>
+    <div class="dshift" aria-label="Turning a p-value into a frequency">
+      <div><span class="from">p = .05</span><span class="how">move the decimal 2 places</span><span class="to">5 times in 100</span></div>
+      <div><span class="from">p = .01</span><span class="how">move the decimal 2 places</span><span class="to">1 time in 100</span></div>
+      <div><span class="from">.000</span><span class="how">SPSS (Stata: 0.000) means p &lt; .001: move 3 places</span><span class="to">fewer than 1 in 1,000</span></div>
+    </div>
+    <ul>
+      <li><b>Match the wording to the sign.</b> p = .05 is about 5 times in 100; p &lt; .05 is <i>fewer than</i> 5 times in 100.</li>
+      <li><b>Two decisions, about H₀ only.</b> p &lt; α: reject H₀. p ≥ α: fail to reject H₀. We never “accept” anything: failing to reject means the evidence wasn't strong enough, not that the groups are the same.</li>
+      <li><b>p is not the chance that H₀ is true.</b> It's the chance of a result like ours <i>if</i> H₀ were true.</li>
+      <li><b>.05 is a convention we choose</b> (α), not a law of nature. Set α to .01 above and the bar gets higher.</li>
+      <li><b>Same logic in regression.</b> There H₀ says the slope is 0, and p is how often a slope at least this steep would turn up by chance.</li>
+    </ul>
+  </section>
+
   <div class="learn">
     <section>
       <h2>Try this</h2>
@@ -322,7 +364,7 @@ html{scroll-padding-top:58px}
       </details>
       <details>
         <summary>H₀ is true. At α = .05, how often will the test reject?</summary>
-        <p>About 5% of the time. That is what α means: the false-positive (Type I error) rate you accept in advance. Turn on “Make H₀ true” to check.</p>
+        <p>About 5% of the time. That is what α means: the false-positive (Type I error) rate you choose in advance. Turn on “Make H₀ true” to check.</p>
       </details>
       <details>
         <summary>The true gap is the same at n = 25 and n = 250. Why does the test reject far more often at 250?</summary>
@@ -618,6 +660,8 @@ function drawC(R){
   xAxis(ctx,xs,lo,hi,yb,W,m.l,m.r);
   const a=String(st.alpha).replace(/^0/,'');
   $('#cStatus').innerHTML=`<span class="chip">t = ${R.t.toFixed(3)}, df = ${st.equal?R.df:R.df.toFixed(1)}</span><span class="chip ${R.reject?'strong':''}">p = ${pfmt(R.p)} ${R.reject?'<':'≥'} α = ${a}</span>`;
+  { const p=R.p, rd=p<0.001?'fewer than 1 time in 1,000':p<0.01?'about '+Math.round(p*1000)+' times in 1,000':'about '+(p*100).toFixed(1).replace(/\.0$/,'')+' times in 100';
+    const pl=document.getElementById('pLive'); if(pl) pl.innerHTML=`<b>Your latest sample:</b> p ${R.p<0.0001?'&lt; .0001':'= '+pfmt(R.p)}. If H₀ were true, a difference this large or larger would turn up <b>${rd}</b>. That's ${R.reject?'below':'not below'} α = ${a}, so we <b>${R.reject?'reject H₀':'fail to reject H₀'}</b>.`; }
 }
 
 /* ---------- Stata output ---------- */
@@ -686,8 +730,8 @@ function addSamples(k,animate){
   if(animate && !reduce){
     const idx=st.S.length-1;
     if(!st.anims.length) st.landed=idx; // everything before this sample is already on the pile
-    st.anims.push({idx, d:st.S[idx][0]-st.S[idx][1], t0:performance.now(), dur:650});
-    st.tw={from:st.disp||to, to, t0:performance.now(), dur:420};
+    st.anims.push({idx, d:st.S[idx][0]-st.S[idx][1], t0:performance.now(), dur:810});
+    st.tw={from:st.disp||to, to, t0:performance.now(), dur:525};
   } else { st.landed=st.S.length; st.anims=[]; st.disp=to; st.tw=null; }
   refreshText(); kick();
 }
@@ -724,7 +768,7 @@ $('#d1').addEventListener('click',()=>addSamples(1,true));
 $('#d100').addEventListener('click',()=>addSamples(100,false));
 $('#d1000').addEventListener('click',()=>addSamples(1000,false));
 $('#clear').addEventListener('click',()=>{stopRun();st.S=[];st.landed=0;st.anims=[];st.tw=null;st.disp=null;refreshText();kick();});
-$('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run').setAttribute('aria-pressed','true'); $('#run').textContent='Pause'; addSamples(1,true); st.timer=setInterval(()=>addSamples(1,true),reduce?120:340); });
+$('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run').setAttribute('aria-pressed','true'); $('#run').textContent='Pause'; addSamples(1,true); st.timer=setInterval(()=>addSamples(1,true),reduce?120:425); });
 
 const drawer=$('#drawer');let lastFocus=null;
 function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}
