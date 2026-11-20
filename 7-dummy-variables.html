@@ -280,14 +280,399 @@ html{scroll-padding-top:58px}
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 @media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
 </style>
+<!-- spss-start -->
+<style>
+details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
+details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
+details.spss > summary::before,details.stata-wrap > summary::before{content:"";flex:0 0 auto;width:0;height:0;border-left:6px solid var(--ink-2);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;transition:transform .15s}
+details.spss[open] > summary::before,details.stata-wrap[open] > summary::before{transform:rotate(90deg)}
+.sp-lab code{font:500 13px var(--font-mono);background:var(--code-bg);padding:1px 5px;border-radius:4px}
+details.spss > summary:hover,details.stata-wrap > summary:hover{background:var(--page);border-radius:8px}
+details.spss[open] > summary,details.stata-wrap[open] > summary{border-bottom:1px solid var(--line);border-radius:8px 8px 0 0}
+.sp-badge{flex:0 0 auto;display:inline-block;font:700 11px var(--font-mono);letter-spacing:.06em;background:var(--ink);color:var(--surface);border-radius:4px;padding:2px 6px}
+.sp-body{padding:12px}
+.sp-note{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--ink-2);max-width:82ch}
+.sp-note b{color:var(--ink)}
+.sp-sheet{background:#fff;color:#000;border:1px solid #c9ccd2;border-radius:4px;padding:16px 12px 4px;overflow-x:auto;font:12.5px/1.35 Arial,"Helvetica Neue",Helvetica,sans-serif;color-scheme:light}
+.sp-t{margin:0 auto 18px;width:max-content}
+.sp-title{margin:0 0 5px;text-align:center;font-weight:700;font-size:13.5px;color:#000}
+table.sp{border-collapse:collapse;border:1px solid #8a9099}
+table.sp th,table.sp td{border:1px solid #c3c8d0;padding:3px 9px;white-space:nowrap;color:#000}
+table.sp thead th{font-weight:400;text-align:center;vertical-align:bottom;background:#fff;white-space:normal;min-width:3.6em;max-width:9.5em;line-height:1.25}
+table.sp td{text-align:right;background:#fff}
+table.sp .rh{text-align:left;background:#e9eef5;font-weight:400;vertical-align:top}
+table.sp .rh.c{text-align:center}
+table.sp sup,.sp-title sup{font-size:.72em;line-height:0}
+.sp-fn{font-size:11.5px;margin-top:4px;color:#000}
+@media (max-width:520px){.sp-sheet{font-size:11.5px;padding:12px 8px 2px}.sp-body{padding:10px}}
+@media print{details.spss{break-inside:avoid}}
+.sp-hint{display:none;margin:0 0 6px;font-size:12.5px;color:var(--muted)}
+@media (max-width:700px){.sp-hint{display:block}}
+.st-body{padding:10px}
+.st-body > pre.stata{margin:0 !important}
+h3 + details.stata-wrap{margin-top:4px}
+.sp-sheet td.tap{cursor:pointer;text-decoration:underline dotted #b07800;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.sp-sheet td.tap:hover{background:#f2f5fa}
+.sp-sheet td.tap:focus-visible{outline:2px solid #2a78d6;outline-offset:-2px}
+.sp-sheet td.tap.sel{background:#dbe9f9;color:#0b3f73}
+.sp-exp{margin:10px 0 0;padding:11px 14px;background:#fff6d8;border:2px solid #e0a100;border-radius:10px;color:#1a1a1a;font-size:14.5px;line-height:1.6}
+.sp-exp .sp-hint2{color:#5c5440}
+.sp-exp a{color:#0b3f73;font-weight:600}
+.sp-exp b{color:#1a1a1a}
+</style>
+<script>
+/* SPSS-style output: one expandable panel under every Stata output on the site.
+   It reads the Stata text in each pre.stata (plus optional hidden meta: betas, Levene)
+   and lays the same numbers out the way SPSS does. */
+(function(){
+"use strict";
+/* ---------- distributions ---------- */
+function lgamma(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function betacf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-300)d=1e-300;d=1/d;let h=d;for(let m=1;m<=300;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-14)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b;}
+function tcdf(t,df){const x=df/(df+t*t);const tail=0.5*ibeta(x,df/2,0.5);return t>=0?1-tail:tail;}
+function tinv(p,df){let lo=0,hi=500;for(let i=0;i<90;i++){const m=(lo+hi)/2;if(tcdf(m,df)<p)lo=m;else hi=m;}return (lo+hi)/2;}
+function fsurv(F,d1,d2){return F<=0?1:ibeta(d2/(d2+d1*F),d2/2,d1/2);}
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z);const r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));return x>=0?r:2-r;}
+const p2t=(t,df)=>2*(1-tcdf(Math.abs(t),df));
+const p2z=z=>erfc(Math.abs(z)/Math.SQRT2);
+
+/* ---------- helpers pages can call ---------- */
+function levene(groups){ // mean-centered Levene test, as SPSS computes it
+  const z=groups.map(g=>{const m=g.reduce((s,v)=>s+v,0)/g.length;return g.map(v=>Math.abs(v-m));});
+  return leveneZ(z);
+}
+function leveneZ(z){const N=z.reduce((s,g)=>s+g.length,0),k=z.length,gm=z.map(g=>g.reduce((s,v)=>s+v,0)/g.length),M=z.reduce((s,g)=>s+g.reduce((a,v)=>a+v,0),0)/N;
+  let sb=0,sw=0;z.forEach((g,i)=>{sb+=g.length*(gm[i]-M)**2;g.forEach(v=>{sw+=(v-gm[i])**2;});});
+  const F=(sb/(k-1))/(sw/(N-k));return {F,p:isFinite(F)?fsurv(F,k-1,N-k):NaN};}
+function leveneBinary(n,p){ // a 0/1 variable: deviations are (1-p) for the 1s and p for the 0s
+  return leveneZ(n.map((ni,i)=>{const ones=Math.round(ni*p[i]);return Array(ones).fill(1-ones/ni).concat(Array(ni-ones).fill(ones/ni));}));}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+window.SPSSX={meta:o=>`<span class="spssmeta" hidden>${esc(JSON.stringify(o))}</span>`,levene:(a,b)=>levene([a,b])};
+
+/* ---------- SPSS number formats ---------- */
+const lead=s=>s.replace(/^(-?)0\./,'$1.');
+const F=(v,d)=>{if(v===null||v===undefined||!isFinite(v))return '.';let s=v.toFixed(d);if(/^-0\.?0*$/.test(s))s=s.slice(1);return lead(s);};
+const SIG=p=>!isFinite(p)?'.':p<0.0005?'.000':lead(p.toFixed(3));
+const N=s=>String(s).replace(/,/g,'');
+const num=s=>parseFloat(N(s));
+
+/* ---------- table builder ---------- */
+// rows: array of arrays of cells; a cell is a string or {t, cls, cs (colspan), rs (rowspan), h (header)}
+function tbl(title,head,rows,foot){
+  const cell=(c,isHead)=>{if(c===null)return '';const o=typeof c==='object'?c:{t:c};const tag=(isHead||o.h)?'th':'td';
+    const cls=[o.cls,o.x?'tap':''].filter(Boolean).join(' ');
+    return `<${tag}${cls?` class="${cls}"`:''}${o.x?` data-x="${o.x}" tabindex="0"`:''}${o.cs?` colspan="${o.cs}"`:''}${o.rs?` rowspan="${o.rs}"`:''}>${o.t===undefined?'':o.t}</${tag}>`;};
+  let h=`<div class="sp-t"><p class="sp-title">${title}</p><table class="sp"><thead>`;
+  head.forEach(r=>{h+='<tr>'+r.map(c=>cell(c,true)).join('')+'</tr>';});
+  h+='</thead><tbody>';
+  rows.forEach(r=>{h+='<tr>'+r.map(c=>cell(c,false)).join('')+'</tr>';});
+  h+='</tbody></table>';
+  if(foot&&foot.length)h+=`<div class="sp-fn">${foot.map(f=>`<div>${f}</div>`).join('')}</div>`;
+  return h+'</div>';
+}
+const rh=(t,o)=>Object.assign({t,cls:'rh'},o||{});
+const sup=s=>`<sup>${s}</sup>`;
+const X=(t,x)=>({t,x}); // a tappable value cell
+
+/* ---------- explanation language (matches the rest of the site) ---------- */
+const tms=n=>n===1?'1 time':n+' times';
+const pq=p=>p<0.001?'fewer than 1 time in 1,000':p<0.01?`about ${tms(Math.round(p*1000))} in 1,000`:`about ${tms(Math.round(p*100))} in 100`;
+function pSent(p,what,h0){
+  const shown=SIG(p);
+  const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
+  let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  return s+' Sig. is not the probability that H₀ is true. <a href="3-difference-in-means.html#pvalue">Reading p-values →</a>';
+}
+const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const list=a=>a.length<2?a.join(''):a.length===2?a.join(' and '):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+const DUMMY=/^(south|female|first|middle|lower|northeast|midwest|west|male|women|men)$/i;
+const lamWord=v=>v<0.10?'no relationship':v<0.20?'a very weak relationship':v<0.30?'a moderate relationship':v<0.40?'a moderately strong relationship':'a strong relationship';
+const gamWord=v=>{v=Math.abs(v);return v<0.25?'no relationship':v<0.50?'a very weak relationship':v<0.75?'a moderate relationship':'a strong relationship';};
+
+/* ---------- parsers ---------- */
+function cmdOf(txt){const m=txt.match(/^\.\s+(regress|ttest|summarize|ci\s+means|ci\s+proportions|tabulate)\b.*$/m);return m?{kind:m[1].replace(/\s+/,' '),line:m[0].replace(/^\.\s+/,'')}:null;}
+
+function parseRegress(txt,line){
+  const g=re=>{const m=txt.match(re);return m?m[1]:null;};
+  const an=nm=>{const m=txt.match(new RegExp('^\\s*'+nm+'\\s*\\|\\s*(\\S+)\\s+(\\d+)\\s+(\\S+)','m'));return m?{ss:num(m[1]),df:+m[2],ms:num(m[3])}:null;};
+  const R={dv:line.split(/\s+/)[1],model:an('Model'),resid:an('Residual'),total:an('Total'),n:num(g(/Number of obs\s*=\s*([\d,]+)/)),coefs:[]};
+  if(!R.model||!R.resid||!R.total)return null;
+  const lines=txt.split('\n');let on=false;
+  for(const L of lines){
+    if(/Coefficient\s+Std\. err\./.test(L)){on=true;continue;}
+    if(!on)continue;
+    const m=L.match(/^\s*(\S+)\s*\|\s*(-?[\d.]+(?:e-?\d+)?)\s+(-?[\d.]+(?:e-?\d+)?)\s+(-?[\d.]+)\s+([\d.]+)/);
+    if(m)R.coefs.push({name:m[1],b:num(m[2]),se:num(m[3])});
+  }
+  return R;
+}
+function renderRegress(txt,line,meta){
+  const R=parseRegress(txt,line);if(!R)return null;
+  if(meta&&meta.ss){R.model.ss=meta.ss[0];R.resid.ss=meta.ss[1];R.total.ss=meta.ss[2];R.model.ms=R.model.ss/R.model.df;R.resid.ms=R.resid.ss/R.resid.df;}
+  const k=R.model.df,dfr=R.resid.df,r2=R.model.ss/R.total.ss,adj=1-(1-r2)*(R.total.df)/dfr,see=Math.sqrt(R.resid.ms),Fv=R.model.ms/R.resid.ms,pF=fsurv(Fv,k,dfr),tc=tinv(0.975,dfr);
+  const ivs=R.coefs.filter(c=>c.name!=='_cons'),cons=R.coefs.find(c=>c.name==='_cons');
+  const names=ivs.length?ivs.map(c=>c.name):line.split(/\s+/).slice(2).filter(w=>!/[,(]/.test(w));
+  const dv=R.dv,bin=/^survived$/.test(dv),E={};
+  const pred=`a. Predictors: (Constant), ${names.slice().reverse().join(', ')}`;
+  E.r2=`<b>R Square = ${F(r2,3)}</b>: knowing ${list(names)} cuts the squared error of predicting ${dv} by ${r2<0.005?'less than 1%':'about '+Math.round(r2*100)+'%'} compared with guessing the mean of ${dv} every time (Module 4). It measures fit, not significance.`;
+  E.adj=`<b>Adjusted R Square = ${F(adj,3)}</b>. It charges a small penalty for each IV, so it rises only when an IV improves the fit by more than chance would. Use it to compare models with different numbers of IVs.`;
+  E.F=`<b>F = ${F(Fv,3)}</b> tests H₀ that ${k===1?'the slope is 0':k===2?'both slopes are 0 at once':'all '+k+' slopes are 0 at once'}.${k===1?' With one IV it asks the same question as the slope\'s t-test, and F = t².':''} Read its Sig. next to it.`;
+  E.pF=pSent(pF,'an R Square this large or larger',k===1?'the slope is 0':'every slope is 0 (the IVs together predict nothing)');
+  let h=tbl('Model Summary',[['Model','R','R Square','Adjusted R Square','Std. Error of the Estimate']],
+    [[rh('1',{cls:'rh c'}),F(Math.sqrt(r2),3)+sup('a'),X(F(r2,3),'r2'),X(F(adj,3),'adj'),F(see,5)]],[pred]);
+  h+=tbl('ANOVA'+sup('a'),[[{t:'Model',cs:2},'Sum of Squares','df','Mean Square','F','Sig.']],
+    [[rh('1',{rs:3,cls:'rh c'}),rh('Regression'),F(R.model.ss,3),String(k),F(R.model.ms,3),X(F(Fv,3),'F'),X(SIG(pF)+sup('b'),'pF')],
+     [rh('Residual'),F(R.resid.ss,3),String(dfr),F(R.resid.ms,3),'',''],
+     [rh('Total'),F(R.total.ss,3),String(R.total.df),'','','']],
+    [`a. Dependent Variable: ${dv}`,'b. '+pred.slice(3)]);
+  if(cons){
+    let beta=meta&&meta.beta;
+    if(!beta&&ivs.length===1)beta=[Math.sign(ivs[0].b)*Math.sqrt(r2)];
+    const cp=p2t(cons.b/cons.se,dfr);
+    E['b:_c']=`<b>(Constant) B = ${F(cons.b,3)}</b>: the predicted ${dv} when ${ivs.length===1?ivs[0].name+' is':'every IV is'} 0. Ask whether 0 is a realistic value${ivs.length===1?' of '+ivs[0].name:' for the IVs'}. If it isn't, the constant is only an anchor for the line, not a prediction for any real case.`;
+    E['p:_c']=`Sig. for the constant tests H₀ that the constant is 0, which is rarely interesting. Sig. = ${SIG(cp)}. Interpret the IVs' Sig. values instead.`;
+    const rows=[[rh('1',{rs:ivs.length+1,cls:'rh c'}),rh('(Constant)'),X(F(cons.b,3),'b:_c'),F(cons.se,3),'',F(cons.b/cons.se,3),X(SIG(cp),'p:_c')]];
+    ivs.forEach((c,j)=>{const t=c.b/c.se,p=p2t(t,dfr),others=ivs.filter(o=>o!==c).map(o=>o.name),hold=others.length?`holding ${list(others)} constant, `:'';
+      const up=c.b>=0?'higher':'lower',amt=F(Math.abs(c.b),3);
+      let txt=DUMMY.test(c.name)
+        ? cap(`${hold}cases coded 1 on <i>${c.name}</i> are predicted to score ${amt} ${up} on ${dv} than cases coded 0 (the reference group).`)
+        : cap(`${hold}each 1-unit increase in <i>${c.name}</i> goes with a predicted ${dv} ${Math.abs(c.b)<0.01?fe(Math.abs(c.b)):amt} ${up}.`);
+      if(bin)txt+=` Because ${dv} is coded 0/1, multiply by 100 to read it in percentage points: about ${(Math.abs(c.b)*100).toFixed(1)} points ${up}.`;
+      E['b:'+j]=`<b>B = ${F(c.b,3)}</b>${Math.abs(c.b)<0.01?` (${fe(c.b)} unrounded)`:''}, the unstandardized coefficient (the slope). ${txt} Check its Sig. before you call it a real relationship.`;
+      E['p:'+j]=pSent(p,'a slope this far from 0',`the slope for ${c.name} is 0${others.length?' (holding the other IVs constant)':''}`);
+      E['t:'+j]=`<b>t = B ÷ Std. Error</b> = ${fe(c.b)} ÷ ${fe(c.se)} ≈ ${F(t,3)}. With ${dfr} df, a t beyond about ±${tc.toFixed(2)} gives Sig. below .05.`;
+      E['beta:'+j]=beta?`<b>Beta = ${F(beta[j],3)}</b>, the standardized coefficient: ${hold}a 1-SD increase in ${c.name} goes with a predicted ${dv} ${F(Math.abs(beta[j]),3)} SD ${up}. Every Beta is in SD units, so you can compare them across IVs measured in different units (Module 6).`:'';
+      rows.push([rh(c.name),X(F(c.b,3),'b:'+j),F(c.se,3),beta?X(F(beta[j],3),'beta:'+j):'',X(F(t,3),'t:'+j),X(SIG(p),'p:'+j)]);});
+    h+=tbl('Coefficients'+sup('a'),[[{t:'Model',cs:2,rs:2},{t:'Unstandardized Coefficients',cs:2},{t:'Standardized Coefficients'},{t:'t',rs:2},{t:'Sig.',rs:2}],['B','Std. Error','Beta']],
+      rows,[`a. Dependent Variable: ${dv}`]);
+  }
+  return {html:h,E,note:'SPSS splits one regression into three tables: Model Summary (fit), ANOVA (the F-test) and Coefficients. <b>Sig.</b> is SPSS\'s name for the p-value, and .000 means p &lt; .001.'+(cons?'':' This module shows only the fit, so the Coefficients table is left out here as it is in the Stata output.')};
+}
+
+
+function parseTtest(txt,line){
+  const dv=line.replace(/^ttest\s+/,'').split(/[\s,]/)[0],by=(line.match(/by\(([^)]+)\)/)||[])[1]||'group';
+  const lv=+((txt.match(/\[(\d+)% conf\. interval\]/)||[])[1]||95);
+  const rows=[];
+  for(const L of txt.split('\n')){const m=L.match(/^\s*(\S+)\s*\|\s*([\d,]+)\s+(-?[\d.]+)\s+([\d.]+)\s+([\d.]+)\s/);if(m&&m[1]!=='Combined'&&m[1]!=='Group')rows.push({g:m[1],n:num(m[2]),m:num(m[3]),se:num(m[4]),sd:num(m[5])});}
+  if(rows.length<2)return null;
+  return {dv,by,lv,a:rows[0],b:rows[1]};
+}
+function renderTtest(txt,line,meta){
+  const T=parseTtest(txt,line);if(!T)return null;
+  const {a,b}=T,d=a.m-b.m,q=1-(1-T.lv/100)/2;
+  const sp2=((a.n-1)*a.sd*a.sd+(b.n-1)*b.sd*b.sd)/(a.n+b.n-2),se1=Math.sqrt(sp2*(1/a.n+1/b.n)),df1=a.n+b.n-2,t1=d/se1;
+  const v1=a.sd*a.sd/a.n,v2=b.sd*b.sd/b.n,se2=Math.sqrt(v1+v2),df2=(v1+v2)**2/(v1*v1/(a.n-1)+v2*v2/(b.n-1)),t2=d/se2;
+  const c1=tinv(q,df1)*se1,c2=tinv(q,df2)*se2,p1=p2t(t1,df1),p2=p2t(t2,df2);
+  let lev=meta&&meta.levene;
+  if(!lev){const bin=[a,b].every(g=>g.m>=0&&g.m<=1&&Math.abs(g.sd-Math.sqrt(g.m*(1-g.m)*g.n/(g.n-1)))<2e-4*Math.max(1,g.sd));
+    if(bin)lev=leveneBinary([a.n,b.n],[a.m,b.m]);}
+  const ga=`${T.by} = ${a.g}`,gb=`${T.by} = ${b.g}`,E={};
+  E.ma=`<b>Mean = ${F(a.m,4)}</b>: the average ${T.dv} for the ${a.n} cases with ${ga}.`;
+  E.mb=`<b>Mean = ${F(b.m,4)}</b>: the average ${T.dv} for the ${b.n} cases with ${gb}.`;
+  E.sa=E.sb=`<b>Std. Deviation</b>: how spread out ${T.dv} is within the group, the typical distance of a case from its group's mean.`;
+  if(lev)E.lev=`<b>Levene's test</b> checks H₀ that the two groups have equal variances (equal spread). Sig. = ${SIG(lev.p)}. `+(lev.p<0.05?'That is below .05: the spreads differ, so many courses read the <b>Equal variances not assumed</b> row.':'That is not below .05: no evidence the spreads differ, so read the <b>Equal variances assumed</b> row.')+' Levene\'s Sig. is not the test of your hypothesis; the t-test\'s Sig. (2-tailed) is.';
+  const dTxt=`<b>Mean Difference = ${F(d,5)}</b>: the ${ga} mean minus the ${gb} mean (${F(a.m,4)} − ${F(b.m,4)}). `+(d<0?`Negative, so the ${gb} group's mean is higher.`:d>0?`Positive, so the ${ga} group's mean is higher.`:'');
+  E.d=dTxt;
+  [['1',p1,t1,se1,df1,c1],['2',p2,t2,se2,df2,c2]].forEach(([r,p,t,se,df,c])=>{
+    E['p'+r]=pSent(p,'a difference in means this large or larger','the two groups\' means are equal in the population');
+    E['t'+r]=`<b>t = Mean Difference ÷ Std. Error Difference</b> = ${F(d,5)} ÷ ${F(se,5)} ≈ ${F(t,3)}.`;
+    const lo=d-c,hi=d+c,in0=lo<=0&&hi>=0;
+    E['ci'+r]=`The ${T.lv}% confidence interval for the difference runs from ${F(lo,5)} to ${F(hi,5)}. `+(in0?'It includes 0, which matches Sig. at or above .05 (fail to reject H₀).':'It does not include 0, which matches Sig. below .05 (reject H₀).');});
+  let h=tbl('Group Statistics',[[{t:'',cs:2},'N','Mean','Std. Deviation','Std. Error Mean']],
+    [[rh(T.dv,{rs:2}),rh(ga),String(a.n),X(F(a.m,4),'ma'),X(F(a.sd,5),'sa'),F(a.se,5)],[rh(gb),String(b.n),X(F(b.m,4),'mb'),X(F(b.sd,5),'sb'),F(b.se,5)]]);
+  const dfFmt=v=>Math.abs(v-Math.round(v))<1e-9?String(Math.round(v)):F(v,3);
+  h+=tbl('Independent Samples Test',[[{t:'',cs:2,rs:3},{t:"Levene's Test for Equality of Variances",cs:2},{t:'t-test for Equality of Means',cs:7}],
+      [{t:'F',rs:2},{t:'Sig.',rs:2},{t:'t',rs:2},{t:'df',rs:2},{t:'Sig. (2-tailed)',rs:2},{t:'Mean Difference',rs:2},{t:'Std. Error Difference',rs:2},{t:`${T.lv}% Confidence Interval of the Difference`,cs:2}],
+      ['Lower','Upper']],
+    [[rh(T.dv,{rs:2}),rh('Equal variances assumed'),lev?F(lev.F,3):'.',lev?X(SIG(lev.p),'lev'):'.',X(F(t1,3),'t1'),dfFmt(df1),X(SIG(p1),'p1'),X(F(d,5),'d'),F(se1,5),X(F(d-c1,5),'ci1'),X(F(d+c1,5),'ci1')],
+     [rh('Equal variances not assumed'),'','',X(F(t2,3),'t2'),dfFmt(df2),X(SIG(p2),'p2'),X(F(d,5),'d'),F(se2,5),X(F(d-c2,5),'ci2'),X(F(d+c2,5),'ci2')]]);
+  const unequal=/unequal/.test(line);
+  return {html:h,E,note:`SPSS subtracts the same way Stata does (${ga} minus ${gb}). Stata's <code>ttest</code> matches the <b>Equal variances ${unequal?'not assumed':'assumed'}</b> row. SPSS always adds <b>Levene's test</b> for equal variances.`};
+}
+
+
+function renderSummarize(txt){
+  const rows=[];
+  for(const Ln of txt.split('\n')){const m=Ln.match(/^\s*(\S+)\s*\|\s*([\d,]+)\s+(-?[\d.]+)\s+([\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s*$/);if(m)rows.push({v:m[1],n:num(m[2]),m:num(m[3]),sd:num(m[4]),lo:m[5],hi:m[6]});}
+  if(!rows.length)return null;
+  const same=rows.every(r=>r.n===rows[0].n),E={};
+  rows.forEach((r,i)=>{E['m'+i]=`<b>Mean = ${F(r.m,4)}</b>: the average ${r.v} across ${r.n} cases.`;
+    E['s'+i]=`<b>Std. Deviation = ${F(r.sd,5)}</b>: the typical distance of a case from the mean of ${r.v}. A larger SD means the values are more spread out.`;});
+  const body=rows.map((r,i)=>[rh(r.v),String(r.n),lead(r.lo),lead(r.hi),X(F(r.m,4),'m'+i),X(F(r.sd,5),'s'+i)]);
+  if(same)body.push([rh('Valid N (listwise)'),String(rows[0].n),'','','','']);
+  return {html:tbl('Descriptive Statistics',[['','N','Minimum','Maximum','Mean','Std. Deviation']],body),E,
+    note:'SPSS\'s Descriptives table holds the same numbers as Stata\'s <code>summarize</code>, in a different order.'+(same?'':' The two rows come from different datasets here (counties and simulated samples), so SPSS would list them in separate runs; there is no listwise N.')};
+}
+
+function renderCI(txt,line){
+  const prop=/^ci proportions/.test(line),lv=+((line.match(/level\((\d+)\)/)||[])[1]||((txt.match(/\[(\d+)% conf\. interval\]/)||[])[1])||95);
+  let r=null;
+  for(const Ln of txt.split('\n')){const m=Ln.match(/^\s*(\S+)\s*\|\s*([\d,]+)\s+(-?[\d.]+)\s+([\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)/);if(m&&!/Variable/.test(m[1])){r={v:m[1],n:num(m[2]),m:num(m[3]),se:num(m[4])};break;}}
+  if(!r)return null;
+  const zMode=/z interval/.test(txt),E={};
+  const ciTxt=(lo,hi,what)=>`The ${lv}% confidence interval runs from ${lo} to ${hi}. If we drew many samples of ${r.n} and built an interval this way from each one, about ${lv}% of those intervals would capture the true ${what}. (Loosely: we are ${lv}% confident the true ${what} lies between ${lo} and ${hi}.)`;
+  if(prop){
+    const z=-normInv((1-lv/100)/2),se=Math.sqrt(r.m*(1-r.m)/r.n),succ=Math.round(r.m*r.n),lo=F(r.m-z*se,3),hi=F(r.m+z*se,3);
+    E.p=`<b>Proportion = ${F(r.m,3)}</b>: ${succ} of the ${r.n} cases in the sample (${(r.m*100).toFixed(1)}%).`;
+    E.se=`<b>Standard error = ${F(se,3)}</b> = √(p(1 − p)/n): how much the sample proportion would vary from sample to sample.`;
+    E.ci=ciTxt(lo,hi,'population proportion');
+    return {html:tbl('One-Sample Proportions Confidence Intervals',[[{t:'',rs:2},{t:'Interval Type',rs:2},{t:'Observed',cs:3},{t:'Asymptotic Standard Error',rs:2},{t:`${lv}% Confidence Interval`,cs:2}],['Successes','Trials','Proportion','Lower','Upper']],
+      [[rh(r.v),rh('Wald'),String(succ),String(r.n),X(F(r.m,3),'p'),X(F(se,3),'se'),X(lo,'ci'),X(hi,'ci')]]),E,
+      note:'SPSS (version 27 and later) reports a proportion\'s interval with <i>Analyze → Compare Means → One-Sample Proportions</i>. The Wald interval uses z, like the interval on this page.'};
+  }
+  const sd=r.se*Math.sqrt(r.n),tc=tinv(1-(1-lv/100)/2,r.n-1),lo=F(r.m-tc*r.se,4),hi=F(r.m+tc*r.se,4);
+  E.m=`<b>Mean = ${F(r.m,4)}</b>: the sample mean of ${r.v}, the center of the interval.`;
+  E.se=`<b>Std. Error = ${F(r.se,5)}</b> = SD ÷ √n = ${F(sd,5)} ÷ √${r.n}. The interval is the mean ± t × this.`;
+  E.ci=ciTxt(lo,hi,'population mean');
+  E.sd=`<b>Std. Deviation = ${F(sd,5)}</b>: the typical distance of a case from the mean. Divide by √n to get the standard error.`;
+  return {html:tbl('Descriptives',[[{t:'',cs:3},'Statistic','Std. Error']],
+    [[rh(r.v,{rs:5}),rh('Mean',{cs:2}),X(F(r.m,4),'m'),X(F(r.se,5),'se')],
+     [rh(`${lv}% Confidence Interval for Mean`,{rs:2}),rh('Lower Bound'),X(lo,'ci'),''],
+     [rh('Upper Bound'),X(hi,'ci'),''],
+     [rh('Variance',{cs:2}),F(sd*sd,3),''],
+     [rh('Std. Deviation',{cs:2}),X(F(sd,5),'sd'),'']]),E,
+    note:`The first rows of SPSS's <i>Explore</i> Descriptives table (Explore also lists the median, range and more, which need the raw data). SPSS always builds this interval with t, here t(${r.n-1}) = ${tc.toFixed(3)}.`+(zMode?' The page is set to z, so SPSS\'s interval is a little wider than the one above.':'')};
+}
+
+function normInv(p){ // Acklam
+  const a=[-39.69683028665376,220.9460984245205,-275.9285104469687,138.357751867269,-30.66479806614716,2.506628277459239],b=[-54.47609879822406,161.5858368580409,-155.6989798598866,66.80131188771972,-13.28068155288572],c=[-0.007784894002430293,-0.3223964580411365,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783],d=[0.007784695709041462,0.3224671290700398,2.445134137142996,3.754408661907416];
+  const pl=0.02425;let q,r;if(p<pl){q=Math.sqrt(-2*Math.log(p));return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p>1-pl){q=Math.sqrt(-2*Math.log(1-p));return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  q=p-0.5;r=q*q;return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+
+/* crosstabs */
+function parseTab(txt,line){
+  const L=txt.split('\n');const hi=L.findIndex(l=>/\|.*\|\s*Total\s*$/.test(l));if(hi<0)return null;
+  const rowVar=L[hi].split('|')[0].trim(),colVar=(L[hi-1]||'').split('|')[1]?.trim()||line.split(/\s+/)[2];
+  const cols=L[hi].split('|')[1].trim().split(/\s+/);
+  const rows=[],m=[];let total=null;
+  for(let i=hi+2;i<L.length;i++){const s=L[i];if(/^-+\+/.test(s))continue;const p=s.split('|');if(p.length<3)break;
+    const lab=p[0].trim(),vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
+  if(!rows.length)return null;
+  return {rowVar,colVar,cols,rows,m};
+}
+function lambdas(m){ // as SPSS / PSPP compute them
+  const R=m.length,C=m[0].length,N=m.flat().reduce((s,v)=>s+v,0);
+  const rt=m.map(r=>r.reduce((s,v)=>s+v,0)),ct=m[0].map((_,j)=>m.reduce((s,r)=>s+r[j],0));
+  const argmax=a=>a.reduce((bi,v,i)=>v>a[bi]?i:bi,0);
+  const fimI=m.map(r=>argmax(r)),fim=m.map((r,i)=>r[fimI[i]]),fmjI=ct.map((_,j)=>argmax(m.map(r=>r[j]))),fmj=fmjI.map((i,j)=>m[i][j]);
+  const sfim=fim.reduce((s,v)=>s+v,0),sfmj=fmj.reduce((s,v)=>s+v,0),rmI=argmax(rt),cmI=argmax(ct),rm=rt[rmI],cm=ct[cmI];
+  const out=[];
+  // symmetric
+  const v0=(sfim+sfmj-cm-rm)/(2*N-rm-cm);let a0=0,a1=0;
+  for(let i=0;i<R;i++)for(let j=0;j<C;j++){const t0=(fmjI[j]===i)+(fimI[i]===j),t1=(i===rmI)+(j===cmI);a0+=m[i][j]*(t0-t1)**2;a1+=m[i][j]*(t0+(v0-1)*t1)**2;}
+  out.push({v:v0,ase:Math.sqrt(a1-4*N*v0*v0)/(2*N-rm-cm),t:v0/(Math.sqrt(a0-(sfim+sfmj-cm-rm)**2/N)/(2*N-rm-cm))});
+  // row variable dependent
+  const v1=(sfmj-rm)/(N-rm);let c1=0,d1=0;
+  for(let j=0;j<C;j++){if(rmI===fmjI[j])c1+=fmj[j];else d1+=m[fmjI[j]][j]+m[rmI][j];}
+  out.push({v:v1,ase:Math.sqrt((N-sfmj)*(sfmj+rm-2*c1)/(N-rm)**3),t:v1/(Math.sqrt(d1-(sfmj-rm)**2/N)/(N-rm))});
+  // column variable dependent
+  const v2=(sfim-cm)/(N-cm);let c2=0,d2=0;
+  for(let i=0;i<R;i++){if(cmI===fimI[i])c2+=fim[i];else d2+=m[i][fimI[i]]+m[i][cmI];}
+  out.push({v:v2,ase:Math.sqrt((N-sfim)*(sfim+cm-2*c2)/(N-cm)**3),t:v2/(Math.sqrt(d2-(sfim-cm)**2/N)/(N-cm))});
+  out.forEach(o=>{o.p=isFinite(o.t)?p2z(o.t):NaN;});
+  return {out,N};
+}
+function gammaS(m){
+  const R=m.length,C=m[0].length,N=m.flat().reduce((s,v)=>s+v,0);let P=0,Q=0;const Cm=[],Dm=[];
+  for(let i=0;i<R;i++){Cm.push([]);Dm.push([]);for(let j=0;j<C;j++){let c=0,d=0;
+    for(let a=0;a<R;a++)for(let b=0;b<C;b++){if((a<i&&b<j)||(a>i&&b>j))c+=m[a][b];else if((a<i&&b>j)||(a>i&&b<j))d+=m[a][b];}
+    Cm[i][j]=c;Dm[i][j]=d;P+=m[i][j]*c;Q+=m[i][j]*d;}}
+  let g1=0,g0=0;for(let i=0;i<R;i++)for(let j=0;j<C;j++){g1+=m[i][j]*(Q*Cm[i][j]-P*Dm[i][j])**2;g0+=m[i][j]*(Cm[i][j]-Dm[i][j])**2;}
+  const v=(P-Q)/(P+Q),ase=4/(P+Q)**2*Math.sqrt(g1),t=v/(2/(P+Q)*Math.sqrt(g0-(P-Q)**2/N));
+  return {v,ase,t,p:p2z(t),N};
+}
+window.SPSSX.lambdas=lambdas;window.SPSSX.gamma=gammaS;
+function renderTab(txt,line){
+  const T=parseTab(txt,line);if(!T)return null;
+  const {rowVar,colVar,cols,rows,m}=T,ct=cols.map((_,j)=>m.reduce((s,r)=>s+r[j],0)),Ntot=ct.reduce((s,v)=>s+v,0),E={};
+  const pc=(a,b)=>b?(100*a/b).toFixed(1)+'%':'.';
+  const body=[];
+  rows.forEach((r,i)=>{const rt=m[i].reduce((s,v)=>s+v,0);
+    const c1=[];if(i===0)c1.push(rh(rowVar,{rs:2*rows.length}));c1.push(rh(r,{rs:2}),rh('Count'));m[i].forEach(v=>c1.push(String(v)));c1.push(String(rt));body.push(c1);
+    const c2=[rh(`% within ${colVar}`)];m[i].forEach((v,j)=>{const k=`cp:${i}:${j}`;E[k]=`<b>${pc(v,ct[j])}</b> of the cases with ${colVar} = ${cols[j]} have ${rowVar} = ${r} (${v} of ${ct[j]}). Column percentages put each category of the IV (the columns) on the same footing. Compare them <b>across</b> a row: if they differ, ${rowVar} depends on ${colVar}.`;c2.push(X(pc(v,ct[j]),k));});
+    c2.push(pc(rt,Ntot));body.push(c2);});
+  body.push([rh('Total',{cs:2,rs:2}),rh('Count'),...ct.map(String),String(Ntot)]);
+  body.push([rh(`% within ${colVar}`),...ct.map(()=> '100.0%'),'100.0%']);
+  let h=tbl(`${rowVar} * ${colVar} Crosstabulation`,[[{t:'',cs:3,rs:2},{t:colVar,cs:cols.length},{t:'Total',rs:2}],cols],body);
+  const wantG=/gamma/.test(line)||/gamma\s*=/.test(txt),wantL=/lambda/.test(txt);
+  let note=`SPSS prints the same counts as Stata's <code>tabulate</code>, plus the column percentages the labs ask for (put the IV in the columns and the DV in the rows).`;
+  if(wantL){const {out}=lambdas(m),fmt=(o,k)=>[X(F(o.v,3),'lv'+k),isFinite(o.ase)?F(o.ase,3):'.',isFinite(o.t)?F(o.t,3):'.',X(SIG(o.p),'lp'+k)];
+    const dvL=(txt.match(/lambda \((\S+) given/)||[])[1]||rowVar,ivL=dvL===rowVar?colVar:rowVar,dvRow=dvL===rowVar?1:2;
+    [0,1,2].forEach(k=>{const o=out[k];
+      E['lv'+k]=k===dvRow?`<b>Lambda = ${F(o.v,3)}</b>, with ${dvL} as the DV: knowing ${ivL} cuts errors in guessing ${dvL} by ${(o.v*100).toFixed(1)}% compared with always guessing its mode (Module 4). On the course scale (below .10 none, .10 very weak, .20 moderate, .30 moderately strong, .40 and up strong) that is <b>${lamWord(o.v)}</b>. Lambda is never negative, so it has no direction.`
+        :k===0?`The symmetric lambda averages the two directions. You almost always want the row for your DV instead: <b>${dvL} Dependent</b>.`
+        :`This row treats ${dvL===rowVar?colVar:rowVar} as the DV. Read the <b>${dvL} Dependent</b> row instead, the one for your DV.`;
+      E['lp'+k]=pSent(o.p,'a lambda this large or larger','lambda is 0 in the population');});
+    h+=tbl('Directional Measures',[['','','','Value','Asymptotic Standard Error'+sup('a'),'Approximate T'+sup('b'),'Approximate Significance']],
+      [[rh('Nominal by Nominal',{rs:3}),rh('Lambda',{rs:3}),rh('Symmetric'),...fmt(out[0],0)],[rh(rowVar+' Dependent'),...fmt(out[1],1)],[rh(colVar+' Dependent'),...fmt(out[2],2)]],
+      ['a. Not assuming the null hypothesis.','b. Using the asymptotic standard error assuming the null hypothesis.']);
+    note+=` For lambda, read the row for your DV: <b>${dvL} Dependent</b>. SPSS also lists Goodman and Kruskal tau; tau isn't covered in this course, so it is left out here.`;}
+  if(wantG){const g=gammaS(m);
+    E.gv=`<b>Gamma = ${F(g.v,3)}</b>. Read strength from the size, ignoring the sign: on the course scale (below .25 none, .25 very weak, .50 moderate, .75 and up strong) |${F(g.v,3)}| is <b>${gamWord(g.v)}</b>. The sign gives the direction: ${g.v>=0?'<b>positive</b>, so cases in higher categories of one variable tend to fall in higher categories of the other':'<b>negative (inverse)</b>, so cases in higher categories of one variable tend to fall in lower categories of the other'}. Check how each variable is coded before you say what that means in words.`;
+    E.gp=pSent(g.p,'a gamma this far from 0','gamma is 0 in the population');
+    h+=tbl('Symmetric Measures',[['','','Value','Asymptotic Standard Error'+sup('a'),'Approximate T'+sup('b'),'Approximate Significance']],
+      [[rh('Ordinal by Ordinal'),rh('Gamma'),X(F(g.v,3),'gv'),F(g.ase,3),F(g.t,3),X(SIG(g.p),'gp')],[rh('N of Valid Cases',{cs:2}),String(g.N),'','','']],
+      ['a. Not assuming the null hypothesis.','b. Using the asymptotic standard error assuming the null hypothesis.']);}
+  return {html:h,E,note};
+}
+
+
+/* ---------- panel wiring ---------- */
+function readPre(pre){const c=pre.cloneNode(true);let meta=null;c.querySelectorAll('.spssmeta').forEach(s=>{try{meta=Object.assign(meta||{},JSON.parse(s.textContent));}catch(e){}s.remove();});return {txt:c.textContent,meta};}
+const HINT='Tap an underlined number to see what it means.';
+function render(pre,body){
+  const {txt,meta}=readPre(pre),cmd=cmdOf(txt);let out=null;
+  try{ if(cmd){ if(cmd.kind==='regress')out=renderRegress(txt,cmd.line,meta); else if(cmd.kind==='ttest')out=renderTtest(txt,cmd.line,meta);
+    else if(cmd.kind==='summarize')out=renderSummarize(txt); else if(/^ci /.test(cmd.kind))out=renderCI(txt,cmd.line); else if(cmd.kind==='tabulate')out=renderTab(txt,cmd.line);} }
+  catch(e){console.warn('SPSS-style output:',e);out=null;}
+  body._E=out?out.E||{}:{};
+  body.innerHTML=out?`<p class="sp-note">${out.note}</p><p class="sp-hint">Wide tables scroll sideways.</p><div class="sp-sheet">${out.html}</div><p class="sp-exp" aria-live="polite"><span class="sp-hint2">${HINT}</span></p>`:'<p class="sp-note">Run the analysis above, and its SPSS-style output will appear here.</p>';
+}
+function attach(pre){
+  if(pre.dataset.spss)return;pre.dataset.spss='1';
+  const d=document.createElement('details');d.className='spss';
+  d.innerHTML='<summary><span class="sp-badge">SPSS</span><span class="sp-lab">Show SPSS-style output</span></summary><div class="sp-body"></div>';
+  let anchor=pre;
+  if(!pre.closest('.tfig')){ // the published-tables page already has its own Stata toggle
+    const w=document.createElement('details');w.className='stata-wrap';
+    w.innerHTML='<summary><span class="sp-badge">Stata</span><span class="sp-lab">Show Stata output</span></summary><div class="st-body"></div>';
+    pre.parentNode.insertBefore(w,pre);w.querySelector('.st-body').appendChild(pre);anchor=w;}
+  anchor.insertAdjacentElement('beforebegin',d); // SPSS first, then Stata
+  const body=d.querySelector('.sp-body');let dirty=true,raf=0;
+  const KIND={regress:'regression','ttest':'t test',summarize:'descriptives','ci means':'confidence interval','ci proportions':'confidence interval',tabulate:'crosstab'};
+  const label=()=>{const c=cmdOf(readPre(pre).txt);const k=c?c.kind:null;
+    if(anchor!==pre)anchor.querySelector('.sp-lab').innerHTML='Show Stata output'+(k?`: <code>${k}</code>`:'');
+    d.querySelector('.sp-lab').textContent='Show SPSS-style output'+(k?` (${KIND[k]})`:'');};
+  label();
+  const go=()=>{raf=0;label();if(d.open){render(pre,body);dirty=false;}else dirty=true;};
+  new MutationObserver(()=>{if(!raf)raf=requestAnimationFrame(go);}).observe(pre,{childList:true,subtree:true,characterData:true});
+  d.addEventListener('toggle',()=>{if(d.open&&dirty)go();});
+  const pick=cell=>{const k=cell.dataset.x,E=body._E||{};if(!E[k])return;
+    body.querySelectorAll('.tap.sel').forEach(x=>x.classList.remove('sel'));body.querySelectorAll(`[data-x="${CSS.escape(k)}"]`).forEach(x=>x.classList.add('sel'));
+    const ex=body.querySelector('.sp-exp');if(ex)ex.innerHTML=E[k];};
+  body.addEventListener('click',e=>{const c=e.target.closest('.tap');if(c)pick(c);});
+  body.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const c=e.target.closest('.tap');if(c){e.preventDefault();pick(c);}});
+}
+function init(){document.querySelectorAll('pre.stata').forEach(attach);}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.SPSSX.attachAll=init;
+})();</script>
+<!-- spss-end -->
 </head>
 <body>
-<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 7: </span><b>Dummy variables</b></span><a href="8-titanic-practice.html" aria-label="Next: Practice, who survived the Titanic?">Next →</a></nav>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 7: </span><b>Dummy variables</b></span><a href="8-published-tables.html" aria-label="Next: What would it look like published?">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive 7 of 7</p>
+    <p class="kicker">Statistical methods · Interactive 7 of 8</p>
     <h1>Dummy variables</h1>
     <p class="dek">Regression needs numbers, but region, party and gender are categories. A dummy variable turns a category into a 0/1 switch. Its coefficient is a difference between groups, and in a regression with other IVs it shifts the line up or down.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -299,6 +684,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
       <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li aria-current="page"><a href="7-dummy-variables.html">7 Dummy variables</a></li>
+      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li><a href="8-titanic-practice.html">Practice: Titanic</a></li>
     </ul>
   </div>
@@ -365,6 +751,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
       </div>
     </div>
     <section class="card" style="margin-top:12px"><h3>Output</h3><pre class="stata" id="bStata"></pre></section>
+    <p class="publink" style="margin-top:10px"><a href="8-published-tables.html#t7">See this as a published table →</a></p>
   </figure>
 
   <!-- ============ C ============ -->
@@ -412,6 +799,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
           <div class="box" id="flPanel"></div>
         </div>
         <section class="card"><h3>Output</h3><pre class="stata" id="flStata"></pre></section>
+        <p class="publink"><a href="8-published-tables.html#t5">See these models as published tables →</a></p>
       </div>
     </details>
     <p class="fn" style="margin:10px 0 0"><sup>1</sup> Center for American Women and Politics, “Gender Gaps in Vote Choice and Party Identification,” <a href="https://cawp.rutgers.edu/data-voters">cawp.rutgers.edu/data-voters</a>; Pew Research Center, “Changing Partisan Coalitions in a Politically Divided Nation,” April 9, 2024 (among registered voters, 52% of men identify with or lean toward the Republican Party, 46% toward the Democratic Party).</p>
@@ -458,7 +846,7 @@ main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side 
   <footer class="src">
     Data: Trump's 2016 vote share and the share of each state's population in metro areas, from FiveThirtyEight's <i>hate_crimes</i> data via the <i>fivethirtyeight</i> R package and <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>. Census Bureau regions: Northeast (9), Midwest (12), South (16 states plus D.C.), West (13).
   </footer>
-<nav class="pager" aria-label="Previous and next"><a href="6-multiple-regression.html"><span class="k">← Previous · Module 6</span><span class="t">Multiple regression</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8-titanic-practice.html"><span class="k">Next · Practice →</span><span class="t">Who survived the Titanic?</span></a></nav>
+<nav class="pager" aria-label="Previous and next"><a href="6-multiple-regression.html"><span class="k">← Previous · Module 6</span><span class="t">Multiple regression</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8-published-tables.html"><span class="k">Next · Module 8 →</span><span class="t">What would it look like published?</span></a></nav>
 </main>
 
 <div class="scrim" id="scrim"></div>
@@ -512,7 +900,7 @@ function ols(cols,y){const n=y.length,k=cols.length,p=k+1;const X=Array.from({le
   for(let i=0;i<n;i++){const r=X[i];for(let a=0;a<p;a++){Xty[a]+=r[a]*y[i];for(let b=0;b<p;b++)XtX[a][b]+=r[a]*r[b];}}const inv=invert(XtX);if(!inv)return null;const b=inv.map(r=>r.reduce((s,v,j)=>s+v*Xty[j],0));
   let sse=0,sst=0;const my=mean(y);for(let i=0;i<n;i++){const yh=X[i].reduce((s,v,j)=>s+v*b[j],0);sse+=(y[i]-yh)**2;sst+=(y[i]-my)**2;}
   const df=n-p,s2=sse/df,se=inv.map((r,j)=>Math.sqrt(s2*r[j])),t=b.map((v,j)=>v/se[j]),pv=t.map(v=>2*(1-tcdf(Math.abs(v),df)));const r2=1-sse/sst;
-  return {b,se,t,p:pv,df,sse,sst,r2,adj:1-(1-r2)*(n-1)/df,F:((sst-sse)/k)/s2,pF:fsurv(((sst-sse)/k)/s2,k,df),k,n,tc:tinv(0.975,df),rmse:Math.sqrt(s2)};}
+  const __sy=Math.sqrt(sst/(n-1)),beta=cols.map((c,j)=>{const mm=c.reduce((s,v)=>s+v,0)/n;return b[j]*Math.sqrt(c.reduce((s,v)=>s+(v-mm)**2,0)/(n-1))/__sy;});return {beta,b,se,t,p:pv,df,sse,sst,r2,adj:1-(1-r2)*(n-1)/df,F:((sst-sse)/k)/s2,pF:fsurv(((sst-sse)/k)/s2,k,df),k,n,tc:tinv(0.975,df),rmse:Math.sqrt(s2)};}
 
 /* stata helpers */
 function pad(s,w){s=String(s);return s.length>=w?s:' '.repeat(w-s.length)+s;}
@@ -521,7 +909,7 @@ function fnum(v){if(!isFinite(v))return '.';let t=String(Number(v.toPrecision(7)
 const pf=p=>p<0.0005?'0.000':p.toFixed(3);
 const hl=(s,c)=>c?`<span class="${c}">${s}</span>`:s;
 function anova(f,cmd){const R=(l,v)=>'  '+rpad(l,16)+'='+pad(v,10),row=(s,ss,df,ms)=>pad(s,12)+' |'+pad(fnum(ss),12)+pad(df,11)+pad(fnum(ms),12),ssm=f.sst-f.sse;
-  return [cmd.split('\n').map(c=>`<span class="cmd">${c}</span>`).join('\n'),'',rpad('      Source |       SS           df       MS',49)+R('Number of obs',f.n),rpad('-------------+----------------------------------',49)+R(`F(${f.k}, ${f.df})`,f.F.toFixed(2)),row('Model',ssm,f.k,ssm/f.k)+R('Prob > F',f.pF<0.00005?'0.0000':f.pF.toFixed(4)),row('Residual',f.sse,f.df,f.sse/f.df)+R('R-squared',f.r2.toFixed(4)),rpad('-------------+----------------------------------',49)+R('Adj R-squared',f.adj.toFixed(4)),row('Total',f.sst,f.n-1,f.sst/(f.n-1))+R('Root MSE',f.rmse.toPrecision(5)),'','-'.repeat(78),'   trump_pct | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]','-------------+'+'-'.repeat(64)];}
+  return [cmd.split('\n').map(c=>`<span class="cmd">${c}</span>`).join('\n')+(window.SPSSX&&f.beta?SPSSX.meta({beta:f.beta,ss:[f.sst-f.sse,f.sse,f.sst]}):''),'',rpad('      Source |       SS           df       MS',49)+R('Number of obs',f.n),rpad('-------------+----------------------------------',49)+R(`F(${f.k}, ${f.df})`,f.F.toFixed(2)),row('Model',ssm,f.k,ssm/f.k)+R('Prob > F',f.pF<0.00005?'0.0000':f.pF.toFixed(4)),row('Residual',f.sse,f.df,f.sse/f.df)+R('R-squared',f.r2.toFixed(4)),rpad('-------------+----------------------------------',49)+R('Adj R-squared',f.adj.toFixed(4)),row('Total',f.sst,f.n-1,f.sst/(f.n-1))+R('Root MSE',f.rmse.toPrecision(5)),'','-'.repeat(78),'   trump_pct | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]','-------------+'+'-'.repeat(64)];}
 function crow(name,f,j,cls,mark){const parts=[pad(fnum(f.b[j]),11),pad(fnum(f.se[j]),11),pad(f.t[j].toFixed(2),9),pad(pf(f.p[j]),8)];if(mark){parts[0]=hl(parts[0],'m');parts[1]=hl(parts[1],'m');parts[2]=hl(parts[2],'m');parts[3]=hl(parts[3],'m');}
   return hl(pad(name,12),cls)+' |'+hl(parts[0],cls)+parts.slice(1).join('')+pad(fnum(f.b[j]-f.tc*f.se[j]),13)+pad(fnum(f.b[j]+f.tc*f.se[j]),12);}
 
@@ -590,7 +978,7 @@ function renderA(){
     '    Ha: diff &lt; 0                 Ha: diff != 0                 Ha: diff &gt; 0',
     ` Pr(T &lt; t) = ${pLess.toFixed(4)}         Pr(|T| &gt; |t|) = ${hl((2*(1-tcdf(Math.abs(t),df))).toFixed(4),'m')}          Pr(T &gt; t) = ${(1-pLess).toFixed(4)}`,'',
     `<span class="dim">* ttest subtracts group 1 from group 0, so diff and t carry the opposite sign of the regression coefficient.</span>`];
-  $('#aTt').innerHTML=T.join('\n');
+  if(window.SPSSX)T.push(SPSSX.meta({levene:SPSSX.levene(g0,g1)}));$('#aTt').innerHTML=T.join('\n');
 }
 
 /* ============ B ============ */
