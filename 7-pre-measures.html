@@ -14,37 +14,37 @@
    Stata-style output under the charts. */
 :root{
   color-scheme: light;
-  --page:#f6f6f3;
-  --surface:#fdfdfc;
-  --ink:#121212;
-  --ink-2:#4f4e4a;
-  --muted:#85837d;
-  --grid:#e4e3dc;
-  --axis:#bebdb4;
-  --line:rgba(18,18,18,.12);
-  --accent:#c8102e;          /* masthead rule, kicker */
-  --pop:#8d8b84;             /* population bars */
-  --s1:#2a78d6;              /* sample means (blue) */
-  --s1-ink:#1c5cab;
-  --s2:#eb6834;              /* the current sample (orange) */
-  --s2-ink:#b8481c;
-  --code-bg:#f1f0eb;
+  --page:#F4F5F6;
+  --surface:#FFFFFF;
+  --ink:#16191C;
+  --ink-2:#4A4F55;
+  --muted:#5F6266;
+  --grid:#E3E5E8;
+  --axis:#B9BCC0;
+  --line:rgba(22,25,28,.12);
+  --accent:#004C97;          /* masthead rule, kicker */
+  --pop:#75787B;             /* population bars */
+  --s1:#004C97;--s1-edge:transparent;--s1-line:#004C97;--accent-ink:#004C97;              /* sample means (blue) */
+  --s1-ink:#004C97;
+  --s2:#C25E00;              /* the current sample (orange) */
+  --s2-ink:#9A4A00;
+  --code-bg:#EDEFF1;
   --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
-    --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
-    --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+    --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+    --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+    --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
   }
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
-  --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
-  --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+  --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+  --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+  --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
 }
 
 *{box-sizing:border-box}
@@ -57,7 +57,7 @@ body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body)
 .rule{height:4px;background:var(--accent)}
 header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
 header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
-.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
 h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
 .dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
 .modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
@@ -77,18 +77,18 @@ select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);bo
 .seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
 .seg label:first-of-type{border-left:0}
 .seg input:checked + label{background:var(--ink);color:var(--surface)}
-.seg input:focus-visible + label{outline:2px solid var(--s1);outline-offset:-2px}
+.seg input:focus-visible + label{outline:2px solid var(--s1-line);outline-offset:-2px}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
 button:hover{border-color:var(--ink-2)}
-button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
-button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+button.primary{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-color:var(--s1-ink);color:#fff}
 @media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
 button.primary:active{filter:brightness(.92)}
 button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
 .toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
 .toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
-.toggles input{accent-color:var(--s1);width:16px;height:16px;margin:0}
+.toggles input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
 
 /* figures */
 .figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -189,7 +189,7 @@ body.formulas-open .drawer{transform:none}
 .measures b{display:block;font-size:16px}
 .measures span{font-size:13.5px;color:var(--ink-2)}
 .part{margin-top:14px;padding-top:22px;border-top:2px solid var(--ink)}
-.part .kick{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.part .kick{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
 .part h2{margin:4px 0 6px;font-size:clamp(22px,3vw,28px);line-height:1.2;text-wrap:balance}
 .part p.lede{margin:0;max-width:70ch;color:var(--ink-2)}
 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
@@ -206,7 +206,7 @@ table.xt th.xlab{font-size:12px;letter-spacing:.04em;text-transform:uppercase;co
 table.xt td{min-width:64px;text-align:center;padding:6px 6px;border-radius:5px;background:var(--page);border:1px solid transparent;position:relative}
 table.xt td .c{display:block;font-weight:500;font-size:15px}
 table.xt td .p{display:block;font-size:11.5px;color:var(--muted)}
-table.xt td.modal{background:color-mix(in srgb, var(--s1) 18%, var(--surface));border-color:var(--s1)}
+table.xt td.modal{background:color-mix(in srgb, var(--s1) 18%, var(--surface));border-color:var(--s1-ink)}
 table.xt td.modal .c{font-weight:700}
 table.xt td.tot{background:transparent;color:var(--ink-2)}
 table.xt td.tot.modal{background:transparent;border-color:var(--ink);color:var(--ink)}
@@ -238,7 +238,7 @@ table.xt td.pb{outline:3px solid var(--ink);outline-offset:-1px}
 .pair .tag.a{background:var(--s2);color:#fff}
 .pair .tag.b{background:var(--ink);color:var(--surface)}
 .verdict{display:inline-flex;gap:6px;align-items:center;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;border:1px solid var(--line);justify-self:start}
-.verdict.con{background:color-mix(in srgb,var(--s1) 18%,var(--surface));border-color:var(--s1);color:var(--s1-ink)}
+.verdict.con{background:color-mix(in srgb,var(--s1) 18%,var(--surface));border-color:var(--s1-ink);color:var(--s1-ink)}
 .verdict.dis{background:color-mix(in srgb,var(--miss) 15%,var(--surface));border-color:var(--miss);color:var(--miss-ink)}
 .verdict.tie{color:var(--ink-2)}
 .why{font-size:13.5px;color:var(--ink-2);margin:0}
@@ -254,15 +254,15 @@ table.xt td.pb{outline:3px solid var(--ink);outline-offset:-1px}
 .sw.mean{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
 
 /* ---- start-simple lambda walkthrough ---- */
-:root{ --dem:#2a78d6; --rep:#e34948; }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --dem:#3987e5; --rep:#e66767; } }
-:root[data-theme="dark"]{ --dem:#3987e5; --rep:#e66767; }
+:root{ --dem:#5B9BD5; --rep:#E06666; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --dem:#5E97D8; --rep:#DB6E6E; } }
+:root[data-theme="dark"]{ --dem:#5E97D8; --rep:#DB6E6E; }
 .simple{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:920px){.simple{grid-template-columns:1fr}}
 .stage{position:relative;min-height:120px;transition:height .5s ease}
 .tok{position:absolute;left:0;top:0;width:38px;height:50px;transition:transform .75s cubic-bezier(.3,.8,.25,1),opacity .4s;will-change:transform}
 .tok .c{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:700 15px var(--font-body);color:#fff;transition:opacity .4s,box-shadow .4s}
-.tok.dem .c{background:var(--dem)} .tok.rep .c{background:var(--rep)}
+.tok.dem .c{background:var(--dem);box-shadow:inset 0 0 0 1px var(--dem-ink)} .tok.rep .c{background:var(--rep);box-shadow:inset 0 0 0 1px var(--rep-ink)}
 .tok .g{display:block;text-align:center;font:600 11px var(--font-body);color:var(--muted);margin-top:1px;letter-spacing:.03em}
 .tok .mk{position:absolute;top:-6px;right:-6px;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-body);opacity:0;transform:scale(.6);transition:opacity .3s .45s,transform .3s .45s}
 .tok.ok .mk{opacity:1;transform:none;background:var(--surface);color:var(--ink);border:1.5px solid var(--ink)}
@@ -271,7 +271,7 @@ table.xt td.pb{outline:3px solid var(--ink);outline-offset:-1px}
 .glab{position:absolute;font-size:13.5px;color:var(--ink-2);transition:transform .75s cubic-bezier(.3,.8,.25,1),opacity .4s;white-space:nowrap}
 .glab b{color:var(--ink)}
 .guess{display:inline-flex;align-items:center;gap:6px;font-weight:600;padding:2px 9px;border-radius:999px;font-size:13px;color:#fff}
-.guess.dem{background:var(--dem)} .guess.rep{background:var(--rep)}
+.guess.dem{background:var(--dem);box-shadow:inset 0 0 0 1px var(--dem-ink)} .guess.rep{background:var(--rep);box-shadow:inset 0 0 0 1px var(--rep-ink)}
 .tally{display:grid;gap:10px}
 .tally .line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px;font-size:15px}
 .tally .line .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -293,7 +293,7 @@ table.xt td.pb{outline:3px solid var(--ink);outline-offset:-1px}
 .pline{transition:stroke .4s,opacity .4s,stroke-width .2s}
 .plist{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .plist .pc{font:600 12.5px var(--font-body);padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);cursor:default;font-variant-numeric:tabular-nums}
-.plist .pc.con{border-color:var(--s1);color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 12%,var(--surface))}
+.plist .pc.con{border-color:var(--s1-ink);color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 12%,var(--surface))}
 .plist .pc.dis{border-color:var(--miss);color:var(--miss-ink);background:color-mix(in srgb,var(--miss) 12%,var(--surface))}
 .plist .pc.tie{opacity:.55;text-decoration:line-through}
 .plist .pc.unk{border-color:var(--ink-2);color:var(--ink)}
@@ -322,7 +322,7 @@ html{scroll-padding-top:58px}
 .topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
 .topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
 .topnav a:hover{border-color:var(--ink-2)}
-.topnav a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.topnav a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
 .topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .topnav .here b{color:var(--ink);font-weight:600}
 @media (max-width:520px){.topnav .here .lab{display:none}}
@@ -346,6 +346,12 @@ html{scroll-padding-top:58px}
 main{grid-template-columns:minmax(0,1fr)}
 main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
 @media (max-width:520px){.fx math{font-size:17px}}
+
+/* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
+svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):not([stroke]){stroke:var(--s1-edge);stroke-width:1px}
+svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
+svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
+svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 </style>
 <!-- spss-start -->
 <style>
@@ -383,10 +389,10 @@ h3 + details.stata-wrap{margin-top:4px}
 .sp-sheet td.tap:hover{background:#f2f5fa}
 .sp-sheet td.tap:focus-visible{outline:2px solid #2a78d6;outline-offset:-2px}
 .sp-sheet td.tap.sel{background:#dbe9f9;color:#0b3f73}
-.sp-exp{margin:10px 0 0;padding:11px 14px;background:#fff6d8;border:2px solid #e0a100;border-radius:10px;color:#1a1a1a;font-size:14.5px;line-height:1.6}
+.sp-exp{margin:10px 0 0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:14.5px;line-height:1.6}
 .sp-exp .sp-hint2{color:#5c5440}
 .sp-exp a{color:#0b3f73;font-weight:600}
-.sp-exp b{color:#1a1a1a}
+.sp-exp b{color:#181A1D}
 </style>
 <script>
 /* SPSS-style output: one expandable panel under every Stata output on the site.
@@ -783,7 +789,7 @@ window.SPSSX.attachAll=init;
   <section class="card" aria-labelledby="simpleh" style="margin-top:4px">
     <h3 id="simpleh" style="font-size:19px">Guess the party of 20 voters</h3>
     <p style="margin:0 0 6px;color:var(--ink-2);max-width:78ch">Ten women and ten men, drawn at random from the Democrats and Republicans in the 2004 National Election Study. Your job: guess each person's party. The strategy never changes: <b style="color:var(--ink)">always guess the most common party (the mode)</b>. First you don't know their gender, then you do. Count the wrong guesses each time.</p>
-    <div class="legend2"><span><i class="dot" style="background:var(--dem)"></i>D = Democrat</span><span><i class="dot" style="background:var(--rep)"></i>R = Republican</span><span>W / M under each voter = woman / man</span><span><b style="color:var(--ink)">✓</b> right guess</span><span><b style="color:var(--ink)">✗</b> wrong guess (faded)</span></div>
+    <div class="legend2"><span><i class="dot" style="background:var(--dem);box-shadow:inset 0 0 0 1px var(--dem-ink)"></i>D = Democrat</span><span><i class="dot" style="background:var(--rep);box-shadow:inset 0 0 0 1px var(--rep-ink)"></i>R = Republican</span><span>W / M under each voter = woman / man</span><span><b style="color:var(--ink)">✓</b> right guess</span><span><b style="color:var(--ink)">✗</b> wrong guess (faded)</span></div>
     <div class="row" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
       <div class="btns" id="ssteps"><button data-s="1">1 · Guess without gender</button><button data-s="2">2 · Guess within each gender</button><button data-s="3">3 · Do the math</button></div>
       <button id="sdraw" style="margin-left:auto">Draw a different 20</button>
@@ -927,7 +933,7 @@ window.SPSSX.attachAll=init;
   <div class="grid2">
     <figure>
       <div class="fighead"><h2><span class="step">C</span><span id="rtitle"></span></h2></div>
-      <div class="key"><span><i class="sw" style="background:var(--s1);border-radius:50%"></i>a county</span><span><i class="sw mean"></i>mean of Y, ȳ</span><span><i class="sw reg"></i>regression line</span><span><i class="sw err"></i>prediction error</span></div>
+      <div class="key"><span><i class="sw" style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-radius:50%"></i>a county</span><span><i class="sw mean"></i>mean of Y, ȳ</span><span><i class="sw reg"></i>regression line</span><span><i class="sw err"></i>prediction error</span></div>
       <div class="chart" id="rchart"></div>
       <p class="xnote" id="rnote"></p>
     </figure>
