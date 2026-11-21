@@ -653,11 +653,14 @@ window.SPSSX.attachAll=init;
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive 3 of 8</p>
+    <p class="kicker">Statistical methods · Interactive 3 of 7</p>
     <h1>Difference in means</h1>
     <p class="dek">Do two groups really differ, or is the gap in our sample just luck of the draw? Draw samples from real surveys, compare the two group means on one axis, and then repeat the sampling until the distribution of the difference shows whether zero is a plausible value.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="d1-levels-and-central-tendency.html">D1 Levels and central tendency</a></li>
+      <li><a href="d2-skew-and-kurtosis.html">D2 Skew and kurtosis</a></li>
+      <li><a href="d3-dispersion.html">D3 Dispersion</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
       <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
       <li aria-current="page"><a href="3-difference-in-means.html">3 Difference in means</a></li>
@@ -665,8 +668,9 @@ window.SPSSX.attachAll=init;
       <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
-      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li><a href="8-titanic-practice.html">Practice: Titanic</a></li>
+      <li><a href="9-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="10-exam-prep.html">Exam prep</a></li>
     </ul>
   </div>
 </header>
@@ -705,7 +709,7 @@ window.SPSSX.attachAll=init;
 
   <figure>
     <div class="fighead">
-      <h2><span class="step">A</span>This sample: two group means on one axis</h2>
+      <h2><span class="step">A</span>Two group means from this sample</h2>
       <button class="linkish fxbtn" data-open-formulas><i>Σ</i> Formulas</button>
     </div>
     <p class="sub">Each curve is the estimated sampling distribution of one group's mean, centered on x̄ with spread s/√n. The shaded part of each curve, and the bracket below it, is that group's <span class="lvl">95</span>% confidence interval.</p>
@@ -716,7 +720,7 @@ window.SPSSX.attachAll=init;
   </figure>
 
   <figure>
-    <div class="fighead"><h2><span class="step">B</span>Repeat it: the sampling distribution of the difference</h2></div>
+    <div class="fighead"><h2><span class="step">B</span>The sampling distribution of the difference</h2></div>
     <p class="sub">Every draw computes one difference, x̄₁ − x̄₂, and drops it onto the axis. The shaded band holds the middle <span class="lvl">95</span>% of all differences so far. The black line marks zero, the value the null hypothesis claims.</p>
     <div class="key"><span><i class="sw" style="background:var(--s1)"></i>differences from your samples</span><span><i class="sw band"></i><span>middle <b class="lvl" style="font-weight:inherit">95</b>%</span></span><span><i class="sw line"></i>normal curve from theory</span><span><i class="sw zero"></i>H₀: difference = 0</span><span><i class="sw" style="background:var(--s2);border-radius:50%"></i>this sample, with its CI</span></div>
     <div class="status" id="bStatus"></div>
@@ -757,7 +761,7 @@ window.SPSSX.attachAll=init;
   </section>
 
   <figure id="errors">
-    <div class="fighead"><h2><span class="step">E</span>Two ways to be wrong: Type I and Type II errors</h2></div>
+    <div class="fighead"><h2><span class="step">E</span>Type I and Type II errors</h2></div>
     <p class="sub">A test ends in one of two decisions about H₀, and the world is in one of two states. Two of the four combinations are mistakes.</p>
     <div class="tblwrap"><table class="dec">
       <tr><th></th><th>H₀ is true (no real difference)</th><th>H₀ is false (a real difference)</th></tr>
@@ -791,7 +795,7 @@ window.SPSSX.attachAll=init;
         <p>Modern courts flip the burden: the defendant is presumed innocent, and the prosecution has to bring enough evidence to overcome that presumption. Science does the same. H₀ is the presumption of innocence (“nothing is going on”), and the data have to be strong enough to reject it.</p>
         <h3>Humble science</h3>
         <p>We prefer science to be humble, and to build knowledge on an assessment of evidence rather than assumptions of knowledge. Starting from the assumption of no relationship helps us avoid the costly error of concluding there are effects or connections out in the world that don't actually exist: a Type I error, convicting an innocent null. That is why α is kept small.</p>
-        <h3>.05 is a convention, not a law</h3>
+        <h3>Why we use .05</h3>
         <p>Setting α = .05 means we accept being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on, not a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The slider above shows the price: a stricter α makes Type II errors more likely, unless we collect more data.</p>
       </div>
     </details>
@@ -1076,7 +1080,7 @@ function drawB(now){
     html+=`<span class="chip ${inside?'':'strong'}">0 is ${inside?'inside':'outside'} the middle ${lev}% of the differences</span>`; }
   else html+=`<span class="chip">Draw at least 40 samples to see the middle ${lev}%</span>`;
   if(out) html+=`<span class="chip">${out} beyond the edges</span>`;
-  if(st.S.length){ const R=test(st.S[st.S.length-1]); html+=`<span class="chip">this sample: ${f3(R.d)}, ${lev}% CI ${f3(R.lo)} to ${f3(R.hi)}</span>`; }
+  if(st.S.length){ const R=test(st.S[st.S.length-1]); html+=`<span class="chip">This sample\'s difference is ${f3(R.d)}, with a ${lev}% CI of ${f3(R.lo)} to ${f3(R.hi)}</span>`; }
   $('#bStatus').innerHTML=html;
 }
 $('#bChart').addEventListener('pointermove',e=>{ if(!geomB) return; const r=e.currentTarget.getBoundingClientRect(); const x=e.clientX-r.left;

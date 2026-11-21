@@ -178,6 +178,14 @@ body.formulas-open .drawer{transform:none}
 .ctl .seg{justify-self:start}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
 .card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.trk{margin:10px 0 4px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:var(--page)}
+.trk-h{margin:0 0 8px;font-size:15px;color:var(--ink)}
+.trk-bar{position:relative;height:12px;border-radius:6px;background:var(--grid);overflow:hidden}
+.trk-fill{position:absolute;left:0;top:0;bottom:0;background:var(--miss);border-radius:6px;transition:width .25s}
+.trk-mark{position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+.trk-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:3px}
+.trk-say{margin:8px 0 0;font-size:14px;color:var(--ink-2)}
+.trk-say a{color:var(--s1-ink);font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
 .chip b{color:var(--ink)}
@@ -669,12 +677,15 @@ window.SPSSX.attachAll=init;
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive 5 of 8</p>
+    <p class="kicker">Statistical methods · Interactive 5 of 7</p>
     <h1>Bivariate regression</h1>
     <p class="dek">One line summarizes how Y moves with X. Fit it, read it as an equation, use it to make predictions, and ask whether its slope is steeper than chance alone would produce.</p>
     <p style="margin:2px 0 0;font-size:14.5px;color:var(--ink-2)">Worked example: <a href="5b-partisans-and-the-first-lady.html" style="color:var(--ink);font-weight:600">Partisans and the First Lady</a> (2004 NES feeling thermometers), a step-by-step lab companion.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="d1-levels-and-central-tendency.html">D1 Levels and central tendency</a></li>
+      <li><a href="d2-skew-and-kurtosis.html">D2 Skew and kurtosis</a></li>
+      <li><a href="d3-dispersion.html">D3 Dispersion</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
       <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
       <li><a href="3-difference-in-means.html">3 Difference in means</a></li>
@@ -682,8 +693,9 @@ window.SPSSX.attachAll=init;
       <li aria-current="page"><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
-      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li><a href="8-titanic-practice.html">Practice: Titanic</a></li>
+      <li><a href="9-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="10-exam-prep.html">Exam prep</a></li>
     </ul>
   </div>
 </header>
@@ -726,7 +738,7 @@ window.SPSSX.attachAll=init;
 
   <!-- C: predict + marginal -->
   <figure>
-    <div class="fighead"><h2><span class="step">C</span>Predict, and measure a change</h2></div>
+    <div class="fighead"><h2><span class="step">C</span>Predictions and predicted changes</h2></div>
     <p class="sub">Plug any value of X into the equation for a point prediction. Pick a starting and ending value of X to see the change the line predicts: the triangle's run is the change in X, its rise is the change in ŷ.</p>
     <div class="pc">
       <div>
@@ -742,7 +754,7 @@ window.SPSSX.attachAll=init;
           <p class="warn" id="pWarn"></p>
         </div>
         <div class="box">
-          <h4>Change in X → predicted change in Y</h4>
+          <h4>Predicted change in Y for a change in X</h4>
           <div class="row"><label for="mFrom">From</label><select id="mFrom"></select><label for="mTo">to</label><select id="mTo"></select></div>
           <div class="big" id="mBig" style="margin-top:10px"></div>
           <div class="calc" id="mCalc"></div>
@@ -754,7 +766,7 @@ window.SPSSX.attachAll=init;
 
   <!-- D: significance -->
   <figure>
-    <div class="fighead"><h2><span class="step">D</span>Is the slope real? Turn the bell curve 90°</h2></div>
+    <div class="fighead"><h2><span class="step">D</span>Testing whether the slope is real</h2></div>
     <ol class="steps">
       <li><b>Suppose X and Y were unrelated.</b> The true slope would be 0, but any one dataset would still show some slope by chance.</li>
       <li><b>Shuffle Y</b> across the <span class="unitw">state</span>s. That breaks any real link while keeping every value. The line through the shuffled points is a slope produced purely by chance (gray).</li>
@@ -766,7 +778,9 @@ window.SPSSX.attachAll=init;
     </div>
     <div class="key"><span><i class="sw ols"></i>real least-squares line</span><span><i class="sw null"></i>lines from shuffled data</span><span><i class="sw crit"></i>critical slopes (±t*·SE)</span><span><i class="sw" style="background:var(--muted)"></i>chance slopes, stacked sideways</span></div>
     <div class="chips" id="dChips"></div>
+    <p class="say" id="dSay" style="margin:0 0 8px"></p>
     <div class="chart" id="dChart"></div>
+    <div class="trk" id="dTrack" aria-live="polite"></div>
     <figcaption id="dCap"></figcaption>
   </figure>
 
@@ -774,7 +788,7 @@ window.SPSSX.attachAll=init;
     <h3>Output</h3>
     <pre class="stata" id="stata"></pre>
   </section>
-  <p class="publink"><a href="8-published-tables.html#t1">See the metro share model as a published table →</a></p>
+  <p class="publink"><a href="9-published-tables.html#t1">See the metro share model as a published table →</a></p>
 
   <section class="amberbox wex" aria-labelledby="wexH">
     <span class="tag">Worked example</span>
@@ -976,7 +990,7 @@ function renderA(){
   $('#mineKey').hidden=!mine;
   const t=T();
   $('#aChips').innerHTML=`<span class="chip">n = <b>${f.n}</b></span><span class="chip">slope β₁ = <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">constant = <b class="k-cons">${sgn(f.b0)}</b></span><span class="chip">r = <b>${(f.r<0?'−':'')+Math.abs(f.r).toFixed(2)}</b></span><span class="chip">r² = <b>${f.r2.toFixed(3)}</b></span><span class="chip">SSE (least squares) = <b>${Math.round(f.sse).toLocaleString('en-US')}</b></span>`+
-    (mine? `<span class="chip ${sseMine<=f.sse*1.0005?'strong':''}">SSE (your line) = <b>${Math.round(sseMine).toLocaleString('en-US')}</b> · ${sseMine<=f.sse*1.0005?'a tie: you found the least-squares line':'+'+(100*(sseMine/f.sse-1)).toFixed(1)+'% worse'}</span>`:'');
+    (mine? `<span class="chip ${sseMine<=f.sse*1.0005?'strong':''}">${sseMine<=f.sse*1.0005?`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, a tie with the least-squares line`:`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, ${(100*(sseMine/f.sse-1)).toFixed(1)}% more than the least-squares line's`}</span>`:'');
   const changed=st.x.some((v,i)=>v!==D().x[i]||st.y[i]!==D().y[i]);
   $('#aCap').textContent=(changed?'You have moved points; the equation, predictions and test below use your edited data. ':'')+`Least squares minimizes the total area of the squares, Σ(y − ŷ)². The line always passes through the mean point (x̄, ȳ).`;
 }
@@ -1133,8 +1147,19 @@ function renderD(shufY,shufP){
   // chips
   const ge=st.shuf.filter(b=>Math.abs(b)>=Math.abs(f.b1)).length;
   const sig=f.p1<0.05;
-  $('#dChips').innerHTML=`<span class="chip">real slope <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">SE = <b>${cf(f.se1)}</b></span><span class="chip">critical slopes ±${cf(crit)} (t* = ${f.tc.toFixed(2)}, df = ${f.df})</span><span class="chip">t = <b>${f.t1.toFixed(2)}</b></span><span class="chip ${sig?'strong':''}">p ${f.p1<0.0001?'< .0001':'= '+f.p1.toFixed(4).replace(/^0/,'')} · ${sig?'outside the wedge: significant at .05':'inside the wedge: not significant at .05'}</span>`+
-    (M?`<span class="chip">${M.toLocaleString('en-US')} shuffles: <b>${ge.toLocaleString('en-US')}</b> as steep as the real slope${ge===0?` (p < ${(1/M).toFixed(M>=1000?3:2).replace(/^0/,'')})`:` (≈ ${(ge/M).toFixed(3).replace(/^0/,'')})`}</span>`:'');
+  $('#dChips').innerHTML=`<span class="chip">real slope <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">SE = <b>${cf(f.se1)}</b></span><span class="chip">critical slopes ±${cf(crit)} (t* = ${f.tc.toFixed(2)}, df = ${f.df})</span><span class="chip">t = <b>${f.t1.toFixed(2)}</b></span><span class="chip ${sig?'strong':''}">p ${f.p1<0.0001?'&lt; .0001':'= '+f.p1.toFixed(4).replace(/^0/,'')}</span>`;
+  $('#dSay').innerHTML=(sig?`The real slope falls outside the wedge, so it is significant at .05: reject H₀.`:`The real slope falls inside the wedge, so it is not significant at .05: fail to reject H₀.`)+
+    (M?(ge===0?` None of your ${M.toLocaleString('en-US')} shuffled slopes was as steep as the real one.`:` In your ${M.toLocaleString('en-US')} shuffles, a slope as steep as the real one turned up ${ge.toLocaleString('en-US')} ${ge===1?'time':'times'}.`):'');
+  // tracker: how many chance slopes would pass p < .05 on their own t test
+  const rPer=(f.b1!==0)?Math.sign(f.b1)*Math.sqrt(f.r2)/f.b1:0, nn=f.df+2;
+  const passes=st.shuf.filter(b=>{const r=Math.max(-0.999999,Math.min(0.999999,b*rPer));const tt=r*Math.sqrt(nn-2)/Math.sqrt(1-r*r);return Math.abs(tt)>f.tc;}).length;
+  const pct=M?100*passes/M:0;
+  $('#dTrack').innerHTML=M
+    ? `<p class="trk-h"><b>${passes.toLocaleString('en-US')}</b> of your ${M.toLocaleString('en-US')} shuffled slopes passed p &lt; .05 (<b>${pct.toFixed(1)}%</b>).</p>
+       <div class="trk-bar" role="img" aria-label="${pct.toFixed(1)} percent of shuffled slopes passed, compared with the 5 percent expected"><span class="trk-fill" style="width:${Math.min(100,pct*10)}%"></span><span class="trk-mark"></span></div>
+       <div class="trk-scale"><span>0%</span><span>5% expected</span><span>10%</span></div>
+       <p class="trk-say">Shuffling breaks any real link between X and Y, so every one of these “significant” slopes is a false positive, a Type I error. With α = .05, about 5% of chance slopes should pass, and the more you shuffle, the closer your share gets to 5%. <a href="3-difference-in-means.html#errors">Type I and II errors →</a></p>`
+    : `<p class="trk-h">Shuffle to start counting how many chance slopes would pass p &lt; .05.</p>`;
   $('#dCap').textContent=`Gray bars on the right stack the slopes from your shuffles: flat lines land in the middle, steep lines in the red tails. The black curve is the bell theory predicts, a t distribution with ${f.df} df scaled by the slope's standard error. The shaded wedge holds lines within the middle 95% of chance.`;
 }
 function doShuffle(k,animate){

@@ -668,15 +668,18 @@ window.SPSSX.attachAll=init;
 <!-- spss-end -->
 </head>
 <body>
-<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 7: </span><b>Dummy variables</b></span><a href="8-published-tables.html" aria-label="Next: What would it look like published?">Next →</a></nav>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 7: </span><b>Dummy variables</b></span><a href="8-titanic-practice.html" aria-label="Next: Practice, who survived the Titanic?">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive 7 of 8</p>
+    <p class="kicker">Statistical methods · Interactive 7 of 7</p>
     <h1>Dummy variables</h1>
     <p class="dek">Regression needs numbers, but region, party and gender are categories. A dummy variable turns a category into a 0/1 switch. Its coefficient is a difference between groups, and in a regression with other IVs it shifts the line up or down.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="d1-levels-and-central-tendency.html">D1 Levels and central tendency</a></li>
+      <li><a href="d2-skew-and-kurtosis.html">D2 Skew and kurtosis</a></li>
+      <li><a href="d3-dispersion.html">D3 Dispersion</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
       <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
       <li><a href="3-difference-in-means.html">3 Difference in means</a></li>
@@ -684,8 +687,9 @@ window.SPSSX.attachAll=init;
       <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li aria-current="page"><a href="7-dummy-variables.html">7 Dummy variables</a></li>
-      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li><a href="8-titanic-practice.html">Practice: Titanic</a></li>
+      <li><a href="9-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="10-exam-prep.html">Exam prep</a></li>
     </ul>
   </div>
 </header>
@@ -713,8 +717,8 @@ window.SPSSX.attachAll=init;
       <p class="say" id="aSay"></p>
     </figure>
     <div>
-      <section class="card"><h3>Same test, two commands</h3>
-        <p class="say" style="margin:0 0 8px;font-size:13.5px">Highlighted numbers match. A regression on one dummy <i>is</i> the equal-variance t test from Module 3.</p>
+      <section class="card"><h3>A regression on one dummy matches the t test</h3>
+        <p class="say" style="margin:0 0 8px;font-size:13.5px">The highlighted numbers are the same in both outputs, because a regression on one dummy <i>is</i> the equal-variance t test from Module 3.</p>
         <pre class="stata" id="aReg"></pre>
         <pre class="stata" id="aTt" style="margin-top:10px"></pre>
       </section>
@@ -724,7 +728,7 @@ window.SPSSX.attachAll=init;
   <!-- ============ B ============ -->
   <section class="part" aria-labelledby="bh">
     <p class="kick">Part 2 · Dummy plus a continuous IV</p>
-    <h2 id="bh">A dummy shifts the line up or down: parallel lines</h2>
+    <h2 id="bh">A dummy shifts the line up or down, giving parallel lines</h2>
     <p class="lede">Add metro share as a second IV. Plug in south = 0 and you get the non-South line; plug in south = 1 and the same line moves up or down by the South coefficient. The lines share a slope but have different intercepts. The model assumes the regional gap is the same at every metro share, which is why the two lines are parallel.</p>
   </section>
   <figure>
@@ -738,7 +742,7 @@ window.SPSSX.attachAll=init;
       </div>
       <div class="side">
         <div class="box">
-          <h4>Flip the switch: predict a state</h4>
+          <h4>Predict a state</h4>
           <div class="row"><div class="seg" role="radiogroup" aria-label="Group" id="grpB"></div></div>
           <div class="row" style="margin-top:8px"><label for="bx">Metro share</label><input type="number" id="bx" step="any"><input type="range" id="bxr" min="25" max="100" step="0.5" aria-label="Metro share"></div>
           <div class="calc" id="bCalc"></div>
@@ -751,13 +755,13 @@ window.SPSSX.attachAll=init;
       </div>
     </div>
     <section class="card" style="margin-top:12px"><h3>Output</h3><pre class="stata" id="bStata"></pre></section>
-    <p class="publink" style="margin-top:10px"><a href="8-published-tables.html#t7">See this as a published table →</a></p>
+    <p class="publink" style="margin-top:10px"><a href="9-published-tables.html#t7">See this as a published table →</a></p>
   </figure>
 
   <!-- ============ C ============ -->
   <section class="part" aria-labelledby="ch">
     <p class="kick">Part 3 · More than two categories</p>
-    <h2 id="ch">More than two categories: one dummy per region, minus a reference</h2>
+    <h2 id="ch">More than two categories need one dummy per region, minus a reference</h2>
     <p class="lede">A variable with k categories gets k − 1 dummies. The category left out is the reference: the constant is its mean, and every coefficient is a gap from it. Change the reference and the coefficients change, but the predictions don't.</p>
   </section>
   <figure>
@@ -799,7 +803,7 @@ window.SPSSX.attachAll=init;
           <div class="box" id="flPanel"></div>
         </div>
         <section class="card"><h3>Output</h3><pre class="stata" id="flStata"></pre></section>
-        <p class="publink"><a href="8-published-tables.html#t5">See these models as published tables →</a></p>
+        <p class="publink"><a href="9-published-tables.html#t5">See these models as published tables →</a></p>
       </div>
     </details>
     <p class="fn" style="margin:10px 0 0"><sup>1</sup> Center for American Women and Politics, “Gender Gaps in Vote Choice and Party Identification,” <a href="https://cawp.rutgers.edu/data-voters">cawp.rutgers.edu/data-voters</a>; Pew Research Center, “Changing Partisan Coalitions in a Politically Divided Nation,” April 9, 2024 (among registered voters, 52% of men identify with or lean toward the Republican Party, 46% toward the Democratic Party).</p>
@@ -846,7 +850,7 @@ window.SPSSX.attachAll=init;
   <footer class="src">
     Data: Trump's 2016 vote share and the share of each state's population in metro areas, from FiveThirtyEight's <i>hate_crimes</i> data via the <i>fivethirtyeight</i> R package and <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>. Census Bureau regions: Northeast (9), Midwest (12), South (16 states plus D.C.), West (13).
   </footer>
-<nav class="pager" aria-label="Previous and next"><a href="6-multiple-regression.html"><span class="k">← Previous · Module 6</span><span class="t">Multiple regression</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8-published-tables.html"><span class="k">Next · Module 8 →</span><span class="t">What would it look like published?</span></a></nav>
+<nav class="pager" aria-label="Previous and next"><a href="6-multiple-regression.html"><span class="k">← Previous · Module 6</span><span class="t">Multiple regression</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8-titanic-practice.html"><span class="k">Next · Practice →</span><span class="t">Who survived the Titanic?</span></a></nav>
 </main>
 
 <div class="scrim" id="scrim"></div>

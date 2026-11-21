@@ -728,7 +728,7 @@ window.SPSSX.attachAll=init;
 <!-- spss-end -->
 </head>
 <body>
-<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Who survived the Titanic?</b></span><a href="index.html">Done ✓</a></nav>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Who survived the Titanic?</b></span><a href="9-published-tables.html" aria-label="Next: Practice, what would it look like published?">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
@@ -737,6 +737,9 @@ window.SPSSX.attachAll=init;
     <p class="dek">This page applies every technique from Modules 1–7 to one question: who survived the Titanic? Work through the same survival questions as the labs, from describing the passengers to multiple regression with dummies. Notes are short; each step links back to its full module if you need a refresher.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="d1-levels-and-central-tendency.html">D1 Levels and central tendency</a></li>
+      <li><a href="d2-skew-and-kurtosis.html">D2 Skew and kurtosis</a></li>
+      <li><a href="d3-dispersion.html">D3 Dispersion</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
       <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
       <li><a href="3-difference-in-means.html">3 Difference in means</a></li>
@@ -744,8 +747,9 @@ window.SPSSX.attachAll=init;
       <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
-      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li aria-current="page"><a href="8-titanic-practice.html">Practice: Titanic</a></li>
+      <li><a href="9-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="10-exam-prep.html">Exam prep</a></li>
     </ul>
   </div>
 </header>
@@ -863,7 +867,7 @@ window.SPSSX.attachAll=init;
   <!-- ============ 5 TEST ============ -->
   <section class="part" id="s5" aria-labelledby="h5">
     <p class="kick">Step 5 · Module 3: difference in means</p>
-    <h2 id="h5">The lab's questions, tested</h2>
+    <h2 id="h5">Testing the lab's questions</h2>
     <p class="lede">Each test assumes H₀ (no difference) and asks how often a gap this large or larger would show up if H₀ were true. We reject H₀ or fail to reject it; we never accept anything. Because survived is 0/1, each mean is a survival rate.</p>
     <a class="refresh" href="3-difference-in-means.html">Refresh: Module 3 →</a>
   </section>
@@ -899,7 +903,7 @@ window.SPSSX.attachAll=init;
   <!-- ============ LPM CALLOUT ============ -->
   <section class="amberbox" id="lpm" aria-labelledby="hl">
     <span class="tag">Read first</span>
-    <h2 id="hl">Regression on a 0/1 outcome: a detour from class</h2>
+    <h2 id="hl">Regression on a 0/1 outcome goes beyond what we cover in class</h2>
     <p>In class, our regression DVs are interval-level, like feeling thermometers or vote shares. Survival is only 0 or 1. Running ordinary least squares on a 0/1 DV has a name, the <b>linear probability model</b>, and Steps 6–8 use it on purpose as extra illustration on passengers you already know. In class and on the labs, regression DVs stay interval-level.</p>
     <details id="lpmd">
       <summary>When do social scientists use OLS with binary DVs?</summary>
@@ -1025,7 +1029,7 @@ window.SPSSX.attachAll=init;
       </div>
     </div>
     <div class="box" style="margin-top:12px;background:var(--surface)">
-      <h4>Who would you least like to be? Build a passenger</h4>
+      <h4>Build a passenger and find the worst chance</h4>
       <div class="row" style="gap:10px 16px">
         <div class="seg" role="radiogroup" aria-label="Sex" id="sx8"></div>
         <div class="seg" role="radiogroup" aria-label="Class" id="pc8"></div>
@@ -1066,7 +1070,7 @@ window.SPSSX.attachAll=init;
   <footer class="src">
     Data: the 1,309-passenger Titanic list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables age5, female, trav_alone, the_freeriders and the_one_percent computed for PLS2033. Crew are not included. This list is nearly every passenger rather than a random sample; like the labs, the page treats it as a sample to practice inference. Step 2 draws passengers at random with replacement. Confidence intervals use z, as in class; with groups this large, t gives nearly identical intervals. Regression models in Steps 6–8 drop passengers with unknown age.
   </footer>
-<nav class="pager" aria-label="Previous and next"><a href="8-published-tables.html"><span class="k">← Previous · Module 8</span><span class="t">What would it look like published?</span></a><a class="home" href="index.html">All modules</a><span></span></nav>
+<nav class="pager" aria-label="Previous and next"><a href="7-dummy-variables.html"><span class="k">← Previous · Module 7</span><span class="t">Dummy variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="9-published-tables.html"><span class="k">Next · Practice →</span><span class="t">What would it look like published?</span></a></nav>
 </main>
 
 <div class="scrim" id="scrim"></div>
@@ -1532,7 +1536,7 @@ function renderCtl(){
     bindTip(c,()=>`<b>${x.l}</b><br>age slope ${sgnf(b,4)} (p ${x.f.p[0]<0.001?'&lt; .001':'= '+x.f.p[0].toFixed(3).replace(/^0/,'')})<br>R² = ${x.f.r2.toFixed(3)}`);});
   txt(svg,W-m.r,H-2,'age slope: change in P(survive) per year →',{class:'axlab','text-anchor':'end'});
   const age=c=>mean(ageIx.filter(i=>C[i]===c).map(i=>A[i])), sv=c=>mean(S.filter((_,i)=>C[i]===c));
-  $('#chips7').innerHTML=`<span class="chip"><span>mean age: First <b>${age(1).toFixed(1)}</b> · Middle <b>${age(2).toFixed(1)}</b> · Lower <b>${age(3).toFixed(1)}</b></span></span><span class="chip"><span>survived: First <b>${pc(sv(1),0)}</b> · Middle <b>${pc(sv(2),0)}</b> · Lower <b>${pc(sv(3),0)}</b></span></span>`;
+  $('#chips7').innerHTML=`<span class="chip"><span>Mean age is <b>${age(1).toFixed(1)}</b> in first class, <b>${age(2).toFixed(1)}</b> in middle and <b>${age(3).toFixed(1)}</b> in lower</span></span><span class="chip"><span>Survival is <b>${pc(sv(1),0)}</b> in first class, <b>${pc(sv(2),0)}</b> in middle and <b>${pc(sv(3),0)}</b> in lower</span></span>`;
   const f=cur.f,b=f.b[0],a0=M[0].f.b[0];
   let s=`<b>This model:</b> age slope ${sgnf(b,4)}${cur.s||cur.c?' holding '+[cur.s?'sex':'',cur.c?'class':''].filter(Boolean).join(' and ')+' constant':''}, Sig. = ${sig(f.p[0])} → <b>${f.p[0]<0.05?'reject H₀':'fail to reject H₀'}</b>. Each extra year changes the predicted chance of surviving by ${sgnf(b*100,2)} points (${sgnf(b*1000,1)} per decade). R² = ${f.r2.toFixed(3)}. `;
   s+=cur.c?`<br><br>Why the slope grew from ${sgnf(a0,4)}: older passengers were concentrated in first class, which survived far more often. Without class in the model, age borrowed first class's advantage, which masked age's own negative effect. Hold class constant and the effect of age shows.`

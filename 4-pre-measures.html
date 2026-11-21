@@ -737,11 +737,14 @@ window.SPSSX.attachAll=init;
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive 4 of 8</p>
+    <p class="kicker">Statistical methods · Interactive 4 of 7</p>
     <h1>Proportional reduction in error</h1>
     <p class="dek">Lambda, gamma and r² look like three unrelated statistics. They answer one question: once you know X, how many fewer mistakes do you make predicting Y? Play the guessing game three ways, at three levels of measurement.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="d1-levels-and-central-tendency.html">D1 Levels and central tendency</a></li>
+      <li><a href="d2-skew-and-kurtosis.html">D2 Skew and kurtosis</a></li>
+      <li><a href="d3-dispersion.html">D3 Dispersion</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
       <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
       <li><a href="3-difference-in-means.html">3 Difference in means</a></li>
@@ -749,8 +752,9 @@ window.SPSSX.attachAll=init;
       <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
-      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li><a href="8-titanic-practice.html">Practice: Titanic</a></li>
+      <li><a href="9-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="10-exam-prep.html">Exam prep</a></li>
     </ul>
   </div>
 </header>
@@ -777,7 +781,7 @@ window.SPSSX.attachAll=init;
   </section>
 
   <section class="card" aria-labelledby="simpleh" style="margin-top:4px">
-    <h3 id="simpleh" style="font-size:19px">Start simple: guess the party of 20 voters</h3>
+    <h3 id="simpleh" style="font-size:19px">Guess the party of 20 voters</h3>
     <p style="margin:0 0 6px;color:var(--ink-2);max-width:78ch">Ten women and ten men, drawn at random from the Democrats and Republicans in the 2004 National Election Study. Your job: guess each person's party. The strategy never changes: <b style="color:var(--ink)">always guess the most common party (the mode)</b>. First you don't know their gender, then you do. Count the wrong guesses each time.</p>
     <div class="legend2"><span><i class="dot" style="background:var(--dem)"></i>D = Democrat</span><span><i class="dot" style="background:var(--rep)"></i>R = Republican</span><span>W / M under each voter = woman / man</span><span><b style="color:var(--ink)">✓</b> right guess</span><span><b style="color:var(--ink)">✗</b> wrong guess (faded)</span></div>
     <div class="row" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
@@ -834,7 +838,7 @@ window.SPSSX.attachAll=init;
   </section>
 
   <section class="card" aria-labelledby="gsimpleh" style="margin-top:4px">
-    <h3 id="gsimpleh" style="font-size:19px">Start simple: who is more conservative?</h3>
+    <h3 id="gsimpleh" style="font-size:19px">Who is more conservative?</h3>
     <p style="margin:0 0 6px;color:var(--ink-2);max-width:80ch">Six voters from the 2004 National Election Study, placed by <b style="color:var(--ink)">party ID</b> (X) and <b style="color:var(--ink)">ideology</b> (Y). Both are ordered, so gamma doesn't guess anyone's category. It guesses <b style="color:var(--ink)">order</b>: for any pair of voters, <b style="color:var(--ink)">which one is more conservative?</b></p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px">
       <div class="btns" id="gsteps"><button data-s="1">1 · Meet the voters</button><button data-s="2">2 · Pair them up</button><button data-s="3">3 · Guess without X</button><button data-s="4">4 · Guess with X</button><button data-s="5">5 · Do the math</button></div>
@@ -895,7 +899,7 @@ window.SPSSX.attachAll=init;
   </section>
 
   <section class="card" aria-labelledby="rsimpleh" style="margin-top:4px">
-    <h3 id="rsimpleh" style="font-size:19px">Start simple: guess six ratings of Laura Bush</h3>
+    <h3 id="rsimpleh" style="font-size:19px">Guess six ratings of Laura Bush</h3>
     <p style="margin:0 0 6px;color:var(--ink-2);max-width:80ch">Six respondents from the 2004 National Election Study. Y is how warmly each rates <b style="color:var(--ink)">Laura Bush</b> (0–100); X is how warmly they rate the <b style="color:var(--ink)">Republican Party</b>. Y is a number, so now a guess can be off by a little or by a lot. We measure each miss as a distance, square it, and add them up.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px">
       <div class="btns" id="rsteps"><button data-s="1">1 · Meet the respondents</button><button data-s="2">2 · Guess without X</button><button data-s="3">3 · Guess with X</button><button data-s="4">4 · Do the math</button></div>
@@ -1224,7 +1228,7 @@ function grender(){
   const E1=c.u/2, E2=neg?c.ns:c.nd, g=c.u?(c.ns-c.nd)/c.u:0, f2=v=>Number.isInteger(v)?String(v):v.toFixed(1);
   const T=$('#gtext'); let h='';
   if(s===1) h=`<h4>1. Meet the voters</h4><p>Each letter is one voter: a column for party, a row for ideology. Lambda guessed each person's category. <b>Gamma guesses order</b>: take any two voters, and predict which is more conservative.</p>`;
-  if(s===2) h=`<h4>2. Pair them up, set ties aside</h4><p>Six voters make <b>${c.n} pairs</b>, one line each. A pair in the <b>same party</b> (vertical line) gives X no clue; a pair with the <b>same ideology</b> (flat line) has no order to predict. Gamma sets those <b>${c.t} tied pairs</b> aside (dashed).</p><p>That leaves <b>${c.u} pairs</b> that differ on both: the solid lines.</p>`;
+  if(s===2) h=`<h4>2. Pair them up and set ties aside</h4><p>Six voters make <b>${c.n} pairs</b>, one line each. A pair in the <b>same party</b> (vertical line) gives X no clue; a pair with the <b>same ideology</b> (flat line) has no order to predict. Gamma sets those <b>${c.t} tied pairs</b> aside (dashed).</p><p>That leaves <b>${c.u} pairs</b> that differ on both: the solid lines.</p>`;
   if(s===3){ const fr=GS.fr||{n:0,w:0}, cur=GS.flip?GS.pairs.reduce((a,p,i)=>a+((p.kind==='con'||p.kind==='dis')&&GS.flip[i]===false?1:0),0):null;
     h=`<h4>3. Guess without knowing X</h4><p>Without X, lambda guessed Y's most common category (and r², next, will guess Y's mean). Gamma predicts something different: <b>which of two people is more conservative</b>. Knowing how ideology is spread across all six voters can't tell you that about two particular people. You know they differ, but either order is equally likely, so the best you can do is <b>50/50: a coin flip</b>.</p><p>A coin flip is wrong <b>half the time</b>, on average. So the errors without X are</p><div class="math">E₁ = ${c.u} pairs ÷ 2 = <b>${f2(E1)}</b></div>
       <p><button id="gflip" ${c.u?'':'disabled'}>Flip a coin for every pair</button></p>

@@ -188,6 +188,17 @@ body.formulas-open .drawer{transform:none}
 @media (max-width:640px){.mod{grid-template-columns:40px minmax(0,1fr)}.mod .go{grid-column:2}.mod.ex{margin-left:20px}.mod .num{font-size:24px}}
 .groups{display:grid;gap:22px}
 .gh{margin:0 0 8px;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.exambox{margin-top:26px;display:grid;gap:8px;justify-items:start;border:3px solid var(--ex-amber);background:var(--ex-bg);border-radius:12px;padding:20px 22px}
+.exambox h2{margin:0;font-size:24px;line-height:1.25}
+.exambox p{margin:0;font-size:15.5px;color:var(--ink-2);max-width:72ch}
+.examtag{font:700 13px var(--font-body);letter-spacing:.06em;text-transform:uppercase;background:var(--ex-amber);color:#1d1600;border-radius:6px;padding:4px 10px}
+.examgo{margin-top:6px;display:inline-block;font-weight:700;font-size:16px;color:#1d1600;background:var(--ex-amber);text-decoration:none;padding:11px 18px;border-radius:8px}
+.examgo:hover{filter:brightness(1.05)}
+.examgo:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+:root{--ex-amber:#e0a100;--ex-bg:#fff7df}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ex-amber:#e6ad2e;--ex-bg:#2a2210}}
+:root[data-theme="dark"]{--ex-amber:#e6ad2e;--ex-bg:#2a2210}
+@media (max-width:640px){.exambox{padding:16px}.exambox h2{font-size:21px}}
 </style>
 </head>
 <body>
@@ -196,12 +207,20 @@ body.formulas-open .drawer{transform:none}
   <div class="wrap">
     <p class="kicker">Statistical methods · Interactive modules</p>
     <h1>See the statistics move</h1>
-    <p class="dek">Eight interactive modules and a practice set for undergraduate statistical methods, built on real political data: election returns, national surveys, and the 2004 National Election Study. Draw samples, drag points, flip switches, and watch the ideas behind the formulas.</p>
+    <p class="dek">Interactive modules for PLS2033, Statistical Methods. The examples use election returns and survey data, including the 2004 National Election Study. Draw samples, drag points, flip switches, and watch the ideas behind the formulas.</p>
   </div>
 </header>
 
 <main class="wrap">
   <div class="groups">
+    <section>
+      <p class="gh">Describing data</p>
+      <div class="mods">
+        <a class="mod" href="d1-levels-and-central-tendency.html"><span class="num">D1</span><div><h2>Levels of measurement and central tendency</h2><p>Sort variables into nominal, ordinal and interval, find the median by putting values in order, balance the mean on a beam, and see why the mean of a nominal variable means nothing.</p><span class="data">Data: Titanic passengers; Massachusetts counties, 1854; countries; 1984 state results; ANES</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="d2-skew-and-kurtosis.html"><span class="num">D2</span><div><h2>Skew and kurtosis</h2><p>Which way the brontosaurus's tail points, curves you can lean and flatten, and how skew pulls the mean away from the median.</p><span class="data">Data: Titanic passengers; 2004 NES thermometers; GDP per capita; Massachusetts counties</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="d3-dispersion.html"><span class="num">D3</span><div><h2>Measures of dispersion</h2><p>Variance and the SD built from squares, the 68/95 rule on real ages, comparing two variables' spread, and settling a Thanksgiving argument with 2014 and 2024 data.</p><span class="data">Data: Massachusetts counties; Titanic passengers; Pew 2014; Gallup 2024; ANES 2024</span></div><span class="go">Open →</span></a>
+      </div>
+    </section>
     <section>
       <p class="gh">Inference: from samples to populations</p>
       <div class="mods">
@@ -223,19 +242,26 @@ body.formulas-open .drawer{transform:none}
         <a class="mod ex" href="5b-partisans-and-the-first-lady.html"><span class="num">Worked example</span><div><h2>Partisans and the First Lady</h2><p>A full bivariate analysis, step by step: do feelings toward the parties shape ratings of Laura Bush? With a replication for Hillary Clinton.</p><span class="data">Data: 2004 NES feeling thermometers</span></div><span class="go">Open →</span></a>
         <a class="mod" href="6-multiple-regression.html"><span class="num">6</span><div><h2>Multiple regression</h2><p>What “holding constant” does to the data, why slopes shrink, grow or flip when you add a control, and how R² and adjusted R² respond.</p><span class="data">Data: state 2016 vote and demographics</span></div><span class="go">Open →</span></a>
         <a class="mod" href="7-dummy-variables.html"><span class="num">7</span><div><h2>Dummy variables</h2><p>A 0/1 switch whose slope is a difference in means, parallel lines when you add a control, and four regions with three dummies.</p><span class="data">Data: state 2016 vote by Census region</span></div><span class="go">Open →</span></a>
-        <a class="mod" href="8-published-tables.html"><span class="num">8</span><div><h2>What would it look like published?</h2><p>Read a regression table the way research articles print it: coefficients with stars, the notes line, fit statistics, and the Stata output behind them. Each table remakes a model you have already run.</p><span class="data">Data: state 2016 vote and demographics</span></div><span class="go">Open →</span></a>
       </div>
     </section>
     <section>
       <p class="gh">Practice: put it all together</p>
       <div class="mods">
         <a class="mod" href="8-titanic-practice.html"><span class="num">★</span><div><h2>Who survived the Titanic?</h2><p>The lab questions, start to finish: describe, sample, estimate, crosstab, test ten differences in means, then regression with controls and dummies (as linear probability models).</p><span class="data">Data: the 1,309-passenger Titanic list</span></div><span class="go">Open →</span></a>
+        <a class="mod" href="9-published-tables.html"><span class="num">★</span><div><h2>What would it look like published?</h2><p>Regression tables as they appear in published research, rebuilt from models in Modules 5–7. Tap any number to see what it means.</p><span class="data">Data: state 2016 vote and demographics; 2004 NES</span></div><span class="go">Open →</span></a>
       </div>
     </section>
   </div>
 
+    <section class="exambox" aria-labelledby="examH">
+      <span class="examtag">Exam prep</span>
+      <h2 id="examH">Practice for the PLS2033 final</h2>
+      <p>Download a sample of a dataset, run the analyses in SPSS and enter your results. The page checks each answer and explains any mistakes. A new sample gives you a new set of answers to work out.</p>
+      <a class="examgo" href="10-exam-prep.html">Open exam prep →</a>
+    </section>
+
   <footer class="src">
-    Data sources: county presidential returns compiled by Tony McGovern (tonmcg/US_County_Level_Election_Results_08-24); FiveThirtyEight's 2016 poll and state data; the British Election Panel Study and the 1988 Chilean plebiscite survey (carData); Florida 2000 county returns (carData); OpenIntro's midterm elections data; the 2004 American National Election Study; and the Titanic passenger list (titanic3, Vanderbilt Biostatistics). Most datasets accessed through the Rdatasets collection.
+    Data sources: county presidential returns compiled by Tony McGovern (tonmcg/US_County_Level_Election_Results_08-24); FiveThirtyEight's 2016 poll and state data; the British Election Panel Study and the 1988 Chilean plebiscite survey (carData); Florida 2000 county returns (carData); OpenIntro's midterm elections data; the 2004 American National Election Study; the Titanic passenger list (titanic3, Vanderbilt Biostatistics); the 2020 and 2024 American National Election Studies and the 2016 ANES Pilot Study; Pew Research Center's 2014 post-election survey; Gallup's January 2025 party-ideology results (respondent-level data imputed to match the published percentages); the 1995 South Africa election survey; the 1854 Massachusetts lunatics data; and a cross-national dataset of countries (World.sav, PLS2033 course files). Most datasets accessed through the Rdatasets collection.
   </footer>
 </main>
 </body>

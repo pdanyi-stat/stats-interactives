@@ -660,11 +660,14 @@ window.SPSSX.attachAll=init;
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive 6 of 8</p>
+    <p class="kicker">Statistical methods · Interactive 6 of 7</p>
     <h1>Multiple regression</h1>
     <p class="dek">A bivariate slope mixes the effect of X with everything that travels with X. Adding a control variable separates them. See what “holding constant” does to the data, why slopes shrink, grow or flip, and how R² and adjusted R² respond as a model grows.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="d1-levels-and-central-tendency.html">D1 Levels and central tendency</a></li>
+      <li><a href="d2-skew-and-kurtosis.html">D2 Skew and kurtosis</a></li>
+      <li><a href="d3-dispersion.html">D3 Dispersion</a></li>
       <li><a href="1-sampling-distributions.html">1 Sampling distributions</a></li>
       <li><a href="2-confidence-intervals.html">2 Confidence intervals</a></li>
       <li><a href="3-difference-in-means.html">3 Difference in means</a></li>
@@ -672,8 +675,9 @@ window.SPSSX.attachAll=init;
       <li><a href="5-bivariate-regression.html">5 Bivariate regression</a></li>
       <li aria-current="page"><a href="6-multiple-regression.html">6 Multiple regression</a></li>
       <li><a href="7-dummy-variables.html">7 Dummy variables</a></li>
-      <li><a href="8-published-tables.html">8 Published tables</a></li>
       <li><a href="8-titanic-practice.html">Practice: Titanic</a></li>
+      <li><a href="9-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="10-exam-prep.html">Exam prep</a></li>
     </ul>
   </div>
 </header>
@@ -704,7 +708,7 @@ window.SPSSX.attachAll=init;
 
   <!-- B -->
   <section class="card">
-    <h3><span class="step">B</span>Why the slope changed: omitted variable bias</h3>
+    <h3><span class="step">B</span>Why the slope changed (omitted variable bias)</h3>
     <div class="ovb">
       <div class="chart" id="path"></div>
       <div class="decomp" id="decomp"></div>
@@ -730,7 +734,7 @@ window.SPSSX.attachAll=init;
           <p class="say" id="pSay"></p>
         </div>
         <div class="box">
-          <h4>Change X₁, hold X₂ where you set it</h4>
+          <h4>Change X₁ while holding X₂ where you set it</h4>
           <div class="row"><label for="mFrom">From</label><select id="mFrom"></select><label for="mTo">to</label><select id="mTo"></select></div>
           <div class="big" id="mBig" style="margin-top:8px"></div>
           <div class="calc" id="mCalc"></div>
@@ -761,7 +765,7 @@ window.SPSSX.attachAll=init;
     <h3>Output</h3>
     <pre class="stata" id="stata"></pre>
   </section>
-  <p class="publink"><a href="8-published-tables.html#t3">See this as a published table →</a> A five-IV model in the export style, then three models side by side in the journal style.</p>
+  <p class="publink"><a href="9-published-tables.html#t3">See this as a published table →</a> A five-IV model in the export style, then three models side by side in the journal style.</p>
 
   <section class="fljumpbox" aria-label="Extended worked example"><p>Multiple regression with a dummy on real survey data: the First Lady analysis redone holding gender constant, step by step, ending with both parties and gender in one model.</p><p><a class="fljump" href="7-dummy-variables.html#firstlady">★ Worked example, extended: the First Lady, controlling for gender →</a></p></section>
 
@@ -944,7 +948,7 @@ function renderA(){
     const s1=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1); const lab=partial?`${DAT.abbr[i]}: X₁ leftover ${s1(ex)}, Y leftover ${s1(ey)}`:`${DAT.states[i]}`;
     const tl=el('text',{x:X+(right?14:-14),y:Yp-10,'text-anchor':right?'start':'end',class:'mlab',fill:css('--ink'),style:'paint-order:stroke;stroke:var(--surface);stroke-width:4px'},svg); tl.textContent=lab; }
   const sig=c.ctl.p[0]<0.05;
-  $('#aChips').innerHTML=`<span class="chip">bivariate slope <b>${sgn(bRaw)}</b></span><span class="chip">holding ${VK[st.x2].short} constant <b class="k-b1">${sgn(bPar)}</b> (p ${c.ctl.p[0]<0.001?'< .001':'= '+c.ctl.p[0].toFixed(3).replace(/^0/,'')})</span><span class="chip ${partial?'strong':''}">${partial?'Showing: leftovers vs. leftovers':'Showing: raw data'}</span>`;
+  $('#aChips').innerHTML=`<span class="chip">bivariate slope <b>${sgn(bRaw)}</b></span><span class="chip">holding ${VK[st.x2].short} constant <b class="k-b1">${sgn(bPar)}</b> (p ${c.ctl.p[0]<0.001?'< .001':'= '+c.ctl.p[0].toFixed(3).replace(/^0/,'')})</span><span class="chip ${partial?'strong':''}">${partial?'Now showing leftovers against leftovers':'Now showing the raw data'}</span>`;
   $('#rampLab').parentElement.parentElement.style.display=''; $('#ghostLab').parentElement.style.display='';
   $('#rampLab').textContent=`${VK[st.x2].short}: low → high`;
   $('#lineLab').textContent= partial?`slope holding ${VK[st.x2].short} constant`:'bivariate slope';
@@ -1162,7 +1166,7 @@ function renderSticks(){
     el('circle',{cx:X,cy:Yp,r:10,fill:'none',stroke:css('--ink'),'stroke-width':2.5},svg);
     const t=el('text',{x:X+(right?14:-14),y:Yp+(lv>=0?-10:18),'text-anchor':right?'start':'end',class:'mlab',fill:css('--ink'),style:'paint-order:stroke;stroke:var(--surface);stroke-width:4px'},svg);
     t.textContent=`${DAT.abbr[i]}: leftover ${lv>=0?'+':'−'}${isY?Math.abs(lv).toFixed(1):fx(st.x1,Math.abs(lv))}`; }
-  $('#aChips').innerHTML=`<span class="chip">line: ${isY?'Trump share':VK[st.x1].short} predicted from ${VK[st.x2].short}</span><span class="chip"><span style="color:var(--s2-ink);font-weight:600">above the line</span> = positive leftover</span><span class="chip"><span style="color:var(--s1-ink);font-weight:600">below</span> = negative leftover</span>`;
+  $('#aChips').innerHTML=`<span class="chip">The line predicts ${isY?'Trump share':VK[st.x1].short} from ${VK[st.x2].short}</span><span class="chip">Points <span style="color:var(--s2-ink);font-weight:600">above the line</span> have positive leftovers</span><span class="chip">Points <span style="color:var(--s1-ink);font-weight:600">below</span> have negative leftovers</span>`;
   $('#rampLab').parentElement.parentElement.style.display='none'; $('#lineLab').textContent=`fitted line on ${VK[st.x2].short}`; $('#ghostLab').parentElement.style.display='none';
   $('#aCap').textContent=isY?`Leftovers sum to zero: the line runs through the middle of the cloud. Whatever pattern remains in these sticks is the part of Trump's share that ${VK[st.x2].short} can't explain.`:`These leftovers are ${VK[st.x1].short} with ${VK[st.x2].short}'s influence removed. Some states have a lot more (or less) ${VK[st.x1].short} than their ${VK[st.x2].short} would suggest.`;
 }
