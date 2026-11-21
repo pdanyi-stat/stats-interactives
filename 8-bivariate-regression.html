@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bivariate Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#f6f6f3;
+  --surface:#fdfdfc;
+  --ink:#121212;
+  --ink-2:#4f4e4a;
+  --muted:#85837d;
+  --grid:#e4e3dc;
+  --axis:#bebdb4;
+  --line:rgba(18,18,18,.12);
+  --accent:#c8102e;          /* masthead rule, kicker */
+  --pop:#8d8b84;             /* population bars */
+  --s1:#2a78d6;              /* sample means (blue) */
+  --s1-ink:#1c5cab;
+  --s2:#eb6834;              /* the current sample (orange) */
+  --s2-ink:#b8481c;
+  --code-bg:#f1f0eb;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+    --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+    --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0f0f0e; --surface:#1a1a19; --ink:#f0efec; --ink-2:#c3c2b7; --muted:#8f8d86;
+  --grid:#2c2c2a; --axis:#45443f; --line:rgba(255,255,255,.12); --accent:#ff4d5e;
+  --pop:#77756e; --s1:#3987e5; --s1-ink:#86b6ef; --s2:#e8703f; --s2-ink:#f29a72; --code-bg:#222220;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 5 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.trk{margin:10px 0 4px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:var(--page)}
+.trk-h{margin:0 0 8px;font-size:15px;color:var(--ink)}
+.trk-bar{position:relative;height:12px;border-radius:6px;background:var(--grid);overflow:hidden}
+.trk-fill{position:absolute;left:0;top:0;bottom:0;background:var(--miss);border-radius:6px;transition:width .25s}
+.trk-mark{position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+.trk-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:3px}
+.trk-say{margin:8px 0 0;font-size:14px;color:var(--ink-2)}
+.trk-say a{color:var(--s1-ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-slope{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--s2-ink);font-weight:600}
+.k-dv{color:var(--ink);font-weight:600}
+.k-iv{color:var(--ink);font-weight:600}
+.chart svg{display:block;touch-action:pan-y}
+.pt{cursor:grab;touch-action:none}
+.pt:active{cursor:grabbing}
+.handle{cursor:grab;touch-action:none}
+/* equation */
+.eqs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.eqs{grid-template-columns:1fr}}
+.eq{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.eq .tag{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.eq .f{font-size:26px;font-weight:600;margin:4px 0 6px;font-family:var(--font-body);letter-spacing:.01em}
+.eq .f i{font-style:italic;font-weight:500}
+.eq p{margin:0;font-size:14px;color:var(--ink-2)}
+.filled{margin-top:12px;border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;background:var(--surface);overflow-x:auto}
+.filled .tag{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.terms{display:flex;align-items:flex-start;gap:6px 10px;flex-wrap:wrap;margin-top:8px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:clamp(18px,2.6vw,24px);font-weight:600;padding:4px 10px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.dv{border-color:var(--ink)}
+.term .t.iv{border-color:var(--ink)}
+.term .t.sl{border-color:var(--s1);color:var(--s1-ink)}
+.term .t.co{border-color:var(--s2);color:var(--s2-ink)}
+.term .t.op{border:0;padding:4px 0;color:var(--ink-2)}
+.term .n{font-size:11.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);max-width:16ch;line-height:1.25}
+.interp{display:grid;gap:8px;margin-top:12px;font-size:15px}
+.interp p{margin:0;max-width:80ch}
+/* predict & marginal */
+.pc{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.pc{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:100px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1)}
+.calc{font-family:var(--font-mono);font-size:13.5px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.warn{font-size:13px;color:var(--miss-ink);margin:4px 0 0}
+.big{font-size:34px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* significance */
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:90ch}
+.steps b{color:var(--ink)}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.null{height:0;width:18px;border-top:2px solid var(--muted);border-radius:0}
+.sw.crit{height:0;width:18px;border-top:2px dashed var(--miss);border-radius:0}
+.sw.resid{height:0;width:18px;border-top:2px solid var(--miss);border-radius:0}
+.sw.mine{height:0;width:18px;border-top:2px dashed var(--ink);border-radius:0}
+pre.stata .sl{color:var(--s1-ink);font-weight:600}
+pre.stata .co{color:var(--s2-ink);font-weight:600}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+
+
+/* ---- amber callout (shared look with the practice page) ---- */
+:root{--amber:#c98500;--amber-bg:#fff6dc;--amber-ink:#7a5200;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#e0a92b;--amber-bg:#2a2210;--amber-ink:#f3cf7a;--tag:#e0b400}
+.amberbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:18px 18px 16px;position:relative;box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 18%,transparent);margin-top:10px}
+.amberbox .tag{position:absolute;top:-12px;left:14px;background:var(--tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+.amberbox.wex{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+.amberbox.wex h3{margin:0 0 4px;font-size:19px}
+.amberbox.wex p{margin:0;font-size:14.5px;color:var(--ink);max-width:70ch}
+.amberbox .wexgo{font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;white-space:nowrap;padding:8px 14px;border-radius:7px}
+.amberbox .wexgo:hover{filter:brightness(1.05)}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
+</style>
+<!-- spss-start -->
+<style>
+details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
+details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
+details.spss > summary::before,details.stata-wrap > summary::before{content:"";flex:0 0 auto;width:0;height:0;border-left:6px solid var(--ink-2);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;transition:transform .15s}
+details.spss[open] > summary::before,details.stata-wrap[open] > summary::before{transform:rotate(90deg)}
+.sp-lab code{font:500 13px var(--font-mono);background:var(--code-bg);padding:1px 5px;border-radius:4px}
+details.spss > summary:hover,details.stata-wrap > summary:hover{background:var(--page);border-radius:8px}
+details.spss[open] > summary,details.stata-wrap[open] > summary{border-bottom:1px solid var(--line);border-radius:8px 8px 0 0}
+.sp-badge{flex:0 0 auto;display:inline-block;font:700 11px var(--font-mono);letter-spacing:.06em;background:var(--ink);color:var(--surface);border-radius:4px;padding:2px 6px}
+.sp-body{padding:12px}
+.sp-note{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--ink-2);max-width:82ch}
+.sp-note b{color:var(--ink)}
+.sp-sheet{background:#fff;color:#000;border:1px solid #c9ccd2;border-radius:4px;padding:16px 12px 4px;overflow-x:auto;font:12.5px/1.35 Arial,"Helvetica Neue",Helvetica,sans-serif;color-scheme:light}
+.sp-t{margin:0 auto 18px;width:max-content}
+.sp-title{margin:0 0 5px;text-align:center;font-weight:700;font-size:13.5px;color:#000}
+table.sp{border-collapse:collapse;border:1px solid #8a9099}
+table.sp th,table.sp td{border:1px solid #c3c8d0;padding:3px 9px;white-space:nowrap;color:#000}
+table.sp thead th{font-weight:400;text-align:center;vertical-align:bottom;background:#fff;white-space:normal;min-width:3.6em;max-width:9.5em;line-height:1.25}
+table.sp td{text-align:right;background:#fff}
+table.sp .rh{text-align:left;background:#e9eef5;font-weight:400;vertical-align:top}
+table.sp .rh.c{text-align:center}
+table.sp sup,.sp-title sup{font-size:.72em;line-height:0}
+.sp-fn{font-size:11.5px;margin-top:4px;color:#000}
+@media (max-width:520px){.sp-sheet{font-size:11.5px;padding:12px 8px 2px}.sp-body{padding:10px}}
+@media print{details.spss{break-inside:avoid}}
+.sp-hint{display:none;margin:0 0 6px;font-size:12.5px;color:var(--muted)}
+@media (max-width:700px){.sp-hint{display:block}}
+.st-body{padding:10px}
+.st-body > pre.stata{margin:0 !important}
+h3 + details.stata-wrap{margin-top:4px}
+.sp-sheet td.tap{cursor:pointer;text-decoration:underline dotted #b07800;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.sp-sheet td.tap:hover{background:#f2f5fa}
+.sp-sheet td.tap:focus-visible{outline:2px solid #2a78d6;outline-offset:-2px}
+.sp-sheet td.tap.sel{background:#dbe9f9;color:#0b3f73}
+.sp-exp{margin:10px 0 0;padding:11px 14px;background:#fff6d8;border:2px solid #e0a100;border-radius:10px;color:#1a1a1a;font-size:14.5px;line-height:1.6}
+.sp-exp .sp-hint2{color:#5c5440}
+.sp-exp a{color:#0b3f73;font-weight:600}
+.sp-exp b{color:#1a1a1a}
+</style>
+<script>
+/* SPSS-style output: one expandable panel under every Stata output on the site.
+   It reads the Stata text in each pre.stata (plus optional hidden meta: betas, Levene)
+   and lays the same numbers out the way SPSS does. */
+(function(){
+"use strict";
+/* ---------- distributions ---------- */
+function lgamma(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function betacf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-300)d=1e-300;d=1/d;let h=d;for(let m=1;m<=300;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-14)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b;}
+function tcdf(t,df){const x=df/(df+t*t);const tail=0.5*ibeta(x,df/2,0.5);return t>=0?1-tail:tail;}
+function tinv(p,df){let lo=0,hi=500;for(let i=0;i<90;i++){const m=(lo+hi)/2;if(tcdf(m,df)<p)lo=m;else hi=m;}return (lo+hi)/2;}
+function fsurv(F,d1,d2){return F<=0?1:ibeta(d2/(d2+d1*F),d2/2,d1/2);}
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z);const r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));return x>=0?r:2-r;}
+const p2t=(t,df)=>2*(1-tcdf(Math.abs(t),df));
+const p2z=z=>erfc(Math.abs(z)/Math.SQRT2);
+
+/* ---------- helpers pages can call ---------- */
+function levene(groups){ // mean-centered Levene test, as SPSS computes it
+  const z=groups.map(g=>{const m=g.reduce((s,v)=>s+v,0)/g.length;return g.map(v=>Math.abs(v-m));});
+  return leveneZ(z);
+}
+function leveneZ(z){const N=z.reduce((s,g)=>s+g.length,0),k=z.length,gm=z.map(g=>g.reduce((s,v)=>s+v,0)/g.length),M=z.reduce((s,g)=>s+g.reduce((a,v)=>a+v,0),0)/N;
+  let sb=0,sw=0;z.forEach((g,i)=>{sb+=g.length*(gm[i]-M)**2;g.forEach(v=>{sw+=(v-gm[i])**2;});});
+  const F=(sb/(k-1))/(sw/(N-k));return {F,p:isFinite(F)?fsurv(F,k-1,N-k):NaN};}
+function leveneBinary(n,p){ // a 0/1 variable: deviations are (1-p) for the 1s and p for the 0s
+  return leveneZ(n.map((ni,i)=>{const ones=Math.round(ni*p[i]);return Array(ones).fill(1-ones/ni).concat(Array(ni-ones).fill(ones/ni));}));}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+window.SPSSX={meta:o=>`<span class="spssmeta" hidden>${esc(JSON.stringify(o))}</span>`,levene:(a,b)=>levene([a,b])};
+
+/* ---------- SPSS number formats ---------- */
+const lead=s=>s.replace(/^(-?)0\./,'$1.');
+const F=(v,d)=>{if(v===null||v===undefined||!isFinite(v))return '.';let s=v.toFixed(d);if(/^-0\.?0*$/.test(s))s=s.slice(1);return lead(s);};
+const SIG=p=>!isFinite(p)?'.':p<0.0005?'.000':lead(p.toFixed(3));
+const N=s=>String(s).replace(/,/g,'');
+const num=s=>parseFloat(N(s));
+
+/* ---------- table builder ---------- */
+// rows: array of arrays of cells; a cell is a string or {t, cls, cs (colspan), rs (rowspan), h (header)}
+function tbl(title,head,rows,foot){
+  const cell=(c,isHead)=>{if(c===null)return '';const o=typeof c==='object'?c:{t:c};const tag=(isHead||o.h)?'th':'td';
+    const cls=[o.cls,o.x?'tap':''].filter(Boolean).join(' ');
+    return `<${tag}${cls?` class="${cls}"`:''}${o.x?` data-x="${o.x}" tabindex="0"`:''}${o.cs?` colspan="${o.cs}"`:''}${o.rs?` rowspan="${o.rs}"`:''}>${o.t===undefined?'':o.t}</${tag}>`;};
+  let h=`<div class="sp-t"><p class="sp-title">${title}</p><table class="sp"><thead>`;
+  head.forEach(r=>{h+='<tr>'+r.map(c=>cell(c,true)).join('')+'</tr>';});
+  h+='</thead><tbody>';
+  rows.forEach(r=>{h+='<tr>'+r.map(c=>cell(c,false)).join('')+'</tr>';});
+  h+='</tbody></table>';
+  if(foot&&foot.length)h+=`<div class="sp-fn">${foot.map(f=>`<div>${f}</div>`).join('')}</div>`;
+  return h+'</div>';
+}
+const rh=(t,o)=>Object.assign({t,cls:'rh'},o||{});
+const sup=s=>`<sup>${s}</sup>`;
+const X=(t,x)=>({t,x}); // a tappable value cell
+
+/* ---------- explanation language (matches the rest of the site) ---------- */
+const tms=n=>n===1?'1 time':n+' times';
+const pq=p=>p<0.001?'fewer than 1 time in 1,000':p<0.01?`about ${tms(Math.round(p*1000))} in 1,000`:`about ${tms(Math.round(p*100))} in 100`;
+function pSent(p,what,h0){
+  const shown=SIG(p);
+  const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
+  let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
+}
+const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const list=a=>a.length<2?a.join(''):a.length===2?a.join(' and '):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+const DUMMY=/^(south|female|first|middle|lower|northeast|midwest|west|male|women|men)$/i;
+const lamWord=v=>v<0.10?'no relationship':v<0.20?'a very weak relationship':v<0.30?'a moderate relationship':v<0.40?'a moderately strong relationship':'a strong relationship';
+const gamWord=v=>{v=Math.abs(v);return v<0.25?'no relationship':v<0.50?'a very weak relationship':v<0.75?'a moderate relationship':'a strong relationship';};
+
+/* ---------- parsers ---------- */
+function cmdOf(txt){const m=txt.match(/^\.\s+(regress|ttest|summarize|ci\s+means|ci\s+proportions|tabulate)\b.*$/m);return m?{kind:m[1].replace(/\s+/,' '),line:m[0].replace(/^\.\s+/,'')}:null;}
+
+function parseRegress(txt,line){
+  const g=re=>{const m=txt.match(re);return m?m[1]:null;};
+  const an=nm=>{const m=txt.match(new RegExp('^\\s*'+nm+'\\s*\\|\\s*(\\S+)\\s+(\\d+)\\s+(\\S+)','m'));return m?{ss:num(m[1]),df:+m[2],ms:num(m[3])}:null;};
+  const R={dv:line.split(/\s+/)[1],model:an('Model'),resid:an('Residual'),total:an('Total'),n:num(g(/Number of obs\s*=\s*([\d,]+)/)),coefs:[]};
+  if(!R.model||!R.resid||!R.total)return null;
+  const lines=txt.split('\n');let on=false;
+  for(const L of lines){
+    if(/Coefficient\s+Std\. err\./.test(L)){on=true;continue;}
+    if(!on)continue;
+    const m=L.match(/^\s*(\S+)\s*\|\s*(-?[\d.]+(?:e-?\d+)?)\s+(-?[\d.]+(?:e-?\d+)?)\s+(-?[\d.]+)\s+([\d.]+)/);
+    if(m)R.coefs.push({name:m[1],b:num(m[2]),se:num(m[3])});
+  }
+  return R;
+}
+function renderRegress(txt,line,meta){
+  const R=parseRegress(txt,line);if(!R)return null;
+  if(meta&&meta.ss){R.model.ss=meta.ss[0];R.resid.ss=meta.ss[1];R.total.ss=meta.ss[2];R.model.ms=R.model.ss/R.model.df;R.resid.ms=R.resid.ss/R.resid.df;}
+  const k=R.model.df,dfr=R.resid.df,r2=R.model.ss/R.total.ss,adj=1-(1-r2)*(R.total.df)/dfr,see=Math.sqrt(R.resid.ms),Fv=R.model.ms/R.resid.ms,pF=fsurv(Fv,k,dfr),tc=tinv(0.975,dfr);
+  const ivs=R.coefs.filter(c=>c.name!=='_cons'),cons=R.coefs.find(c=>c.name==='_cons');
+  const names=ivs.length?ivs.map(c=>c.name):line.split(/\s+/).slice(2).filter(w=>!/[,(]/.test(w));
+  const dv=R.dv,bin=/^survived$/.test(dv),E={};
+  const pred=`a. Predictors: (Constant), ${names.slice().reverse().join(', ')}`;
+  E.r2=`<b>R Square = ${F(r2,3)}</b>: knowing ${list(names)} cuts the squared error of predicting ${dv} by ${r2<0.005?'less than 1%':'about '+Math.round(r2*100)+'%'} compared with guessing the mean of ${dv} every time (Module 7). It measures fit, not significance.`;
+  E.adj=`<b>Adjusted R Square = ${F(adj,3)}</b>. It charges a small penalty for each IV, so it rises only when an IV improves the fit by more than chance would. Use it to compare models with different numbers of IVs.`;
+  E.F=`<b>F = ${F(Fv,3)}</b> tests H₀ that ${k===1?'the slope is 0':k===2?'both slopes are 0 at once':'all '+k+' slopes are 0 at once'}.${k===1?' With one IV it asks the same question as the slope\'s t-test, and F = t².':''} Read its Sig. next to it.`;
+  E.pF=pSent(pF,'an R Square this large or larger',k===1?'the slope is 0':'every slope is 0 (the IVs together predict nothing)');
+  let h=tbl('Model Summary',[['Model','R','R Square','Adjusted R Square','Std. Error of the Estimate']],
+    [[rh('1',{cls:'rh c'}),F(Math.sqrt(r2),3)+sup('a'),X(F(r2,3),'r2'),X(F(adj,3),'adj'),F(see,5)]],[pred]);
+  h+=tbl('ANOVA'+sup('a'),[[{t:'Model',cs:2},'Sum of Squares','df','Mean Square','F','Sig.']],
+    [[rh('1',{rs:3,cls:'rh c'}),rh('Regression'),F(R.model.ss,3),String(k),F(R.model.ms,3),X(F(Fv,3),'F'),X(SIG(pF)+sup('b'),'pF')],
+     [rh('Residual'),F(R.resid.ss,3),String(dfr),F(R.resid.ms,3),'',''],
+     [rh('Total'),F(R.total.ss,3),String(R.total.df),'','','']],
+    [`a. Dependent Variable: ${dv}`,'b. '+pred.slice(3)]);
+  if(cons){
+    let beta=meta&&meta.beta;
+    if(!beta&&ivs.length===1)beta=[Math.sign(ivs[0].b)*Math.sqrt(r2)];
+    const cp=p2t(cons.b/cons.se,dfr);
+    E['b:_c']=`<b>(Constant) B = ${F(cons.b,3)}</b>: the predicted ${dv} when ${ivs.length===1?ivs[0].name+' is':'every IV is'} 0. Ask whether 0 is a realistic value${ivs.length===1?' of '+ivs[0].name:' for the IVs'}. If it isn't, the constant is only an anchor for the line, not a prediction for any real case.`;
+    E['p:_c']=`Sig. for the constant tests H₀ that the constant is 0, which is rarely interesting. Sig. = ${SIG(cp)}. Interpret the IVs' Sig. values instead.`;
+    const rows=[[rh('1',{rs:ivs.length+1,cls:'rh c'}),rh('(Constant)'),X(F(cons.b,3),'b:_c'),F(cons.se,3),'',F(cons.b/cons.se,3),X(SIG(cp),'p:_c')]];
+    ivs.forEach((c,j)=>{const t=c.b/c.se,p=p2t(t,dfr),others=ivs.filter(o=>o!==c).map(o=>o.name),hold=others.length?`holding ${list(others)} constant, `:'';
+      const up=c.b>=0?'higher':'lower',amt=F(Math.abs(c.b),3);
+      let txt=DUMMY.test(c.name)
+        ? cap(`${hold}cases coded 1 on <i>${c.name}</i> are predicted to score ${amt} ${up} on ${dv} than cases coded 0 (the reference group).`)
+        : cap(`${hold}each 1-unit increase in <i>${c.name}</i> goes with a predicted ${dv} ${Math.abs(c.b)<0.01?fe(Math.abs(c.b)):amt} ${up}.`);
+      if(bin)txt+=` Because ${dv} is coded 0/1, multiply by 100 to read it in percentage points: about ${(Math.abs(c.b)*100).toFixed(1)} points ${up}.`;
+      E['b:'+j]=`<b>B = ${F(c.b,3)}</b>${Math.abs(c.b)<0.01?` (${fe(c.b)} unrounded)`:''}, the unstandardized coefficient (the slope). ${txt} Check its Sig. before you call it a real relationship.`;
+      E['p:'+j]=pSent(p,'a slope this far from 0',`the slope for ${c.name} is 0${others.length?' (holding the other IVs constant)':''}`);
+      E['t:'+j]=`<b>t = B ÷ Std. Error</b> = ${fe(c.b)} ÷ ${fe(c.se)} ≈ ${F(t,3)}. With ${dfr} df, a t beyond about ±${tc.toFixed(2)} gives Sig. below .05.`;
+      E['beta:'+j]=beta?`<b>Beta = ${F(beta[j],3)}</b>, the standardized coefficient: ${hold}a 1-SD increase in ${c.name} goes with a predicted ${dv} ${F(Math.abs(beta[j]),3)} SD ${up}. Every Beta is in SD units, so you can compare them across IVs measured in different units (Module 9).`:'';
+      rows.push([rh(c.name),X(F(c.b,3),'b:'+j),F(c.se,3),beta?X(F(beta[j],3),'beta:'+j):'',X(F(t,3),'t:'+j),X(SIG(p),'p:'+j)]);});
+    h+=tbl('Coefficients'+sup('a'),[[{t:'Model',cs:2,rs:2},{t:'Unstandardized Coefficients',cs:2},{t:'Standardized Coefficients'},{t:'t',rs:2},{t:'Sig.',rs:2}],['B','Std. Error','Beta']],
+      rows,[`a. Dependent Variable: ${dv}`]);
+  }
+  return {html:h,E,note:'SPSS splits one regression into three tables: Model Summary (fit), ANOVA (the F-test) and Coefficients. <b>Sig.</b> is SPSS\'s name for the p-value, and .000 means p &lt; .001.'+(cons?'':' This module shows only the fit, so the Coefficients table is left out here as it is in the Stata output.')};
+}
+
+
+function parseTtest(txt,line){
+  const dv=line.replace(/^ttest\s+/,'').split(/[\s,]/)[0],by=(line.match(/by\(([^)]+)\)/)||[])[1]||'group';
+  const lv=+((txt.match(/\[(\d+)% conf\. interval\]/)||[])[1]||95);
+  const rows=[];
+  for(const L of txt.split('\n')){const m=L.match(/^\s*(\S+)\s*\|\s*([\d,]+)\s+(-?[\d.]+)\s+([\d.]+)\s+([\d.]+)\s/);if(m&&m[1]!=='Combined'&&m[1]!=='Group')rows.push({g:m[1],n:num(m[2]),m:num(m[3]),se:num(m[4]),sd:num(m[5])});}
+  if(rows.length<2)return null;
+  return {dv,by,lv,a:rows[0],b:rows[1]};
+}
+function renderTtest(txt,line,meta){
+  const T=parseTtest(txt,line);if(!T)return null;
+  const {a,b}=T,d=a.m-b.m,q=1-(1-T.lv/100)/2;
+  const sp2=((a.n-1)*a.sd*a.sd+(b.n-1)*b.sd*b.sd)/(a.n+b.n-2),se1=Math.sqrt(sp2*(1/a.n+1/b.n)),df1=a.n+b.n-2,t1=d/se1;
+  const v1=a.sd*a.sd/a.n,v2=b.sd*b.sd/b.n,se2=Math.sqrt(v1+v2),df2=(v1+v2)**2/(v1*v1/(a.n-1)+v2*v2/(b.n-1)),t2=d/se2;
+  const c1=tinv(q,df1)*se1,c2=tinv(q,df2)*se2,p1=p2t(t1,df1),p2=p2t(t2,df2);
+  let lev=meta&&meta.levene;
+  if(!lev){const bin=[a,b].every(g=>g.m>=0&&g.m<=1&&Math.abs(g.sd-Math.sqrt(g.m*(1-g.m)*g.n/(g.n-1)))<2e-4*Math.max(1,g.sd));
+    if(bin)lev=leveneBinary([a.n,b.n],[a.m,b.m]);}
+  const ga=`${T.by} = ${a.g}`,gb=`${T.by} = ${b.g}`,E={};
+  E.ma=`<b>Mean = ${F(a.m,4)}</b>: the average ${T.dv} for the ${a.n} cases with ${ga}.`;
+  E.mb=`<b>Mean = ${F(b.m,4)}</b>: the average ${T.dv} for the ${b.n} cases with ${gb}.`;
+  E.sa=E.sb=`<b>Std. Deviation</b>: how spread out ${T.dv} is within the group, the typical distance of a case from its group's mean.`;
+  if(lev)E.lev=`<b>Levene's test</b> checks H₀ that the two groups have equal variances (equal spread). Sig. = ${SIG(lev.p)}. `+(lev.p<0.05?'That is below .05: the spreads differ, so many courses read the <b>Equal variances not assumed</b> row.':'That is not below .05: no evidence the spreads differ, so read the <b>Equal variances assumed</b> row.')+' Levene\'s Sig. is not the test of your hypothesis; the t-test\'s Sig. (2-tailed) is.';
+  const dTxt=`<b>Mean Difference = ${F(d,5)}</b>: the ${ga} mean minus the ${gb} mean (${F(a.m,4)} − ${F(b.m,4)}). `+(d<0?`Negative, so the ${gb} group's mean is higher.`:d>0?`Positive, so the ${ga} group's mean is higher.`:'');
+  E.d=dTxt;
+  [['1',p1,t1,se1,df1,c1],['2',p2,t2,se2,df2,c2]].forEach(([r,p,t,se,df,c])=>{
+    E['p'+r]=pSent(p,'a difference in means this large or larger','the two groups\' means are equal in the population');
+    E['t'+r]=`<b>t = Mean Difference ÷ Std. Error Difference</b> = ${F(d,5)} ÷ ${F(se,5)} ≈ ${F(t,3)}.`;
+    const lo=d-c,hi=d+c,in0=lo<=0&&hi>=0;
+    E['ci'+r]=`The ${T.lv}% confidence interval for the difference runs from ${F(lo,5)} to ${F(hi,5)}. `+(in0?'It includes 0, which matches Sig. at or above .05 (fail to reject H₀).':'It does not include 0, which matches Sig. below .05 (reject H₀).');});
+  let h=tbl('Group Statistics',[[{t:'',cs:2},'N','Mean','Std. Deviation','Std. Error Mean']],
+    [[rh(T.dv,{rs:2}),rh(ga),String(a.n),X(F(a.m,4),'ma'),X(F(a.sd,5),'sa'),F(a.se,5)],[rh(gb),String(b.n),X(F(b.m,4),'mb'),X(F(b.sd,5),'sb'),F(b.se,5)]]);
+  const dfFmt=v=>Math.abs(v-Math.round(v))<1e-9?String(Math.round(v)):F(v,3);
+  h+=tbl('Independent Samples Test',[[{t:'',cs:2,rs:3},{t:"Levene's Test for Equality of Variances",cs:2},{t:'t-test for Equality of Means',cs:7}],
+      [{t:'F',rs:2},{t:'Sig.',rs:2},{t:'t',rs:2},{t:'df',rs:2},{t:'Sig. (2-tailed)',rs:2},{t:'Mean Difference',rs:2},{t:'Std. Error Difference',rs:2},{t:`${T.lv}% Confidence Interval of the Difference`,cs:2}],
+      ['Lower','Upper']],
+    [[rh(T.dv,{rs:2}),rh('Equal variances assumed'),lev?F(lev.F,3):'.',lev?X(SIG(lev.p),'lev'):'.',X(F(t1,3),'t1'),dfFmt(df1),X(SIG(p1),'p1'),X(F(d,5),'d'),F(se1,5),X(F(d-c1,5),'ci1'),X(F(d+c1,5),'ci1')],
+     [rh('Equal variances not assumed'),'','',X(F(t2,3),'t2'),dfFmt(df2),X(SIG(p2),'p2'),X(F(d,5),'d'),F(se2,5),X(F(d-c2,5),'ci2'),X(F(d+c2,5),'ci2')]]);
+  const unequal=/unequal/.test(line);
+  return {html:h,E,note:`SPSS subtracts the same way Stata does (${ga} minus ${gb}). Stata's <code>ttest</code> matches the <b>Equal variances ${unequal?'not assumed':'assumed'}</b> row. SPSS always adds <b>Levene's test</b> for equal variances.`};
+}
+
+
+function renderSummarize(txt){
+  const rows=[];
+  for(const Ln of txt.split('\n')){const m=Ln.match(/^\s*(\S+)\s*\|\s*([\d,]+)\s+(-?[\d.]+)\s+([\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s*$/);if(m)rows.push({v:m[1],n:num(m[2]),m:num(m[3]),sd:num(m[4]),lo:m[5],hi:m[6]});}
+  if(!rows.length)return null;
+  const same=rows.every(r=>r.n===rows[0].n),E={};
+  rows.forEach((r,i)=>{E['m'+i]=`<b>Mean = ${F(r.m,4)}</b>: the average ${r.v} across ${r.n} cases.`;
+    E['s'+i]=`<b>Std. Deviation = ${F(r.sd,5)}</b>: the typical distance of a case from the mean of ${r.v}. A larger SD means the values are more spread out.`;});
+  const body=rows.map((r,i)=>[rh(r.v),String(r.n),lead(r.lo),lead(r.hi),X(F(r.m,4),'m'+i),X(F(r.sd,5),'s'+i)]);
+  if(same)body.push([rh('Valid N (listwise)'),String(rows[0].n),'','','','']);
+  return {html:tbl('Descriptive Statistics',[['','N','Minimum','Maximum','Mean','Std. Deviation']],body),E,
+    note:'SPSS\'s Descriptives table holds the same numbers as Stata\'s <code>summarize</code>, in a different order.'+(same?'':' The two rows come from different datasets here (counties and simulated samples), so SPSS would list them in separate runs; there is no listwise N.')};
+}
+
+function renderCI(txt,line){
+  const prop=/^ci proportions/.test(line),lv=+((line.match(/level\((\d+)\)/)||[])[1]||((txt.match(/\[(\d+)% conf\. interval\]/)||[])[1])||95);
+  let r=null;
+  for(const Ln of txt.split('\n')){const m=Ln.match(/^\s*(\S+)\s*\|\s*([\d,]+)\s+(-?[\d.]+)\s+([\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)/);if(m&&!/Variable/.test(m[1])){r={v:m[1],n:num(m[2]),m:num(m[3]),se:num(m[4])};break;}}
+  if(!r)return null;
+  const zMode=/z interval/.test(txt),E={};
+  const ciTxt=(lo,hi,what)=>`The ${lv}% confidence interval runs from ${lo} to ${hi}. If we drew many samples of ${r.n} and built an interval this way from each one, about ${lv}% of those intervals would capture the true ${what}. (Loosely: we are ${lv}% confident the true ${what} lies between ${lo} and ${hi}.)`;
+  if(prop){
+    const z=-normInv((1-lv/100)/2),se=Math.sqrt(r.m*(1-r.m)/r.n),succ=Math.round(r.m*r.n),lo=F(r.m-z*se,3),hi=F(r.m+z*se,3);
+    E.p=`<b>Proportion = ${F(r.m,3)}</b>: ${succ} of the ${r.n} cases in the sample (${(r.m*100).toFixed(1)}%).`;
+    E.se=`<b>Standard error = ${F(se,3)}</b> = √(p(1 − p)/n): how much the sample proportion would vary from sample to sample.`;
+    E.ci=ciTxt(lo,hi,'population proportion');
+    return {html:tbl('One-Sample Proportions Confidence Intervals',[[{t:'',rs:2},{t:'Interval Type',rs:2},{t:'Observed',cs:3},{t:'Asymptotic Standard Error',rs:2},{t:`${lv}% Confidence Interval`,cs:2}],['Successes','Trials','Proportion','Lower','Upper']],
+      [[rh(r.v),rh('Wald'),String(succ),String(r.n),X(F(r.m,3),'p'),X(F(se,3),'se'),X(lo,'ci'),X(hi,'ci')]]),E,
+      note:'SPSS (version 27 and later) reports a proportion\'s interval with <i>Analyze → Compare Means → One-Sample Proportions</i>. The Wald interval uses z, like the interval on this page.'};
+  }
+  const sd=r.se*Math.sqrt(r.n),tc=tinv(1-(1-lv/100)/2,r.n-1),lo=F(r.m-tc*r.se,4),hi=F(r.m+tc*r.se,4);
+  E.m=`<b>Mean = ${F(r.m,4)}</b>: the sample mean of ${r.v}, the center of the interval.`;
+  E.se=`<b>Std. Error = ${F(r.se,5)}</b> = SD ÷ √n = ${F(sd,5)} ÷ √${r.n}. The interval is the mean ± t × this.`;
+  E.ci=ciTxt(lo,hi,'population mean');
+  E.sd=`<b>Std. Deviation = ${F(sd,5)}</b>: the typical distance of a case from the mean. Divide by √n to get the standard error.`;
+  return {html:tbl('Descriptives',[[{t:'',cs:3},'Statistic','Std. Error']],
+    [[rh(r.v,{rs:5}),rh('Mean',{cs:2}),X(F(r.m,4),'m'),X(F(r.se,5),'se')],
+     [rh(`${lv}% Confidence Interval for Mean`,{rs:2}),rh('Lower Bound'),X(lo,'ci'),''],
+     [rh('Upper Bound'),X(hi,'ci'),''],
+     [rh('Variance',{cs:2}),F(sd*sd,3),''],
+     [rh('Std. Deviation',{cs:2}),X(F(sd,5),'sd'),'']]),E,
+    note:`The first rows of SPSS's <i>Explore</i> Descriptives table (Explore also lists the median, range and more, which need the raw data). SPSS always builds this interval with t, here t(${r.n-1}) = ${tc.toFixed(3)}.`+(zMode?' The page is set to z, so SPSS\'s interval is a little wider than the one above.':'')};
+}
+
+function normInv(p){ // Acklam
+  const a=[-39.69683028665376,220.9460984245205,-275.9285104469687,138.357751867269,-30.66479806614716,2.506628277459239],b=[-54.47609879822406,161.5858368580409,-155.6989798598866,66.80131188771972,-13.28068155288572],c=[-0.007784894002430293,-0.3223964580411365,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783],d=[0.007784695709041462,0.3224671290700398,2.445134137142996,3.754408661907416];
+  const pl=0.02425;let q,r;if(p<pl){q=Math.sqrt(-2*Math.log(p));return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p>1-pl){q=Math.sqrt(-2*Math.log(1-p));return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  q=p-0.5;r=q*q;return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+
+/* crosstabs */
+function parseTab(txt,line){
+  const L=txt.split('\n');const hi=L.findIndex(l=>/\|.*\|\s*Total\s*$/.test(l));if(hi<0)return null;
+  const rowVar=L[hi].split('|')[0].trim(),colVar=(L[hi-1]||'').split('|')[1]?.trim()||line.split(/\s+/)[2];
+  const cols=L[hi].split('|')[1].trim().split(/\s+/);
+  const rows=[],m=[];let total=null;
+  for(let i=hi+2;i<L.length;i++){const s=L[i];if(/^-+\+/.test(s))continue;const p=s.split('|');if(p.length<3)break;
+    const lab=p[0].trim(),vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
+  if(!rows.length)return null;
+  return {rowVar,colVar,cols,rows,m};
+}
+function lambdas(m){ // as SPSS / PSPP compute them
+  const R=m.length,C=m[0].length,N=m.flat().reduce((s,v)=>s+v,0);
+  const rt=m.map(r=>r.reduce((s,v)=>s+v,0)),ct=m[0].map((_,j)=>m.reduce((s,r)=>s+r[j],0));
+  const argmax=a=>a.reduce((bi,v,i)=>v>a[bi]?i:bi,0);
+  const fimI=m.map(r=>argmax(r)),fim=m.map((r,i)=>r[fimI[i]]),fmjI=ct.map((_,j)=>argmax(m.map(r=>r[j]))),fmj=fmjI.map((i,j)=>m[i][j]);
+  const sfim=fim.reduce((s,v)=>s+v,0),sfmj=fmj.reduce((s,v)=>s+v,0),rmI=argmax(rt),cmI=argmax(ct),rm=rt[rmI],cm=ct[cmI];
+  const out=[];
+  // symmetric
+  const v0=(sfim+sfmj-cm-rm)/(2*N-rm-cm);let a0=0,a1=0;
+  for(let i=0;i<R;i++)for(let j=0;j<C;j++){const t0=(fmjI[j]===i)+(fimI[i]===j),t1=(i===rmI)+(j===cmI);a0+=m[i][j]*(t0-t1)**2;a1+=m[i][j]*(t0+(v0-1)*t1)**2;}
+  out.push({v:v0,ase:Math.sqrt(a1-4*N*v0*v0)/(2*N-rm-cm),t:v0/(Math.sqrt(a0-(sfim+sfmj-cm-rm)**2/N)/(2*N-rm-cm))});
+  // row variable dependent
+  const v1=(sfmj-rm)/(N-rm);let c1=0,d1=0;
+  for(let j=0;j<C;j++){if(rmI===fmjI[j])c1+=fmj[j];else d1+=m[fmjI[j]][j]+m[rmI][j];}
+  out.push({v:v1,ase:Math.sqrt((N-sfmj)*(sfmj+rm-2*c1)/(N-rm)**3),t:v1/(Math.sqrt(d1-(sfmj-rm)**2/N)/(N-rm))});
+  // column variable dependent
+  const v2=(sfim-cm)/(N-cm);let c2=0,d2=0;
+  for(let i=0;i<R;i++){if(cmI===fimI[i])c2+=fim[i];else d2+=m[i][fimI[i]]+m[i][cmI];}
+  out.push({v:v2,ase:Math.sqrt((N-sfim)*(sfim+cm-2*c2)/(N-cm)**3),t:v2/(Math.sqrt(d2-(sfim-cm)**2/N)/(N-cm))});
+  out.forEach(o=>{o.p=isFinite(o.t)?p2z(o.t):NaN;});
+  return {out,N};
+}
+function gammaS(m){
+  const R=m.length,C=m[0].length,N=m.flat().reduce((s,v)=>s+v,0);let P=0,Q=0;const Cm=[],Dm=[];
+  for(let i=0;i<R;i++){Cm.push([]);Dm.push([]);for(let j=0;j<C;j++){let c=0,d=0;
+    for(let a=0;a<R;a++)for(let b=0;b<C;b++){if((a<i&&b<j)||(a>i&&b>j))c+=m[a][b];else if((a<i&&b>j)||(a>i&&b<j))d+=m[a][b];}
+    Cm[i][j]=c;Dm[i][j]=d;P+=m[i][j]*c;Q+=m[i][j]*d;}}
+  let g1=0,g0=0;for(let i=0;i<R;i++)for(let j=0;j<C;j++){g1+=m[i][j]*(Q*Cm[i][j]-P*Dm[i][j])**2;g0+=m[i][j]*(Cm[i][j]-Dm[i][j])**2;}
+  const v=(P-Q)/(P+Q),ase=4/(P+Q)**2*Math.sqrt(g1),t=v/(2/(P+Q)*Math.sqrt(g0-(P-Q)**2/N));
+  return {v,ase,t,p:p2z(t),N};
+}
+window.SPSSX.lambdas=lambdas;window.SPSSX.gamma=gammaS;
+function renderTab(txt,line){
+  const T=parseTab(txt,line);if(!T)return null;
+  const {rowVar,colVar,cols,rows,m}=T,ct=cols.map((_,j)=>m.reduce((s,r)=>s+r[j],0)),Ntot=ct.reduce((s,v)=>s+v,0),E={};
+  const pc=(a,b)=>b?(100*a/b).toFixed(1)+'%':'.';
+  const body=[];
+  rows.forEach((r,i)=>{const rt=m[i].reduce((s,v)=>s+v,0);
+    const c1=[];if(i===0)c1.push(rh(rowVar,{rs:2*rows.length}));c1.push(rh(r,{rs:2}),rh('Count'));m[i].forEach(v=>c1.push(String(v)));c1.push(String(rt));body.push(c1);
+    const c2=[rh(`% within ${colVar}`)];m[i].forEach((v,j)=>{const k=`cp:${i}:${j}`;E[k]=`<b>${pc(v,ct[j])}</b> of the cases with ${colVar} = ${cols[j]} have ${rowVar} = ${r} (${v} of ${ct[j]}). Column percentages put each category of the IV (the columns) on the same footing. Compare them <b>across</b> a row: if they differ, ${rowVar} depends on ${colVar}.`;c2.push(X(pc(v,ct[j]),k));});
+    c2.push(pc(rt,Ntot));body.push(c2);});
+  body.push([rh('Total',{cs:2,rs:2}),rh('Count'),...ct.map(String),String(Ntot)]);
+  body.push([rh(`% within ${colVar}`),...ct.map(()=> '100.0%'),'100.0%']);
+  let h=tbl(`${rowVar} * ${colVar} Crosstabulation`,[[{t:'',cs:3,rs:2},{t:colVar,cs:cols.length},{t:'Total',rs:2}],cols],body);
+  const wantG=/gamma/.test(line)||/gamma\s*=/.test(txt),wantL=/lambda/.test(txt);
+  let note=`SPSS prints the same counts as Stata's <code>tabulate</code>, plus the column percentages the labs ask for (put the IV in the columns and the DV in the rows).`;
+  if(wantL){const {out}=lambdas(m),fmt=(o,k)=>[X(F(o.v,3),'lv'+k),isFinite(o.ase)?F(o.ase,3):'.',isFinite(o.t)?F(o.t,3):'.',X(SIG(o.p),'lp'+k)];
+    const dvL=(txt.match(/lambda \((\S+) given/)||[])[1]||rowVar,ivL=dvL===rowVar?colVar:rowVar,dvRow=dvL===rowVar?1:2;
+    [0,1,2].forEach(k=>{const o=out[k];
+      E['lv'+k]=k===dvRow?`<b>Lambda = ${F(o.v,3)}</b>, with ${dvL} as the DV: knowing ${ivL} cuts errors in guessing ${dvL} by ${(o.v*100).toFixed(1)}% compared with always guessing its mode (Module 7). On the course scale (below .10 none, .10 very weak, .20 moderate, .30 moderately strong, .40 and up strong) that is <b>${lamWord(o.v)}</b>. Lambda is never negative, so it has no direction.`
+        :k===0?`The symmetric lambda averages the two directions. You almost always want the row for your DV instead: <b>${dvL} Dependent</b>.`
+        :`This row treats ${dvL===rowVar?colVar:rowVar} as the DV. Read the <b>${dvL} Dependent</b> row instead, the one for your DV.`;
+      E['lp'+k]=pSent(o.p,'a lambda this large or larger','lambda is 0 in the population');});
+    h+=tbl('Directional Measures',[['','','','Value','Asymptotic Standard Error'+sup('a'),'Approximate T'+sup('b'),'Approximate Significance']],
+      [[rh('Nominal by Nominal',{rs:3}),rh('Lambda',{rs:3}),rh('Symmetric'),...fmt(out[0],0)],[rh(rowVar+' Dependent'),...fmt(out[1],1)],[rh(colVar+' Dependent'),...fmt(out[2],2)]],
+      ['a. Not assuming the null hypothesis.','b. Using the asymptotic standard error assuming the null hypothesis.']);
+    note+=` For lambda, read the row for your DV: <b>${dvL} Dependent</b>. SPSS also lists Goodman and Kruskal tau; tau isn't covered in this course, so it is left out here.`;}
+  if(wantG){const g=gammaS(m);
+    E.gv=`<b>Gamma = ${F(g.v,3)}</b>. Read strength from the size, ignoring the sign: on the course scale (below .25 none, .25 very weak, .50 moderate, .75 and up strong) |${F(g.v,3)}| is <b>${gamWord(g.v)}</b>. The sign gives the direction: ${g.v>=0?'<b>positive</b>, so cases in higher categories of one variable tend to fall in higher categories of the other':'<b>negative (inverse)</b>, so cases in higher categories of one variable tend to fall in lower categories of the other'}. Check how each variable is coded before you say what that means in words.`;
+    E.gp=pSent(g.p,'a gamma this far from 0','gamma is 0 in the population');
+    h+=tbl('Symmetric Measures',[['','','Value','Asymptotic Standard Error'+sup('a'),'Approximate T'+sup('b'),'Approximate Significance']],
+      [[rh('Ordinal by Ordinal'),rh('Gamma'),X(F(g.v,3),'gv'),F(g.ase,3),F(g.t,3),X(SIG(g.p),'gp')],[rh('N of Valid Cases',{cs:2}),String(g.N),'','','']],
+      ['a. Not assuming the null hypothesis.','b. Using the asymptotic standard error assuming the null hypothesis.']);}
+  return {html:h,E,note};
+}
+
+
+/* ---------- panel wiring ---------- */
+function readPre(pre){const c=pre.cloneNode(true);let meta=null;c.querySelectorAll('.spssmeta').forEach(s=>{try{meta=Object.assign(meta||{},JSON.parse(s.textContent));}catch(e){}s.remove();});return {txt:c.textContent,meta};}
+const HINT='Tap an underlined number to see what it means.';
+function render(pre,body){
+  const {txt,meta}=readPre(pre),cmd=cmdOf(txt);let out=null;
+  try{ if(cmd){ if(cmd.kind==='regress')out=renderRegress(txt,cmd.line,meta); else if(cmd.kind==='ttest')out=renderTtest(txt,cmd.line,meta);
+    else if(cmd.kind==='summarize')out=renderSummarize(txt); else if(/^ci /.test(cmd.kind))out=renderCI(txt,cmd.line); else if(cmd.kind==='tabulate')out=renderTab(txt,cmd.line);} }
+  catch(e){console.warn('SPSS-style output:',e);out=null;}
+  body._E=out?out.E||{}:{};
+  body.innerHTML=out?`<p class="sp-note">${out.note}</p><p class="sp-hint">Wide tables scroll sideways.</p><div class="sp-sheet">${out.html}</div><p class="sp-exp" aria-live="polite"><span class="sp-hint2">${HINT}</span></p>`:'<p class="sp-note">Run the analysis above, and its SPSS-style output will appear here.</p>';
+}
+function attach(pre){
+  if(pre.dataset.spss)return;pre.dataset.spss='1';
+  const d=document.createElement('details');d.className='spss';
+  d.innerHTML='<summary><span class="sp-badge">SPSS</span><span class="sp-lab">Show SPSS-style output</span></summary><div class="sp-body"></div>';
+  let anchor=pre;
+  if(!pre.closest('.tfig')){ // the published-tables page already has its own Stata toggle
+    const w=document.createElement('details');w.className='stata-wrap';
+    w.innerHTML='<summary><span class="sp-badge">Stata</span><span class="sp-lab">Show Stata output</span></summary><div class="st-body"></div>';
+    pre.parentNode.insertBefore(w,pre);w.querySelector('.st-body').appendChild(pre);anchor=w;}
+  anchor.insertAdjacentElement('beforebegin',d); // SPSS first, then Stata
+  const body=d.querySelector('.sp-body');let dirty=true,raf=0;
+  const KIND={regress:'regression','ttest':'t test',summarize:'descriptives','ci means':'confidence interval','ci proportions':'confidence interval',tabulate:'crosstab'};
+  const label=()=>{const c=cmdOf(readPre(pre).txt);const k=c?c.kind:null;
+    if(anchor!==pre)anchor.querySelector('.sp-lab').innerHTML='Show Stata output'+(k?`: <code>${k}</code>`:'');
+    d.querySelector('.sp-lab').textContent='Show SPSS-style output'+(k?` (${KIND[k]})`:'');};
+  label();
+  const go=()=>{raf=0;label();if(d.open){render(pre,body);dirty=false;}else dirty=true;};
+  new MutationObserver(()=>{if(!raf)raf=requestAnimationFrame(go);}).observe(pre,{childList:true,subtree:true,characterData:true});
+  d.addEventListener('toggle',()=>{if(d.open&&dirty)go();});
+  const pick=cell=>{const k=cell.dataset.x,E=body._E||{};if(!E[k])return;
+    body.querySelectorAll('.tap.sel').forEach(x=>x.classList.remove('sel'));body.querySelectorAll(`[data-x="${CSS.escape(k)}"]`).forEach(x=>x.classList.add('sel'));
+    const ex=body.querySelector('.sp-exp');if(ex)ex.innerHTML=E[k];};
+  body.addEventListener('click',e=>{const c=e.target.closest('.tap');if(c)pick(c);});
+  body.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const c=e.target.closest('.tap');if(c){e.preventDefault();pick(c);}});
+}
+function init(){document.querySelectorAll('pre.stata').forEach(attach);}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.SPSSX.attachAll=init;
+})();</script>
+<!-- spss-end -->
+</head>
+<body>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 8: </span><b>Bivariate regression</b></span><a href="8b-partisans-and-the-first-lady.html" aria-label="Next: Partisans and the First Lady">Next →</a></nav>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Module 8 of 10</p>
+    <h1>Bivariate regression</h1>
+    <p class="dek">One line summarizes how Y moves with X. Fit it, read it as an equation, use it to make predictions, and ask whether its slope is steeper than chance alone would produce.</p>
+    <p style="margin:2px 0 0;font-size:14.5px;color:var(--ink-2)">Worked example: <a href="8b-partisans-and-the-first-lady.html" style="color:var(--ink);font-weight:600">Partisans and the First Lady</a> (2004 NES feeling thermometers), a step-by-step lab companion.</p>
+    <ul class="modnav" aria-label="Modules in this series">
+      <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
+      <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
+      <li><a href="3-dispersion.html">3 Dispersion</a></li>
+      <li><a href="4-sampling-distributions.html">4 Sampling distributions</a></li>
+      <li><a href="5-confidence-intervals.html">5 Confidence intervals</a></li>
+      <li><a href="6-difference-in-means.html">6 Difference in means</a></li>
+      <li><a href="7-pre-measures.html">7 PRE measures</a></li>
+      <li aria-current="page"><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
+      <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
+      <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
+      <li><a href="practice-titanic.html">Practice: Titanic</a></li>
+      <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="exam-prep.html">Exam prep</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="controls" aria-label="Data">
+    <div class="ctl" style="flex:1 1 360px"><label class="lab" for="ds">Data</label><select id="ds" style="width:100%"></select></div>
+    <div class="ctl"><span class="lab">Points</span><div class="btns"><button id="reset">Reset to real data</button></div></div>
+    <button class="linkish fxbtn" data-open-formulas style="align-self:center"><i>Σ</i> Formulas</button>
+  </section>
+
+  <!-- A: least squares -->
+  <figure>
+    <div class="fighead"><h2><span class="step">A</span>The least-squares line</h2></div>
+    <p class="sub">Each dot is one <span class="unitw">state</span>. The orange line is the one that makes the sum of squared vertical errors as small as possible. <b>Drag any dot</b> and the line refits instantly.</p>
+    <div class="toggles" style="margin:4px 0 6px">
+      <label><input type="checkbox" id="tRes" checked> Show errors (residuals)</label>
+      <label><input type="checkbox" id="tSq"> Draw them as squares</label>
+      <label><input type="checkbox" id="tMine"> Try to beat it with your own line</label>
+    </div>
+    <div class="key"><span><i class="sw" style="background:var(--s1);border-radius:50%"></i><span class="unitw">state</span></span><span><i class="sw ols"></i>least-squares line</span><span><i class="sw resid"></i>residual (y − ŷ)</span><span id="mineKey" hidden><i class="sw mine"></i>your line (drag its handles)</span></div>
+    <div class="chips" id="aChips"></div>
+    <div class="chart" id="aChart"></div>
+    <figcaption id="aCap"></figcaption>
+  </figure>
+
+  <!-- B: equation -->
+  <section class="card" aria-labelledby="eqh">
+    <h3 id="eqh"><span class="step">B</span>Reading the equation</h3>
+    <div class="eqs">
+      <div class="eq"><span class="tag">Algebra class</span><div class="f"><i>y</i> = <span class="k-slope"><i>m</i></span><i>x</i> + <span class="k-cons"><i>b</i></span></div><p><span class="k-slope">m</span> is the slope: rise over run. <span class="k-cons">b</span> is the intercept: where the line crosses x = 0.</p></div>
+      <div class="eq"><span class="tag">Statistics</span><div class="f"><i>ŷ</i> = <span class="k-slope"><i>β</i>₁</span><i>X</i>₁ + <span class="k-cons">constant</span></div><p>Same line, new names. <span class="k-slope">β₁</span> is the coefficient on the IV; the <span class="k-cons">constant</span> (Stata: <code>_cons</code>, often written β₀) is the intercept. The hat on ŷ means “predicted.”</p></div>
+    </div>
+    <div class="filled">
+      <span class="tag">This model, filled in</span>
+      <div class="terms" id="terms"></div>
+    </div>
+    <div class="interp" id="interp"></div>
+  </section>
+
+  <!-- C: predict + marginal -->
+  <figure>
+    <div class="fighead"><h2><span class="step">C</span>Predictions and predicted changes</h2></div>
+    <p class="sub">Plug any value of X into the equation for a point prediction. Pick a starting and ending value of X to see the change the line predicts: the triangle's run is the change in X, its rise is the change in ŷ.</p>
+    <div class="pc">
+      <div>
+        <div class="key"><span><i class="sw ols"></i>regression line</span><span><i class="sw" style="background:var(--ink);border-radius:50%"></i>point prediction</span><span><i class="sw" style="background:color-mix(in srgb,var(--s1) 30%,transparent);border:1px solid var(--s1)"></i>change triangle</span></div>
+        <div class="chart" id="cChart"></div>
+      </div>
+      <div class="side">
+        <div class="box">
+          <h4>Point prediction</h4>
+          <div class="row"><label for="px" id="pxLab">X =</label><input type="number" id="px" step="any"><input type="range" id="pxr" aria-label="Value of X"></div>
+          <div class="calc" id="pCalc"></div>
+          <p class="say" id="pSay"></p>
+          <p class="warn" id="pWarn"></p>
+        </div>
+        <div class="box">
+          <h4>Predicted change in Y for a change in X</h4>
+          <div class="row"><label for="mFrom">From</label><select id="mFrom"></select><label for="mTo">to</label><select id="mTo"></select></div>
+          <div class="big" id="mBig" style="margin-top:10px"></div>
+          <div class="calc" id="mCalc"></div>
+          <p class="say" id="mSay"></p>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <!-- D: significance -->
+  <figure>
+    <div class="fighead"><h2><span class="step">D</span>Testing whether the slope is real</h2></div>
+    <ol class="steps">
+      <li><b>Suppose X and Y were unrelated.</b> The true slope would be 0, but any one dataset would still show some slope by chance.</li>
+      <li><b>Shuffle Y</b> across the <span class="unitw">state</span>s. That breaks any real link while keeping every value. The line through the shuffled points is a slope produced purely by chance (gray).</li>
+      <li><b>Every line passes through the mean point (x̄, ȳ),</b> so each slope hits the right edge at its own height. Flat lines land in the middle; steep ones land high or low. Stack those landing spots and the bell curve of chance slopes appears, turned on its side.</li>
+      <li><b>Compare the real line.</b> The red dashed lines mark the steepest slopes that still sit in the middle 95% of chance. If the orange line falls outside that wedge, its slope is “statistically significant.”</li>
+    </ol>
+    <div class="row" style="margin:10px 0 4px">
+      <div class="btns"><button class="primary" id="s1">Shuffle once</button><button id="s100">+100 shuffles</button><button id="s1000">+1,000</button><button id="sClr">Clear</button></div>
+    </div>
+    <div class="key"><span><i class="sw ols"></i>real least-squares line</span><span><i class="sw null"></i>lines from shuffled data</span><span><i class="sw crit"></i>critical slopes (±t*·SE)</span><span><i class="sw" style="background:var(--muted)"></i>chance slopes, stacked sideways</span></div>
+    <div class="chips" id="dChips"></div>
+    <p class="say" id="dSay" style="margin:0 0 8px"></p>
+    <div class="chart" id="dChart"></div>
+    <div class="trk" id="dTrack" aria-live="polite"></div>
+    <figcaption id="dCap"></figcaption>
+  </figure>
+
+  <section class="card">
+    <h3>Output</h3>
+    <pre class="stata" id="stata"></pre>
+  </section>
+  <p class="publink"><a href="practice-published-tables.html#t1">See the metro share model as a published table →</a></p>
+
+  <section class="amberbox wex" aria-labelledby="wexH">
+    <span class="tag">Worked example</span>
+    <div><h3 id="wexH">Partisans and the First Lady</h3><p>Do feelings toward the parties shape how people rate Laura Bush? Walk through a full bivariate analysis of 2004 NES data, from binning an overplotted scatterplot to comparing two regressions, with a replication for Hillary Clinton. This is a full analysis of real survey data, and it's worth working through.</p></div>
+    <a class="wexgo" href="8b-partisans-and-the-first-lady.html">Open the worked example →</a>
+  </section>
+
+  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+
+  <div class="learn">
+    <section>
+      <h2>Try this</h2>
+      <ol>
+        <li>Drag a point near the middle of X up and down, then do the same with a point at the far right. Points far from x̄ have more <b>leverage</b>: they pull the slope much harder.</li>
+        <li>Turn on <b>Try to beat it with your own line</b> and drag the handles. Your sum of squared errors can match the orange line's, but it can never beat it.</li>
+        <li>Choose <b>Florida 2000</b> and find Palm Beach, where the confusing “butterfly ballot” was used. Drag it down to the line and watch the slope and r² change.</li>
+        <li>Choose <b>Midterms</b> and click <b>+1,000 shuffles</b>. The real line sits inside the wedge: unemployment doesn't predict House losses in these data.</li>
+        <li>In panel C, compare the change from the mean to the max with a 1-SD increase. Which is the fairer way to describe the effect?</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Check yourself</h2>
+      <details>
+        <summary>The slope on metro share is about −0.37. Interpret it.</summary>
+        <p>Each 1-point increase in the share of a state's population living in metro areas is associated with about a 0.37-point decrease in Trump's predicted 2016 vote share. “Associated with,” not “causes”: this is one variable, observational data.</p>
+      </details>
+      <details>
+        <summary>The constant is 77. Should we predict that a state with no metro residents would give Trump 77%?</summary>
+        <p>No. The lowest metro share in the data is 31%, so x = 0 is far outside the observed range. The constant pins the line in place; it is only a meaningful prediction when x = 0 is a realistic value.</p>
+      </details>
+      <details>
+        <summary>Why does the line always pass through (x̄, ȳ)?</summary>
+        <p>Because the constant is computed as ȳ − β₁x̄. Plug x̄ into the equation and you get exactly ȳ. That is why panel D can pivot every line around the mean point.</p>
+      </details>
+      <details>
+        <summary>Stata reports t = b / SE. What does a t of about −4.9 mean in panel D?</summary>
+        <p>The real slope is almost five standard errors away from zero: far out in the sideways bell, well outside the wedge. A slope that steep would almost never come from shuffled, unrelated data, so p is tiny.</p>
+      </details>
+      <details>
+        <summary>Can a line be steep but not significant?</summary>
+        <p>Yes. Significance depends on the slope relative to its standard error. With few cases or lots of scatter, the bell of chance slopes is wide, and even a steep line can fall inside the wedge.</p>
+      </details>
+    </section>
+  </div>
+
+  <footer class="src">
+    Data: state figures from FiveThirtyEight's <i>hate_crimes</i> data (Trump's 2016 vote share, Census metro share, median household income, white poverty rate), via the <i>fivethirtyeight</i> R package; Florida 2000 county returns from the <i>carData</i> R package; midterm House seat changes for the president's party, 1899–2019, from OpenIntro's <i>midterms_house</i>. All via <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>.
+    Shuffles are random permutations of Y across cases.
+  </footer>
+<nav class="pager" aria-label="Previous and next"><a href="7-pre-measures.html"><span class="k">← Previous · Module 7</span><span class="t">PRE measures</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8b-partisans-and-the-first-lady.html"><span class="k">Next · Worked example →</span><span class="t">Partisans and the First Lady</span></a></nav>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="fxTitle" aria-hidden="true">
+  <div class="top"><h2 id="fxTitle">Formulas</h2><button id="closeFx">Close</button></div>
+  <div class="fx"><h3>The model</h3>
+    <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><mtext>constant</mtext></math><math display="block"><mo>⟺</mo></math><math display="block"><mi>y</mi><mo>=</mo><mi>m</mi><mi>x</mi><mo>+</mo><mi>b</mi></math>
+    <p>Many textbooks write the constant as β₀ and put it first: ŷ = β₀ + β₁X₁.</p></div>
+  <div class="fx"><h3>Least-squares slope and constant</h3>
+    <math display="block"><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></mfrac></math><math display="block"><mtext>constant</mtext><mo>=</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>−</mo><msub><mi>β</mi><mn>1</mn></msub><mover><mi>x</mi><mo>‾</mo></mover></math>
+    <p>These values minimize the sum of squared residuals, SSE = Σ(yᵢ − ŷᵢ)².</p></div>
+  <div class="fx"><h3>Predicted change (marginal effect)</h3>
+    <math display="block"><mi>Δ</mi><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mo>·</mo><mi>Δ</mi><mi>x</mi></math>
+    <p>For a straight line the change depends only on how far X moves, not where it starts. Rise = slope × run.</p></div>
+  <div class="fx"><h3>Fit</h3>
+    <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><msup><mi>r</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mi>SSE</mi><mi>SST</mi></mfrac></math></div>
+  <div class="fx"><h3>Standard error of the slope and the t test</h3>
+    <math display="block"><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>SSE</mi><mo>/</mo><mo>(</mo><mi>n</mi><mo>−</mo><mn>2</mn><mo>)</mo></mrow></msqrt><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><mi>t</mi><mo>=</mo><mfrac><mrow><msub><mi>β</mi><mn>1</mn></msub><mo>−</mo><mn>0</mn></mrow><mrow><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo></mrow></mfrac></math>
+    <p>More scatter around the line (bigger SSE) widens the bell of chance slopes; more spread in X narrows it. Under H₀: β₁ = 0, t follows a t distribution with n − 2 degrees of freedom. 95% CI: β₁ ± t*·SE.</p></div>
+  <div class="fx"><h3>Why the bell lands on the right edge</h3>
+    <math display="block"><msub><mi>y</mi><mtext>edge</mtext></msub><mo>=</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>+</mo><mi>b</mi><mo>·</mo><mo>(</mo><msub><mi>x</mi><mtext>edge</mtext></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></math>
+    <p>Each line through (x̄, ȳ) reaches the right edge at a height that is a straight-line function of its slope b. So the distribution of slopes becomes a distribution of heights on that edge: the same bell curve, turned 90°.</p></div>
+</aside>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script id="data" type="application/json">[{"id":"metro","menu":"States, 2016: Trump vote share by % living in metro areas","src":"538","dv":"Trump vote share, 2016","dvs":"Trump share","dvu":"%","dvvar":"trump_pct","iv":"Population living in metro areas","ivs":"metro share","ivu":"%","ivvar":"metro_pct","unitword":"state","x":[64.0,63.0,90.0,69.0,97.0,80.0,94.0,90.0,100.0,96.0,82.0,76.0,70.0,90.0,79.0,60.0,64.0,56.0,81.0,54.0,97.0,97.0,87.0,75.0,45.0,78.0,34.0,60.0,87.0,63.0,100.0,69.0,94.0,76.0,50.0,75.0,59.0,87.0,87.0,100.0,79.0,51.0,82.0,92.0,82.0,35.0,89.0,86.0,55.0,69.0,31.0],"y":[63.0,53.0,50.0,60.0,33.0,44.0,41.0,42.0,4.0,49.0,51.0,30.0,59.0,39.0,57.0,52.0,57.0,63.0,58.0,45.0,35.0,34.0,48.0,45.0,58.0,57.0,57.0,60.0,46.0,47.0,42.0,40.0,37.0,51.0,64.0,52.0,65.0,41.0,49.0,40.0,55.0,62.0,61.0,53.0,47.0,33.0,45.0,38.0,69.0,48.0,70.0],"lab":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"xd":1,"yd":1},{"id":"income","menu":"States, 2016: Trump vote share by median household income","src":"538","dv":"Trump vote share, 2016","dvs":"Trump share","dvu":"%","dvvar":"trump_pct","iv":"Median household income ($1,000s)","ivs":"median income","ivu":" thousand dollars","ivvar":"income_k","unitword":"state","x":[42.28,67.63,49.25,44.92,60.49,60.94,70.16,57.52,68.28,46.14,49.56,71.22,53.44,54.92,48.06,57.81,53.44,42.79,42.41,51.71,76.17,63.15,52.0,67.24,35.52,56.63,51.1,56.87,49.88,73.4,65.24,46.69,54.31,46.78,60.73,49.64,47.2,58.88,55.17,58.63,44.93,53.05,43.72,53.88,63.38,60.71,66.16,59.07,39.55,58.08,55.69],"y":[63.0,53.0,50.0,60.0,33.0,44.0,41.0,42.0,4.0,49.0,51.0,30.0,59.0,39.0,57.0,52.0,57.0,63.0,58.0,45.0,35.0,34.0,48.0,45.0,58.0,57.0,57.0,60.0,46.0,47.0,42.0,40.0,37.0,51.0,64.0,52.0,65.0,41.0,49.0,40.0,55.0,62.0,61.0,53.0,47.0,33.0,45.0,38.0,69.0,48.0,70.0],"lab":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"xd":1,"yd":1,"xpre":"$","xsuf":"k"},{"id":"wpov","menu":"States, 2016: Trump vote share by white poverty rate","src":"538","dv":"Trump vote share, 2016","dvs":"Trump share","dvu":"%","dvvar":"trump_pct","iv":"White residents below the poverty line","ivs":"white poverty rate","ivu":"%","ivvar":"white_pov","unitword":"state","x":[12.0,6.0,9.0,12.0,9.0,7.0,6.0,8.0,4.0,11.0,9.0,7.0,11.0,7.0,12.0,9.0,11.0,17.0,12.0,12.0,6.0,8.0,9.0,5.0,14.0,7.0,10.0,7.0,8.0,6.0,7.0,10.0,10.0,10.0,9.0,10.0,10.0,10.0,9.0,8.0,9.0,8.0,13.0,8.0,8.0,10.0,7.0,9.0,14.0,9.0,9.0],"y":[63.0,53.0,50.0,60.0,33.0,44.0,41.0,42.0,4.0,49.0,51.0,30.0,59.0,39.0,57.0,52.0,57.0,63.0,58.0,45.0,35.0,34.0,48.0,45.0,58.0,57.0,57.0,60.0,46.0,47.0,42.0,40.0,37.0,51.0,64.0,52.0,65.0,41.0,49.0,40.0,55.0,62.0,61.0,53.0,47.0,33.0,45.0,38.0,69.0,48.0,70.0],"lab":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"xd":1,"yd":1},{"id":"fl","menu":"Florida 2000: Buchanan votes by Bush votes (67 counties)","src":"Florida","dv":"Votes for Buchanan","dvs":"Buchanan votes","dvu":" votes","dvvar":"buchanan","iv":"Votes for Bush (1,000s)","ivs":"Bush votes","ivu":" thousand votes","ivvar":"bush_k","unitword":"county","x":[34.062,5.61,38.637,5.413,115.185,177.279,2.873,35.419,29.744,41.745,60.426,10.964,289.456,4.256,2.698,152.082,73.029,12.608,2.448,4.75,3.3,1.84,3.546,2.153,3.764,4.743,30.646,20.196,176.967,4.985,28.627,9.138,2.481,1.669,49.963,106.141,39.053,6.86,1.316,3.038,57.948,55.135,33.864,16.059,16.404,52.043,5.058,134.476,26.216,152.846,68.581,184.312,90.101,13.439,39.497,34.705,36.248,83.1,75.293,12.126,8.014,4.051,2.326,82.214,4.511,12.176,4.983],"y":[262,73,248,65,570,789,90,182,270,186,122,89,561,36,29,650,504,83,33,39,29,9,71,24,30,22,242,99,836,76,105,102,29,10,289,305,282,67,39,29,272,563,108,47,90,267,43,446,145,3407,570,1010,538,147,229,124,311,305,194,114,108,27,26,396,46,120,88],"lab":["Alachua","Baker","Bay","Bradford","Brevard","Broward","Calhoun","Charlotte","Citrus","Clay","Collier","Columbia","Dade","De Soto","Dixie","Duval","Escambia","Flagler","Franklin","Gadsden","Gilchrist","Glades","Gulf","Hamilton","Hardee","Hendry","Hernando","Highlands","Hillsborough","Holmes","Indian River","Jackson","Jefferson","Lafayette","Lake","Lee","Leon","Levy","Liberty","Madison","Manatee","Marion","Martin","Monroe","Nassau","Okaloosa","Okeechobee","Orange","Osceola","Palm Beach","Pasco","Pinellas","Polk","Putnam","St Johns","St Lucie","Santa Rosa","Sarasota","Seminole","Sumter","Suwannee","Taylor","Union","Volusia","Wakulla","Walton","Washington"],"xd":1,"yd":0},{"id":"mid","menu":"Midterms 1899–2019: president’s party House losses by unemployment","src":"midterms","dv":"Change in president’s party House seats (%)","dvs":"seat change","dvu":" pts","dvvar":"house_chg","iv":"Unemployment rate","ivs":"unemployment","ivu":"%","ivvar":"unemp","unitword":"midterm","x":[11.62,4.3,3.29,5.86,6.63,3.38,6.93,4.02,8.94,21.3,17.8,4.7,3.9,5.3,5.5,6.8,5.5,3.8,4.9,5.6,6.1,9.7,7.0,5.6,6.1,4.5,5.8,4.6,9.7,5.8,3.7],"y":[-9.22,-4.28,-12.29,-26.59,-20.96,-10.28,-25.5,-3.64,-19.26,2.88,-21.56,-16.85,-22.31,-10.65,-8.14,-24.23,-1.07,-16.27,-6.25,-25.0,-5.14,-13.54,-2.75,-4.57,-20.93,2.43,3.62,-12.93,-24.9,-6.47,-16.46],"lab":["1899 (McKinley)","1903 (Roosevelt)","1907 (Roosevelt)","1911 (Taft)","1915 (Wilson)","1919 (Wilson)","1923 (Coolidge)","1927 (Coolidge)","1931 (Hoover)","1935 (Roosevelt)","1939 (Roosevelt)","1943 (Roosevelt)","1947 (Truman)","1951 (Truman)","1955 (Eisenhower)","1959 (Eisenhower)","1963 (Johnson)","1967 (Johnson)","1971 (Nixon)","1975 (Ford)","1979 (Carter)","1983 (Reagan)","1987 (Reagan)","1991 (Bush)","1995 (Clinton)","1999 (Clinton)","2003 (Bush)","2007 (Bush)","2011 (Obama)","2015 (Obama)","2019 (Trump)"],"xd":1,"yd":1}]</script>
+<script>
+(function(){
+"use strict";
+const DS=JSON.parse(document.getElementById('data').textContent);
+const $=s=>document.querySelector(s);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NSVG='http://www.w3.org/2000/svg';
+function el(t,a,p){const e=document.createElementNS(NSVG,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function niceStep(r,t){const raw=r/Math.max(1,t),p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return(f<1.5?1:f<3?2:f<7?5:10)*p;}
+function ticks(lo,hi,t){const s=niceStep(hi-lo,t);const o=[];for(let x=Math.ceil(lo/s-1e-9)*s;x<=hi+1e-9;x+=s)o.push(+x.toFixed(10));return o;}
+const tip=$('#tip');
+function showTip(h,e){tip.innerHTML=h;tip.classList.add('on');const r=tip.getBoundingClientRect();let x=e.clientX+12,y=e.clientY-r.height-10;if(x+r.width>innerWidth-8)x=e.clientX-r.width-12;if(y<8)y=e.clientY+16;tip.style.left=Math.max(8,x)+'px';tip.style.top=y+'px';}
+function hideTip(){tip.classList.remove('on');}
+function bindTip(n,fn){n.addEventListener('pointerenter',e=>showTip(fn(),e));n.addEventListener('pointermove',e=>showTip(fn(),e));n.addEventListener('pointerleave',hideTip);}
+
+/* ---------- t distribution ---------- */
+function lgamma(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function betacf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-300)d=1e-300;d=1/d;let h=d;for(let m=1;m<=300;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-300)d=1e-300;c=1+aa/c;if(Math.abs(c)<1e-300)c=1e-300;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-14)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b;}
+function tcdf(t,df){const x=df/(df+t*t);const tail=0.5*ibeta(x,df/2,0.5);return t>=0?1-tail:tail;}
+function tpdf(t,df){return Math.exp(lgamma((df+1)/2)-lgamma(df/2)-0.5*Math.log(df*Math.PI)-(df+1)/2*Math.log(1+t*t/df));}
+function tinv(p,df){let lo=0,hi=200;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(tcdf(m,df)<p)lo=m;else hi=m;}return (lo+hi)/2;}
+
+/* ---------- per-dataset wording ---------- */
+const pct=d=>v=>v.toFixed(d)+'%';
+const TXT={
+  metro:{xf:pct(1),yf:pct(1),xone:'1-point increase in the metro share',yword:'percentage points',xname:'metro share',xtick:v=>v+'%',ytick:v=>v+'%'},
+  income:{xf:v=>'$'+v.toFixed(1)+'k',yf:pct(1),xone:'$1,000 increase in median household income',yword:'percentage points',xname:'median income',xtick:v=>'$'+v+'k',ytick:v=>v+'%'},
+  wpov:{xf:pct(1),yf:pct(1),xone:'1-point increase in the white poverty rate',yword:'percentage points',xname:'white poverty rate',xtick:v=>v+'%',ytick:v=>v+'%'},
+  fl:{xf:v=>v.toFixed(1)+'k',yf:v=>Math.round(v).toLocaleString('en-US'),xone:'1,000 additional Bush votes',yword:'votes',xname:'Bush votes',xtick:v=>v+'k',ytick:v=>v.toLocaleString('en-US')},
+  mid:{xf:pct(1),yf:v=>(v>0?'+':'')+v.toFixed(1)+'%',xone:'1-point increase in unemployment',yword:'percentage points',xname:'unemployment',xtick:v=>v+'%',ytick:v=>(v>0?'+':'')+v+'%'}
+};
+const cf=v=>{const a=Math.abs(v);return a>=100?v.toFixed(1):a>=10?v.toFixed(2):a>=1?v.toFixed(3):v.toFixed(4);};
+const sgn=v=>v<0?'−'+cf(-v):cf(v);
+const nice=v=>{const a=Math.abs(v);return a>=100?a.toFixed(0):a>=10?a.toFixed(1):a>=1?a.toFixed(2):a.toFixed(2);};
+
+/* ---------- state ---------- */
+const st={i:0,x:[],y:[],lab:[],dom:null,mine:null,shuf:[],shufLines:[],anim:null,pred:null,from:'mean',to:'max',tri:null};
+const D=()=>DS[st.i], T=()=>TXT[D().id];
+const sel=$('#ds'); DS.forEach((d,i)=>{const o=document.createElement('option');o.value=i;o.textContent=d.menu;sel.appendChild(o);});
+
+function fit(x,y){
+  const n=x.length;let sx=0,sy=0;for(let i=0;i<n;i++){sx+=x[i];sy+=y[i];}const mx=sx/n,my=sy/n;
+  let sxx=0,sxy=0,syy=0;for(let i=0;i<n;i++){const a=x[i]-mx,b=y[i]-my;sxx+=a*a;sxy+=a*b;syy+=b*b;}
+  const b1=sxy/sxx,b0=my-b1*mx;let sse=0;for(let i=0;i<n;i++){const e=y[i]-(b0+b1*x[i]);sse+=e*e;}
+  const df=n-2,s=Math.sqrt(sse/df),se1=s/Math.sqrt(sxx),se0=s*Math.sqrt(1/n+mx*mx/sxx);
+  const t1=b1/se1,t0=b0/se0,p1=2*(1-tcdf(Math.abs(t1),df)),p0=2*(1-tcdf(Math.abs(t0),df)),tc=tinv(0.975,df);
+  let sdx=Math.sqrt(sxx/(n-1));let mnx=Infinity,mxx=-Infinity;for(const v of x){if(v<mnx)mnx=v;if(v>mxx)mxx=v;}
+  return {n,mx,my,sxx,sxy,syy,b1,b0,sse,r:sxy/Math.sqrt(sxx*syy),r2:1-sse/syy,df,s,se1,se0,t1,t0,p1,p0,tc,sdx,mnx,mxx};
+}
+function load(i){
+  st.i=i; const d=D(); st.x=d.x.slice(); st.y=d.y.slice(); st.lab=d.lab.slice();
+  let xl=Math.min(...d.x),xh=Math.max(...d.x),yl=Math.min(...d.y),yh=Math.max(...d.y);
+  const px=(xh-xl)*0.06,py=(yh-yl)*0.08; st.dom={xlo:xl-px,xhi:xh+px,ylo:yl-py,yhi:yh+py};
+  if(d.id==='fl'||d.id==='metro'){ st.dom.xlo=Math.max(0,st.dom.xlo); }
+  if(d.id==='fl') st.dom.ylo=Math.max(-150,st.dom.ylo);
+  const f=fit(st.x,st.y);
+  st.mine=[{x:st.dom.xlo+(st.dom.xhi-st.dom.xlo)*0.15,y:f.my},{x:st.dom.xlo+(st.dom.xhi-st.dom.xlo)*0.85,y:f.my}];
+  st.pred=+(f.mx).toFixed(d.xd); st.shuf=[]; st.shufLines=[];
+  document.querySelectorAll('.unitw').forEach(e=>e.textContent=d.unitword);
+  setupPredict(); buildA(); renderAll();
+}
+
+/* ================= A: scatter with drag ================= */
+let A=null;
+function buildA(){
+  const box=$('#aChart'); box.innerHTML='';
+  const W=Math.max(300,box.clientWidth), H=Math.round(Math.min(480,Math.max(320,W*0.56))), m={l:50,r:16,t:16,b:44};
+  const {xlo,xhi,ylo,yhi}=st.dom, d=D(), t=T();
+  const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+  const xinv=p=>xlo+(p-m.l)/(W-m.l-m.r)*(xhi-xlo), yinv=p=>ylo+(H-m.b-p)/(H-m.t-m.b)*(yhi-ylo);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Scatterplot with least-squares line'},box);
+  axes(svg,{W,H,m,xs,ys,xlo,xhi,ylo,yhi,xl:d.iv,yl:d.dv,xt:t.xtick,yt:t.ytick});
+  const dyn=el('g',{},svg), pts=el('g',{},svg), hnd=el('g',{},svg);
+  const circles=st.x.map((_,i)=>{
+    const c=el('circle',{class:'pt',r:5.5,fill:css('--s1'),'fill-opacity':.85,stroke:css('--surface'),'stroke-width':1.5},pts);
+    bindTip(c,()=>{const f=fit(st.x,st.y);const yh=f.b0+f.b1*st.x[i];return `<b>${st.lab[i]}</b><br>${d.iv.split(' (')[0]}: ${t.xf(st.x[i])}<br>${d.dvs}: ${t.yf(st.y[i])}<br>Predicted ${t.yf(yh)} · residual ${(st.y[i]-yh>0?'+':'')+(st.y[i]-yh).toFixed(1)}`;});
+    c.addEventListener('pointerdown',e=>startDrag(e,'pt',i));
+    return c;
+  });
+  const handles=[0,1].map(k=>{const h=el('circle',{class:'handle',r:9,fill:css('--surface'),stroke:css('--ink'),'stroke-width':2},hnd);h.addEventListener('pointerdown',e=>startDrag(e,'h',k));return h;});
+  A={svg,W,H,m,xs,ys,xinv,yinv,dyn,circles,handles};
+}
+let drag=null;
+function startDrag(e,kind,i){ e.preventDefault(); drag={kind,i}; hideTip(); window.addEventListener('pointermove',onDrag); window.addEventListener('pointerup',endDrag,{once:true}); window.addEventListener('pointercancel',endDrag,{once:true}); }
+function onDrag(e){ if(!drag||!A) return; const r=A.svg.getBoundingClientRect(); const px=e.clientX-r.left, py=e.clientY-r.top;
+  const {xlo,xhi,ylo,yhi}=st.dom; const x=Math.min(xhi,Math.max(xlo,A.xinv(px))), y=Math.min(yhi,Math.max(ylo,A.yinv(py)));
+  if(drag.kind==='pt'){ st.x[drag.i]=x; st.y[drag.i]=y; } else { st.mine[drag.i]={x,y}; }
+  schedule(); }
+function endDrag(){ window.removeEventListener('pointermove',onDrag); if(drag&&drag.kind==='pt'){ st.shuf=[]; st.shufLines=[]; } drag=null; renderAll(); }
+let raf=0; function schedule(){ if(!raf) raf=requestAnimationFrame(()=>{raf=0; renderA(); renderEq(); if(!drag||drag.kind==='pt'){renderC(); stata();} }); }
+
+function axes(svg,o){
+  const g=el('g',{class:'tick'},svg);
+  for(const t of ticks(o.ylo,o.yhi,5)){el('line',{x1:o.m.l,x2:o.W-o.m.r,y1:o.ys(t),y2:o.ys(t),stroke:css('--grid')},g);const tx=el('text',{x:o.m.l-7,y:o.ys(t)+4,'text-anchor':'end'},g);tx.textContent=o.yt(t);}
+  for(const t of ticks(o.xlo,o.xhi,Math.max(3,Math.floor((o.W-o.m.l-o.m.r)/80)))){el('line',{x1:o.xs(t),x2:o.xs(t),y1:o.H-o.m.b,y2:o.H-o.m.b+4,stroke:css('--axis')},g);const tx=el('text',{x:o.xs(t),y:o.H-o.m.b+17,'text-anchor':'middle'},g);tx.textContent=o.xt(t);}
+  el('line',{x1:o.m.l,x2:o.W-o.m.r,y1:o.H-o.m.b,y2:o.H-o.m.b,stroke:css('--axis')},svg);
+  const xl=el('text',{x:o.W-o.m.r,y:o.H-6,'text-anchor':'end',class:'axlab'},svg);xl.textContent=o.xl+' (IV, X) →';
+  const yl=el('text',{x:4,y:11,class:'axlab'},svg);yl.textContent='↑ '+o.yl+' (DV, Y)';
+}
+function renderA(){
+  if(!A) return; const f=fit(st.x,st.y), {xs,ys,dyn,m,W,H}=A, {xlo,xhi}=st.dom;
+  dyn.innerHTML='';
+  const showRes=$('#tRes').checked, showSq=$('#tSq').checked, mine=$('#tMine').checked;
+  // the line whose errors we display
+  let lb1=f.b1,lb0=f.b0;
+  if(mine){ const [p,q]=st.mine; lb1=(q.y-p.y)/((q.x-p.x)||1e-9); lb0=p.y-lb1*p.x; }
+  let sseMine=0; for(let i=0;i<st.x.length;i++){const e=st.y[i]-(lb0+lb1*st.x[i]);sseMine+=e*e;}
+  if(showSq){ for(let i=0;i<st.x.length;i++){ const yh=lb0+lb1*st.x[i]; const y1=ys(st.y[i]), y2=ys(yh); const side=Math.abs(y2-y1); const x=xs(st.x[i]); const left= x+side>W-m.r;
+      el('rect',{x:left?x-side:x,y:Math.min(y1,y2),width:side,height:side,fill:css('--miss'),'fill-opacity':.1,stroke:css('--miss'),'stroke-opacity':.45,'stroke-width':1},dyn);} }
+  if(showRes){ for(let i=0;i<st.x.length;i++){ const yh=lb0+lb1*st.x[i]; el('line',{x1:xs(st.x[i]),x2:xs(st.x[i]),y1:ys(st.y[i]),y2:ys(yh),stroke:css('--miss'),'stroke-width':1.5,opacity:.75},dyn);} }
+  // OLS line
+  el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(f.b0+f.b1*xlo),y2:ys(f.b0+f.b1*xhi),stroke:css('--s2'),'stroke-width':2.75},dyn);
+  if(mine){ el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(lb0+lb1*xlo),y2:ys(lb0+lb1*xhi),stroke:css('--ink'),'stroke-width':2,'stroke-dasharray':'6 4'},dyn); }
+  // mean point
+  const cx=xs(f.mx), cy=ys(f.my);
+  el('path',{d:`M${cx-7},${cy}L${cx},${cy-7}L${cx+7},${cy}L${cx},${cy+7}Z`,fill:css('--surface'),stroke:css('--ink'),'stroke-width':2},dyn);
+  const ml=el('text',{x:cx+10,y:cy+16,class:'mlab',fill:css('--ink')},dyn); ml.textContent='(x̄, ȳ)';
+  A.circles.forEach((c,i)=>{c.setAttribute('cx',xs(st.x[i]));c.setAttribute('cy',ys(st.y[i]));});
+  A.handles.forEach((h,k)=>{h.style.display=mine?'':'none';h.setAttribute('cx',xs(st.mine[k].x));h.setAttribute('cy',ys(st.mine[k].y));});
+  $('#mineKey').hidden=!mine;
+  const t=T();
+  $('#aChips').innerHTML=`<span class="chip">n = <b>${f.n}</b></span><span class="chip">slope β₁ = <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">constant = <b class="k-cons">${sgn(f.b0)}</b></span><span class="chip">r = <b>${(f.r<0?'−':'')+Math.abs(f.r).toFixed(2)}</b></span><span class="chip">r² = <b>${f.r2.toFixed(3)}</b></span><span class="chip">SSE (least squares) = <b>${Math.round(f.sse).toLocaleString('en-US')}</b></span>`+
+    (mine? `<span class="chip ${sseMine<=f.sse*1.0005?'strong':''}">${sseMine<=f.sse*1.0005?`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, a tie with the least-squares line`:`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, ${(100*(sseMine/f.sse-1)).toFixed(1)}% more than the least-squares line's`}</span>`:'');
+  const changed=st.x.some((v,i)=>v!==D().x[i]||st.y[i]!==D().y[i]);
+  $('#aCap').textContent=(changed?'You have moved points; the equation, predictions and test below use your edited data. ':'')+`Least squares minimizes the total area of the squares, Σ(y − ŷ)². The line always passes through the mean point (x̄, ȳ).`;
+}
+
+/* ================= B: equation ================= */
+function renderEq(){
+  const f=fit(st.x,st.y), d=D(), t=T();
+  const term=(txt,cls,n)=>`<div class="term"><span class="t ${cls}">${txt}</span>${n?`<span class="n">${n}</span>`:''}</div>`;
+  const op=s=>`<div class="term"><span class="t op">${s}</span></div>`;
+  $('#terms').innerHTML=
+    term('Predicted '+d.dvs,'dv','ŷ · DV (Y)<br>what we explain')+op('=')+term(sgn(f.b1),'sl','β₁ · m<br>slope')+op('×')+term(d.iv.replace(/\s*\(.*\)/,''),'iv','X₁ · IV<br>the explanation')+op(f.b0<0?'−':'+')+term(cf(Math.abs(f.b0)),'co','constant · b<br>_cons');
+  const dir=f.b1<0?'decrease':'increase';
+  const inRange=f.mnx<=0&&f.mxx>=0;
+  $('#interp').innerHTML=`
+    <p><span class="k-slope">Slope:</span> each ${t.xone} is associated with a <b>${nice(f.b1)}-${t.yword==='votes'?'vote':'point'} ${dir}</b> in predicted ${d.dvs}.</p>
+    <p><span class="k-cons">Constant:</span> ${t.yf(f.b0)} is the predicted ${d.dvs} when ${t.xname} equals 0. ${inRange?'Zero is inside the observed range, so this is a real prediction.':`No ${d.unitword} in the data is near 0 (the range is ${t.xf(f.mnx)} to ${t.xf(f.mxx)}), so read the constant as where the line crosses the y-axis, not as a prediction.`}</p>
+    <p><b>Fit:</b> r = ${(f.r<0?'−':'')+Math.abs(f.r).toFixed(2)}, so r² = ${f.r2.toFixed(2)}: ${t.xname} accounts for ${(100*f.r2).toFixed(0)}% of the variation in ${d.dvs} across these ${f.n} ${d.unitword}s.</p>`;
+}
+
+/* ================= C: prediction + marginal effects ================= */
+function setupPredict(){
+  const d=D(), f=fit(d.x,d.y), step=d.id==='fl'?1:0.1;
+  const pi=$('#px'), pr=$('#pxr');
+  pr.min=st.dom.xlo.toFixed(1); pr.max=st.dom.xhi.toFixed(1); pr.step=step; pr.value=st.pred; pi.step=step; pi.value=st.pred;
+  $('#pxLab').textContent=T().xname+' =';
+  const opts=[['min','the minimum'],['m1sd','mean − 1 SD'],['mean','the mean'],['p1sd','mean + 1 SD'],['max','the maximum'],['pred','your prediction X']];
+  for(const id of ['#mFrom','#mTo']){ const s=$(id); s.innerHTML=''; opts.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;s.appendChild(o);}); }
+  $('#mFrom').value=st.from; $('#mTo').value=st.to;
+}
+function anchor(k,f){ return k==='min'?f.mnx:k==='max'?f.mxx:k==='mean'?f.mx:k==='m1sd'?f.mx-f.sdx:k==='p1sd'?f.mx+f.sdx:st.pred; }
+const anchorName={min:'the minimum',max:'the maximum',mean:'the average',m1sd:'one SD below average',p1sd:'one SD above average',pred:'your chosen value'};
+let C=null;
+function renderC(animate){
+  const box=$('#cChart'); const f=fit(st.x,st.y), d=D(), t=T();
+  box.innerHTML='';
+  const W=Math.max(300,box.clientWidth), H=Math.round(Math.min(440,Math.max(300,W*0.62))), m={l:50,r:16,t:16,b:44};
+  const {xlo,xhi,ylo,yhi}=st.dom;
+  const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Regression line with prediction and change triangle'},box);
+  axes(svg,{W,H,m,xs,ys,xlo,xhi,ylo,yhi,xl:d.iv,yl:d.dv,xt:t.xtick,yt:t.ytick});
+  const pg=el('g',{},svg); st.x.forEach((x,i)=>{const c=el('circle',{cx:xs(x),cy:ys(st.y[i]),r:4,fill:css('--s1'),'fill-opacity':.28},pg);});
+  el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(f.b0+f.b1*xlo),y2:ys(f.b0+f.b1*xhi),stroke:css('--s2'),'stroke-width':2.75},svg);
+  const triG=el('g',{},svg), prG=el('g',{},svg);
+  C={svg,xs,ys,triG,prG,W,H,m,f};
+  // target triangle
+  const x1=anchor(st.from,f), x2=anchor(st.to,f);
+  const target={x1,x2};
+  if(animate&&st.tri&&!reduce){ const from={...st.tri}, t0=performance.now(); cancelAnimationFrame(st.anim);
+    const stp=now=>{const p=Math.min(1,(now-t0)/550), e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; st.tri={x1:from.x1+(target.x1-from.x1)*e,x2:from.x2+(target.x2-from.x2)*e}; drawTri(); if(p<1) st.anim=requestAnimationFrame(stp);}; st.anim=requestAnimationFrame(stp); }
+  else { st.tri=target; drawTri(); }
+  drawPred(); textC();
+}
+function drawTri(){
+  if(!C) return; const {xs,ys,triG,f}=C, t=T(); triG.innerHTML='';
+  const {x1,x2}=st.tri, y1=f.b0+f.b1*x1, y2=f.b0+f.b1*x2;
+  const X1=xs(x1),X2=xs(x2),Y1=ys(y1),Y2=ys(y2);
+  el('path',{d:`M${X1},${Y1}L${X2},${Y1}L${X2},${Y2}Z`,fill:css('--s1'),'fill-opacity':.16,stroke:'none'},triG);
+  el('line',{x1:X1,x2:X2,y1:Y1,y2:Y1,stroke:css('--ink-2'),'stroke-width':2},triG);
+  el('line',{x1:X2,x2:X2,y1:Y1,y2:Y2,stroke:css('--s1'),'stroke-width':3.5},triG);
+  for(const [x,y] of [[X1,Y1],[X2,Y2]]) el('circle',{cx:x,cy:y,r:5,fill:css('--s1'),stroke:css('--surface'),'stroke-width':2},triG);
+  const dx=x2-x1, dy=y2-y1;
+  if(Math.abs(X2-X1)>40){ const lt=el('text',{x:(X1+X2)/2,y:Y1+(dy<0?-8:16),'text-anchor':'middle',class:'mlab',fill:css('--ink-2')},triG); lt.textContent='run Δx = '+(dx>0?'+':'')+dx.toFixed(1); }
+  if(Math.abs(Y2-Y1)>14){ const right=X2<C.W-150; const lr=el('text',{x:X2+(right?8:-8),y:(Y1+Y2)/2+4,'text-anchor':right?'start':'end',class:'mlab',fill:css('--s1-ink')},triG); lr.textContent='rise Δŷ = '+(dy>0?'+':'')+dy.toFixed(1); }
+}
+function drawPred(){
+  const {xs,ys,prG,f,m,H}=C; prG.innerHTML=''; const x=st.pred, y=f.b0+f.b1*x;
+  if(x<st.dom.xlo||x>st.dom.xhi) return;
+  const X=xs(x),Y=ys(Math.max(st.dom.ylo,Math.min(st.dom.yhi,y)));
+  el('path',{d:`M${X},${H-m.b}L${X},${Y}L${m.l},${Y}`,fill:'none',stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'4 3'},prG);
+  el('circle',{cx:X,cy:Y,r:6,fill:css('--ink'),stroke:css('--surface'),'stroke-width':2},prG);
+  const lb=el('text',{x:m.l+6,y:Y-6,class:'mlab',fill:css('--ink')},prG); lb.textContent='ŷ = '+T().yf(y);
+}
+function textC(){
+  const f=fit(st.x,st.y), d=D(), t=T(); const x=st.pred, y=f.b0+f.b1*x;
+  $('#pCalc').innerHTML=`ŷ = <span class="k-slope">${sgn(f.b1)}</span> × ${x} ${f.b0<0?'−':'+'} <span class="k-cons">${cf(Math.abs(f.b0))}</span> = <b>${cf(y)}</b>`;
+  $('#pSay').innerHTML=`A ${d.unitword} with ${t.xname} of ${t.xf(x)} has a predicted ${d.dvs} of <b>${t.yf(y)}</b>.`;
+  $('#pWarn').textContent= (x<f.mnx||x>f.mxx)? `Extrapolation: ${t.xf(x)} is outside the observed range (${t.xf(f.mnx)} to ${t.xf(f.mxx)}). The line may not hold out there.`:'';
+  const x1=anchor(st.from,f), x2=anchor(st.to,f), dx=x2-x1, dy=f.b1*dx;
+  const word=dy<0?'decrease':'increase';
+  $('#mBig').innerHTML=`Δŷ = ${dy>0?'+':dy<0?'−':''}${nice(dy)}`;
+  $('#mCalc').innerHTML=`Δŷ = <span class="k-slope">β₁</span> × Δx = <span class="k-slope">${sgn(f.b1)}</span> × ${(dx>=0?'':'−')+Math.abs(dx).toFixed(2)} = ${dy>=0?'':'−'}${cf(Math.abs(dy))}`;
+  $('#mSay').innerHTML= Math.abs(dx)<1e-9 ? 'Pick two different values to see a change.' :
+    `Moving from ${anchorName[st.from]} ${t.xname} (${t.xf(x1)}) to ${anchorName[st.to]} (${t.xf(x2)}) predicts a <b>${nice(dy)}-${t.yword==='votes'?'vote':'point'} ${word}</b> in ${d.dvs}.`;
+}
+$('#px').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(!isFinite(v))return;st.pred=v;$('#pxr').value=v;drawPredAll();});
+$('#pxr').addEventListener('input',e=>{st.pred=+(+e.target.value).toFixed(D().id==='fl'?0:1);$('#px').value=st.pred;drawPredAll();});
+function drawPredAll(){ if(!C) return; drawPred(); if(st.from==='pred'||st.to==='pred'){ st.tri={x1:anchor(st.from,C.f),x2:anchor(st.to,C.f)}; drawTri(); } textC(); }
+$('#mFrom').addEventListener('change',e=>{st.from=e.target.value;renderC(true);});
+$('#mTo').addEventListener('change',e=>{st.to=e.target.value;renderC(true);});
+
+/* ================= D: slopes turned 90° ================= */
+function shuffleSlope(){ const y=st.y.slice(); for(let i=y.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=y[i];y[i]=y[j];y[j]=t;} const f=fit(st.x,y); return {b:f.b1,y}; }
+let Dg=null;
+function renderD(shufY,shufP){
+  const box=$('#dChart'); box.innerHTML='';
+  const f=fit(st.x,st.y), d=D(), t=T();
+  const W=Math.max(320,box.clientWidth), narrow=W<560, side=narrow?92:150;
+  const H=Math.round(Math.min(500,Math.max(340,W*0.56))), m={l:50,r:side,t:20,b:44};
+  const {xlo,xhi}=st.dom, L=xhi-f.mx;
+  const crit=f.tc*f.se1;
+  const lim=Math.max(4.6*f.se1,Math.abs(f.b1)*1.12,crit*1.25);
+  const ysorted=st.y.slice().sort((a,b)=>a-b), q=p=>ysorted[Math.floor(p*(ysorted.length-1))];
+  let ylo=Math.min(f.my-lim*L*1.12,q(0.15)), yhi=Math.max(f.my+lim*L*1.12,q(0.85));
+  const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Chance slopes from shuffled data, with their distribution turned sideways'},box);
+  axes(svg,{W,H,m,xs,ys,xlo,xhi,ylo,yhi,xl:d.iv,yl:d.dv,xt:t.xtick,yt:t.ytick});
+  const ax=xs(xhi); const slopeY=b=>ys(f.my+b*L);
+  // wedge between critical slopes
+  const wx0=xs(xlo);
+  el('path',{d:`M${xs(f.mx)},${ys(f.my)}L${ax},${slopeY(crit)}L${ax},${slopeY(-crit)}Z`,fill:css('--ink'),'fill-opacity':.05},svg);
+  el('path',{d:`M${xs(f.mx)},${ys(f.my)}L${wx0},${ys(f.my-crit*(f.mx-xlo))}L${wx0},${ys(f.my+crit*(f.mx-xlo))}Z`,fill:css('--ink'),'fill-opacity':.05},svg);
+  // points (shuffled positions if animating)
+  const clipId='dclip'; const defs=el('defs',{},svg); const cp=el('clipPath',{id:clipId},defs); el('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},cp);
+  const pg=el('g',{'clip-path':`url(#${clipId})`},svg); st.x.forEach((x,i)=>{const yy=shufY? st.y[i]+(shufY[i]-st.y[i])*shufP : st.y[i]; el('circle',{cx:xs(x),cy:ys(yy),r:4,fill:css('--s1'),'fill-opacity':.35},pg);});
+  // recent null lines
+  const ng=el('g',{'clip-path':`url(#${clipId})`},svg); const recent=st.shufLines.slice(-80);
+  recent.forEach((b,k)=>{ const op=0.12+0.4*(k===recent.length-1?1:0); el('line',{x1:xs(xlo),x2:ax,y1:ys(f.my+b*(xlo-f.mx)),y2:slopeY(b),stroke:css('--muted'),'stroke-width':k===recent.length-1?2:1.2,'stroke-opacity':k===recent.length-1?.9:op},ng); });
+  // critical lines
+  const lg=el('g',{'clip-path':`url(#${clipId})`},svg);
+  for(const s of [crit,-crit]) el('line',{x1:xs(xlo),x2:ax,y1:ys(f.my+s*(xlo-f.mx)),y2:slopeY(s),stroke:css('--miss'),'stroke-width':1.75,'stroke-dasharray':'6 4'},lg);
+  // real line
+  el('line',{x1:xs(xlo),x2:ax,y1:ys(f.b0+f.b1*xlo),y2:slopeY(f.b1),stroke:css('--s2'),'stroke-width':3},lg);
+  // pivot
+  const cx=xs(f.mx),cy=ys(f.my); el('path',{d:`M${cx-7},${cy}L${cx},${cy-7}L${cx+7},${cy}L${cx},${cy+7}Z`,fill:css('--surface'),stroke:css('--ink'),'stroke-width':2},svg);
+  // ---- sideways distribution panel ----
+  const panelW=side-(narrow?34:54);
+  el('line',{x1:ax,x2:ax,y1:m.t,y2:H-m.b,stroke:css('--ink'),'stroke-width':1.5},svg);
+  // critical tails shading
+  const tailTop=slopeY(crit), tailBot=slopeY(-crit);
+  el('rect',{x:ax,y:m.t,width:panelW,height:Math.max(0,tailTop-m.t),fill:css('--miss'),'fill-opacity':.08},svg);
+  el('rect',{x:ax,y:tailBot,width:panelW,height:Math.max(0,H-m.b-tailBot),fill:css('--miss'),'fill-opacity':.08},svg);
+  // histogram of shuffled slopes
+  const bmin=-lim*1.0, bmax=lim*1.0; const nb=narrow?34:46; const bw=(bmax-bmin)/nb; const counts=new Array(nb).fill(0);
+  for(const b of st.shuf){const k=Math.floor((b-bmin)/bw); if(k>=0&&k<nb) counts[k]++;}
+  const M=st.shuf.length;
+  const dens=b=>tpdf(b/f.se1,f.df)/f.se1;
+  const expMax=M? M*bw*dens(0) : 1;
+  const cmax=Math.max(expMax,...counts,1);
+  const sc=v=>v/cmax*panelW;
+  const hg=el('g',{},svg);
+  for(let k=0;k<nb;k++){ if(!counts[k]) continue; const b0=bmin+k*bw, ya=slopeY(b0+bw), yb=slopeY(b0); const len=sc(counts[k]); const inTail=Math.abs(b0+bw/2)>crit;
+    el('rect',{x:ax,y:ya+0.5,width:len,height:Math.max(0.8,yb-ya-1),fill:inTail?css('--miss'):css('--muted'),'fill-opacity':.85,rx:1},hg); }
+  // theoretical sideways curve
+  let dpath=''; for(let i=0;i<=160;i++){ const b=bmin+(bmax-bmin)*i/160; const v=(M?M*bw:cmax/dens(0))*dens(b); dpath+=(i?'L':'M')+(ax+sc(v)).toFixed(1)+','+slopeY(b).toFixed(1); }
+  el('path',{d:dpath,fill:'none',stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':M?'4 3':'0'},svg);
+  // slope tick labels at far right
+  const tg=el('g',{class:'tick'},svg);
+  for(const s of ticks(bmin,bmax,5)){ const y=slopeY(s); if(y<m.t-2||y>H-m.b+2) continue; el('line',{x1:ax-4,x2:ax,y1:y,y2:y,stroke:css('--ink')},tg); const tx=el('text',{x:W-2,y:y+4,'text-anchor':'end'},tg); tx.textContent=(s>0?'+':s<0?'−':'')+cf(Math.abs(s)).replace(/0+$/,'').replace(/\.$/,''); }
+  const sl=el('text',{x:W-2,y:m.t-6,'text-anchor':'end',class:'axlab'},svg); sl.textContent='slope';
+  // marker for the real slope
+  const oy=Math.max(m.t,Math.min(H-m.b,slopeY(f.b1)));
+  el('path',{d:`M${ax+2},${oy}l10,-6v12z`,fill:css('--s2')},svg);
+  const ol=el('text',{x:ax+14,y:oy+(f.b1>0?-8:16),class:'mlab',fill:css('--s2-ink')},svg); ol.textContent=narrow?sgn(f.b1):'real: '+sgn(f.b1);
+  // chips
+  const ge=st.shuf.filter(b=>Math.abs(b)>=Math.abs(f.b1)).length;
+  const sig=f.p1<0.05;
+  $('#dChips').innerHTML=`<span class="chip">real slope <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">SE = <b>${cf(f.se1)}</b></span><span class="chip">critical slopes ±${cf(crit)} (t* = ${f.tc.toFixed(2)}, df = ${f.df})</span><span class="chip">t = <b>${f.t1.toFixed(2)}</b></span><span class="chip ${sig?'strong':''}">p ${f.p1<0.0001?'&lt; .0001':'= '+f.p1.toFixed(4).replace(/^0/,'')}</span>`;
+  $('#dSay').innerHTML=(sig?`The real slope falls outside the wedge, so it is significant at .05: reject H₀.`:`The real slope falls inside the wedge, so it is not significant at .05: fail to reject H₀.`)+
+    (M?(ge===0?` None of your ${M.toLocaleString('en-US')} shuffled slopes was as steep as the real one.`:` In your ${M.toLocaleString('en-US')} shuffles, a slope as steep as the real one turned up ${ge.toLocaleString('en-US')} ${ge===1?'time':'times'}.`):'');
+  // tracker: how many chance slopes would pass p < .05 on their own t test
+  const rPer=(f.b1!==0)?Math.sign(f.b1)*Math.sqrt(f.r2)/f.b1:0, nn=f.df+2;
+  const passes=st.shuf.filter(b=>{const r=Math.max(-0.999999,Math.min(0.999999,b*rPer));const tt=r*Math.sqrt(nn-2)/Math.sqrt(1-r*r);return Math.abs(tt)>f.tc;}).length;
+  const pct=M?100*passes/M:0;
+  $('#dTrack').innerHTML=M
+    ? `<p class="trk-h"><b>${passes.toLocaleString('en-US')}</b> of your ${M.toLocaleString('en-US')} shuffled slopes passed p &lt; .05 (<b>${pct.toFixed(1)}%</b>).</p>
+       <div class="trk-bar" role="img" aria-label="${pct.toFixed(1)} percent of shuffled slopes passed, compared with the 5 percent expected"><span class="trk-fill" style="width:${Math.min(100,pct*10)}%"></span><span class="trk-mark"></span></div>
+       <div class="trk-scale"><span>0%</span><span>5% expected</span><span>10%</span></div>
+       <p class="trk-say">Shuffling breaks any real link between X and Y, so every one of these “significant” slopes is a false positive, a Type I error. With α = .05, about 5% of chance slopes should pass, and the more you shuffle, the closer your share gets to 5%. <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>`
+    : `<p class="trk-h">Shuffle to start counting how many chance slopes would pass p &lt; .05.</p>`;
+  $('#dCap').textContent=`Gray bars on the right stack the slopes from your shuffles: flat lines land in the middle, steep lines in the red tails. The black curve is the bell theory predicts, a t distribution with ${f.df} df scaled by the slope's standard error. The shaded wedge holds lines within the middle 95% of chance.`;
+}
+function doShuffle(k,animate){
+  if(animate&&!reduce){ const s=shuffleSlope(); const t0=performance.now(); cancelAnimationFrame(st.anim);
+    const stp=now=>{ const el_=now-t0; let p;
+      if(el_<450){p=el_/450; p=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2; renderD(s.y,p);}
+      else if(el_<900){ if(!stp.done){st.shuf.push(s.b); st.shufLines.push(s.b); stp.done=true;} renderD(s.y,1);}
+      else if(el_<1350){p=(el_-900)/450; p=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2; renderD(s.y,1-p);}
+      else { renderD(); return; }
+      st.anim=requestAnimationFrame(stp); };
+    st.anim=requestAnimationFrame(stp); return; }
+  for(let i=0;i<k;i++){ const s=shuffleSlope(); st.shuf.push(s.b); st.shufLines.push(s.b); }
+  if(st.shufLines.length>200) st.shufLines=st.shufLines.slice(-200);
+  renderD();
+}
+$('#s1').addEventListener('click',()=>doShuffle(1,true));
+$('#s100').addEventListener('click',()=>doShuffle(100,false));
+$('#s1000').addEventListener('click',()=>doShuffle(1000,false));
+$('#sClr').addEventListener('click',()=>{st.shuf=[];st.shufLines=[];renderD();});
+
+/* ================= Stata ================= */
+function pad(s,w){s=String(s);return s.length>=w?s:' '.repeat(w-s.length)+s;}
+function rpad(s,w){s=String(s);return s.length>=w?s:s+' '.repeat(w-s.length);}
+function fnum(v){if(!isFinite(v))return '.';let t=String(Number(v.toPrecision(7)));if(t.startsWith('0.'))t=t.slice(1);else if(t.startsWith('-0.'))t='-'+t.slice(2);return t;}
+function stata(){
+  const f=fit(st.x,st.y), d=D(), n=f.n, ssm=f.syy-f.sse, msm=ssm, msr=f.sse/f.df, mst=f.syy/(n-1), F=msm/msr, adj=1-(1-f.r2)*(n-1)/f.df;
+  const R=(l,v)=>'  '+rpad(l,16)+'='+pad(v,10);
+  const row=(s,ss,df,ms)=>pad(s,12)+' |'+pad(fnum(ss),12)+pad(df,11)+pad(fnum(ms),12);
+  const pf=p=>p<0.0005?'0.000':p.toFixed(3);
+  const crow=(name,b,se,t,p,cls)=>pad(name,12)+' |'+`<span class="${cls}">${pad(fnum(b),11)}</span>`+pad(fnum(se),11)+pad(t.toFixed(2),9)+pad(pf(p),8)+pad(fnum(b-f.tc*se),13)+pad(fnum(b+f.tc*se),12);
+  const L=[`<span class="cmd">. regress ${d.dvvar} ${d.ivvar}</span>`+(window.SPSSX?SPSSX.meta({ss:[ssm,f.sse,f.syy]}):''),'',
+    rpad('      Source |       SS           df       MS',49)+R('Number of obs',n),
+    rpad('-------------+----------------------------------',49)+R(`F(1, ${f.df})`,F.toFixed(2)),
+    row('Model',ssm,1,msm)+R('Prob > F',f.p1<0.00005?'0.0000':f.p1.toFixed(4)),
+    row('Residual',f.sse,f.df,msr)+R('R-squared',f.r2.toFixed(4)),
+    rpad('-------------+----------------------------------',49)+R('Adj R-squared',adj.toFixed(4)),
+    row('Total',f.syy,n-1,mst)+R('Root MSE',f.s.toPrecision(5)),'',
+    '-'.repeat(78),
+    pad(d.dvvar,12)+' | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]',
+    '-------------+'+'-'.repeat(64),
+    crow(d.ivvar,f.b1,f.se1,f.t1,f.p1,'sl'),
+    crow('_cons',f.b0,f.se0,f.t0,f.p0,'co'),
+    '-'.repeat(78),'',
+    `<span class="dim">* ${d.ivvar} coefficient = </span><span class="sl">β₁ = m (slope)</span><span class="dim">;  _cons = </span><span class="co">constant = b (intercept)</span>`,
+    `<span class="dim">* t = Coefficient / Std. err.;  P&gt;|t| is the share of the sideways bell beyond the real slope</span>`];
+  $('#stata').innerHTML=L.join('\n');
+}
+
+/* ================= wiring ================= */
+function renderAll(){ renderA(); renderEq(); renderC(false); renderD(); stata(); }
+sel.addEventListener('change',()=>{cancelAnimationFrame(st.anim);load(+sel.value);});
+$('#reset').addEventListener('click',()=>{cancelAnimationFrame(st.anim);load(st.i);});
+['#tRes','#tSq','#tMine'].forEach(id=>$(id).addEventListener('change',()=>{ if(id==='#tSq'&&$('#tSq').checked) $('#tRes').checked=true; renderA(); }));
+const drawer=$('#drawer');let lastFocus=null;
+function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}
+function closeFx(){document.body.classList.remove('formulas-open');drawer.setAttribute('aria-hidden','true');if(lastFocus)lastFocus.focus();}
+document.querySelectorAll('[data-open-formulas]').forEach(b=>b.addEventListener('click',openFx));
+$('#closeFx').addEventListener('click',closeFx);$('#scrim').addEventListener('click',closeFx);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('formulas-open'))closeFx();});
+document.addEventListener('pointerdown',e=>{if(!(e.target instanceof SVGElement))hideTip();});
+const redraw=()=>{buildA();renderAll();};
+let rz=0; if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;cancelAnimationFrame(rz);rz=requestAnimationFrame(redraw);}}).observe($('main'));}else addEventListener('resize',redraw);
+if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',redraw);
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+load(0);
+for(let i=0;i<300;i++){ const s=shuffleSlope(); st.shuf.push(s.b); st.shufLines.push(s.b); } renderD();
+})();
+</script>
+</body>
+</html>
