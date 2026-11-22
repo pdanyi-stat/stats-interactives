@@ -322,6 +322,8 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 .btchip{display:inline-flex;align-items:center;gap:6px;padding:4px 4px 4px 10px;border-radius:999px;background:color-mix(in srgb,var(--s2) 12%,var(--surface));border:1px solid var(--s2);font-size:14px;color:var(--ink)}
 .btchip button{border:0;background:transparent;color:var(--ink-2);font-size:18px;min-width:32px;min-height:32px;cursor:pointer}
 .btlist{margin:8px 0;padding-left:20px;display:grid;gap:6px}
+#fmTbl .cumcol{background:#FFF1CC!important}
+#fmTbl thead .cumcol{box-shadow:inset 0 3px 0 #B5862A}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -736,10 +738,9 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
   <section class="part"><p class="kick">Part 8</p><h2>Find the median in a frequency table</h2>
     <p>The median is the answer given by the middle person once everyone is lined up in order, here from “Increased a lot” to “Decreased a lot.” With thousands of people we don't line them up by hand. Instead we read the Cumulative Percent column, which adds up the Valid Percent as you go down the rows. The median is the first row where the cumulative percent reaches 50%, because that row holds the middle person.</p></section>
   <section class="dcard" id="fm" data-ds="ANES_2020_Issues_F26.sav">
-    <h3>Federal budget spending on welfare programs, 2020 ANES</h3>
-    <p class="p">This is the same table as in Part 7. Tap any number or label to see what it means, then find the median.</p>
-    <div class="row"><span class="src">The −2 answers are</span><div class="seg" role="radiogroup" aria-label="How the −2 answers are treated" id="fmMiss"></div></div>
-    <p class="src" style="margin:0">Wide tables scroll sideways.</p>
+    <h3>Find the median in the Cumulative Percent column, 2020 ANES</h3>
+    <p class="p">This is the welfare spending table from Part 7. The median is the first row where Cumulative Percent reaches 50, so the table opens on that column, shaded. Tap any number or label to see what it means.</p>
+    <p class="src" style="margin:0">Swipe the table right to see the other columns.</p>
     <div class="sp-sheet" id="fmTbl"></div>
     <p class="sp-exp fmExp" id="fmExp" aria-live="polite"><span class="sp-hint2">Tap a number in the table.</span></p>
     <div class="qline">The median answer is <select id="fmSel"><option value="">choose</option><option value="1">1. Increased a lot</option><option value="2">2. Increased a little</option><option value="3">3. Kept the same</option><option value="4">4. Decreased a little</option><option value="5">5. Decreased a lot</option></select> <button class="dbtn" id="fmCk">Check</button></div>
@@ -1283,15 +1284,15 @@ upd();
     const ths=$('#fmTbl').querySelectorAll('thead th');const HX=['','','Frequency counts the people who gave each answer.','Percent divides by every case in the file, including missing ones.','Valid Percent divides by the valid cases only.','Cumulative Percent is a running total of Valid Percent. The median is the first row where it reaches 50.'];
     ths.forEach((t,i)=>{if(HX[i]){t.classList.add('tap');t.tabIndex=0;t.dataset.exp=HX[i];}});
     $('#fmExp').innerHTML='<span class="sp-hint2">Tap a number in the table.</span>';
+    $('#fmTbl').querySelectorAll('tr').forEach(tr=>{const c=tr.lastElementChild;if(c&&tr.children.length>2)c.classList.add('cumcol');});
+    requestAnimationFrame(()=>{const sh=$('#fmTbl');sh.scrollLeft=sh.scrollWidth;});
     return cats[medRow];}
   let med=draw();
-  D.seg($('#fmMiss'),[['v','counted as Valid (as downloaded)'],['m','set as missing']],v=>{miss=v==='m';med=draw();$('#fmFb').className='fbk';
-    if(miss)$('#fmExp').innerHTML='With −2 set as missing, the Valid Percent and Cumulative Percent columns are recomputed from the '+D.comma(D.sum(WF.filter(r=>r[0]>=0).map(r=>r[2])))+' real answers. Check whether the median row moves.';},'v');
   const pick=c=>{$('#fmTbl').querySelectorAll('.tap.sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');$('#fmExp').innerHTML=c.dataset.exp;};
   $('#fmTbl').addEventListener('click',e=>{const c=e.target.closest('.tap');if(c)pick(c);});
   $('#fmTbl').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const c=e.target.closest('.tap');if(c){e.preventDefault();pick(c);}});
   $('#fmCk').addEventListener('click',()=>{const v=+$('#fmSel').value;if(!v)return;
-    if(v===med[0])D.fb($('#fmFb'),'ok',`The median is ${med[0]}, “${med[1]},” the first row where the cumulative percent reaches 50. It matches the mode here, but the two don't have to match. The mode is the tallest row, and the median is wherever the running total crosses 50.${miss?' Setting −2 as missing shifted every cumulative percent a little, but the median stayed in the same row.':' Try setting −2 as missing, which is the right first step, and see whether the median moves.'}`);
+    if(v===med[0])D.fb($('#fmFb'),'ok',`The median is ${med[0]}, “${med[1]},” the first row where the cumulative percent reaches 50. It matches the mode here, but the two don't have to match. The mode is the tallest row, and the median is wherever the running total crosses 50.`);
     else D.fb($('#fmFb'),'no',`Find the first row where Cumulative Percent reaches 50. For answer ${v} it is ${(()=>{const cats=WF.filter(r=>!(miss&&r[0]<0)),V=D.sum(cats.map(r=>r[2]));let c=0;for(const r of cats){c+=r[2]/V*100;if(r[0]===v)return c.toFixed(1);}return '?';})()}.`);});
 })();
 
