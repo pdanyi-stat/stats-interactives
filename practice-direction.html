@@ -440,6 +440,20 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
 :root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
 </style>
+<style id="sec-lines">
+:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
+:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
+main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
+main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
+main section.part:first-child{margin-top:8px!important}
+main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
+.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
+.pager a.nx .k{color:var(--nxk)}
+.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
+@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
+@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Which way does it run?</b></span><a href="practice-titanic.html" aria-label="Next: Who survived the Titanic?">Next →</a></nav>
