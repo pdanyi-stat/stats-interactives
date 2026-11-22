@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which way does it run?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#F4F5F6;
+  --surface:#FFFFFF;
+  --ink:#16191C;
+  --ink-2:#4A4F55;
+  --muted:#5F6266;
+  --grid:#E3E5E8;
+  --axis:#B9BCC0;
+  --line:rgba(22,25,28,.12);
+  --accent:#004C97;          /* masthead rule, kicker */
+  --pop:#75787B;             /* population bars */
+  --s1:#004C97;--s1-edge:transparent;--s1-line:#004C97;--accent-ink:#004C97;              /* sample means (blue) */
+  --s1-ink:#004C97;
+  --s2:#C25E00;              /* the current sample (orange) */
+  --s2-ink:#9A4A00;
+  --code-bg:#EDEFF1;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+    --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+    --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+  --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+  --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1-line);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+button.primary{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-color:var(--s1-ink);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 6 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; --q1:#cde2fb; --q2:#86b6ef; --q3:#3987e5; --q4:#1c5cab; --q5:#0d366b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-b1{color:var(--s2-ink);font-weight:600}
+.k-b2{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--ink-2);font-weight:600}
+.chart svg{display:block}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:92ch}
+.steps b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:92px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1-ink)}
+.calc{font-family:var(--font-mono);font-size:13px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.big{font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ramp{display:inline-block;width:70px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--q1),var(--q3),var(--q5))}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.ghost{height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0}
+/* filled equation */
+.terms{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;margin-top:6px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:17px;font-weight:600;padding:3px 8px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.b1{border-color:var(--s2);color:var(--s2-ink)} .term .t.b2{border-color:var(--s1-ink);color:var(--s1-ink)} .term .t.v{border-color:var(--ink)} .term .t.op{border:0;padding:3px 0;color:var(--ink-2)}
+.term .n{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);line-height:1.2;max-width:14ch}
+/* OVB */
+.ovb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:center}
+@media (max-width:860px){.ovb{grid-template-columns:1fr}}
+.decomp{font-size:15px;display:grid;gap:8px}
+.decomp .eqn{font-family:var(--font-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.verdict{display:inline-block;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;background:var(--ink);color:var(--surface)}
+/* model builder */
+.ivlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;margin:6px 0 10px}
+.ivlist label{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+.ivlist input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+.fitbars{display:grid;gap:10px;margin-top:6px}
+.fb .lab{font-size:13.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.fb .lab b{color:var(--ink)}
+.track{height:16px;border-radius:4px;background:var(--page);border:1px solid var(--line);position:relative;overflow:hidden}
+.fill{height:100%;background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fill.adj{background:var(--s2)}
+.ghostmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55;transition:left .5s}
+@media (prefers-reduced-motion: reduce){.fill,.ghostmark{transition:none}}
+pre.stata .b1{color:var(--s2-ink);font-weight:600}
+pre.stata .b2{color:var(--s1-ink);font-weight:600}
+pre.stata .ns{color:var(--muted)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#B07A12;--amber-bg:#FFF1D6;--amber-ink:#6B4A00;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:9px 14px;border-radius:7px;border:2px solid var(--amber)}
+.fljumpbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.fljumpbox p{margin:0;font-size:14.5px;color:var(--ink);max-width:75ch}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
+
+/* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
+svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):not([stroke]){stroke:var(--s1-edge);stroke-width:1px}
+svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
+svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
+svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+
+</style>
+<style>
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:grid;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+.dcard{scroll-margin-top:70px}
+.cods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.cods{grid-template-columns:minmax(0,1fr)}}
+.cod{display:grid;gap:3px;min-width:0}
+.cod .nm{font:600 15px var(--font-mono);color:var(--ink)}
+.cod .lb{font-size:13.5px;color:var(--ink-2);font-style:italic}
+.cod .role{font:600 11.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.outp{font:500 15px/1.65 var(--font-mono);background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink)}
+.claimq{margin:0;font-size:17px;line-height:1.5;color:var(--ink)}
+.qh{margin:4px 0 0;font:600 14px var(--font-body);color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:14.5px;text-align:left}
+.chips button[aria-pressed="true"]{background:var(--selbg);color:var(--selink);border-color:var(--s1-line);box-shadow:inset 0 0 0 1px var(--s1-line)}
+.walk{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 12px;margin:8px 0 0}
+.walk b{font:600 13px var(--font-body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.score{font-size:14px;color:var(--ink-2)}
+.err{color:var(--bad);font-size:14px;min-height:1em;margin:0}
+.flipnote{font-size:14px;color:var(--ink-2);margin:0}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Which way does it run?</b></span><a href="practice-titanic.html" aria-label="Next: Who survived the Titanic?">Next →</a></nav>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Practice</p>
+    <h1>Which way does it run?</h1>
+    <p class="dek">A sign on its own doesn't tell you what happened. You have to walk it through how the variables are coded. Each card gives you the coding, one piece of SPSS output and a claim. Say which way the relationship runs, in plain words, and whether the output supports the claim.</p>
+    <ul class="modnav" aria-label="Modules in this series">
+      <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
+      <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
+      <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
+      <li><a href="3-dispersion.html">3 Dispersion</a></li>
+      <li><a href="4-sampling-distributions.html">4 Sampling distributions</a></li>
+      <li><a href="5-confidence-intervals.html">5 Confidence intervals</a></li>
+      <li><a href="6-difference-in-means.html">6 Difference in means</a></li>
+      <li><a href="7-pre-measures.html">7 PRE measures</a></li>
+      <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
+      <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
+      <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
+      <li aria-current="page"><a href="practice-direction.html">Practice: Which way?</a></li>
+      <li><a href="practice-titanic.html">Practice: Titanic</a></li>
+      <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="exam-prep.html">Exam prep</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="dcard" id="how">
+    <p class="p"><b>How to walk it through.</b> Move the IV from its low code to its high code. The sign (or the change in the group means) tells you whether the DV moves toward its higher or lower codes. Then check what the higher codes mean for that DV. Last, check significance or strength: a sign alone isn't enough to support a claim.</p>
+  </section>
+
+  <section class="dcard" id="card" aria-live="polite">
+    <div class="bar"><p class="kick" id="tt"></p><span class="score" id="score"></span></div>
+    <div class="cods" id="cods"></div>
+    <div class="outp" id="out"></div>
+    <p class="claimq" id="cl"></p>
+    <p class="qh">In plain words, which way does it run?</p><div class="chips" id="qa"></div>
+    <p class="qh">Does the output support the claim?</p><div class="chips" id="qb"></div>
+    <p class="err" id="err"></p>
+    <div class="fbk" id="fb"></div>
+    <p class="flipnote" id="fn" hidden></p>
+    <div class="bar"><div class="chips"><button class="primary" id="chk">Check</button><button id="flp">Flip the coding</button></div><span class="score" id="pg"></span><button id="nx">Next card</button></div>
+  </section>
+
+  <nav class="pager" aria-label="Previous and next"><a href="10-dummy-variables.html"><span class="k">← Previous · Module 10</span><span class="t">Dummy variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="practice-titanic.html"><span class="k">Next · Practice →</span><span class="t">Who survived the Titanic?</span></a></nav>
+</main>
+<script>
+(()=>{
+const $=i=>document.getElementById(i);
+const SA='South Africa 1995, practice file 1',TI='Titanic passengers (N = 1,309)',AN='ANES 2016 Pilot';
+const C=[
+{t:'Gamma · '+SA,iv:['WhiteInterviewerDummy','Was the interviewer white?',[[0,'No'],[1,'Yes']]],dv:['var360','Q10. Importance of minority rights',[[1,'Essential'],[2,'Important'],[3,'Not very important'],[4,'Not at all important']]],
+ dvF:[[1,'Not at all important'],[2,'Not very important'],[3,'Important'],[4,'Essential']],out:f=>`Gamma = ${f?'.516':'−.516'} &nbsp; Approx. Sig. = .000`,
+ claim:'People say minority rights are less important when the interviewer is white.',A:['More important with a white interviewer','Less important with a white interviewer'],a:0,B:['Yes','No'],b:1,signOnly:1,
+ walk:f=>[['IV','0 (not white) → 1 (white)'],['Sign',f?'positive: var360 moves toward higher codes':'negative: var360 moves toward lower codes'],['Codes',f?'higher codes mean more important':'lower codes mean more important'],['So','with a white interviewer, people said minority rights were more important. The claim runs the other way.']]},
+{t:'Gamma · '+SA,iv:['BlackInterviewerDummy','Was the interviewer black or coloured?',[[0,'No'],[1,'Yes']]],dv:['var360','Q10. Importance of minority rights',[[1,'Essential'],[2,'Important'],[3,'Not very important'],[4,'Not at all important']]],
+ dvF:[[1,'Not at all important'],[2,'Not very important'],[3,'Important'],[4,'Essential']],out:f=>`Gamma = ${f?'−.541':'.541'} &nbsp; Approx. Sig. = .000`,
+ claim:'People say minority rights are more important when the interviewer is black.',A:['More important with a black interviewer','Less important with a black interviewer'],a:1,B:['Yes','No'],b:1,signOnly:0,
+ walk:f=>[['IV','0 (not black) → 1 (black or coloured)'],['Sign',f?'negative: var360 moves toward lower codes':'positive: var360 moves toward higher codes'],['Codes',f?'lower codes mean less important':'higher codes mean less important'],['So','with a black interviewer, people said minority rights were less important. The claim runs the other way.']]},
+{t:'Difference of means · '+SA,iv:['BlackInterviewerDummy','Was the interviewer black or coloured?',[[0,'No'],[1,'Yes']]],dv:['ANCVoterDummy','Did the respondent vote for the ANC?',[[0,'No'],[1,'Yes']]],
+ dvF:[[0,'Yes'],[1,'No']],out:f=>`Mean, black interviewer = ${f?'.424':'.576'}<br>Mean, other interviewer = ${f?'.939':'.061'}<br>Sig. (2-tailed) = .000`,
+ claim:'People were more likely to say they voted ANC to a black interviewer.',A:['More likely with a black interviewer','Less likely with a black interviewer'],a:0,B:['Yes','No'],b:0,
+ walk:f=>[['IV','0 (other) → 1 (black interviewer)'],['Means',f?'the mean falls from .939 to .424':'the mean rises from .061 to .576'],['Codes',f?'here 1 means did not vote ANC, so a lower mean means more ANC answers':'1 means voted ANC, so a higher mean means more ANC answers'],['So','more people said they voted ANC to a black interviewer, and Sig. is below .05.']]},
+{t:'Difference of means · '+SA,iv:['WhiteInterviewerDummy','Was the interviewer white?',[[0,'No'],[1,'Yes']]],dv:['var360','Q10. Importance of minority rights',[[1,'Essential'],[2,'Important'],[3,'Not very important'],[4,'Not at all important']]],
+ dvF:[[1,'Not at all important'],[2,'Not very important'],[3,'Important'],[4,'Essential']],out:f=>`Mean, white interviewer = ${f?'3.203':'1.797'}<br>Mean, other interviewer = ${f?'2.512':'2.488'}<br>Sig. (2-tailed) = .000`,
+ claim:'People said minority rights were less important to a white interviewer.',A:['More important to a white interviewer','Less important to a white interviewer'],a:0,B:['Yes','No'],b:1,signOnly:1,
+ walk:f=>[['IV','0 (other) → 1 (white interviewer)'],['Means',f?'the mean rises from 2.512 to 3.203':'the mean falls from 2.488 to 1.797'],['Codes',f?'higher codes mean more important':'lower codes mean more important'],['So','people told white interviewers that minority rights were more important. The claim runs the other way.']]},
+{t:'Regression · '+TI,iv:['pclass','Passenger class',[[1,'First'],[2,'Second'],[3,'Third']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
+ ivF:[[1,'Third'],[2,'Second'],[3,'First']],out:f=>`B (pclass) = ${f?'.181':'−.181'} &nbsp; Sig. = .000`,
+ claim:'Passengers in higher classes were more likely to survive.',A:['Higher class, more likely to survive','Higher class, less likely to survive'],a:0,B:['Yes','No'],b:0,
+ walk:f=>[['IV',f?'1 (third) → 3 (first): moving up in class':'1 (first) → 3 (third): moving down in class'],['Sign',f?'positive: survival rises':'negative: survival falls'],['Codes','survived: 1 = yes'],['So','higher class went with a better chance of surviving. Watch the class codes: in the original coding a lower number is a higher class.']]},
+{t:'Regression · '+TI,iv:['female','Female passenger',[[0,'No (male)'],[1,'Yes']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
+ ivF:[[0,'No (female)'],[1,'Yes (male)']],out:f=>`B (${f?'male':'female'}) = ${f?'−.537':'.537'} &nbsp; Sig. = .000`,
+ claim:'Women were more likely to survive than men.',A:['Women more likely to survive','Women less likely to survive'],a:0,B:['Yes','No'],b:0,
+ walk:f=>[['IV',f?'0 (female) → 1 (male)':'0 (male) → 1 (female)'],['Sign',f?'negative: survival falls by .537 for men':'positive: survival rises by .537 for women'],['Codes','survived: 1 = yes'],['So','women were far more likely to survive, about 54 points more, and Sig. is below .05.']]},
+{t:'Regression · '+TI+', 1,046 with a recorded age',iv:['age','Age in years',[[0,'Newborn'],[80,'80 years']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
+ out:()=>'B (age) = −.0019 &nbsp; Sig. = .073',claim:'Older passengers were less likely to survive.',A:['Older, less likely to survive','Older, more likely to survive'],a:0,B:['Yes','No'],b:1,sigTrap:1,
+ walk:()=>[['IV','older passengers (higher numbers)'],['Sign','negative: survival falls slightly with age'],['Sig.','.073, above .05'],['So','the sign points the claimed way, but we fail to reject H₀. The output doesn’t support the claim.']]},
+{t:'Gamma · '+TI,iv:['age5','Age in five groups',[[1,'Infant or young child (0–5)'],[2,'Youth (5–16)'],[3,'Young adult (16–30)'],[4,'Adult (30–60)'],[5,'Elderly (60–120)']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
+ out:()=>'Gamma = −.085',claim:'Older passengers were less likely to survive.',A:['Older groups, less likely to survive','Older groups, more likely to survive'],a:0,B:['Yes','No'],b:1,sigTrap:1,
+ walk:()=>[['IV','younger groups (1) → older groups (5)'],['Sign','negative: survival moves toward 0 (no)'],['Strength','|−.085| is below .25: no relationship on the gamma scale'],['So','the sign points the claimed way, but gamma is too weak to support it.']]},
+{t:'Regression · '+AN+', GOP voters',iv:['ftjeb','Feeling thermometer: Jeb Bush',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],dv:['fttrump','Feeling thermometer: Trump',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],
+ out:()=>'B (ftjeb) = −.030 &nbsp; Sig. = .697',claim:'GOP voters who like Bush rate Trump lower.',A:['Warmer toward Bush, cooler toward Trump','Warmer toward Bush, warmer toward Trump'],a:0,B:['Yes','No'],b:1,sigTrap:1,
+ walk:()=>[['IV','warmer toward Bush (higher numbers)'],['Sign','negative: slightly cooler toward Trump'],['Sig.','.697, well above .05'],['So','the sign points the claimed way, but we fail to reject H₀. The output doesn’t support the claim.']]},
+{t:'Regression · '+AN+', GOP voters',iv:['ftcruz','Feeling thermometer: Ted Cruz',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],dv:['fttrump','Feeling thermometer: Trump',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],
+ out:()=>'B (ftcruz) = .169 &nbsp; Sig. = .017',claim:'GOP voters who like Cruz rate Trump lower.',A:['Warmer toward Cruz, cooler toward Trump','Warmer toward Cruz, warmer toward Trump'],a:1,B:['Yes','No'],b:1,
+ walk:()=>[['IV','warmer toward Cruz (higher numbers)'],['Sign','positive: warmer toward Trump too'],['Sig.','.017, below .05'],['So','the relationship is real but runs the other way: Cruz fans rated Trump higher.']]},
+{t:'Regression · '+AN+', Democratic voters',iv:['ftobama','Feeling thermometer: Barack Obama',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],dv:['fthrc','Feeling thermometer: Hillary Clinton',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],
+ out:()=>'B (ftobama) = .524 &nbsp; Sig. = .000',claim:'Democrats who like Obama rate Clinton higher.',A:['Warmer toward Obama, warmer toward Clinton','Warmer toward Obama, cooler toward Clinton'],a:0,B:['Yes','No'],b:0,
+ walk:()=>[['IV','warmer toward Obama (higher numbers)'],['Sign','positive: warmer toward Clinton, about half a point per point'],['Sig.','.000, which means p < .001'],['So','the claim holds.']]},
+{t:'Lambda · '+SA,iv:['WhiteInterviewerDummy','Was the interviewer white?',[[0,'No'],[1,'Yes']]],dv:['ANCVoterDummy','Did the respondent vote for the ANC?',[[0,'No'],[1,'Yes']]],
+ out:()=>'Lambda (ANCVoterDummy dependent) = .240',claim:'With a white interviewer, people were less likely to say they voted ANC.',A:['Less likely with a white interviewer','More likely with a white interviewer','Lambda can’t tell us the direction'],a:2,B:['Yes','No','Not from lambda alone'],b:2,
+ walk:()=>[['Lambda','has no sign: it only says how much knowing the IV improves your guess of the DV'],['Look at','the column percentages in the crosstab to see which way it runs'],['So','a moderate relationship; the direction has to come from the table, not from lambda.']]}];
+let order=[],pos=0,f=false,A=null,B=null,done=0,right=0,checked=false;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const cod=(role,v,rows)=>`<div class="cod"><span class="role">${role}</span><span class="nm">${v[0]}</span><span class="lb">${v[1]}</span><dl class="codes">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl></div>`;
+function show(){const c=C[order[pos]];$('tt').textContent=c.t;
+  $('cods').innerHTML=cod('IV',c.iv,f&&c.ivF?c.ivF:c.iv[2])+cod('DV',c.dv,f&&c.dvF?c.dvF:c.dv[2]);$('out').innerHTML=c.out(f);$('cl').textContent='Claim: '+c.claim;
+  $('qa').innerHTML=c.A.map((t,k)=>`<button data-k="${k}" aria-pressed="${A===k}">${t}</button>`).join('');$('qb').innerHTML=c.B.map((t,k)=>`<button data-k="${k}" aria-pressed="${B===k}">${t}</button>`).join('');
+  const can=!!(c.dvF||c.ivF);$('flp').hidden=!can;$('flp').textContent=f?'Back to the original coding':'Flip the coding';
+  $('fn').hidden=!f;$('fn').textContent=f?'Same data, opposite coding. The sign flips, but the answer in plain words stays the same.':'';
+  $('pg').textContent=`Card ${pos+1} of ${C.length}`;$('score').textContent=done?`${right} of ${done} right this round`:'';}
+function reset(){f=false;A=null;B=null;checked=false;$('fb').className='fbk';$('fb').innerHTML='';$('err').textContent='';}
+$('qa').onclick=e=>{const b=e.target.closest('button');if(!b)return;A=+b.dataset.k;$('err').textContent='';show();};
+$('qb').onclick=e=>{const b=e.target.closest('button');if(!b)return;B=+b.dataset.k;$('err').textContent='';show();};
+$('chk').onclick=()=>{if(A===null||B===null){$('err').textContent='Answer both questions first.';return;}const c=C[order[pos]],ok=A===c.a&&B===c.b;
+  if(!checked){checked=true;done++;if(ok)right++;}
+  let lead=ok?'Right.':'Not quite.';
+  if(!ok&&c.signOnly&&A!==c.a)lead='Not quite. That reads the sign alone. Walk it through the coding:';
+  else if(!ok&&c.sigTrap&&B===0)lead='Not quite. The sign points that way, but check the last step:';
+  else if(!ok&&c.a===2)lead='Not quite. Lambda has no sign:';
+  const e=$('fb');e.className='fbk show '+(ok?'ok':'no');e.innerHTML=`<b class="k">${lead}</b><div class="walk">${c.walk(f).map(r=>`<b>${r[0]}</b><span>${r[1]}</span>`).join('')}</div>`;show();};
+$('flp').onclick=()=>{f=!f;show();if(checked){const keep=checked;checked=true;$('chk').click();checked=keep;}};
+$('nx').onclick=()=>{pos++;if(pos>=C.length){order=shuffle(C.map((_,i)=>i));pos=0;done=0;right=0;}reset();show();};
+order=shuffle(C.map((_,i)=>i));show();
+})();
+</script>
+</body>
+</html>
