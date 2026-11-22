@@ -23,6 +23,7 @@ Files
   practice-published-tables.html          practice: what would it look like published?
   exam-prep.html                          practice final
   data/                                   datasets students can download
+  exam-data/                              sample files for each practice exam code
   STYLE.md                                writing rules for every word of copy
 
 Publishing
