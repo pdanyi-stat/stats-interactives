@@ -18,11 +18,11 @@ Files
   8b-partisans-and-the-first-lady.html    worked example for Module 8
   9-multiple-regression.html
   10-dummy-variables.html
+  11-problems-of-causation.html           Module 11, problems of causation (mechanisms, seven pitfalls, 50 practice claims)
   practice-direction.html                 practice: which way does it run?
   practice-titanic.html                   practice: who survived the Titanic?
   practice-published-tables.html          practice: what would it look like published?
   exam-prep.html                          practice final
-  11-problems-of-causation.html           Module 11, problems of causation (DRAFT ONLY)
   data/                                   datasets students can download
   exam-data/                              sample files for each practice exam code
   STYLE.md                                writing rules for every word of copy
