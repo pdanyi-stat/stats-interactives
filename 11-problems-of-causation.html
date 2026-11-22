@@ -495,6 +495,7 @@ p.say2[id] a,#ceSay a{color:#0b3f73;font-weight:600}
 @media (max-width:760px){.exs{grid-template-columns:1fr}}
 .ex{display:grid;gap:8px;align-content:start;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--page)}
 .ex h4{margin:0;font-size:16px}
+.exh{display:flex;justify-content:space-between;align-items:center;gap:8px}.exh .rp{font-size:13px;padding:5px 10px}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -699,11 +700,11 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   <section class="dcard" id="gf">
     <h3>Two rounds of golf</h3>
     <p class="p">At a big golf tournament every player plays a first round and then a second round on the same course, and lower scores are better. The 156 golfers below are simulated, after a figure in Bueno de Mesquita and Fowler's <i>Thinking Clearly with Data</i> (2021) that uses real first- and second-round scores from the U.S. Women's Open. Each simulated golfer has her own usual score, and each round adds luck to it.</p>
-    <p class="p">If every second round matched the first, the dots would sit on the dashed 45-degree line. Watch what happens to the golfers who had the best and the worst first rounds.</p>
+    <p class="p">Each golfer starts on the dashed 45-degree line, which is where she would land if her second round matched her first. When round 2 plays, watch where the golfers with the best and the worst first rounds go.</p>
     <div class="kk"><span><i style="background:var(--s1-line)"></i>10 best first rounds</span><span><i style="background:var(--s2)"></i>10 worst first rounds</span><span><i style="background:var(--axis)"></i>everyone else</span><span><i class="ln" style="background:var(--ink-2)"></i>least-squares line</span></div>
     <div id="gfChart"></div>
     <p class="src">Dots are nudged slightly so that golfers with the same scores don't hide each other. The dashed line marks the same score in both rounds.</p>
-    <div class="btnrow"><button id="gfOwn">Show each highlighted golfer's usual score</button><button id="gfNew">Play a new tournament</button></div>
+    <div class="btnrow"><button class="primary" id="gfPlay">▶ Play round 2 again</button><button id="gfOwn">Show each highlighted golfer's usual score</button><button id="gfNew">Play a new tournament</button></div>
     <p class="say2" id="gfSay"></p>
     <p class="p">Tap any blue or orange golfer to follow her over eight rounds.</p>
     <div id="gfTs"></div>
@@ -712,12 +713,13 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   <section class="dcard" id="co">
     <h3>Fire the coach</h3>
     <p class="p">Teams don't fire a coach at random. They fire the coach at the bottom of a slide, after a season or two that went badly. The teams below are simulated, and each has its own usual winning percentage. Good and bad stretches carry over from one season to the next (many of the same players return), so a team can slide for a few seasons before drifting back. No coach in the simulation makes any difference at all, and a team fires its coach whenever it wins fewer than 35% of its games.</p>
-    <div class="btnrow"><button class="primary" id="coNew">Show another team</button></div>
+    <div class="btnrow"><button class="primary" id="coNew">▶ Play another team</button></div>
     <div class="kk"><span><i class="ln" style="background:var(--s1-line)"></i>the team's winning percentage</span><span><i style="background:#B3261E"></i>coach fired after this season</span></div>
     <div id="coTeam"></div>
     <p class="say2" id="coTeamSay"></p>
-    <p class="p">Now line up every firing in 1,000 simulated team histories, so that season 0 is the bad season that got the coach fired, and average the seasons around it. For comparison, the gray line follows equally bad seasons where a coin flip had the team keep its coach.</p>
-    <div class="kk"><span><i class="ln" style="background:#B3261E"></i>fired the coach</span><span><i class="ln" style="background:var(--axis)"></i>kept the coach</span></div>
+    <p class="p">Now line up every firing in 1,000 simulated team histories, so that season 0 is the bad season that got the coach fired, and average the seasons around it. For comparison, the dotted line follows equally bad seasons where a coin flip had the team keep its coach. As the simulation runs, each team's nine seasons flash by as a thin line and the averages build up behind them.</p>
+    <div class="btnrow"><button class="primary" id="evRun">▶ Run the simulation again</button><button id="evSkip">Skip to the end</button></div>
+    <div class="kk"><span><i class="ln" style="background:#B3261E"></i>fired the coach</span><span><i style="display:inline-block;width:20px;height:0;border-radius:0;border-top:3px dotted var(--ink)"></i>kept the coach</span></div>
     <div id="coEv"></div>
     <p class="say2" id="coEvSay"></p>
   </section>
@@ -725,10 +727,10 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <h3>More reversions to look at</h3>
     <p class="p">The same shape turns up wherever we step in at an extreme moment. Each picture below shows a usual level as a dashed line and marks the moment someone stepped in. The numbers are simulated or hypothetical, drawn to show the pattern.</p>
     <div class="exs">
-      <div class="ex"><h4>The seeking-help problem</h4><div class="kk"><span><i class="ln" style="background:var(--s1-line)"></i>took a remedy</span><span><i class="ln" style="background:var(--axis)"></i>took nothing</span></div><div id="ex1"></div><p class="say2" id="ex1s">People take a remedy on the day their cold feels worst, and colds get better from there on their own. The gray line is a cold with no remedy at all, and it follows the same path, so the remedy gets credit it didn't earn. Homeopathic medicine draws much of its reputation from this pattern.</p></div>
-      <div class="ex"><h4>The policing problem</h4><div id="ex2"></div><p class="say2" id="ex2s"></p></div>
-      <div class="ex"><h4>The membership drive</h4><div id="ex3"></div><p class="say2" id="ex3s">Suppose you lead a student group that usually has about 20 members, and one year an unusually large membership drive brings it to 40. Two years later, in your senior year, the group is down to 18 and doesn't recover much. Your co-leaders say tastes have changed, but the likelier story is that 40 was the extreme year and the group has returned to its usual size.</p></div>
-      <div class="ex"><h4>The magazine-cover jinx</h4><div id="ex4"></div><p class="say2" id="ex4s">Athletes who appear on the cover of <i>Sports Illustrated</i> often have a worse season next. As Daniel Kahneman explains in <i>Thinking, Fast and Slow</i>, they made the cover after an exceptional season that was probably helped along by luck, and luck doesn't last. This hypothetical hitter's cover season (.338) sits well above her career average of .290, and the next season (.291) falls back to it.</p></div>
+      <div class="ex"><div class="exh"><h4>The seeking-help problem</h4><button class="rp" data-x="1" aria-label="Replay the seeking-help example">▶ Replay</button></div><div class="kk"><span><i class="ln" style="background:var(--s1-line)"></i>took a remedy</span><span><i class="ln" style="background:var(--axis)"></i>took nothing</span></div><div id="ex1"></div><p class="say2" id="ex1s">People take a remedy on the day their cold feels worst, and colds get better from there on their own. The gray line is a cold with no remedy at all, and it follows the same path, so the remedy gets credit it didn't earn. Homeopathic medicine draws much of its reputation from this pattern.</p></div>
+      <div class="ex"><div class="exh"><h4>The policing problem</h4><button class="rp" data-x="2" aria-label="Replay the policing example">▶ Replay</button></div><div id="ex2"></div><p class="say2" id="ex2s"></p></div>
+      <div class="ex"><div class="exh"><h4>The membership drive</h4><button class="rp" data-x="3" aria-label="Replay the membership example">▶ Replay</button></div><div id="ex3"></div><p class="say2" id="ex3s">Suppose you lead a student group that usually has about 20 members, and one year an unusually large membership drive brings it to 40. Two years later, in your senior year, the group is down to 18 and doesn't recover much. Your co-leaders say tastes have changed, but the likelier story is that 40 was the extreme year and the group has returned to its usual size.</p></div>
+      <div class="ex"><div class="exh"><h4>The magazine-cover jinx</h4><button class="rp" data-x="4" aria-label="Replay the magazine-cover example">▶ Replay</button></div><div id="ex4"></div><p class="say2" id="ex4s">Athletes who appear on the cover of <i>Sports Illustrated</i> often have a worse season next. As Daniel Kahneman explains in <i>Thinking, Fast and Slow</i>, they made the cover after an exceptional season that was probably helped along by luck, and luck doesn't last. This hypothetical hitter's cover season (.338) sits well above her career average of .290, and the next season (.291) falls back to it.</p></div>
     </div>
     <p class="p">We can guard against reversion in two ways. First, we remember that it exists and that one of the results we are comparing may simply be a lucky or unlucky extreme. Second, we think about how cases come to be treated in the real world, since cases chosen because they are extreme will tend to look better afterward whatever we do to them. The fair comparison is with similar cases that hit the same extreme and were left alone.</p>
   </section>
@@ -1034,29 +1036,40 @@ function tsChart(el,o){const F=frame(el,o.h||200),pl=o.pl||40,pr=12,pt=12,pb=34,
   o.ticks.forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${o.yf?o.yf(v):v}</text>`);
   o.xl.forEach((t,i)=>{if(t!=='')s+=`<text x="${xs(i)}" y="${F.h-18}" text-anchor="${o.bars?'middle':i===0?'start':i===n-1?'end':'middle'}" font-size="11" style="fill:var(--muted)">${t}</text>`;});
   if(o.xt)s+=`<text x="${(pl+F.w)/2}" y="${F.h-3}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">${o.xt}</text>`;
-  if(o.mark)o.mark.forEach(m=>s+=`<line x1="${xs(m.i)}" x2="${xs(m.i)}" y1="${pt}" y2="${F.h-pb}" style="stroke:#B3261E" stroke-width="1.5" stroke-dasharray="4 4"/><text x="${xs(m.i)+(m.left?-5:5)}" y="${pt+11}" text-anchor="${m.left?'end':'start'}" font-size="11.5" font-weight="700" style="fill:#B3261E;stroke:var(--page);paint-order:stroke" stroke-width="3">${m.t}</text>`);
+  if(o.mark)o.mark.filter(m=>o.upto==null||o.upto>=m.i).forEach(m=>s+=`<line x1="${xs(m.i)}" x2="${xs(m.i)}" y1="${pt}" y2="${F.h-pb}" style="stroke:#B3261E" stroke-width="1.5" stroke-dasharray="4 4"/><text x="${xs(m.i)+(m.left?-5:5)}" y="${pt+11}" text-anchor="${m.left?'end':'start'}" font-size="11.5" font-weight="700" style="fill:#B3261E;stroke:var(--page);paint-order:stroke" stroke-width="3">${m.t}</text>`);
   if(o.mean)s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(o.mean.v)}" y2="${ys(o.mean.v)}" style="stroke:var(--ink-2)" stroke-width="2" stroke-dasharray="6 5"/>`;
-  if(o.bars){const bw=(F.w-pl-pr)/n*.62;o.series[0].v.forEach((v,i)=>{const hl=(o.hl||[]).includes(i);s+=`<rect x="${xs(i)-bw/2}" y="${ys(v)}" width="${bw}" height="${ys(lo)-ys(v)}" rx="3" style="fill:${hl?'var(--s2)':'var(--s1-line)'}" opacity="${hl?1:.8}"/><text x="${xs(i)}" y="${ys(v)-4}" text-anchor="middle" font-size="11" font-weight="600" style="fill:var(--ink)">${v}</text>`;});}
-  else o.series.forEach(se=>{s+=`<polyline fill="none" points="${se.v.map((v,i)=>v==null?'':xs(i)+','+ys(v)).join(' ')}" style="stroke:${se.c}" stroke-width="${se.w||2.4}" opacity="${se.op||1}"/>`;if(se.dots!==false)se.v.forEach((v,i)=>{if(v==null)return;const big=(se.big||[]).includes(i);s+=`<circle cx="${xs(i)}" cy="${ys(v)}" r="${big?6:se.r||3.2}" style="fill:${big?(se.bc||'#B3261E'):se.c};stroke:var(--surface)" stroke-width="1.5" opacity="${se.op||1}"/>`;});});
+  const U=o.upto==null?1e9:o.upto;
+  if(o.bars){const bw=(F.w-pl-pr)/n*.62;o.series[0].v.forEach((v,i)=>{const f=Math.max(0,Math.min(1,U-i));if(!f)return;const hl=(o.hl||[]).includes(i),vv=lo+(v-lo)*f;s+=`<rect x="${xs(i)-bw/2}" y="${ys(vv)}" width="${bw}" height="${ys(lo)-ys(vv)}" rx="3" style="fill:${hl?'var(--s2)':'var(--s1-line)'}" opacity="${hl?1:.8}"/>`+(f===1?`<text x="${xs(i)}" y="${ys(v)-4}" text-anchor="middle" font-size="11" font-weight="600" style="fill:var(--ink)">${v}</text>`:'');});}
+  else o.series.forEach(se=>{const pts=[];se.v.forEach((v,i)=>{if(v==null||i>U)return;pts.push([xs(i),ys(v)]);});const fi=Math.floor(U);if(U<se.v.length-1&&fi>=0&&se.v[fi+1]!=null&&se.v[fi]!=null){const f=U-fi;pts.push([xs(fi)+f*(xs(fi+1)-xs(fi)),ys(se.v[fi]+f*(se.v[fi+1]-se.v[fi]))]);}
+    s+=`<polyline fill="none" points="${pts.map(q=>q.join(',')).join(' ')}" style="stroke:${se.c}" stroke-width="${se.w||2.4}" opacity="${se.op||1}"/>`;if(se.dots!==false)se.v.forEach((v,i)=>{if(v==null||i>U)return;const big=(se.big||[]).includes(i);s+=`<circle cx="${xs(i)}" cy="${ys(v)}" r="${big?6:se.r||3.2}" style="fill:${big?(se.bc||'#B3261E'):se.c};stroke:var(--surface)" stroke-width="1.5" opacity="${se.op||1}"/>`;});});
   el.innerHTML=F.svg(s)+(o.mean?`<div class="kk" style="margin-top:2px"><span><i style="display:inline-block;width:20px;height:0;border-radius:0;border-top:2px dashed var(--ink-2)"></i>${o.mean.t}</span></div>`:'');}
 
+/* ---- animation helpers ---- */
+const RMO=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+function animate(dur,step,done){if(RMO){step(1);if(done)done();return ()=>{};}let t0=null,id=0,stop=false;const f=ts=>{if(stop)return;if(t0==null)t0=ts;const k=Math.min(1,(ts-t0)/dur);step(k);if(k<1)id=requestAnimationFrame(f);else if(done)done();};id=requestAnimationFrame(f);return ()=>{stop=true;cancelAnimationFrame(id);};}
+function onVisible(el,cb){if(!('IntersectionObserver' in window)){cb();return;}const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();cb();}},{threshold:.3});io.observe(el);}
+const ease=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+
 /* ---- golf ---- */
-let GF=null,gfOwn=false,gfPick=-1;
+let GF=null,gfOwn=false,gfPick=-1,gfK=1,gfStop=()=>{};
 function gfRun(seed){const r=rng(seed),P=[];for(let i=0;i<156;i++){const sk=72.6+gaussR(r)*2.1;const rd=()=>Math.round(sk+gaussR(r)*2.5);P.push({sk,r1:rd(),r2:rd(),jx:(r()-.5)*.55,jy:(r()-.5)*.55,i});}
   const by=P.slice().sort((a,b)=>a.r1-b.r1||a.jx-b.jx);by.slice(0,10).forEach(p=>p.g='best');by.slice(-10).forEach(p=>p.g='worst');
-  GF={P,seed};gfPick=by[0].i;gfDraw();gfFollow();}
+  GF={P,seed};gfPick=by[0].i;gfFollow();gfPlay();}
+function gfPlay(){gfStop();gfK=0;gfDraw();$('gfSay').textContent='';gfStop=animate(2200,k=>{gfK=ease(k);gfDraw();});}
 function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=46,pr=14,pt=12,pb=42,lo=63,hi=84,xs=v=>pl+(v-lo)/(hi-lo)*(F.w-pl-pr),ys=v=>pt+(hi-v)/(hi-lo)*(F.h-pt-pb);let s='';
   for(let v=65;v<=83;v+=3){s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text><text x="${xs(v)}" y="${F.h-24}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${v}</text>`;}
   s+=`<text x="${(pl+F.w)/2}" y="${F.h-6}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">First-round score (lower is better)</text><text transform="translate(13 ${(pt+F.h-pb)/2}) rotate(-90)" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Second-round score</text>`;
   s+=`<line x1="${xs(lo)}" y1="${ys(lo)}" x2="${xs(hi)}" y2="${ys(hi)}" style="stroke:var(--ink-2)" stroke-width="2" stroke-dasharray="6 5"/>`;
   const P=GF.P,x=P.map(p=>p.r1),y=P.map(p=>p.r2),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b;GF.sl=sl;
   const L=Math.min(...x),H=Math.max(...x);
-  P.filter(p=>!p.g).forEach(p=>s+=`<circle cx="${xs(p.r1+p.jx)}" cy="${ys(p.r2+p.jy)}" r="3.4" style="fill:var(--axis)" opacity=".7"/>`);
-  s+=`<line x1="${xs(L)}" y1="${ys(my+sl*(L-mx))}" x2="${xs(H)}" y2="${ys(my+sl*(H-mx))}" style="stroke:var(--surface)" stroke-width="7"/><line x1="${xs(L)}" y1="${ys(my+sl*(L-mx))}" x2="${xs(H)}" y2="${ys(my+sl*(H-mx))}" style="stroke:var(--ink-2)" stroke-width="3"/>`;
-  P.filter(p=>p.g).forEach(p=>{const c=p.g==='best'?'var(--s1-line)':'var(--s2)',cx=xs(p.r1+p.jx),cy=ys(p.r2+p.jy);
-    if(gfOwn)s+=`<line x1="${cx}" y1="${ys(p.sk)}" x2="${cx}" y2="${cy}" style="stroke:${c}" stroke-width="1.5" stroke-dasharray="2 3"/><path d="M ${cx} ${ys(p.sk)-6} L ${cx+6} ${ys(p.sk)} L ${cx} ${ys(p.sk)+6} L ${cx-6} ${ys(p.sk)} Z" style="fill:var(--surface);stroke:${c}" stroke-width="2"/>`;
+  const k=gfK,yy=p=>p.r1+k*(p.r2-p.r1)+p.jy*k,done=k>=1;
+  P.filter(p=>!p.g).forEach(p=>s+=`<circle cx="${xs(p.r1+p.jx)}" cy="${ys(yy(p))}" r="3.4" style="fill:var(--axis)" opacity=".7"/>`);
+  if(done)s+=`<line x1="${xs(L)}" y1="${ys(my+sl*(L-mx))}" x2="${xs(H)}" y2="${ys(my+sl*(H-mx))}" style="stroke:var(--surface)" stroke-width="7"/><line x1="${xs(L)}" y1="${ys(my+sl*(L-mx))}" x2="${xs(H)}" y2="${ys(my+sl*(H-mx))}" style="stroke:var(--ink-2)" stroke-width="3"/>`;
+  if(!done)s+=`<text x="${pl+8}" y="${pt+14}" font-size="12.5" font-weight="700" style="fill:var(--ink)">${k===0?'Round 1':'Round 2 coming in…'}</text>`;
+  P.filter(p=>p.g).forEach(p=>{const c=p.g==='best'?'var(--s1-line)':'var(--s2)',cx=xs(p.r1+p.jx),cy=ys(yy(p));
+    if(gfOwn&&done)s+=`<line x1="${cx}" y1="${ys(p.sk)}" x2="${cx}" y2="${cy}" style="stroke:${c}" stroke-width="1.5" stroke-dasharray="2 3"/><path d="M ${cx} ${ys(p.sk)-6} L ${cx+6} ${ys(p.sk)} L ${cx} ${ys(p.sk)+6} L ${cx-6} ${ys(p.sk)} Z" style="fill:var(--surface);stroke:${c}" stroke-width="2"/>`;
     s+=`<circle class="gfp" data-i="${p.i}" cx="${cx}" cy="${cy}" r="${p.i===gfPick?7.5:5.5}" style="fill:${c};stroke:${p.i===gfPick?'var(--ink)':'var(--surface)'};cursor:pointer" stroke-width="${p.i===gfPick?2.5:1.5}"><title>First round ${p.r1}, second round ${p.r2}</title></circle>`;});
-  el.innerHTML=F.svg(s);
+  el.innerHTML=F.svg(s);if(!done)return;
   const B=P.filter(p=>p.g==='best'),W=P.filter(p=>p.g==='worst'),m=(A,k)=>mean(A.map(p=>p[k])).toFixed(1);
   $('gfSay').innerHTML=`The 10 best first rounds averaged <b>${m(B,'r1')}</b>, and the same golfers averaged <b>${m(B,'r2')}</b> the next day. The 10 worst first rounds averaged <b>${m(W,'r1')}</b>, and those golfers averaged <b>${m(W,'r2')}</b> the next day. Both groups moved toward the middle, so the least-squares line is flatter than the 45-degree line (its slope is ${sl.toFixed(2)}, not 1).`+(gfOwn?` The diamonds mark each highlighted golfer's usual score. The second rounds land near the diamonds, so each golfer falls back toward <b>her own</b> usual level, not toward the average of the whole field.`:` Show the usual scores to see where each one was headed.`);}
 function gfFollow(){const p=GF.P[gfPick],r=rng(GF.seed*7+p.i),v=[p.r1,p.r2];for(let k=2;k<8;k++)v.push(Math.round(p.sk+gaussR(r)*2.5));
@@ -1065,35 +1078,61 @@ function gfFollow(){const p=GF.P[gfPick],r=rng(GF.seed*7+p.i),v=[p.r1,p.r2];for(
   $('gfTsSay').innerHTML=`This golfer shot <b>${p.r1}</b> in round 1, one of the ${p.g==='best'?'best':'worst'} in the field, and her usual score is about <b>${p.sk.toFixed(1)}</b>. Over the next seven rounds she scatters around that usual level, because round 1 was ${p.g==='best'?'a good day with some luck in it':'a bad day with some bad luck in it'}. Nothing about her game changed.`;}
 $('gfChart').addEventListener('click',e=>{const c=e.target.closest('.gfp');if(!c)return;gfPick=+c.dataset.i;gfDraw();gfFollow();});
 $('gfOwn').onclick=()=>{gfOwn=!gfOwn;$('gfOwn').textContent=gfOwn?'Hide the usual scores':'Show each highlighted golfer\'s usual score';gfDraw();};
-$('gfNew').onclick=()=>gfRun(Math.floor(R()*1e9));gfRun(156);
+$('gfNew').onclick=()=>gfRun(Math.floor(R()*1e9));$('gfPlay').onclick=gfPlay;
+(function(){const r=rng(156);gfRun(156);gfStop();gfK=0;gfDraw();onVisible($('gfChart'),gfPlay);})();
 
 /* ---- fire the coach: one team over time, then every firing lined up ---- */
-function teamHist(r,T){const sk=Math.min(.78,Math.max(.24,.5+gaussR(r)*.09));let e=0;const w=[];for(let t=0;t<T;t++){e=.55*e+gaussR(r)*.075;w.push(Math.min(.95,Math.max(.05,sk+e)));}
+function teamHist(r,T){const sk=Math.min(.78,Math.max(.24,.5+gaussR(r)*.09));let e=0;const w=[];for(let t=0;t<T;t++){e=.6*e+gaussR(r)*.1;w.push(Math.min(.95,Math.max(.05,sk+e)));}
   const fire=[];let last=-9;w.forEach((v,t)=>{if(v<.35&&t-last>=3){fire.push(t);last=t;}});return {sk,w,fire};}
-let coSeed=3;
-function coTeam(){let r,h,k=0;do{r=rng(coSeed*131+k++);h=teamHist(r,24);}while(k<400&&!(h.fire.length>=1&&h.fire.length<=3&&h.fire[0]>=3&&h.fire[0]<=20&&h.w[h.fire[0]-2]>h.w[h.fire[0]-1]&&h.w[h.fire[0]-1]>h.w[h.fire[0]]&&h.w[h.fire[0]-3]-h.w[h.fire[0]]>.1&&h.w[h.fire[0]+1]>h.w[h.fire[0]]+.06&&h.w[h.fire[0]+2]>h.w[h.fire[0]]+.06));
-  tsChart($('coTeam'),{n:24,lo:0,hi:1,ticks:[0,.25,.5,.75,1],yf:v=>Math.round(v*100)+'%',xl:h.w.map((_,i)=>i%4===0||i===23?String(i+1):''),xt:'Season',series:[{v:h.w,c:'var(--s1-line)',big:h.fire}],mean:{v:h.sk,t:`this team's usual level (${Math.round(h.sk*100)}%)`},h:220});
-  const f=h.fire[0],pre=h.w.slice(Math.max(0,f-3),f+1).map(v=>Math.round(v*100)+'%').join(', '),post=h.w.slice(f+1,f+3).map(v=>Math.round(v*100)+'%').join(' and ');
+let coSeed=3,coStop=()=>{},coH=null,coU=23;
+function coPick(){let r,h,k=0;do{r=rng(coSeed*131+k++);h=teamHist(r,24);}while(k<400&&!(h.fire.length>=1&&h.fire.length<=3&&h.fire[0]>=3&&h.fire[0]<=20&&h.w[h.fire[0]-2]>h.w[h.fire[0]-1]&&h.w[h.fire[0]-1]>h.w[h.fire[0]]&&h.w[h.fire[0]-3]-h.w[h.fire[0]]>.12&&h.w[h.fire[0]+1]>h.w[h.fire[0]]+.08&&h.w[h.fire[0]+2]>h.w[h.fire[0]]+.08));coH=h;}
+function coTeam(){const h=coH;if(!h)return;
+  tsChart($('coTeam'),{n:24,lo:0,hi:1,ticks:[0,.25,.5,.75,1],yf:v=>Math.round(v*100)+'%',xl:h.w.map((_,i)=>i%4===0||i===23?String(i+1):''),xt:'Season',series:[{v:h.w,c:'var(--s1-line)',big:h.fire}],mean:{v:h.sk,t:`this team's usual level (${Math.round(h.sk*100)}%)`},mark:h.fire.map(t=>({i:t,t:'coach fired'})),upto:coU,h:220});}
+function coSay(){const h=coH,f=h.fire[0],pre=h.w.slice(Math.max(0,f-3),f+1).map(v=>Math.round(v*100)+'%').join(', '),post=h.w.slice(f+1,f+3).map(v=>Math.round(v*100)+'%').join(' and ');
   $('coTeamSay').innerHTML=`This team usually wins about <b>${Math.round(h.sk*100)}%</b> of its games. Before its ${h.fire.length>1?'first ':''}firing it went ${pre}, and the coach was fired after that last season. The next two seasons came in at ${post}, back toward its usual level, even though no coach in this simulation does anything. The firing came at the bottom of a slide, so the rebound was coming anyway.`;}
-$('coNew').onclick=()=>{coSeed++;coTeam();};coTeam();
-(function(){const r=rng(2026),K=4,F=Array(9).fill(0),Kp=Array(9).fill(0);let nf=0,nk=0,sF=0,sK=0;
-  for(let i=0;i<1000;i++){const h=teamHist(r,30);h.fire.forEach(t=>{if(t-K<0||t+K>=30)return;const fired=r()<.5;const A=fired?F:Kp;for(let k=-K;k<=K;k++)A[k+K]+=h.w[t+k];if(fired){nf++;sF+=h.sk;}else{nk++;sK+=h.sk;}});}
-  const f=F.map(v=>v/nf),k=Kp.map(v=>v/nk),u=(sF+sK)/(nf+nk);
-  const draw=()=>tsChart($('coEv'),{n:9,lo:.2,hi:.6,ticks:[.2,.3,.4,.5,.6],yf:v=>Math.round(v*100)+'%',xl:['−4','−3','−2','−1','0','+1','+2','+3','+4'],xt:'Seasons before and after the bad season (0)',series:[{v:k,c:'var(--axis)',w:4,r:4},{v:f,c:'#B3261E',w:2.4}],mean:{v:u,t:`these teams' usual level (${Math.round(u*100)}%)`},mark:[{i:4,t:'coach fired',left:false}],h:230});
-  draw();window.addEventListener('resize',draw);const P=v=>Math.round(v*100)+'%';
-  $('coEvSay').innerHTML=`Across ${nf.toLocaleString()} firings, these teams slid from <b>${P(f[0])}</b> four seasons before to <b>${P(f[4])}</b> in the season that got the coach fired, and they were back to <b>${P(f[6])}</b> two seasons later, near their usual level of ${P(u)}. The ${nk.toLocaleString()} teams that kept their coach after an equally bad season made the same V, going from ${P(k[4])} to ${P(k[6])}. Anyone who looks only at the teams that fired their coach will conclude that firing works.`;})();
+function coPlay(){coStop();coPick();coU=0;$('coTeamSay').textContent='';coTeam();coStop=animate(5200,k=>{coU=k*23;coTeam();},coSay);}
+$('coNew').onclick=()=>{coSeed++;coPlay();};coPick();coU=0;coTeam();onVisible($('coTeam'),coPlay);
+(function(){const r=rng(2026),K=4,EV=[];
+  for(let i=0;i<1000;i++){const h=teamHist(r,30);h.fire.forEach(t=>{if(t-K<0||t+K>=30)return;EV.push({f:r()<.5,w:h.w.slice(t-K,t+K+1),sk:h.sk});});}
+  for(let i=EV.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[EV[i],EV[j]]=[EV[j],EV[i]];}
+  let M=0,fin=false,stop=()=>{};const P=v=>Math.round(v*100)+'%';
+  function avg(m,fired){const A=Array(9).fill(0);let n=0,sk=0;for(let i=0;i<m;i++){const e=EV[i];if(e.f!==fired)continue;n++;sk+=e.sk;e.w.forEach((v,k)=>A[k]+=v);}return n?{a:A.map(v=>v/n),n,sk:sk/n}:null;}
+  function draw(){const el=$('coEv'),F=frame(el,250),pl=40,pr=12,pt=26,pb=34,lo=.1,hi=.7,xs=i=>pl+i*(F.w-pl-pr)/8,ys=v=>pt+(hi-Math.max(lo,Math.min(hi,v)))/(hi-lo)*(F.h-pt-pb);let s='';
+    [.1,.2,.3,.4,.5,.6,.7].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${P(v)}</text>`);
+    ['−4','−3','−2','−1','0','+1','+2','+3','+4'].forEach((t,i)=>s+=`<text x="${xs(i)}" y="${F.h-18}" text-anchor="${i===0?'start':i===8?'end':'middle'}" font-size="11" style="fill:var(--muted)">${t}</text>`);
+    s+=`<text x="${(pl+F.w)/2}" y="${F.h-3}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Seasons before and after the bad season (0)</text>`;
+    s+=`<line x1="${xs(4)}" x2="${xs(4)}" y1="${pt}" y2="${F.h-pb}" style="stroke:#B3261E" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+    const line=(a,c,w,op)=>`<polyline fill="none" points="${a.map((v,i)=>xs(i)+','+ys(v)).join(' ')}" style="stroke:${c}" stroke-width="${w}" opacity="${op}"/>`;
+    if(!fin)for(let i=Math.max(0,M-14);i<M;i++){const e=EV[i],age=M-1-i;s+=line(e.w,e.f?'#B3261E':'var(--ink-2)',1.3,(1-age/14)*.55);}
+    const A=avg(M,true),B=avg(M,false);
+    if(A&&B){const u=(A.sk*A.n+B.sk*B.n)/(A.n+B.n);s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(u)}" y2="${ys(u)}" style="stroke:var(--ink-2)" stroke-width="2" stroke-dasharray="6 5"/>`;}
+    if(A)s+=line(A.a,'var(--surface)',7,1)+line(A.a,'#B3261E',3.5,1)+A.a.map((v,i)=>`<circle cx="${xs(i)}" cy="${ys(v)}" r="3.4" style="fill:#B3261E;stroke:var(--surface)" stroke-width="1.5"/>`).join('');
+    if(B)s+=`<polyline fill="none" points="${B.a.map((v,i)=>xs(i)+','+ys(v)).join(' ')}" style="stroke:var(--ink)" stroke-width="2.6" stroke-dasharray="1 6" stroke-linecap="round"/>`;
+    s+=`<text x="${pl+4}" y="14" font-size="12" font-weight="700" style="fill:var(--ink)">${(A?A.n:0).toLocaleString()} fired · ${(B?B.n:0).toLocaleString()} kept</text><text x="${xs(4)+5}" y="${pt+11}" font-size="11.5" font-weight="700" style="fill:#B3261E;stroke:var(--surface);paint-order:stroke" stroke-width="3">coach fired</text>`;
+    el.innerHTML=F.svg(s)+`<div class="kk" style="margin-top:2px"><span><i style="display:inline-block;width:20px;height:0;border-radius:0;border-top:2px dashed var(--ink-2)"></i>these teams' usual level</span></div>`;}
+  function say(){const A=avg(EV.length,true),B=avg(EV.length,false),u=(A.sk*A.n+B.sk*B.n)/(A.n+B.n),f=A.a,k=B.a;
+    $('coEvSay').innerHTML=`Across ${A.n.toLocaleString()} firings, these teams slid from <b>${P(f[0])}</b> four seasons before to <b>${P(f[4])}</b> in the season that got the coach fired, and two seasons later they were back up to <b>${P(f[6])}</b>, well on the way back to their usual level of ${P(u)}. The ${B.n.toLocaleString()} teams that kept their coach after an equally bad season made the same V, going from ${P(k[4])} to ${P(k[6])}. Anyone who looks only at the teams that fired their coach will conclude that firing works.`;}
+  function run(){stop();M=0;fin=false;$('coEvSay').textContent='';draw();
+    stop=animate(9000,k=>{M=Math.round(EV.length*Math.pow(k,2.2));draw();},()=>{M=EV.length;fin=true;draw();say();});}
+  $('evRun').onclick=run;$('evSkip').onclick=()=>{stop();M=EV.length;fin=true;draw();say();};
+  draw();onVisible($('coEv'),run);
+  let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(draw,150);});})();
 
 /* ---- four more examples ---- */
 (function(){
-  const d1=()=>{const sym=[2,4.5,7,8.6,7.8,6.6,5.2,4,3,2.2,1.6,1.1,.8,.6],none=[1.6,3.6,6.1,7.9,8.1,7.2,6,4.7,3.6,2.6,1.9,1.3,.9,.6];
-    tsChart($('ex1'),{n:14,lo:0,hi:10,ticks:[0,5,10],xl:sym.map((_,i)=>i%3===0||i===13?String(i+1):''),xt:'Day of the cold',series:[{v:none,c:'var(--axis)',w:3,r:3},{v:sym,c:'var(--s1-line)',big:[3]}],mean:{v:.5,t:'usual level (feeling fine)'},mark:[{i:3,t:'remedy taken'}],h:180,pl:30});};
+  const d1=(u)=>{const sym=[2,4.5,7,8.6,7.8,6.6,5.2,4,3,2.2,1.6,1.1,.8,.6],none=[1.6,3.6,6.1,7.9,8.1,7.2,6,4.7,3.6,2.6,1.9,1.3,.9,.6];
+    tsChart($('ex1'),{n:14,lo:0,hi:10,ticks:[0,5,10],xl:sym.map((_,i)=>i%3===0||i===13?String(i+1):''),xt:'Day of the cold',series:[{v:none,c:'var(--axis)',w:3,r:3},{v:sym,c:'var(--s1-line)',big:[3]}],mean:{v:.5,t:'usual level (feeling fine)'},mark:[{i:3,t:'remedy taken'}],h:180,pl:30,upto:u});};
   const r=rng(77),N=30,Y=8,Nb=[];for(let i=0;i<N;i++){const m=40+gaussR(r)*10;let e=0;const v=[];for(let t=0;t<Y;t++){e=.3*e+gaussR(r)*7;v.push(Math.max(5,Math.round(m+e)));}Nb.push({m,v});}
   const top=Nb.map((n,i)=>[n.v[3],i]).sort((a,b)=>b[0]-a[0]).slice(0,5).map(x=>x[1]),avg=Array(Y).fill(0).map((_,t)=>mean(top.map(i=>Nb[i].v[t]))),usual=mean(top.map(i=>Nb[i].m));
-  const d2=()=>tsChart($('ex2'),{n:Y,lo:20,hi:75,ticks:[20,40,60],xl:Array(Y).fill(0).map((_,i)=>String(i+1)),xt:'Year',series:Nb.map((n,i)=>top.includes(i)?null:{v:n.v,c:'var(--axis)',w:1,op:.35,dots:false}).filter(Boolean).concat([{v:avg,c:'var(--s2)',w:3,big:[3],bc:'var(--s2)'}]),mean:{v:usual,t:`the five neighborhoods' usual level (about ${usual.toFixed(0)})`},mark:[{i:4,t:'extra policing',left:true}],h:180,pl:30});
+  const d2=(u)=>tsChart($('ex2'),{n:Y,lo:20,hi:75,ticks:[20,40,60],xl:Array(Y).fill(0).map((_,i)=>String(i+1)),xt:'Year',series:Nb.map((n,i)=>top.includes(i)?null:{v:n.v,c:'var(--axis)',w:1,op:.35,dots:false}).filter(Boolean).concat([{v:avg,c:'var(--s2)',w:3,big:[3],bc:'var(--s2)'}]),mean:{v:usual,t:`the five neighborhoods' usual level (about ${usual.toFixed(0)})`},mark:[{i:4,t:'extra policing',left:true}],h:180,pl:30,upto:u});
   $('ex2s').innerHTML=`The orange line averages the five neighborhoods (out of ${N}) with the most crimes in year 4, which then get extra policing from year 5. Their crime falls from ${avg[3].toFixed(0)} to ${avg[4].toFixed(0)}, back toward their usual level of about ${usual.toFixed(0)}, because a neighborhood's worst year is partly bad luck. The gray lines are the other neighborhoods. Since the policing goes to places at their worst, it will look like it works whether or not it does.`;
-  const d3=()=>tsChart($('ex3'),{bars:true,n:7,lo:0,hi:45,ticks:[0,10,20,30,40],xl:['Yr 1','Yr 2','Yr 3','Yr 4','Yr 5','Yr 6','Yr 7'],xt:'Year (the big drive is year 2)',series:[{v:[20,40,25,18,21,19,22]}],hl:[1],mean:{v:20.7,t:'usual size (about 20)'},h:190,pl:30});
-  const d4=()=>tsChart($('ex4'),{n:10,lo:.22,hi:.36,ticks:[.24,.28,.32,.36],yf:v=>v.toFixed(3).replace(/^0/,''),xl:Array(10).fill(0).map((_,i)=>String(i+1)),xt:'Season',series:[{v:[.271,.288,.279,.296,.283,.338,.291,.286,.279,.284],c:'var(--s1-line)',big:[5]}],mean:{v:.2895,t:'career batting average (.290)'},mark:[{i:5,t:'on the cover',left:true}],h:180,pl:38});
-  const all=()=>{d1();d2();d3();d4();};all();window.addEventListener('resize',all);})();
+  const d3=(u)=>tsChart($('ex3'),{bars:true,n:7,lo:0,hi:45,ticks:[0,10,20,30,40],xl:['Yr 1','Yr 2','Yr 3','Yr 4','Yr 5','Yr 6','Yr 7'],xt:'Year (the big drive is year 2)',series:[{v:[20,40,25,18,21,19,22]}],hl:[1],mean:{v:20.7,t:'usual size (about 20)'},h:190,pl:30,upto:u});
+  const d4=(u)=>tsChart($('ex4'),{n:10,lo:.22,hi:.36,ticks:[.24,.28,.32,.36],yf:v=>v.toFixed(3).replace(/^0/,''),xl:Array(10).fill(0).map((_,i)=>String(i+1)),xt:'Season',series:[{v:[.271,.288,.279,.296,.283,.338,.291,.286,.279,.284],c:'var(--s1-line)',big:[5]}],mean:{v:.2895,t:'career batting average (.290)'},mark:[{i:5,t:'on the cover',left:true}],h:180,pl:38,upto:u});
+  const D={1:[d1,13,4200],2:[d2,7,4200],3:[d3,7,3800],4:[d4,9,4200]},U={1:null,2:null,3:null,4:null},ST={};
+  const play=x=>{const [f,n,dur]=D[x];if(ST[x])ST[x]();U[x]=0;f(0);ST[x]=animate(dur,k=>{U[x]=k*n;f(U[x]);},()=>{U[x]=null;f(null);});};
+  [1,2,3,4].forEach(x=>{D[x][0](0);U[x]=0;onVisible($('ex'+x),()=>play(x));});
+  document.querySelectorAll('.ex .rp').forEach(b=>b.addEventListener('click',()=>play(+b.dataset.x)));
+  window.addEventListener('resize',()=>[1,2,3,4].forEach(x=>D[x][0](U[x])));})();
 
 /* ========== Part 9: diagnose it ========== */
 const PB=[['spur','Spurious'],['omit','Omitted variable'],['endo','Endogeneity'],['inter','Intervening variable'],['def','Definition problem'],['rev','Reverse causation'],['reg','Reversion to the mean']];
