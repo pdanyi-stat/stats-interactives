@@ -709,6 +709,13 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="qline" id="moQ" hidden>Most people want to <select id="moSel"><option value="">choose</option><option value="1">increase welfare spending a lot</option><option value="2">increase it a little</option><option value="3">keep it the same</option><option value="4">decrease it a little</option><option value="5">decrease it a lot</option></select> (in 2020). <button class="dbtn" id="moQc">Check</button></div>
     <div class="fbk" id="moFb2" aria-live="polite"></div>
   </section>
+  <section class="dcard" id="rg" data-ds="World.sav">
+    <h3>Regime type in 168 countries (regime_type3)</h3>
+    <p class="p">Tap the bar for the mode.</p>
+    <div id="rgChart"></div>
+    <div class="fbk" id="rgFb" aria-live="polite"></div>
+    <div id="rgOut"></div>
+  </section>
   <section class="dcard" id="bt" data-ds="ANES_2020_Issues_F26.sav">
     <h3>Advise a candidate on the big three issues, 2020 ANES</h3>
     <p class="p">Now consider that you are advising a presidential candidate, and you have survey data on the policy preferences of potential voters from the 2020 ANES. For the speech that launches the campaign, the candidate wants you to zero in on a “big three” issues, so the candidacy can be framed around a message voters can easily digest. Tap an issue to see its bar chart, then pick three issues and the position you would suggest on each.</p>
@@ -723,13 +730,6 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div id="btPicks" class="btpicks"></div>
     <div class="row"><button class="dbtn pri" id="btCheck" disabled>Check my big three</button><button class="dbtn" id="btReset">Start over</button></div>
     <div class="fbk" id="btFb" aria-live="polite"></div>
-  </section>
-  <section class="dcard" id="rg" data-ds="World.sav">
-    <h3>Regime type in 168 countries (regime_type3)</h3>
-    <p class="p">Tap the bar for the mode.</p>
-    <div id="rgChart"></div>
-    <div class="fbk" id="rgFb" aria-live="polite"></div>
-    <div id="rgOut"></div>
   </section>
 
   <!-- 7b MEDIAN IN A FREQUENCY TABLE -->
