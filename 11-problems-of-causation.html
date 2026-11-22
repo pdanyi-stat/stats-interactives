@@ -277,6 +277,15 @@ svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 
+.subnav{margin:18px 0 4px;display:grid;gap:12px}
+.subnav .grp{margin:0 0 6px;font:700 12px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.subnav .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.subnav a{display:flex;flex-direction:column;justify-content:center;gap:2px;min-height:52px;padding:8px 11px;border-radius:9px;border:1px solid var(--line);border-left:4px solid var(--s1-line);background:var(--surface);color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:600;line-height:1.3}
+.subnav a:hover,.subnav a:focus-visible{background:color-mix(in srgb,var(--s1) 10%,var(--surface))}
+.subnav a .sy{font:500 12.5px var(--font-mono);color:var(--muted)}
+.subnav .err a{border-left-color:var(--s2)}
+.subnav .prac a{border-left-color:#5a9a3a}
+.part{scroll-margin-top:70px}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -547,13 +556,14 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
       <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
       <li><a href="exam-prep.html">Exam prep</a></li>
     </ul>
+    <nav class="subnav" aria-label="Sections of this module"><div><p class="grp">Main sections</p><div class="tiles"><a href="#p1">Storytelling and mechanisms</a><a href="#req">Four requirements for a cause</a></div></div><div class="err"><p class="grp">Types of error</p><div class="tiles"><a href="#p2">Spurious<span class="sy">X → ? → Y</span></a><a href="#p3">Omitted variables<span class="sy">Z → X and Y</span></a><a href="#p4">Endogeneity<span class="sy">X ⇄ Y</span></a><a href="#p5">Intervening variables<span class="sy">X → Z → Y</span></a><a href="#p6">Definition problems<span class="sy">X = Y</span></a><a href="#p7">Reverse causation<span class="sy">Y → X</span></a><a href="#p8">Reversion to the mean<span class="sy">extreme → usual</span></a></div></div><div class="prac"><p class="grp">Practice</p><div class="tiles"><a href="#p9">Diagnose it<span class="sy">50 cards</span></a><a href="practice-direction.html">Which way?<span class="sy">next page →</span></a></div></div></nav>
   </div>
 </header>
 
 <main class="wrap">
 
   <!-- 1 REQUIREMENTS -->
-  <section class="part"><p class="kick">Part 1</p><h2>When does a correlation suggest a cause?</h2>
+  <section class="part" id="p1"><p class="kick">Part 1</p><h2>When does a correlation suggest a cause?</h2>
     <p class="lede">A correlation is the presence of covariation between two variables, meaning that as the values on one variable change, the values on the second change systematically with it. You have likely heard that correlation does not imply causation. In fact a correlation often suggests a cause quite strongly, so our job is to ask whether that suggestion holds up once we start questioning it.</p></section>
   <section class="dcard" id="mech">
     <h3>Social science as storytelling</h3>
@@ -578,7 +588,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 2 SPURIOUS -->
-  <section class="part"><p class="kick">Part 2</p><h2>Spurious relationships (X → ? → Y)</h2>
+  <section class="part" id="p2"><p class="kick">Part 2</p><h2>Spurious relationships (X → ? → Y)</h2>
     <p class="lede">A spurious relationship is one in which two things correlate without any reasonable mechanism between them. The world produces a great many patterns by pure accident, so if a story connecting the two is nearly impossible to tell, the relationship might be spurious.</p></section>
   <section class="dcard" id="sp">
     <h3>How to manufacture a spurious correlation</h3>
@@ -601,7 +611,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 3 OMITTED -->
-  <section class="part"><p class="kick">Part 3</p><h2>Omitted variables (Z → X and Y)</h2>
+  <section class="part" id="p3"><p class="kick">Part 3</p><h2>Omitted variables (Z → X and Y)</h2>
     <p class="lede">Sometimes the story we tell between X and Y is wrong because X and Y share a common cause, Z, that drives each of them. These relationships often look spurious until the common cause is revealed.</p></section>
   <section class="dcard" id="om">
     <h3>Your gas bill and your marshmallows</h3>
@@ -625,7 +635,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 4 ENDOGENEITY -->
-  <section class="part"><p class="kick">Part 4</p><h2>Endogeneity (X ⇄ Y)</h2>
+  <section class="part" id="p4"><p class="kick">Part 4</p><h2>Endogeneity (X ⇄ Y)</h2>
     <p class="lede">With endogeneity, the story we tell from X to Y is wrong because X and Y are locked in a feedback loop, where one has influenced the other in the past and the other has pushed back (the slides give it a less polite name). We risk endogeneity problems whenever we lack information about which thing came first.</p></section>
   <section class="dcard" id="en">
     <h3>Happiness and leisure</h3>
@@ -645,7 +655,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 5 INTERVENING -->
-  <section class="part"><p class="kick">Part 5</p><h2>Intervening variables (X → Z → Y)</h2>
+  <section class="part" id="p5"><p class="kick">Part 5</p><h2>Intervening variables (X → Z → Y)</h2>
     <p class="lede">Here the story between X and Y goes wrong because it skips a step. The missing step is a mechanism, present in most cases, that carries the influence of X to Y. These relationships often look reasonable, but the story seems to have a stretch in it.</p></section>
   <section class="dcard" id="ch">
     <h3>Youth and left-party voting</h3>
@@ -672,7 +682,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 6 DEFINITION -->
-  <section class="part"><p class="kick">Part 6</p><h2>Definition problems (X = Y)</h2>
+  <section class="part" id="p6"><p class="kick">Part 6</p><h2>Definition problems (X = Y)</h2>
     <p class="lede">Sometimes the story fails because X is not really distinct from Y. We risk this often when we look for relationships between a big, multifaceted concept and one of the things that make it up.</p></section>
   <section class="dcard" id="df">
     <h3>Democracy and periodic elections</h3>
@@ -687,7 +697,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 7 REVERSE -->
-  <section class="part"><p class="kick">Part 7</p><h2>Reverse causation (Y → X)</h2>
+  <section class="part" id="p7"><p class="kick">Part 7</p><h2>Reverse causation (Y → X)</h2>
     <p class="lede">Reverse causation means the story we tell misses that Y is actually the cause of X. These claims can look reasonable, but they often lack a clear statement of when X happened in relation to Y. They can look like endogeneity problems, but they differ in that we can eventually identify which came first and diagnose the problem.</p></section>
   <section class="dcard" id="rv">
     <h3>Do police cause crime?</h3>
@@ -711,7 +721,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 8 REVERSION -->
-  <section class="part"><p class="kick">Part 8</p><h2>Reversion to the mean</h2>
+  <section class="part" id="p8"><p class="kick">Part 8</p><h2>Reversion to the mean</h2>
     <p class="lede">Every golfer, team or person has a usual level, and any single result mixes that level with luck. An extreme result is usually extreme partly because of luck, and luck doesn't repeat, so the next result tends to fall back toward that golfer's or team's own usual level. That is reversion (or regression) to the mean. It becomes a causal trap when we step in at an extreme moment, because whatever we do then gets the credit for a recovery that was coming anyway.</p></section>
   <section class="dcard" id="gf">
     <h3>Two rounds of golf</h3>
@@ -753,7 +763,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </section>
 
   <!-- 9 DIAGNOSE -->
-  <section class="part"><p class="kick">Part 9</p><h2>Diagnose it</h2>
+  <section class="part" id="p9"><p class="kick">Part 9</p><h2>Diagnose it</h2>
     <p class="lede">Each card makes a causal claim, and there are 50 of them. Pick the problem that best describes the claim, and the diagram will redraw to show what is more likely going on. Some claims draw on published research, and the source appears with the answer. A few claims have a second reading that is defensible, so those answers are marked as close rather than wrong.</p></section>
   <section class="dcard" id="dx">
     <div class="foot"><span id="dxN"></span><span class="dots" id="dxDots"></span></div>
