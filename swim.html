@@ -47,9 +47,10 @@ window.addEventListener('resize',resize);resize();
 
 /* ---------- state ---------- */
 const DX=110;                                 // brontosaurus position
-const G=1400,V0=560;                          // gravity and jump speed (world units per second)
-const S0=420,SMAX=700,ACC=4.2;                // speed in world units per second: start, cap (below the classic game's), and gain per second
-let state='ready',t=0,spd=S0,lift=0,vy=0,air=false,score=0,obs=[],nextGap=0,parts=[],best=0,clouds=[],stars=[];
+const G=1000,V0=486;                          // gravity and jump speed (world units per second): a 118-unit leap lasting about 0.97 s
+const S0=336,SMAX=700,ACC=4.2;                // speed in world units per second: start, cap (below the classic game's), and gain per second
+const RESCUE_AT=200;                          // past this score the Carpathia comes
+let carp=false,state='ready',t=0,spd=S0,lift=0,vy=0,air=false,score=0,obs=[],nextGap=0,parts=[],best=0,clouds=[],stars=[];
 try{best=+localStorage.getItem('brontoSwimBest')||0;}catch(e){}
 for(let i=0;i<5;i++)clouds.push({x:Math.random()*900,y:20+Math.random()*70,s:0.6+Math.random()*0.7});
 for(let i=0;i<40;i++)stars.push({x:Math.random(),y:Math.random()*0.55,r:Math.random()*1.2+0.3});
@@ -57,15 +58,17 @@ for(let i=0;i<40;i++)stars.push({x:Math.random(),y:Math.random()*0.55,r:Math.ran
 /* ---------- items: Titanic and class themed ---------- */
 const KINDS=[ // weight, width, height above the water
   {k:'ice',wt:26,w:44,h:36},{k:'door',wt:18,w:56,h:12},{k:'boat',wt:14,w:66,h:32},
-  {k:'ship',wt:12,w:68,h:34},{k:'beans',wt:10,w:38,h:24},{k:'pcube',wt:14,w:30,h:30}];
+  {k:'ship',wt:12,w:76,h:46},{k:'beans',wt:10,w:38,h:24},{k:'pcube',wt:14,w:30,h:30}];
 const TOT=KINDS.reduce((s,k)=>s+k.wt,0);
 function pick(){let r=Math.random()*TOT;for(const k of KINDS){if((r-=k.wt)<0)return k;}return KINDS[0];}
-function spawn(){const k=pick();obs.push({...k,x:WW+20,seed:Math.random()*1000,done:false,iceH:k.k==='ice'?28+Math.random()*10:0});
-  const v=spd;nextGap=(v*(1.05+Math.random()*1.0)+k.w)/v;}
+function spawn(){if(carp)return;if(score>=RESCUE_AT){carp=true;obs.push({k:'carpathia',w:430,h:132,x:WW+40,seed:0,done:true});nextGap=1e9;return;}
+  const k=pick();obs.push({...k,x:WW+20,seed:Math.random()*1000,done:false,iceH:k.k==='ice'?28+Math.random()*10:0});
+  const v=spd;nextGap=(v*(1.2+Math.random()*1.0)+k.w)/v;}
 
-function reset(){t=0;spd=S0;lift=0;vy=0;air=false;score=0;obs=[];parts=[];nextGap=0.6;state='play';}
+function reset(){carp=false;t=0;spd=S0;lift=0;vy=0;air=false;score=0;obs=[];parts=[];nextGap=0.6;state='play';}
 function jump(){if(state==='ready'){reset();}
   else if(state==='over'){if(t>0.45)reset();return;}
+  else if(state==='rescued'){if(t>0.6)location.href='practice-titanic.html';return;}
   if(!air){air=true;vy=V0;splash(DX+10,WL,10,1);}}
 function splash(x,y,n,p){for(let i=0;i<n;i++)parts.push({x:x+(Math.random()-0.5)*40,y,vx:(Math.random()-0.5)*160*p,vy:-(80+Math.random()*200)*p,life:0.6+Math.random()*0.4});}
 
@@ -77,7 +80,11 @@ window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e
 function dinoBoxes(){const cy=WL+18-lift;return [
   {x0:DX-44,x1:DX+32,y0:cy-20,y1:cy+14},      // body
   {x0:DX+28,x1:DX+60,y0:cy-70,y1:cy-18}];}    // neck and head
-function obsBox(o){const bob=Math.sin(t*3+o.seed)*1.5;return {x0:o.x+4,x1:o.x+o.w-4,y0:WL-(o.k==='ice'?o.iceH:o.h)+4+bob,y1:WL+4};}
+function obsBoxes(o){const bob=Math.sin(t*3+o.seed)*1.5,B=(a,b,h)=>({x0:o.x+a,x1:o.x+b,y0:WL-h+4+bob,y1:WL+4});
+  if(o.k==='ship')return [B(4,o.w-4,26),B(18,54,o.h)];               // hull, then the funnels
+  if(o.k==='ice')return [B(6,o.w-6,o.iceH)];
+  if(o.k==='carpathia')return [B(0,o.w,62),B(70,330,96),B(150,180,o.h)];
+  return [B(4,o.w-4,o.h)];}
 const hit=(a,b)=>a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0;
 
 /* ---------- update ---------- */
@@ -87,9 +94,12 @@ function update(dt){t+=dt;
     nextGap-=dt;if(nextGap<=0)spawn();
     if(air){lift+=vy*dt;vy-=G*dt;if(lift<=0){lift=0;vy=0;air=false;splash(DX,WL,12,0.8);}}
     const D=dinoBoxes();
-    for(const o of obs){const B=obsBox(o);if(D.some(d=>hit(d,B))){state='over';t=0;splash(DX+20,WL,40,1.6);
+    for(const o of obs){const Bs=obsBoxes(o);if(D.some(d=>Bs.some(B=>hit(d,B)))){
+        if(o.k==='carpathia'){state='rescued';t=0;if(air&&lift>40){lift=Math.max(lift,WL+18+14-(WL-62));air=false;vy=0;}}
+        else{state='over';t=0;splash(DX+20,WL,40,1.6);}
         if(score>best){best=score;try{localStorage.setItem('brontoSwimBest',String(best));}catch(e){}}break;}
       if(!o.done&&o.x+o.w<DX-44){o.done=true;score++;}}}
+  if(state==='rescued'&&t>3.6&&!update.left){update.left=true;location.href='practice-titanic.html';}
   clouds.forEach(c=>{c.x-=(state==='play'?spd*0.06:8)*dt*c.s;if(c.x<-120)c.x=WW+60+Math.random()*200;});
   parts.forEach(p=>{p.x+=p.vx*dt-(state==='play'?spd*dt*0.5:0);p.y+=p.vy*dt;p.vy+=900*dt;p.life-=dt;});parts=parts.filter(p=>p.life>0&&p.y<WL+30);}
 
@@ -136,8 +146,9 @@ function drawHeart(x,y){const k=1.6,P=(a,b)=>[x+a*k,y+b*k];ctx.save();
 
 function drawItem(o){const bob=Math.sin(t*3+o.seed)*1.5,x=o.x,y=WL+bob;ctx.save();ctx.lineJoin='round';
   if(o.k==='ice'){const h=o.iceH,w=o.w;ctx.beginPath();ctx.moveTo(x,y+4);ctx.lineTo(x+6,y-h*0.5);ctx.lineTo(x+14,y-h*0.62);ctx.lineTo(x+20,y-h);ctx.lineTo(x+28,y-h*0.72);ctx.lineTo(x+35,y-h*0.8);ctx.lineTo(x+w,y+4);ctx.closePath();
-    ctx.fillStyle='#F4FBFF';ctx.fill();ctx.strokeStyle='#8FB9D6';ctx.lineWidth=1.6;ctx.stroke();
-    ctx.beginPath();ctx.moveTo(x+20,y-h);ctx.lineTo(x+22,y-h*0.35);ctx.lineTo(x+28,y-h*0.72);ctx.fillStyle='#D6EAF6';ctx.fill();}
+    const ig=ctx.createLinearGradient(x,y-h,x+w,y);ig.addColorStop(0,'#FFFFFF');ig.addColorStop(1,'#BFE0F4');ctx.fillStyle=ig;ctx.fill();ctx.strokeStyle=dark()?'#9FD0F0':'#2F6E9E';ctx.lineWidth=2.2;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x+20,y-h);ctx.lineTo(x+22,y-h*0.35);ctx.lineTo(x+28,y-h*0.72);ctx.closePath();ctx.fillStyle='#8EC3E6';ctx.fill();
+    ctx.beginPath();ctx.moveTo(x+28,y-h*0.72);ctx.lineTo(x+31,y-h*0.2);ctx.lineTo(x+35,y-h*0.8);ctx.closePath();ctx.fillStyle='#A9D2EE';ctx.fill();}
   else if(o.k==='door'){ctx.translate(x+o.w/2,y-5);ctx.rotate(-0.07+Math.sin(t*2+o.seed)*0.03);
     rr(-o.w/2,-5,o.w,10,2);ctx.fillStyle='#8B5A2B';ctx.fill();ctx.strokeStyle='#4E3217';ctx.lineWidth=1.4;ctx.stroke();
     ctx.strokeStyle='#6B4220';ctx.lineWidth=1;[-o.w/2+5,-2].forEach(px=>{ctx.strokeRect(px,-3,o.w/2-8,6);});ctx.fillStyle='#E2B23C';ctx.beginPath();ctx.arc(o.w/2-4,0,1.4,0,Math.PI*2);ctx.fill();}
@@ -148,12 +159,24 @@ function drawItem(o){const bob=Math.sin(t*3+o.seed)*1.5,x=o.x,y=WL+bob;ctx.save(
       const a=-1.2+Math.sin(t*8+i*1.7)*0.5;ctx.beginPath();ctx.moveTo(px+3,top+8);ctx.lineTo(px+3+Math.cos(a)*8,top+8+Math.sin(a)*8);ctx.strokeStyle=p.s;ctx.lineWidth=2;ctx.lineCap='round';ctx.stroke();});
     ctx.beginPath();ctx.moveTo(x,y-12);ctx.lineTo(x+o.w,y-12);ctx.quadraticCurveTo(x+o.w-4,y+4,x+o.w-14,y+4);ctx.lineTo(x+12,y+4);ctx.quadraticCurveTo(x+3,y+4,x,y-12);ctx.closePath();
     ctx.fillStyle='#FAFAF7';ctx.fill();ctx.strokeStyle='#5D4037';ctx.lineWidth=1.6;ctx.stroke();ctx.fillStyle='#A1764B';ctx.fillRect(x+1,y-13,o.w-2,3);}
-  else if(o.k==='ship'){// a small ocean liner with four funnels
-    ctx.fillStyle='#1B1E22';ctx.beginPath();ctx.moveTo(x,y-14);ctx.lineTo(x+o.w,y-14);ctx.lineTo(x+o.w-6,y+3);ctx.lineTo(x+5,y+3);ctx.closePath();ctx.fill();
-    ctx.fillStyle='#A3291F';ctx.fillRect(x+4,y-1,o.w-9,4);
-    ctx.fillStyle='#F4F1E8';ctx.fillRect(x+9,y-21,o.w-18,7);ctx.strokeStyle='#8A8578';ctx.lineWidth=0.8;ctx.strokeRect(x+9,y-21,o.w-18,7);
-    ctx.fillStyle='#2A2E33';for(let i=0;i<9;i++){ctx.beginPath();ctx.arc(x+8+i*6.5,y-9,1,0,Math.PI*2);ctx.fill();}
-    [0,1,2,3].forEach(i=>{const fx=x+15+i*11;ctx.fillStyle='#E1A841';ctx.fillRect(fx,y-33,6,12);ctx.fillStyle='#1B1E22';ctx.fillRect(fx,y-33,6,3.5);});}
+  else if(o.k==='ship'){// a small ocean liner with four tall funnels
+    ctx.fillStyle='#1B1E22';ctx.beginPath();ctx.moveTo(x,y-18);ctx.lineTo(x+o.w,y-18);ctx.lineTo(x+o.w-7,y+3);ctx.lineTo(x+6,y+3);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#A3291F';ctx.fillRect(x+5,y-1,o.w-11,4);
+    ctx.fillStyle='#F4F1E8';ctx.strokeStyle='#8A8578';ctx.lineWidth=0.8;ctx.fillRect(x+7,y-26,o.w-14,8);ctx.strokeRect(x+7,y-26,o.w-14,8);ctx.fillRect(x+13,y-31,o.w-30,5);ctx.strokeRect(x+13,y-31,o.w-30,5);
+    ctx.fillStyle='#2A2E33';for(let i=0;i<11;i++){ctx.beginPath();ctx.arc(x+8+i*6.2,y-11,1.1,0,Math.PI*2);ctx.fill();}
+    ctx.fillStyle='#9AA0A6';for(let i=0;i<9;i++)ctx.fillRect(x+10+i*6.6,y-24,3,3);
+    [0,1,2,3].forEach(i=>{const fx=x+19+i*9.5;ctx.fillStyle='#E1A841';ctx.fillRect(fx,y-47,6.5,17);ctx.fillStyle='#1B1E22';ctx.fillRect(fx,y-47,6.5,4.5);});
+    ctx.strokeStyle='#3A3F45';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+8,y-26);ctx.lineTo(x+10,y-52);ctx.moveTo(x+o.w-8,y-26);ctx.lineTo(x+o.w-10,y-50);ctx.stroke();}
+  else if(o.k==='carpathia'){// the rescue ship: far too big to leap over
+    const w=o.w;ctx.fillStyle='#1E2226';ctx.beginPath();ctx.moveTo(x-14,y-62);ctx.lineTo(x+w,y-62);ctx.lineTo(x+w-12,y+4);ctx.lineTo(x+14,y+4);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#9E2A20';ctx.fillRect(x+10,y-4,w-24,8);
+    ctx.fillStyle='#F2EEE3';ctx.fillRect(x+70,y-96,260,34);ctx.strokeStyle='#8A8578';ctx.lineWidth=1;ctx.strokeRect(x+70,y-96,260,34);
+    ctx.fillStyle='#5B6168';for(let i=0;i<20;i++)ctx.fillRect(x+80+i*12.5,y-88,6,6);for(let i=0;i<20;i++)ctx.fillRect(x+80+i*12.5,y-76,6,6);
+    ctx.fillStyle='#2A2E33';for(let i=0;i<26;i++){ctx.beginPath();ctx.arc(x+24+i*15,y-36,2.2,0,Math.PI*2);ctx.fill();}
+    ctx.fillStyle='#C8361E';ctx.fillRect(x+150,y-132,30,36);ctx.fillStyle='#14171A';ctx.fillRect(x+150,y-132,30,10);
+    ctx.strokeStyle='#2A2E33';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+40,y-62);ctx.lineTo(x+44,y-150);ctx.moveTo(x+w-40,y-62);ctx.lineTo(x+w-44,y-146);ctx.stroke();
+    ctx.fillStyle='#FFFFFF';ctx.font='700 21px Georgia,"Times New Roman",serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillText('CARPATHIA',x+18,y-44);
+    ctx.font='700 9px Georgia,serif';ctx.fillText('LIVERPOOL',x+w-80,y-44);}
   else if(o.k==='beans'){const C=['#D32F2F','#FBC02D','#388E3C','#7B1FA2','#F57C00','#1976D2','#E91E63','#8BC34A','#5D4037'];let n=0;
     [[4,0],[3,1],[2,2]].forEach(([cnt,row])=>{for(let i=0;i<cnt;i++){const bx=x+6+row*4.5+i*9,by=y-4-row*7.5;ctx.save();ctx.translate(bx,by);ctx.rotate(((n*37)%7-3)*0.12);
       ctx.beginPath();ctx.ellipse(0,0,4.8,3.4,0,0,Math.PI*2);ctx.fillStyle=C[n%C.length];ctx.fill();ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=0.8;ctx.stroke();
@@ -185,9 +208,10 @@ function draw(){const nt=dark();ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
   ctx.fillText(`Score ${score}   Best ${best}`,WW-14,12);
   ctx.textAlign='center';
   if(state==='ready'){panel(['Tap, click or press the space bar to start.','Each tap makes the brontosaurus leap.']);}
-  if(state==='over'){panel([`Splash! You cleared ${score} ${score===1?'thing':'things'}.`,t>0.45?'Tap to swim again.':' ']);}}
-function panel(lines){const w=Math.min(WW-30,360),h=58,x=(WW-w)/2,y=58;ctx.fillStyle=dark()?'rgba(14,16,18,.82)':'rgba(255,255,255,.9)';rr(x,y,w,h,10);ctx.fill();
-  ctx.fillStyle=dark()?'#EEF0F2':'#16191C';ctx.font='700 15px system-ui,sans-serif';ctx.fillText(lines[0],WW/2,y+11);ctx.font='14px system-ui,sans-serif';ctx.fillText(lines[1],WW/2,y+33);}
+  if(state==='over'){panel([`Splash! You cleared ${score} ${score===1?'thing':'things'}.`,t>0.45?'Tap to swim again.':' ']);}
+  if(state==='rescued'){panel(['You are one of the lucky ones.',`The Carpathia picked you up after you cleared ${score} things.`,'Taking you back to the Titanic practice now.']);}}
+function panel(lines){const w=Math.min(WW-24,440),h=14+lines.length*21,x=(WW-w)/2,y=50;ctx.fillStyle=dark()?'rgba(14,16,18,.85)':'rgba(255,255,255,.92)';rr(x,y,w,h,10);ctx.fill();
+  ctx.fillStyle=dark()?'#EEF0F2':'#16191C';lines.forEach((L,i)=>{ctx.font=(i?'':'700 ')+(i?13.5:15)+'px system-ui,sans-serif';ctx.fillText(L,WW/2,y+10+i*21,w-16);});}
 
 let last=performance.now();
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(frame);}
