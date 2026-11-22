@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hypotheses and variables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#F4F5F6;
+  --surface:#FFFFFF;
+  --ink:#16191C;
+  --ink-2:#4A4F55;
+  --muted:#5F6266;
+  --grid:#E3E5E8;
+  --axis:#B9BCC0;
+  --line:rgba(22,25,28,.12);
+  --accent:#004C97;          /* masthead rule, kicker */
+  --pop:#75787B;             /* population bars */
+  --s1:#004C97;--s1-edge:transparent;--s1-line:#004C97;--accent-ink:#004C97;              /* sample means (blue) */
+  --s1-ink:#004C97;
+  --s2:#C25E00;              /* the current sample (orange) */
+  --s2-ink:#9A4A00;
+  --code-bg:#EDEFF1;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+    --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+    --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+  --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+  --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1-line);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+button.primary{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-color:var(--s1-ink);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 6 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; --q1:#cde2fb; --q2:#86b6ef; --q3:#3987e5; --q4:#1c5cab; --q5:#0d366b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-b1{color:var(--s2-ink);font-weight:600}
+.k-b2{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--ink-2);font-weight:600}
+.chart svg{display:block}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:92ch}
+.steps b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:92px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1-ink)}
+.calc{font-family:var(--font-mono);font-size:13px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.big{font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ramp{display:inline-block;width:70px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--q1),var(--q3),var(--q5))}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.ghost{height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0}
+/* filled equation */
+.terms{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;margin-top:6px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:17px;font-weight:600;padding:3px 8px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.b1{border-color:var(--s2);color:var(--s2-ink)} .term .t.b2{border-color:var(--s1-ink);color:var(--s1-ink)} .term .t.v{border-color:var(--ink)} .term .t.op{border:0;padding:3px 0;color:var(--ink-2)}
+.term .n{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);line-height:1.2;max-width:14ch}
+/* OVB */
+.ovb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:center}
+@media (max-width:860px){.ovb{grid-template-columns:1fr}}
+.decomp{font-size:15px;display:grid;gap:8px}
+.decomp .eqn{font-family:var(--font-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.verdict{display:inline-block;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;background:var(--ink);color:var(--surface)}
+/* model builder */
+.ivlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;margin:6px 0 10px}
+.ivlist label{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+.ivlist input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+.fitbars{display:grid;gap:10px;margin-top:6px}
+.fb .lab{font-size:13.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.fb .lab b{color:var(--ink)}
+.track{height:16px;border-radius:4px;background:var(--page);border:1px solid var(--line);position:relative;overflow:hidden}
+.fill{height:100%;background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fill.adj{background:var(--s2)}
+.ghostmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55;transition:left .5s}
+@media (prefers-reduced-motion: reduce){.fill,.ghostmark{transition:none}}
+pre.stata .b1{color:var(--s2-ink);font-weight:600}
+pre.stata .b2{color:var(--s1-ink);font-weight:600}
+pre.stata .ns{color:var(--muted)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#B07A12;--amber-bg:#FFF1D6;--amber-ink:#6B4A00;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:9px 14px;border-radius:7px;border:2px solid var(--amber)}
+.fljumpbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.fljumpbox p{margin:0;font-size:14.5px;color:var(--ink);max-width:75ch}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
+
+/* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
+svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):not([stroke]){stroke:var(--s1-edge);stroke-width:1px}
+svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
+svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
+svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+
+</style>
+<style>
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:grid;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+.dcard{scroll-margin-top:70px}
+.act{display:grid;gap:10px;margin-top:4px;padding:14px 15px 13px;border-radius:10px;background:color-mix(in srgb,var(--s1) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--s1-line) 35%,var(--line));border-left:5px solid var(--s1-line)}
+.act>.kick{color:var(--s1-ink)!important;font-weight:700;letter-spacing:.04em}
+.tag{justify-self:start;display:inline-block;font:600 12.5px var(--font-body);letter-spacing:.03em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--s1);color:#fff;box-shadow:inset 0 0 0 1px var(--s1-edge)}
+.ctx{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.chips button.yes{background:var(--s1);color:#fff;border-color:var(--s1-ink);box-shadow:inset 0 0 0 1px var(--s1-edge)}
+.chips button.nope{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.chips button.isY{background:color-mix(in srgb,var(--s2) 16%,var(--surface));border-color:var(--s2);color:var(--ink)}
+.chips button.either{border-style:dashed;border-color:var(--s1-line)}
+.chips button .role{display:inline-block;margin-left:7px;font:700 11.5px var(--font-body);letter-spacing:.03em;padding:1px 7px;border-radius:999px;vertical-align:1px}
+.chips button.yes .role{background:#fff;color:var(--s1)}
+.chips button.isY .role{background:var(--s2);color:#fff}
+.dots{display:inline-flex;gap:5px;align-items:center}
+.dots i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--s1-line) 22%,var(--surface));border:1px solid color-mix(in srgb,var(--s1-line) 45%,var(--line))}
+.dots i.on{background:var(--s1-line);border-color:var(--s1-line)}
+.dots i.cur{background:var(--s2);border-color:var(--s2);transform:scale(1.25)}
+.xy-x{color:var(--s1-ink);font-weight:600}.xy-y{color:var(--s2-ink);font-weight:600}
+.act .q{margin:0;font-size:17px;line-height:1.5;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:14.5px}
+.chips button[aria-pressed="true"]{background:var(--selbg,#DCE8F5);color:var(--selink,#003D7A);border-color:var(--s1-line)}
+.foot>span{white-space:nowrap;display:inline-flex;align-items:center}.foot button{white-space:nowrap}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.act{grid-template-columns:minmax(0,1fr)}.act>*{min-width:0}
+.arrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:480px}
+.arrows .ax{text-align:center}
+#sc{width:100%;max-width:480px;height:auto;display:block;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.arrows.off button{opacity:.35}
+#nd[aria-pressed="true"]{background:var(--s1);color:#fff;border-color:var(--s1-ink);box-shadow:inset 0 0 0 1px var(--s1-edge)}
+.arrows .ax{display:grid;justify-items:center;gap:4px;font-size:13.5px;color:var(--ink-2)}
+.arrows .ax button{width:58px;height:58px;font-size:28px;padding:0;line-height:1;font-weight:700}
+#ax{background:color-mix(in srgb,var(--s1) 14%,var(--surface));border:2px solid var(--s1-line);color:var(--s1-ink)}
+#ay{background:color-mix(in srgb,var(--s2) 14%,var(--surface));border:2px solid var(--s2);color:var(--s2-ink)}
+#axl{color:var(--s1-ink);font-weight:600}#ayl{color:var(--s2-ink);font-weight:600}
+@media (max-width:640px){@media (max-width:640px){.hyp{font-style:italic;color:var(--ink);margin:0}
+ul.p{margin:0;padding-left:20px}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Start here: </span><b>Hypotheses and variables</b></span><a href="1-levels-and-central-tendency.html" aria-label="Next: Levels and central tendency">Next →</a></nav>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Start here</p>
+    <h1>Hypotheses and variables</h1>
+    <p class="dek">Statistical tests start from a pair of hypotheses about two variables. This page covers what a hypothesis needs, which variable is the cause, and which way a relationship runs.</p>
+    <ul class="modnav" aria-label="Modules in this series">
+      <li class="home"><a href="index.html">← All modules</a></li>
+      <li aria-current="page"><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
+      <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
+      <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
+      <li><a href="3-dispersion.html">3 Dispersion</a></li>
+      <li><a href="4-sampling-distributions.html">4 Sampling distributions</a></li>
+      <li><a href="5-confidence-intervals.html">5 Confidence intervals</a></li>
+      <li><a href="6-difference-in-means.html">6 Difference in means</a></li>
+      <li><a href="7-pre-measures.html">7 PRE measures</a></li>
+      <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
+      <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
+      <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
+      <li><a href="practice-direction.html">Practice: Which way?</a></li>
+      <li><a href="practice-titanic.html">Practice: Titanic</a></li>
+      <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="exam-prep.html">Exam prep</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="part"><p class="kick">Part 1</p><h2>What a hypothesis needs</h2></section>
+  <section class="dcard" id="needs">
+    <p class="p">A hypothesis formalizes what we expect to see when we study the political world. A workable one has four parts:</p>
+    <ul class="p">
+      <li>It suggests a relationship between two things.</li>
+      <li>It can suggest a direction for that relationship. A direction is preferred when you have a reason to expect one; when you don't, saying only that two things are related is fine.</li>
+      <li>Hypotheses come in a pair: a research hypothesis (H₁) and a null hypothesis (H₀).</li>
+      <li>The null hypothesis always states that there is no relationship between the two things.</li>
+    </ul>
+    <p class="p"><b>An example.</b> Some countries choose their leaders through millions of voters; others through a small circle of generals or party officials. Bueno de Mesquita and his co-authors argue that leaders chosen by a large group can't afford to buy off everyone they need, so they provide public goods instead, while leaders chosen by a small group can keep power by rewarding a few insiders (<i>The Logic of Political Survival</i>, 2003). That argument becomes a pair of hypotheses:</p>
+    <p class="hyp">H₁: The larger the number of people selecting a leader in a political system, the less likely that system is to display corruption.</p>
+    <p class="hyp">H₀: There is no relationship between the number of people selecting a leader and corruption.</p>
+    <div class="act"><p class="kick">Try it · Fix this hypothesis</p><span class="tag" id="h1tag"></span><p class="ctx" id="h1ctx"></p><p class="q" id="h1s"></p><p class="p" style="font-size:15px;margin:0"><b>What would you fix?</b></p><div class="chips" id="h1c"></div><div class="fbk" id="h1f"></div><div class="foot"><span id="h1n"></span><button id="h1x">Next →</button></div></div>
+  </section>
+
+  <section class="part"><p class="kick">Part 2</p><h2>Which one is the independent variable?</h2></section>
+  <section class="dcard" id="iv">
+    <p class="p">The independent variable (IV, or X) is the one we think does the causing. The dependent variable (DV, or Y) is the outcome. To tell them apart, ask which one could change the other. A cause has to come first in time, so something that happens later can't change something that was already set.</p>
+    <p class="p">Sometimes the order isn't obvious, and either variable could plausibly affect the other. Then researchers have to argue for an order, and readers can disagree.</p>
+    <div class="act"><p class="kick">Try it · Pick the IV</p><span class="tag" id="h2tag"></span><p class="ctx" id="h2ctx"></p><p class="p" style="font-size:15px;margin:0"><b>Which is the cause?</b></p><div class="chips" id="h2c"></div><div class="fbk" id="h2f"></div><div class="foot"><span id="h2n"></span><button id="h2x">Next →</button></div></div>
+  </section>
+
+  <section class="part"><p class="kick">Part 3</p><h2>Positive or inverse</h2></section>
+  <section class="dcard" id="dir">
+    <p class="p">"Positive" means the two variables change in the same direction: up and up, or down and down. "Inverse" (or negative) means they move in opposite directions: one goes up as the other goes down. Positive doesn't mean good.</p>
+    <p class="p">Watch how a variable is coded. On the Titanic, first class is coded 1 and third class is coded 3, so a higher number means a lower class. Whether a relationship comes out positive or inverse depends on those codes, so a graph needs axis labels with the values on each scale before you can say which way it runs.</p>
+    <p class="p">A hypothesis can also say only that two variables are related, without a direction. That's fine when you have no reason to expect one, but state the direction when you do.</p>
+    <div class="act"><p class="kick">Try it · Match the hypothesis</p><span class="tag" id="h3tag"></span><p class="ctx" id="h3ctx"></p><p class="q" id="h3s"></p>
+      <div class="arrows"><div class="ax"><button id="ax" aria-label="Direction of X">↑</button><span id="axl"></span></div><div class="ax"><button id="ay" aria-label="Direction of Y">↑</button><span id="ayl"></span></div></div>
+      <svg id="sc" viewBox="0 0 320 274" role="img" aria-label="Sketch of the relationship"></svg>
+      <div class="chips"><button id="nd" aria-pressed="false">No direction stated</button><button class="primary" id="h3k">Check</button></div>
+      <div class="fbk" id="h3f"></div><div class="foot"><span id="h3n"></span><button id="h3x">Next →</button></div></div>
+  </section>
+
+  <section class="dcard" id="refs">
+    <p class="kick" style="color:var(--muted)">Studies mentioned on this page</p>
+    <ul class="p" style="font-size:14.5px;display:grid;gap:4px">
+      <li>Bueno de Mesquita, Bruce, Alastair Smith, Randolph M. Siverson, and James D. Morrow. 2003. <i>The Logic of Political Survival</i>. Cambridge, MA: MIT Press.</li>
+      <li>Campbell, Angus, Philip E. Converse, Warren E. Miller, and Donald E. Stokes. 1960. <i>The American Voter</i>. New York: Wiley.</li>
+      <li>Downs, Anthony. 1957. <i>An Economic Theory of Democracy</i>. New York: Harper.</li>
+      <li>Frey, Bruno S., David A. Savage, and Benno Torgler. 2011. "Behavior under Extreme Conditions: The Titanic Disaster." <i>Journal of Economic Perspectives</i> 25 (1): 209–222.</li>
+      <li>Hatchett, Shirley, and Howard Schuman. 1975. "White Respondents and Race-of-Interviewer Effects." <i>Public Opinion Quarterly</i> 39 (4): 523–527.</li>
+      <li>Levendusky, Matthew. 2009. <i>The Partisan Sort: How Liberals Became Democrats and Conservatives Became Republicans</i>. Chicago: University of Chicago Press.</li>
+      <li>Wolfinger, Raymond E., and Steven J. Rosenstone. 1980. <i>Who Votes?</i> New Haven, CT: Yale University Press.</li>
+    </ul>
+  </section>
+
+  <nav class="pager" aria-label="Previous and next"><span></span><a class="home" href="index.html">All modules</a><a class="nx" href="1-levels-and-central-tendency.html"><span class="k">Next · Module 1 →</span><span class="t">Levels of measurement and central tendency</span></a></nav>
+</main>
+<script>
+(()=>{
+const $=i=>document.getElementById(i);
+function say(id,ok,t){const e=$(id);e.className='fbk show '+(ok?'ok':'no');e.innerHTML=`<b class="k">${ok?'Right.':'Not quite.'}</b> ${t}`;}
+function clear(id){const e=$(id);e.className='fbk';e.innerHTML='';}
+const nx=(n,c)=>(c+1)%n;
+const dots=(n,c)=>'<span class="dots" aria-hidden="true">'+Array.from({length:n},(_,k)=>`<i class="${k===c?'cur':k<c?'on':''}"></i>`).join('')+'</span>';
+const foot=(id,word,n,c)=>{$(id).innerHTML=`${dots(n,c)} <span style="margin-left:6px">${c+1} of ${n}</span>`;$(id).setAttribute('aria-label',`${word} ${c+1} of ${n}`);};
+/* 1 fix this hypothesis: [context, statement, answer, why] */
+const M=['Only one variable','Could state a direction','Can’t be tested','The null states a relationship','Nothing to fix'];
+const A1=[
+["A student wants to study corruption around the world and drafts this:","Corruption varies a lot from country to country.",0,"There's only one variable here, corruption. A hypothesis relates two things, such as corruption and the size of the group that selects a country's leader."],
+["A student reading about the Titanic writes:","Many of the passengers on the Titanic died.",0,"There's only one variable here, survival. To make it a hypothesis, relate survival to something else about the passengers, such as their class or sex."],
+["Working from <i>The Logic of Political Survival</i>, a student writes:","The size of the group that selects a leader is related to how corrupt the political system is.",1,"Leaving out the direction is allowed, but here the theory predicts one: the larger the group, the less corruption. When you suspect a direction, state it."],
+["The legend of the Titanic says the crew loaded “women and children first.” A student writes this null hypothesis:","H₀: Women were more likely to survive the Titanic than men.",3,"That's the research hypothesis. A null hypothesis always states no relationship: there is no difference in survival between men and women."],
+["A commentator on cable news claims:","Politicians secretly prefer chaos.",2,"“Secretly” means there's no observable evidence anyone could gather, so there's no way to test it."],
+["A student isn't sure which way this would go on the Titanic. Family members might help each other reach a lifeboat, or might slow each other down looking for one another. The student writes:","H₁: Whether a passenger traveled alone is related to whether they survived.",4,"Two variables, and both can be observed. With no reason to expect one direction over the other, it's fine to leave the direction out. Its null: there is no relationship between traveling alone and survival."],
+["In <i>Who Votes?</i>, Wolfinger and Rosenstone (1980) used Census Bureau surveys to study who votes. One of their hypotheses could be written as:","Older citizens are more likely to vote than younger citizens.",4,"Two variables (age and voting), a direction, and both can be measured. Its null: there is no relationship between age and turnout."]];
+const T1=['Corruption','Titanic','Political survival','Titanic','Cable news','Titanic','Who votes'];
+let i1=0;function d1(){const a=A1[i1];$('h1tag').textContent=T1[i1];$('h1ctx').innerHTML=a[0];$('h1s').textContent=a[1];clear('h1f');foot('h1n','Example',A1.length,i1);$('h1c').innerHTML=M.map((m,k)=>`<button data-k="${k}">${m}</button>`).join('');}
+$('h1c').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=A1[i1],k=+b.dataset.k;$('h1c').querySelectorAll('button').forEach(c=>{c.className=+c.dataset.k===a[2]?'yes':'';});if(k!==a[2])b.className='nope';say('h1f',k===a[2],a[3]);};$('h1x').onclick=()=>{i1=nx(A1.length,i1);d1();};
+/* 2 pick the IV: [context, var A, var B, answer 0/1/2(either), why] */
+const A2=[
+["<b>The Titanic.</b> When the Titanic sank in 1912, its lifeboats could hold only about half the people aboard. Frey, Savage and Torgler (2011) used the passenger list to ask whether a passenger's ticket class affected who survived.","Passenger class","Whether the passenger survived",0,"Class was set when the ticket was bought, before the ship sailed. Surviving can't change what ticket someone held."],
+["<b>Interviewers in South Africa.</b> In 1995, right after the country's first election open to all races, survey interviewers of different races went door to door asking people how they voted. Studies in the U.S. had already found that people answer some questions differently depending on the interviewer's race (Hatchett and Schuman 1975).","What respondents say about how they voted","The interviewer's race",1,"The interviewer's race can shape what people say. What people say can't change who knocked on their door."],
+["<b>Women first.</b> The Titanic's crew was ordered to load women and children into the lifeboats first. On the passenger list, about 73% of women survived, against 19% of men.","Whether the passenger survived","The passenger's sex",1,"Sex was set long before the ship sailed. Surviving can't change it."],
+["<b>Who votes?</b> Wolfinger and Rosenstone (1980) used Census surveys to see which Americans turn out to vote. One pattern they studied: older citizens vote at higher rates.","Age","Turnout in the last election",0,"Age comes first. Voting can't change how old someone is."],
+["<b>Children first.</b> The same order covered children. A student uses the passenger list to ask whether a passenger's age affected whether they survived.","The passenger's age","Whether the passenger survived",0,"Age was set before the sinking. Surviving can't change how old someone was."],
+["<b>Party loyalty.</b> <i>The American Voter</i> (Campbell et al. 1960) described party identification as a lasting attachment that many people learn early, often from their parents. Researchers then ask whether it shapes how people vote for Congress.","How someone votes in this year's House race","The party someone identifies with",1,"Party identification is a long-term attachment formed before any single election, so it's treated as the cause of the vote."],
+["<b>Traveling alone.</b> Some Titanic passengers traveled alone; others came with spouses, parents, children or siblings. A student asks whether traveling alone affected survival.","Whether the passenger survived","Traveling alone or with family",1,"Who you boarded with was settled before the sinking. Surviving can't change it."],
+["<b>Party and ideology.</b> Liberals today mostly call themselves Democrats, and conservatives mostly call themselves Republicans, much more than in the 1970s (Levendusky 2009). A study asks how a person's party relates to their ideology.","The party someone identifies with","Where someone places themselves from liberal to conservative",2,"This one can run either way. People may choose a party because of their ideology, or adopt their party's positions after joining it. Researchers have to argue for an order, and many treat party as the IV."],
+["<b>Choosing leaders.</b> Some countries choose leaders through millions of voters, others through a small group of insiders. <i>The Logic of Political Survival</i> (2003) asks whether that difference affects corruption.","How corrupt the system is","The size of the group that selects the leader",1,"The rules for choosing leaders are the proposed cause; corruption is the outcome the theory tries to explain."]];
+let i2=0;function d2(){const a=A2[i2],m=a[0].match(/^<b>(.*?)\.?<\/b>\s*/);$('h2tag').textContent=m[1].replace(/\?$/,'');$('h2ctx').innerHTML=a[0].slice(m[0].length);clear('h2f');foot('h2n','Study',A2.length,i2);$('h2c').innerHTML=[a[1],a[2],'It could run either way'].map((t,k)=>`<button data-k="${k}">${t}</button>`).join('');}
+$('h2c').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=A2[i2],k=+b.dataset.k,bs=[...$('h2c').querySelectorAll('button')],lab=[a[1],a[2],'It could run either way'];
+  bs.forEach((c,j)=>{c.className='';c.innerHTML=lab[j];});
+  if(a[3]===2){bs[0].className=bs[1].className='either';bs[2].className='yes';}
+  else{const iv=a[3];bs[iv].className='yes';bs[iv].innerHTML+='<span class="role">IV · X</span>';
+  bs[1-iv].className='isY';bs[1-iv].innerHTML+='<span class="role">DV · Y</span>';if(k===2)bs[2].className='nope';}
+  if(a[3]===2)say('h2f',true,(k===2?'':'That\u2019s one possible order, but the other order works too. ')+a[4]);
+  else say('h2f',k===a[3],k===2?'Here the order is clear. '+a[4]:a[4]);};
+$('h2x').onclick=()=>{i2=nx(A2.length,i2);d2();};
+/* 3 positive, inverse or no direction: [tag, context, hypothesis, X name, Y name, X ticks, Y ticks, dir] ticks are [code,label] */
+const PCT=[['0%',''],['50%',''],['100%','']];
+const A3=[
+["Who votes","From <i>Who Votes?</i> (Wolfinger and Rosenstone 1980):","As people get older, they are more likely to vote.","Age in years","Share who voted",[['18',''],['40',''],['60',''],['80','']],PCT,1],
+["Titanic","In the Titanic file, pclass is coded 1 = First, 2 = Middle, 3 = Lower:","As the class number goes up, passengers are less likely to survive.","Passenger class (pclass)","Share who survived",[['1','First'],['2','Middle'],['3','Lower']],PCT,-1],
+["Political survival","From <i>The Logic of Political Survival</i> (2003):","The larger the group that selects a leader, the less corruption.","Size of the group that selects the leader","Corruption",[['Small',''],['Large','']],[['Low',''],['High','']],-1],
+["Titanic","In the Titanic file, trav_alone is coded 0 = Not traveling alone, 1 = Traveling alone:","Whether a passenger traveled alone is related to whether they survived.","Traveling alone (trav_alone)","Share who survived",[['0','With others'],['1','Alone']],PCT,0],
+["Cost of voting","Downs (1957) argued that voters weigh the costs of voting:","The more time and effort it takes to vote, the fewer people vote.","Time and effort it takes to vote","Share who vote",[['Low',''],['High','']],PCT,-1],
+["Titanic","In the Titanic file, female is coded 0 = Male, 1 = Female:","Women were more likely to survive than men.","Sex (female)","Share who survived",[['0','Male'],['1','Female']],PCT,1],
+["Interviewers","From the 1995 South Africa survey:","The interviewer's race is related to whether people say they voted ANC.","Interviewer's race","Share who say they voted ANC",[['White',''],['Black','']],PCT,0],
+["Party and ideology","On the ANES, party ID runs from 1 = Strong Democrat to 7 = Strong Republican, and ideology from 1 = Extremely liberal to 7 = Extremely conservative:","The more Republican someone is, the more conservative they are.","Party ID","Ideology",[['1','Strong Dem.'],['4','Independent'],['7','Strong Rep.']],[['1','Ext. lib.'],['4','Moderate'],['7','Ext. con.']],1]];
+let i3=0,x=1,y=1,nd=false;
+function d3(){const a=A3[i3];x=1;y=1;nd=false;$('h3tag').textContent=a[0];$('h3ctx').innerHTML=a[1];$('h3s').textContent=a[2];$('axl').textContent='X: '+a[3];$('ayl').textContent='Y: '+a[4];clear('h3f');foot('h3n','Hypothesis',A3.length,i3);draw();}
+function draw(){const a=A3[i3];$('ax').textContent=x>0?'↑':'↓';$('ay').textContent=y>0?'↑':'↓';
+  $('nd').setAttribute('aria-pressed',nd);document.querySelector('#dir .arrows').classList.toggle('off',nd);
+  const L=90,R=306,T=48,B=204,xt=a[5],yt=a[6],X=k=>xt.length===1?(L+R)/2:L+18+k*(R-L-36)/(xt.length-1),Y=k=>B-12-k*(B-T-24)/(yt.length-1);
+  let h=`<text x="${L}" y="16" font-size="14.5" font-weight="700" style="fill:var(--s2-ink)">${a[4]}</text>`;
+  h+=`<line x1="${L}" y1="${B}" x2="${R}" y2="${B}" style="stroke:var(--s1-line);stroke-width:2.5"/><line x1="${L}" y1="${T-4}" x2="${L}" y2="${B}" style="stroke:var(--s2);stroke-width:2.5"/>`;
+  xt.forEach((t,k)=>{h+=`<line x1="${X(k)}" y1="${B}" x2="${X(k)}" y2="${B+5}" style="stroke:var(--s1-line);stroke-width:2"/><text x="${X(k)}" y="${B+20}" text-anchor="middle" font-size="14" font-weight="600" style="fill:var(--ink)">${t[0]}</text>`+(t[1]?`<text x="${X(k)}" y="${B+35}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">${t[1]}</text>`:'');});
+  yt.forEach((t,k)=>{h+=`<line x1="${L-5}" y1="${Y(k)}" x2="${L}" y2="${Y(k)}" style="stroke:var(--s2);stroke-width:2"/><text x="${L-9}" y="${Y(k)+(t[1]?-2:5)}" text-anchor="end" font-size="14" font-weight="600" style="fill:var(--ink)">${t[0]}</text>`+(t[1]?`<text x="${L-9}" y="${Y(k)+13}" text-anchor="end" font-size="12" style="fill:var(--ink-2)">${t[1]}</text>`:'');});
+  h+=`<text x="${(L+R)/2}" y="${xt.some(t=>t[1])?B+56:B+42}" text-anchor="middle" font-size="14.5" font-weight="700" style="fill:var(--s1-ink)">${a[3]}</text>`;
+  const n=Math.max(xt.length,2),px=k=>n===xt.length?X(k):L+18+k*(R-L-36)/(n-1),lo=B-30,hi=T+12;
+  const line=(sg,dash)=>{let d='',c='';for(let k=0;k<n;k++){const u=k/(n-1),v=sg>0?u:1-u,yy=lo-(lo-hi)*v,xx=px(k);d+=(k?'L':'M')+xx.toFixed(1)+' '+yy.toFixed(1);c+=`<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r="5" fill="var(--s1)" style="stroke:var(--s1-edge);stroke-width:1.2${dash?';opacity:.45':''}"/>`;}
+    return `<path d="${d}" fill="none" style="stroke:var(--s1-line);stroke-width:2.5${dash?';stroke-dasharray:6 5;opacity:.6':''}"/>`+c;};
+  if(nd){h+=line(1,1)+line(-1,1)+`<text x="${R}" y="${T-12}" text-anchor="end" font-size="13" font-weight="600" style="fill:var(--ink-2)">direction not stated</text>`;}
+  else{h+=line(x*y,0)+`<text x="${R}" y="${T-12}" text-anchor="end" font-size="14" font-weight="700" style="fill:var(--ink)">${x*y>0?'positive':'inverse'}</text>`;}
+  $('sc').innerHTML=h;}
+$('ax').onclick=()=>{x=-x;nd=false;draw();};$('ay').onclick=()=>{y=-y;nd=false;draw();};$('nd').onclick=()=>{nd=!nd;draw();};
+$('h3k').onclick=()=>{const a=A3[i3],d=a[7];
+  if(d===0)say('h3f',nd,nd?'It says the two are related without saying which way. That’s fine when there’s no reason to expect one direction.':'This hypothesis only says the two variables are related. It doesn’t say which way, so neither positive nor inverse matches it.');
+  else if(nd)say('h3f',false,'This hypothesis does state a direction. Read it again for which way Y moves as X goes up.');
+  else{const ok=x*y===d;say('h3f',ok,(d>0?'Both move the same way: a positive relationship.':'They move in opposite directions: an inverse (negative) relationship.')+(a[3].includes('pclass')?' In plain words, higher classes did better, but with these codes the relationship is inverse.':'')+(a[3].includes('female')?' Because female is coded 1, “more women” is the high end of X.':''));}};
+$('h3x').onclick=()=>{i3=nx(A3.length,i3);d3();};
+d1();d2();d3();
+})();
+</script>
+</body>
+</html>
