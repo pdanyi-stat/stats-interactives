@@ -408,6 +408,17 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
 :root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
 
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
 details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
 details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
@@ -532,7 +543,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <p class="p" id="shMM" style="font-size:14.5px"></p>
     <p class="src" style="margin:0">Leaning the curve stretches one tail, and a long tail raises kurtosis too, so the kurtosis number creeps up a little as you lean even though the peak slider hasn't moved.</p>
   </section>
-  <section class="dcard" id="ch">
+  <section class="dcard" id="ch" data-ds="NES2004.sav">
     <h3>Check it on real data: feelings about Dick Cheney in 2004 (cheney_therm)</h3>
     <div id="chChart"></div>
     <div class="qline">Cheney's distribution is <div id="chQ"></div></div>
@@ -574,7 +585,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <!-- 5 MEAN VS MEDIAN -->
   <section class="part"><p class="kick">Part 5</p><h2>Skew pulls the mean away from the median</h2>
     <p>In a skewed distribution, the few cases in the long tail drag the mean toward them. The median stays with the bulk of the cases.</p></section>
-  <section class="dcard" id="gd">
+  <section class="dcard" id="gd" data-ds="World.sav">
     <h3>GDP per capita in 177 countries (gdp_10_thou, in units of $10,000)</h3>
     <p class="p">Tap the chart where you think the “typical” country is.</p>
     <div id="gdChart"></div>
@@ -591,7 +602,7 @@ h3 + details.stata-wrap{margin-top:4px}
     </div>
     <div id="gdOut"></div>
   </section>
-  <section class="dcard" id="ph">
+  <section class="dcard" id="ph" data-ds="LunaticData.sav">
     <h3>Percent of lunatics cared for at home, Massachusetts counties (PHOME)</h3>
     <p class="p">Each county's percentage is on its marker and in the table. <span class="src">“Lunatics” is the dataset's term, from the era.</span></p>
     <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the boxes below, or by running PHOME in SPSS with LunaticData.sav.</p>
@@ -616,7 +627,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <div class="fbk" id="caFb" aria-live="polite"></div>
   </section>
 
-  <footer class="src">Data: Titanic passenger list (titanic.sav); 2004 American National Election Study feeling thermometers; World dataset (World.sav); Massachusetts lunatics, 1854 (LunaticData.sav). Skewness and kurtosis are computed the way SPSS computes them.</footer>
+  <footer class="src">Data: Titanic passenger list (titanic.sav); 2004 American National Election Study feeling thermometers (NES2004.sav); World dataset (World.sav); Massachusetts lunatics, 1854 (LunaticData.sav). Skewness and kurtosis are computed the way SPSS computes them.</footer>
   <nav class="pager" aria-label="Previous and next"><a href="1-levels-and-central-tendency.html"><span class="k">← Previous · Module 1</span><span class="t">Levels and central tendency</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="3-dispersion.html"><span class="k">Next · Module 3 →</span><span class="t">Measures of dispersion</span></a></nav>
 </main>
 
@@ -802,6 +813,19 @@ function drawers(host,o){host.innerHTML='';
   d.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('td.tap'))e.target.click();});}
 return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mean,median,variance,sd,skew,kurt,mode,expand,sp,fx,comma,num,near,fb,normPdf,hist,niceTicks,svgPt,sortable,binDrop,shuffle,seg};
 })();
+
+/* dataset download buttons */
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav'];
+const INSTR=['2014ElectionSurvey_F26.sav'];
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014'};
+function run(){
+  document.querySelectorAll('.dcard[data-ds]').forEach(card=>{const h=card.querySelector('h3');if(!h||h.parentElement.classList.contains('dshead'))return;
+    const row=document.createElement('div');row.className='dshead';h.before(row);row.appendChild(h);
+    const box=document.createElement('div');box.className='dsbtns';row.appendChild(box);
+    card.dataset.ds.split(/\s+/).forEach(f=>{if(HOSTED.includes(f)){const a=document.createElement('a');a.className='dsbtn';a.href='data/'+f;a.setAttribute('download',f);a.title=f;a.setAttribute('aria-label',`Download ${f}`);a.innerHTML=`<span aria-hidden="true">↓</span> Download ${NICE[f]||f} data`;box.appendChild(a);}
+      else if(INSTR.includes(f)){const s=document.createElement('span');s.className='dsbtn held';s.title=f;s.textContent=`${NICE[f]||f} data: from your instructor`;box.appendChild(s);}});});
+  document.querySelectorAll('footer.src').forEach(ft=>{ft.innerHTML=ft.innerHTML.replace(/\(([A-Za-z0-9_]+\.sav)\)/g,(m,f)=>HOSTED.includes(f)?`(<a href="data/${f}" download="${f}">${f}</a>)`:m);});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();})();
 
 </script>
 <script>

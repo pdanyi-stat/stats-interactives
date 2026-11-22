@@ -408,6 +408,17 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
 :root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
 
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
 details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
 details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
@@ -507,7 +518,7 @@ sup.fn a{text-decoration:none;color:var(--s1-ink);font-weight:700;padding:0 2px}
   <!-- 1 VARIANCE -->
   <section class="part"><p class="kick">Part 1</p><h2>Variance is the average squared distance from the mean</h2>
     <p>For each observation, find its distance from the mean and square it. Squaring keeps the distances below the mean from canceling out the ones above it. Add the squares, then divide by n − 1.</p></section>
-  <section class="dcard" id="va">
+  <section class="dcard" id="va" data-ds="LunaticData.sav">
     <h3>Lunatics per county, Massachusetts, 1854 (NBR)</h3>
     <p class="p"><span style="font-family:var(--font-mono)">s² = Σ(X − x̄)² ÷ (n − 1)</span>. The mean is <b>180.85</b> and n = 13.</p>
     <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the buttons below, or by running NBR in SPSS with LunaticData.sav.</p>
@@ -540,7 +551,7 @@ sup.fn a{text-decoration:none;color:var(--s1-ink);font-weight:700;padding:0 2px}
   <!-- 3 68/95 -->
   <section class="part"><p class="kick">Part 3</p><h2>What the SD tells you about where observations fall</h2>
     <p>If a variable is roughly normal, about 68% of observations fall within one SD of the mean and about 95% within two. The SD is in the same units as the variable, which is what makes this useful.</p></section>
-  <section class="dcard" id="nr">
+  <section class="dcard" id="nr" data-ds="titanic.sav">
     <h3>Age of Titanic passengers (age): mean 29.88, SD 14.41</h3>
     <div class="row"><div id="nrSeg"></div></div>
     <div id="nrChart"></div>
@@ -552,7 +563,7 @@ sup.fn a{text-decoration:none;color:var(--s1-ink);font-weight:700;padding:0 2px}
   <!-- 4 PEW q36/q37 -->
   <section class="part"><p class="kick">Part 4</p><h2>Compare two variables on the same scale</h2>
     <p>You can compare SDs directly only when two variables share a coding. Pew asked in 2014 how confident people were that their own vote was counted correctly (q36), and how confident they were that votes across the country were counted correctly (q37).</p></section>
-  <section class="dcard" id="pw">
+  <section class="dcard" id="pw" data-ds="2014ElectionSurvey_F26.sav">
     <h3>Pew Research Center, 2014 post-election survey (2014ElectionSurvey_F26.sav)</h3>
     <p class="codes-h">q36 and q37 are coded the same way:</p>
     <dl class="codes"><dt>1</dt><dd>Very confident</dd><dt>2</dt><dd>Somewhat confident</dd><dt>3</dt><dd>Not too confident</dd><dt>4</dt><dd>Not at all confident</dd><dt class="miss">9</dt><dd class="miss">Don't know/Refused (set as missing)</dd></dl>
@@ -620,7 +631,7 @@ sup.fn a{text-decoration:none;color:var(--s1-ink);font-weight:700;padding:0 2px}
     <div id="vd14" style="display:grid;gap:10px"></div>
   </section>
 
-  <section class="dcard" id="r24">
+  <section class="dcard" id="r24" data-ds="Gallup_Reconstructed_2024_F26.sav NES_2024_Party_Placement_and_Ideology_F26.sav">
     <p class="kick" style="margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)">Round 2</p>
     <h3>Thanksgiving 2024, ten years later</h3>
     <p class="p">A decade on, Sue and Jim are making the same four claims, word for word. A lot has changed in both parties since 2014, so check whether the 2014 answers still hold. You have two sources this time, and they measure different things.</p>
@@ -823,6 +834,19 @@ function drawers(host,o){host.innerHTML='';
   d.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('td.tap'))e.target.click();});}
 return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mean,median,variance,sd,skew,kurt,mode,expand,sp,fx,comma,num,near,fb,normPdf,hist,niceTicks,svgPt,sortable,binDrop,shuffle,seg};
 })();
+
+/* dataset download buttons */
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav'];
+const INSTR=['2014ElectionSurvey_F26.sav'];
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014'};
+function run(){
+  document.querySelectorAll('.dcard[data-ds]').forEach(card=>{const h=card.querySelector('h3');if(!h||h.parentElement.classList.contains('dshead'))return;
+    const row=document.createElement('div');row.className='dshead';h.before(row);row.appendChild(h);
+    const box=document.createElement('div');box.className='dsbtns';row.appendChild(box);
+    card.dataset.ds.split(/\s+/).forEach(f=>{if(HOSTED.includes(f)){const a=document.createElement('a');a.className='dsbtn';a.href='data/'+f;a.setAttribute('download',f);a.title=f;a.setAttribute('aria-label',`Download ${f}`);a.innerHTML=`<span aria-hidden="true">↓</span> Download ${NICE[f]||f} data`;box.appendChild(a);}
+      else if(INSTR.includes(f)){const s=document.createElement('span');s.className='dsbtn held';s.title=f;s.textContent=`${NICE[f]||f} data: from your instructor`;box.appendChild(s);}});});
+  document.querySelectorAll('footer.src').forEach(ft=>{ft.innerHTML=ft.innerHTML.replace(/\(([A-Za-z0-9_]+\.sav)\)/g,(m,f)=>HOSTED.includes(f)?`(<a href="data/${f}" download="${f}">${f}</a>)`:m);});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();})();
 
 </script>
 <script>

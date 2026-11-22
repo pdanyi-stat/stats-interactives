@@ -436,6 +436,17 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
 :root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
 
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
 details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
 details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
@@ -559,7 +570,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <!-- 2 SPSS GIVES ALL THREE -->
   <section class="part"><p class="kick">Part 2</p><h2>SPSS reports all three anyway</h2>
     <p>SPSS will print a mean, a median and a mode for any numeric variable, including ones where the number means nothing. Deciding which to read is your job.</p></section>
-  <section class="dcard" id="sp">
+  <section class="dcard" id="sp" data-ds="titanic.sav">
     <h3>Titanic passengers: which numbers are worth reading?</h3>
     <div class="row"><span class="src">Variable</span><div id="spVar"></div></div>
     <div id="spCoding" class="p" style="display:grid;gap:6px"></div>
@@ -584,7 +595,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <!-- 4 MEAN -->
   <section class="part"><p class="kick">Part 4</p><h2>The mean is the balance point</h2>
     <p>Put a weight on a beam at each county's value. The point where the beam balances is the mean. Slide the triangle until the beam is level.</p></section>
-  <section class="dcard" id="bal">
+  <section class="dcard" id="bal" data-ds="LunaticData.sav">
     <h3>Lunatics per county, Massachusetts, 1854</h3>
     <p class="p">Each blue weight is one of the 13 counties. The number on it is the county's count of lunatics (variable NBR, “Lunatics Per County”), and its line drops to that value on the beam, which is marked like a ruler. Weights at nearly the same value stack up. Drag on the chart or use the slider to move the triangle. <span class="src">“Lunatics” is the dataset's term, from the era.</span></p>
     <div id="balSvg"></div>
@@ -604,7 +615,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <!-- 5 NOMINAL -->
   <section class="part"><p class="kick">Part 5</p><h2>Why the mean of a nominal variable means nothing</h2>
     <p>The numbers SPSS stores for a nominal variable are only labels. You can put the categories in any order and number them any way you like, and nothing is lost: every country keeps its religion, and every religion keeps its count. A measure that changes when you rearrange the categories is reacting to the labels, not to the countries.</p></section>
-  <section class="dcard" id="nm">
+  <section class="dcard" id="nm" data-ds="World.sav">
     <h3>Predominant religion in 191 countries (typerel)</h3>
     <div class="hbars" id="nmBars"></div>
     <p class="p">Tap <b>Rearrange the categories</b> to put the religions in a new order and number them 1 to 8 in that order. Watch what changes and what doesn't.</p>
@@ -646,7 +657,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <div class="qline" id="moQ" hidden>Most people want to <select id="moSel"><option value="">choose</option><option value="1">increase welfare spending a lot</option><option value="2">increase it a little</option><option value="3">keep it the same</option><option value="4">decrease it a little</option><option value="5">decrease it a lot</option></select> (in 2020). <button class="dbtn" id="moQc">Check</button></div>
     <div class="fbk" id="moFb2" aria-live="polite"></div>
   </section>
-  <section class="dcard" id="rg">
+  <section class="dcard" id="rg" data-ds="World.sav">
     <h3>Regime type in 168 countries (regime_type3)</h3>
     <p class="p">Tap the bar for the mode.</p>
     <div id="rgChart"></div>
@@ -657,7 +668,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <!-- 8 RANGE -->
   <section class="part"><p class="kick">Part 8</p><h2>Range, and why bar charts don't suit interval variables</h2>
     <p>The range runs from the lowest observed value to the highest. Feeling thermometers run from 0 (cold) to 100 (warm).</p></section>
-  <section class="dcard" id="ra">
+  <section class="dcard" id="ra" data-ds="NES2004.sav">
     <h3>How do you feel about Southerners? (southern_therm, 2004 ANES)</h3>
     <div id="raChart"></div>
     <p class="src" id="raTap">Tap a bar to see its count.</p>
@@ -667,7 +678,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <div class="fbk" id="raFb" aria-live="polite"></div>
     <div id="raOut"></div>
   </section>
-  <section class="dcard" id="cf">
+  <section class="dcard" id="cf" data-ds="World.sav">
     <h3>Confidence in institutions in 71 countries (confidence)</h3>
     <p class="p">Here is an example from a cross-national dataset. It scores 71 countries on how much confidence their publics have in the country's institutions, on a scale from 0 (none) to 100 (complete). It's an interval variable, and the scores have decimals, for example 47.97 or 52.31.</p>
     <p class="p">A bar chart gives every distinct value its own bar, and each bar's height is the number of cases with exactly that value. That works when a variable has a handful of categories, like religion or passenger class, because many cases share each value. On a 0–100 scale measured to two decimals, almost every country has a value of its own, so a bar chart just lines up 71 bars of the same height. A histogram groups the scores into ranges first, and then counts how many countries fall in each range.</p>
@@ -678,7 +689,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <div class="fbk" id="cfFb" aria-live="polite"></div>
   </section>
 
-  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 and 2020 American National Election Studies; 1984 state results from the Describing Attributes of Data notes.</footer>
+  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study; 1984 state results from the Describing Attributes of Data notes.</footer>
   <nav class="pager" aria-label="Previous and next"><a href="hypotheses-and-variables.html"><span class="k">← Previous · Start here</span><span class="t">Hypotheses and variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="2-skew-and-kurtosis.html"><span class="k">Next · Module 2 →</span><span class="t">Skew and kurtosis</span></a></nav>
 </main>
 
@@ -864,6 +875,19 @@ function drawers(host,o){host.innerHTML='';
   d.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('td.tap'))e.target.click();});}
 return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mean,median,variance,sd,skew,kurt,mode,expand,sp,fx,comma,num,near,fb,normPdf,hist,niceTicks,svgPt,sortable,binDrop,shuffle,seg};
 })();
+
+/* dataset download buttons */
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav'];
+const INSTR=['2014ElectionSurvey_F26.sav'];
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014'};
+function run(){
+  document.querySelectorAll('.dcard[data-ds]').forEach(card=>{const h=card.querySelector('h3');if(!h||h.parentElement.classList.contains('dshead'))return;
+    const row=document.createElement('div');row.className='dshead';h.before(row);row.appendChild(h);
+    const box=document.createElement('div');box.className='dsbtns';row.appendChild(box);
+    card.dataset.ds.split(/\s+/).forEach(f=>{if(HOSTED.includes(f)){const a=document.createElement('a');a.className='dsbtn';a.href='data/'+f;a.setAttribute('download',f);a.title=f;a.setAttribute('aria-label',`Download ${f}`);a.innerHTML=`<span aria-hidden="true">↓</span> Download ${NICE[f]||f} data`;box.appendChild(a);}
+      else if(INSTR.includes(f)){const s=document.createElement('span');s.className='dsbtn held';s.title=f;s.textContent=`${NICE[f]||f} data: from your instructor`;box.appendChild(s);}});});
+  document.querySelectorAll('footer.src').forEach(ft=>{ft.innerHTML=ft.innerHTML.replace(/\(([A-Za-z0-9_]+\.sav)\)/g,(m,f)=>HOSTED.includes(f)?`(<a href="data/${f}" download="${f}">${f}</a>)`:m);});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();})();
 
 </script>
 <script>
