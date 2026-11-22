@@ -496,7 +496,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 3 of 10</p>
     <h1>Measures of dispersion</h1>
-    <p class="dek">How spread out are the observations? The variance and the standard deviation (SD) measure the typical distance of observations from the mean. The examples use the Massachusetts counties and the Titanic passenger list.</p>
+    <p class="dek">How spread out are the observations? The variance and the standard deviation (SD) measure the typical distance of the observations from the mean. The examples use the Massachusetts counties and the Titanic passenger list.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -538,7 +538,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="fbk" id="vaFb" aria-live="polite"></div>
     <div id="vaOut"></div>
     <div id="vaAvg" hidden style="display:grid;gap:8px">
-      <p class="p">Pool all 13 squares and share the area out equally among n − 1 = 12. Each share is one average square: its area is the variance and its side is the SD.</p>
+      <p class="p">Pool all 13 squares and share the area out equally among n − 1 = 12. Each share is one average square, so its area is the variance and its side is the SD.</p>
       <div class="pile" id="vaAvgPile"></div>
     </div>
   </section>
@@ -548,7 +548,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>Enter your class's ages to see each step. You can compare your own hand calculation with it.</p></section>
   <section class="dcard" id="cl">
     <div class="qline"><label for="clIn">Ages:</label><input id="clIn" style="width:100%;max-width:520px;font-family:var(--font-mono)" value="19, 20, 20, 21, 21, 21, 22, 22, 23, 24, 26"></div>
-    <p class="src" style="margin:0">These are example ages. Replace them with your class's.</p>
+    <p class="src" style="margin:0">These are example ages, so replace them with your class's.</p>
     <div class="tblwrap"><table class="tbl" id="clTbl" style="max-width:520px"></table></div>
     <div class="stat"><div class="mean"><span>Mean</span><b id="clM"></b></div><div><span>Variance</span><b id="clV"></b></div><div><span>SD</span><b id="clS"></b></div></div>
   </section>
@@ -570,10 +570,10 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>You can compare SDs directly only when two variables share a coding. Pew asked in 2014 how confident people were that their own vote was counted correctly (q36), and how confident they were that votes across the country were counted correctly (q37).</p></section>
   <section class="dcard" id="pw" data-ds="2014ElectionSurvey_F26.sav">
     <h3>Pew Research Center, 2014 post-election survey (2014ElectionSurvey_F26.sav)</h3>
-    <p class="codes-h">q36 and q37 are coded the same way:</p>
+    <p class="codes-h">q36 and q37 are coded the same way.</p>
     <dl class="codes"><dt>1</dt><dd>Very confident</dd><dt>2</dt><dd>Somewhat confident</dd><dt>3</dt><dd>Not too confident</dd><dt>4</dt><dd>Not at all confident</dd><dt class="miss">9</dt><dd class="miss">Don't know/Refused (set as missing)</dd></dl>
     <p class="p">A <b>low</b> code means <b>more</b> confidence. q36 was asked only of people who voted.</p>
-    <p class="p">In SPSS: Analyze → Descriptive Statistics → Frequencies, move q36 and q37 over, check Bar charts under Charts, and under Statistics check Mean, Std. deviation, Variance, Skewness and Kurtosis.</p>
+    <p class="p">In SPSS, go to Analyze → Descriptive Statistics → Frequencies, move q36 and q37 over, check Bar charts under Charts, and under Statistics check Mean, Std. deviation, Variance, Skewness and Kurtosis.</p>
     <div class="two"><div><div id="pw36"></div></div><div><div id="pw37"></div></div></div>
     <div class="legend"><span><i style="background:var(--s2)"></i>Mean</span><span><i style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);height:6px"></i>One SD on each side of the mean</span><span>Bars: percent of valid answers</span></div>
     <table class="tbl pwt"><tr><th class="l"></th><th>q36 (your vote)</th><th>q37 (the country)</th></tr>
@@ -622,13 +622,13 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="claim"><span class="who">Uncle Jim on Republicans (claim 2)</span><q>Republicans in general want more conservative policies from leadership. It isn't some small group; the conservative voter today in general wants a far more conservative leadership in the party.</q></div>
     <div class="claim"><span class="who">Uncle Jim on Democrats (claim 3)</span><q>Democrats in America today are so super liberal that they are pushing their leaders in Congress to adopt some communist far left policies.</q></div>
     <div class="claim"><span class="who">Aunt Sue on Democrats (claim 4)</span><q>The Democrats I know are actually pretty moderate, and if anything I think Democrats in general want moderate left policies from Democratic leaders in Congress and DC.</q></div>
-    <p class="p"><b>What would settle it.</b> Sue and Jim agree that some Republicans want a more conservative party. They disagree about how many. So the key number is the share who want their party to move: a small share supports Sue, a large share or a majority supports Jim. The mode and the median tell you where most party members are; the skew tells you which way the distribution leans and whether the people who want change are a tail or the bulk.</p>
+    <p class="p"><b>What would settle it?</b> Sue and Jim agree that some Republicans want a more conservative party. They disagree about how many. So the key number is the share who want their party to move. A small share supports Sue, and a large share or a majority supports Jim. The mode and the median tell you where most party members are, and the skew tells you which way the distribution leans and whether the people who want change are a tail or the bulk.</p>
   </section>
 
   <section class="dcard" id="r14">
     <p class="kick" style="margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)">Round 1</p>
     <h3>Thanksgiving 2014, with the Pew data</h3>
-    <p class="p">Right after the 2014 midterm election, Pew asked Republicans and Republican leaners whether they would like to see Republican leaders in Washington move in a more conservative direction or a more moderate direction (q88). It asked Democrats and Democratic leaners the same question with “more liberal” (q89). A few people volunteered that they wanted no change. These are the RepPref and DemPref variables you recoded in Part 5:</p>
+    <p class="p">Right after the 2014 midterm election, Pew asked Republicans and Republican leaners whether they would like to see Republican leaders in Washington move in a more conservative direction or a more moderate direction (q88). It asked Democrats and Democratic leaners the same question with “more liberal” (q89). A few people volunteered that they wanted no change. These are the RepPref and DemPref variables you recoded in Part 5.</p>
     <dl class="codes"><dt>1</dt><dd>More moderate</dd><dt>2</dt><dd>No change</dd><dt>3</dt><dd>More conservative (DemPref: More liberal)</dd></dl>
     <div class="two"><div id="r14A"></div><div id="r14B"></div></div>
     <div id="r14Out"></div>
@@ -640,9 +640,9 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="kick" style="margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)">Round 2</p>
     <h3>Thanksgiving 2024, ten years later</h3>
     <p class="p">A decade on, Sue and Jim are making the same four claims, word for word. A lot has changed in both parties since 2014, so check whether the 2014 answers still hold. You have two sources this time, and they measure different things.</p>
-    <p class="p"><b>Gallup, January 2025.</b><sup class="fn"><a href="#gallup-note" aria-label="Note on the Gallup data">†</a></sup> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, with one difference: “stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
+    <p class="p"><b>Gallup, January 2025.</b><sup class="fn"><a href="#gallup-note" aria-label="Note on the Gallup data">†</a></sup> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, with one difference. “Stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
     <div class="two"><div><p class="codes-h">Gallup's own codes (q7 and q6)</p><dl class="codes"><dt>1</dt><dd>More conservative (q6: More liberal)</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More moderate</dd><dt class="miss">9</dt><dd class="miss">No opinion</dd></dl></div><div><p class="codes-h">Recoded to match RepPref and DemPref (the charts below)</p><dl class="codes"><dt>1</dt><dd>More moderate</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More conservative (or more liberal)</dd></dl></div></div>
-    <p class="p">To recode in SPSS: 1 → 3, 2 → 2, 3 → 1 and 9 → System-missing.</p>
+    <p class="p">To recode it in SPSS, turn 1 into 3, keep 2 as 2, turn 3 into 1, and set 9 to System-missing.</p>
     <div class="two"><div id="r24A"></div><div id="r24B"></div></div>
     <div id="r24Out1"></div>
     <p class="p"><b>ANES 2024.</b> The ANES asked everyone to place themselves on a 7-point liberal–conservative scale (V241177). Split by party, it shows what Republicans and Democrats <i>are</i>, which speaks to claims about a “small faction” or “super liberal” voters. It doesn't say which way they want their party to move.</p>
@@ -783,14 +783,14 @@ function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-tit
   rows.forEach(r=>{h+=`<tr${r.flag?' class="flag"':''}>`+r.cells.map((c,i)=>{if(c&&typeof c==='object'){return `<td${c.rh?' class="rh"':''}${c.span?` rowspan="${c.span}"`:''}${c.cs?` colspan="${c.cs}"`:''}${c.tap?` class="tap" tabindex="0" data-exp="${esc(c.tap)}"`:''}>${c.v}</td>`;}return i===0&&r.rh!==false?`<td class="rh">${c}</td>`:`<td>${c}</td>`;}).join('')+'</tr>';});
   h+='</tbody></table>'+(foot?`<div class="sp-fn">${foot}</div>`:'')+'</div>';return h;}
 const EXP={
- mean:(v,u)=>`The mean is ${v}${u||''}: the arithmetic average of the valid cases.`,
- median:(v,u)=>`The median is ${v}${u||''}: half the valid cases are at or below it and half at or above.`,
- mode:(v,u)=>`The mode is ${v}${u||''}: the most common value. If several values tie, SPSS shows the smallest and adds a footnote.`,
- sd:(v)=>`The standard deviation is ${v}: the typical distance of a case from the mean, in the variable's own units.`,
- var:(v)=>`The variance is ${v}: the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
- skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'Close to 0, so roughly symmetric.':num(v)>0?'Above 0: the tail points toward the high values (positive skew).':'Below 0: the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
- kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'Above 0: more peaked than normal (leptokurtic).':'Below 0: flatter than normal (platykurtic).'}`,
- range:(v)=>`The range is ${v}: maximum minus minimum.`,
+ mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
+ median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
+ mode:(v,u)=>`The mode is ${v}${u||''}, the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
+ sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
+ var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
+ skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
+ kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'It is above 0, so the distribution is more peaked than normal (leptokurtic).':'It is below 0, so the distribution is flatter than normal (platykurtic).'}`,
+ range:(v)=>`The range is ${v}, the maximum minus the minimum.`,
  nmiss:(v)=>`${v} cases are missing on this variable (no answer, or a code such as Don't know that is set as missing). They are left out of every statistic above.`
 };
 /* vars: [{name, vals, nTotal}] */
@@ -829,7 +829,7 @@ function stTab(name,label,cats){const T=sum(cats.map(c=>c.n));let cum=0;const w=
   const L=[`<span class="cmd">. tabulate ${name}</span>`,'',lab.slice(0,w).padStart(w)+' |      Freq.     Percent        Cum.','-'.repeat(w+1)+'+-----------------------------------'];
   cats.forEach(c=>{cum+=c.n;L.push(String(c.label).padStart(w)+' | '+String(comma(c.n)).padStart(10)+String((c.n/T*100).toFixed(2)).padStart(12)+String((cum/T*100).toFixed(2)).padStart(12));});
   L.push('-'.repeat(w+1)+'+-----------------------------------');L.push('Total'.padStart(w)+' | '+String(comma(T)).padStart(10)+'      100.00');return L.join('\n');}
-const STNOTE='Stata\'s skewness and kurtosis come out slightly different from SPSS\'s: Stata doesn\'t apply SPSS\'s small-sample correction, and Stata\'s kurtosis is not centered at 0. A normal curve scores <b>3</b> in Stata, so subtract 3 to compare with SPSS.';
+const STNOTE='Stata\'s skewness and kurtosis come out slightly different from SPSS\'s, because Stata doesn\'t apply SPSS\'s small-sample correction and Stata\'s kurtosis is not centered at 0. A normal curve scores <b>3</b> in Stata, so subtract 3 to compare with SPSS.';
 /* host: element to append to. o={spssNote, spssCmd, spss(html), stataNote, stata(text)} */
 function drawers(host,o){host.innerHTML='';
   const d=document.createElement('details');d.className='spss';if(!o.spss){d.hidden=true;}d.innerHTML=`<summary><span class="sp-badge">SPSS</span><span class="sp-lab">Show SPSS output</span></summary><div class="sp-body">${o.spssNote?`<p class="sp-note">${o.spssNote}</p>`:''}<p class="sp-hint">Wide tables scroll sideways.</p><div class="sp-sheet">${o.spss}</div><p class="sp-exp" aria-live="polite"></p></div>`;
@@ -884,11 +884,11 @@ $('#vaNext').addEventListener('click',()=>{const i=L.findIndex((_,k)=>!done.has(
 $('#vaAll').addEventListener('click',()=>{L.forEach((_,i)=>{if(!done.has(i))fill(i);});});
 $('#vaClear').addEventListener('click',()=>{done.clear();cur=-1;$('#vaPile').innerHTML='';$$('#vaTbl input').forEach(x=>{x.value='';x.className='';});$('#vaAvg').hidden=true;$('#vaFb').className='fbk';strip();});
 $('#vaCheck').addEventListener('click',()=>{const a=D.num($('#va1').value),b=D.num($('#va2').value),c=D.num($('#va3').value);
-  if(!D.near(a,ss,ss*0.002))return D.fb($('#vaFb'),'no',a===0||D.near(a,0,1)?'The distances themselves add to 0; that\'s why we square them. Add up the squared column.':'Add up the last column, the squared distances.');
+  if(!D.near(a,ss,ss*0.002))return D.fb($('#vaFb'),'no',a===0||D.near(a,0,1)?'The distances themselves add to 0, and that\'s why we square them. Add up the squared column.':'Add up the last column, the squared distances.');
   if(!D.near(b,vr,vr*0.002))return D.fb($('#vaFb'),'no',D.near(b,ss/13,ss/13*0.002)?'Divide by n − 1 = 12, not by 13.':'Divide the sum by n − 1 = 12.');
   if(!D.near(c,sdv,0.06))return D.fb($('#vaFb'),'no','Take the square root of the variance.');
-  D.fb($('#vaFb'),'ok',`Sum of squares ${D.comma(ss)}, variance ${vr.toFixed(2)}, SD ${sdv.toFixed(2)}. The variance is in squared lunatics, which has no everyday meaning. Taking the square root puts the SD back in the variable's own units: the typical county is about ${Math.round(sdv)} lunatics away from the mean of ${mu.toFixed(1)}. You can confirm this in SPSS with Analyze → Descriptive Statistics → Descriptives, choosing Variance and Std. deviation under Options.`);
-  $('#vaAvg').hidden=false;sqK();const s=sdv*K;$('#vaAvgPile').innerHTML=Array.from({length:12},()=>`<div class="sq avg" style="width:${s}px;height:${s}px"></div>`).join('')+`<span class="src" style="align-self:center">Each square: area ${D.comma(vr)} (the variance), side ${sdv.toFixed(1)} (the SD).</span>`;});
+  D.fb($('#vaFb'),'ok',`Sum of squares ${D.comma(ss)}, variance ${vr.toFixed(2)}, SD ${sdv.toFixed(2)}. The variance is in squared lunatics, which has no everyday meaning. Taking the square root puts the SD back in the variable's own units, so the typical county is about ${Math.round(sdv)} lunatics away from the mean of ${mu.toFixed(1)}. You can confirm this in SPSS with Analyze → Descriptive Statistics → Descriptives, choosing Variance and Std. deviation under Options.`);
+  $('#vaAvg').hidden=false;sqK();const s=sdv*K;$('#vaAvgPile').innerHTML=Array.from({length:12},()=>`<div class="sq avg" style="width:${s}px;height:${s}px"></div>`).join('')+`<span class="src" style="align-self:center">Each square has an area of ${D.comma(vr)}, which is the variance, and a side of ${sdv.toFixed(1)}, which is the SD.</span>`;});
 strip();
 
 /* ---------- Part 2 ---------- */
@@ -903,12 +903,12 @@ function nr(){const lo=Am-k*As,hi=Am+k*As;D.hist($('#nrChart'),{values:A,xmin:0,
   lines:[{x:Am,cls:'meanl',label:'Mean '+Am.toFixed(1)}],aria:'Titanic ages with shaded SD band'});
   const inside=A.filter(x=>x>=lo&&x<=hi).length,exp=erf(k/Math.SQRT2);
   $('#nrR').textContent=`${Math.max(0,lo).toFixed(1)} to ${hi.toFixed(1)}`;$('#nrIn').textContent=(inside/A.length*100).toFixed(1)+'%';$('#nrExp').textContent=(exp*100).toFixed(1)+'%';
-  D.fb($('#nrFb'),'info',k===1?`${(inside/A.length*100).toFixed(0)}% of passengers were between ${lo.toFixed(1)} and ${hi.toFixed(1)}, close to the 68% a normal curve predicts. Age is roughly normal, so the rule works well.`:k===2?`${(inside/A.length*100).toFixed(0)}% were between ${Math.max(0,lo).toFixed(1)} and ${hi.toFixed(1)}. The normal curve predicts 95%. Outside the band are ${A.filter(x=>x<lo).length} infants below ${lo.toFixed(1)} and ${A.filter(x=>x>hi).length} older passengers above ${hi.toFixed(1)}. The extra cases on the right come from the short right tail (skewness .408).`:`${(inside/A.length*100).toFixed(1)}% inside, against ${(exp*100).toFixed(1)}% for a normal curve.`);}
+  D.fb($('#nrFb'),'info',k===1?`${(inside/A.length*100).toFixed(0)}% of passengers were between ${lo.toFixed(1)} and ${hi.toFixed(1)}, close to the 68% a normal curve predicts. Age is roughly normal, so the rule works well here.`:k===2?`${(inside/A.length*100).toFixed(0)}% were between ${Math.max(0,lo).toFixed(1)} and ${hi.toFixed(1)}. The normal curve predicts 95%. Outside the band are ${A.filter(x=>x<lo).length} infants below ${lo.toFixed(1)} and ${A.filter(x=>x>hi).length} older passengers above ${hi.toFixed(1)}. The extra cases on the right come from the short right tail (skewness .408).`:`${(inside/A.length*100).toFixed(1)}% inside, against ${(exp*100).toFixed(1)}% for a normal curve.`);}
 function erf(x){const t=1/(1+0.3275911*Math.abs(x));const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
 D.seg($('#nrSeg'),[['1','± 1 SD'],['2','± 2 SD'],['3','± 3 SD']],v=>{k=+v;nr();},'1');nr();
 
 /* ---------- Part 5: recode ---------- */
-D.seg($('#rcLvl'),[['nom','nominal'],['ord','ordinal'],['int','interval']],v=>{v==='nom'?D.fb($('#rcFb0'),'ok','As coded, the numbers don\'t follow the order of the answers: “stay the same” (3) sits above both kinds of change, and “more conservative” (1) sits below “more moderate” (2). So the variable works only as categories. To use the median, SD, skew or kurtosis it has to be recoded into an order.'):D.fb($('#rcFb0'),'no','Read the codes in order: 1 more conservative, 2 more moderate, 3 stay the same. Do higher numbers mean more of something?');},'');
+D.seg($('#rcLvl'),[['nom','nominal'],['ord','ordinal'],['int','interval']],v=>{v==='nom'?D.fb($('#rcFb0'),'ok','As coded, the numbers don\'t follow the order of the answers. “Stay the same” (3) sits above both kinds of change, and “more conservative” (1) sits below “more moderate” (2). So the variable works only as categories. To use the median, SD, skew or kurtosis it has to be recoded into an order.'):D.fb($('#rcFb0'),'no','Read the codes in order, which are 1 for more conservative, 2 for more moderate and 3 for stay the same. Do higher numbers mean more of something?');},'');
 const RC=[['1','More conservative'],['2','More moderate'],['3','No change (stay the same)'],['9','Don\'t know']];
 function rcLoad(){$('#rcPool').innerHTML='';document.querySelectorAll('#rc .bin .tiles').forEach(t=>t.innerHTML='');D.shuffle(RC).forEach(r=>$('#rcPool').appendChild(H('div',{class:'tile card-v',tabindex:'0','data-old':r[0]},`<span>${r[1]}</span><small>old code ${r[0]}</small>`)));$('#rcFb').className='fbk';}
 D.binDrop($('#rc'),(t,bin)=>{const box=bin.querySelector('.tiles');if(bin.dataset.bin!=='miss'&&box.children.length){$('#rcPool').appendChild(box.firstElementChild);}box.appendChild(t);});
@@ -916,10 +916,10 @@ $('#rcReset').addEventListener('click',rcLoad);
 $('#rcCheck').addEventListener('click',()=>{const g=b=>{const t=document.querySelector(`#rc .bin[data-bin="${b}"] .tile`);return t?t.dataset.old:null;};
   const n1=g('1'),n2=g('2'),n3=g('3'),miss=[...document.querySelectorAll('#rc .bin[data-bin="miss"] .tile')].map(t=>t.dataset.old);
   if(!n1||!n2||!n3)return D.fb($('#rcFb'),'info','Fill all three new codes first.');
-  if(!(miss.length===1&&miss[0]==='9'))return D.fb($('#rcFb'),'no','“Don\'t know” isn\'t a position on the scale. It belongs in Missing, and only it does.');
+  if(!(miss.length===1&&miss[0]==='9'))return D.fb($('#rcFb'),'no','“Don\'t know” isn\'t a position on the scale. It belongs in Missing, and it is the only answer that does.');
   if(n2!=='3')return D.fb($('#rcFb'),'no','Which answer sits between wanting the party more moderate and wanting it more conservative? That one goes in the middle.');
   const map={[n1]:1,[n2]:2,[n3]:3};
-  D.fb($('#rcFb'),'ok',`In order: ${RC.find(r=>r[0]===n1)[1]} (1), No change (2), ${RC.find(r=>r[0]===n3)[1]} (3). In SPSS: Transform → Recode into Different Variables, move q88 over, name the output RepPref, then under Old and New Values enter 1 → ${map['1']}, 2 → ${map['2']}, 3 → ${map['3']}, and 9 → System-missing. Label RepPref “Republicans' preference for party leadership” and add value labels for the new codes. Do the same for q89 to make DemPref.`);rcCharts(map);});
+  D.fb($('#rcFb'),'ok',`In order: ${RC.find(r=>r[0]===n1)[1]} (1), No change (2), ${RC.find(r=>r[0]===n3)[1]} (3). In SPSS, go to Transform → Recode into Different Variables, move q88 over, name the output RepPref, then under Old and New Values enter 1 → ${map['1']}, 2 → ${map['2']}, 3 → ${map['3']}, and 9 → System-missing. Label RepPref “Republicans' preference for party leadership” and add value labels for the new codes. Do the same for q89 to make DemPref.`);rcCharts(map);});
 rcLoad();
 const PW=DATA.pw;
 /* bar chart of a coded variable with mean line and a 1-SD bracket, bars in percent */
@@ -944,8 +944,8 @@ $('#pwCheck').addEventListener('click',()=>{const bad=[];const chk=(id,ok)=>{con
   chk('#pwSD36',D.near(D.num($('#pwSD36').value),P36.s,0.0015));chk('#pwSD37',D.near(D.num($('#pwSD37').value),P37.s,0.0015));
   const sel=(id,v)=>{const ok=$(id).value===v;if(!ok)bad.push(id);return ok;};
   sel('#pwD36','positive');sel('#pwD37','positive');sel('#pwK36','lep');sel('#pwK37','pla');sel('#pwMore','37');
-  if(bad.length)return D.fb($('#pwFb'),'no',`${bad.length} answer${bad.length>1?'s':''} to look at again. Read Skewness, Kurtosis and Std. Deviation from the Statistics table for each variable. A kurtosis above 0 is peaked, below 0 flat.`);
-  D.fb($('#pwFb'),'ok',`Both skews are positive, and that needs the coding to read: the fat end is at code 1, <b>very confident</b>, and the tail runs toward “not at all.” So most Americans were confident. For their own vote (q36) the skew is strong (${D.sp(P36.sk,3)}) and the kurtosis is high (${D.sp(P36.ku,3)}): answers are packed at “very confident.” For the country (q37) the skew is milder (${D.sp(P37.sk,3)}) and the kurtosis is negative (${D.sp(P37.ku,3)}): answers are spread more evenly. q37 has more dispersion, SD ${D.sp(P37.s,3)} against ${D.sp(P36.s,3)}, and the comparison is fair because both are coded 1 to 4 the same way. People trusted the count of their own vote more, and agreed with each other more about it, than about the count across the country.`);});
+  if(bad.length)return D.fb($('#pwFb'),'no',`${bad.length} answer${bad.length>1?'s':''} to look at again. Read Skewness, Kurtosis and Std. Deviation from the Statistics table for each variable. A kurtosis above 0 means the distribution is peaked, and below 0 means it is flat.`);
+  D.fb($('#pwFb'),'ok',`Both skews are positive, and you need the coding to read them. The fat end is at code 1, <b>very confident</b>, and the tail runs toward “not at all.” So most Americans were confident. For their own vote (q36) the skew is strong (${D.sp(P36.sk,3)}) and the kurtosis is high (${D.sp(P36.ku,3)}), so answers are packed at “very confident.” For the country (q37) the skew is milder (${D.sp(P37.sk,3)}) and the kurtosis is negative (${D.sp(P37.ku,3)}), so answers are spread more evenly. q37 has more dispersion, SD ${D.sp(P37.s,3)} against ${D.sp(P36.s,3)}, and the comparison is fair because both are coded 1 to 4 the same way. People trusted the count of their own vote more, and agreed with each other more about it, than about the count across the country.`);});
 
 /* ---------- Part 5 output ---------- */
 const PREF={rep:{1:347,2:231,3:4},dem:{1:246,2:332,3:12}};
@@ -969,14 +969,14 @@ coded($('#r24D'),{codes:[1,2,3,4,5,6,7],counts:DATA.pw.n_dem.counts,labels:ANESL
 const R14={1:231,2:4,3:347},D14={1:332,2:12,3:246},GR=GRr,GD=GDr,NR=DATA.pw.n_rep.counts,ND=DATA.pw.n_dem.counts;
 const CL=[
  {who:'Aunt Sue on Republicans (claim 1)',what:'Republicans have been overrun by a small, super-conservative faction.',k14:['wrong'],k24:['partly'],
-  e14:`The claim doesn't hold. ${PCT(R14,['3'])} of Republicans wanted their leaders more conservative. That's a majority, and both the median and the mode are “more conservative,” so these voters are the bulk of the party, not a faction. The skew is negative (−.408): the distribution leans toward “more conservative,” with the moderates as the smaller group.`,
-  e24:`The claim partly holds. In Gallup only ${PCT(GR,['3'])} of Republicans want the party more conservative, so the push for more is now a minority, closer to Sue's “faction.” But the ANES shows the rank and file are conservative across the board: ${PCT(NR,['6','7'])} place themselves at 6 or 7, the median is 6, and only ${PCT(NR,['1','2','3'])} are on the liberal side. Conservatives aren't a small faction; they're most of the party. What's small is the group that wants the party to move further.`},
+  e14:`The claim doesn't hold. ${PCT(R14,['3'])} of Republicans wanted their leaders more conservative. That's a majority, and both the median and the mode are “more conservative,” so these voters are the bulk of the party, not a faction. The skew is negative (−.408), so the distribution leans toward “more conservative,” with the moderates as the smaller group.`,
+  e24:`The claim partly holds. In Gallup only ${PCT(GR,['3'])} of Republicans want the party more conservative, so the push for more is now a minority, closer to Sue's “faction.” But the ANES shows the rank and file are conservative across the board, since ${PCT(NR,['6','7'])} place themselves at 6 or 7, the median is 6, and only ${PCT(NR,['1','2','3'])} are on the liberal side. Conservatives aren't a small faction, because they're most of the party. What's small is the group that wants the party to move further.`},
  {who:'Uncle Jim on Republicans (claim 2)',what:'Republicans in general want far more conservative leadership.',k14:['right'],k24:['wrong','partly'],
   e14:`The claim holds. ${PCT(R14,['3'])} wanted more conservative leaders against ${PCT(R14,['1'])} who wanted more moderate ones, and the median sits at “more conservative.”`,
-  e24:`The claim no longer holds. In Gallup the mode and the median are “stay the same” (${PCT(GR,['2'])}), and only ${PCT(GR,['3'])} want more conservative, about the same as want more moderate (${PCT(GR,['1'])}). The skew is close to 0 (${D.sp(-DATA.pw.g_rep.skew,3)} after recoding): answers balance around the middle. Republicans are conservative (ANES median 6), but most are content with where the party is. If you said “partly,” that's fair: Jim is right that Republicans are conservative, wrong that they want much more of it.`},
+  e24:`The claim no longer holds. In Gallup the mode and the median are “stay the same” (${PCT(GR,['2'])}), and only ${PCT(GR,['3'])} want more conservative, about the same as want more moderate (${PCT(GR,['1'])}). The skew is close to 0 (${D.sp(-DATA.pw.g_rep.skew,3)} after recoding), so answers balance around the middle. Republicans are conservative (ANES median 6), but most are content with where the party is. If you said “partly,” that's fair, since Jim is right that Republicans are conservative but wrong that they want much more of it.`},
  {who:'Uncle Jim on Democrats (claim 3)',what:'Democrats are so liberal they are pushing their leaders far left.',k14:['wrong'],k24:['wrong'],
-  e14:`The claim doesn't hold. ${PCT(D14,['1'])} of Democrats wanted their leaders more moderate; ${PCT(D14,['3'])} wanted them more liberal. The median and the mode are “more moderate,” and the skew is positive (.295): the more-liberal group is the smaller side.`,
-  e24:`It still doesn't hold. Gallup's mode for Democrats is “more moderate” (${PCT(GD,['1'])}), against ${PCT(GD,['3'])} who want more liberal. The ANES doesn't show a “super liberal” party either: only ${PCT(ND,['1'])} of Democrats call themselves extremely liberal, the median is 3 (slightly liberal), and ${PCT(ND,['4'])} say moderate.`},
+  e14:`The claim doesn't hold. ${PCT(D14,['1'])} of Democrats wanted their leaders more moderate, while ${PCT(D14,['3'])} wanted them more liberal. The median and the mode are “more moderate,” and the skew is positive (.295), so the more-liberal group is the smaller side.`,
+  e24:`It still doesn't hold. Gallup's mode for Democrats is “more moderate” (${PCT(GD,['1'])}), against ${PCT(GD,['3'])} who want more liberal. The ANES doesn't show a “super liberal” party either, since only ${PCT(ND,['1'])} of Democrats call themselves extremely liberal, the median is 3 (slightly liberal), and ${PCT(ND,['4'])} say moderate.`},
  {who:'Aunt Sue on Democrats (claim 4)',what:'Democrats are pretty moderate and want moderate-left policies.',k14:['right'],k24:['right'],
   e14:`The claim holds. A majority (${PCT(D14,['1'])}) wanted their leaders to be more moderate.`,
   e24:`It still holds. Gallup's mode is “more moderate” (${PCT(GD,['1'])}), and in the ANES Democrats center on slightly liberal (median 3), with a long thin tail toward the conservative end (skewness ${D.sp(DATA.pw.n_dem.skew,3)}). That is a moderate-left party.`}];
@@ -1014,7 +1014,7 @@ prefOut($('#r24Out1'),[GRrp,GDrp],'Gallup q7 and q6 after recoding them to run 1
   <div class="fbk" id="vdFb${i}${y}" aria-live="polite"></div></div>`).join('');
   $('#vd'+y).addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;const sg=b.parentNode;sg.querySelectorAll('button').forEach(x=>{x.setAttribute('aria-pressed',x===b);x.classList.remove('right','wrong');});
     const c=CL[+sg.dataset.c],ok=c['k'+y].includes(b.dataset.v);b.classList.add(ok?'right':'wrong');
-    D.fb($(`#vdFb${sg.dataset.c}${y}`),ok?'ok':'no',ok?c['e'+y]:(y==='14'?'Look at the 2014 charts again: what share wants the party to move, and which answer is the mode?':'Look at both 2024 sources again: Gallup for which way people want the party to move, and the ANES for where they place themselves.'));});});
+    D.fb($(`#vdFb${sg.dataset.c}${y}`),ok?'ok':'no',ok?c['e'+y]:(y==='14'?'Look at the 2014 charts again. What share wants the party to move, and which answer is the mode?':'Look at both 2024 sources again, using Gallup for which way people want the party to move and the ANES for where they place themselves.'));});});
 })();
 </script>
 </body>

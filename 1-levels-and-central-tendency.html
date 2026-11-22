@@ -574,7 +574,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <!-- 2 SPSS GIVES ALL THREE -->
   <section class="part"><p class="kick">Part 2</p><h2>SPSS reports all three anyway</h2>
-    <p>SPSS will print a mean, a median and a mode for any numeric variable, including ones where the number means nothing. Deciding which to read is your job.</p></section>
+    <p>SPSS will print a mean, a median and a mode for any numeric variable, including ones where the number means nothing. Deciding which of them to read is up to you.</p></section>
   <section class="dcard" id="sp" data-ds="titanic.sav">
     <h3>Titanic passengers: which numbers are worth reading?</h3>
     <div class="row"><span class="src">Variable</span><div id="spVar"></div></div>
@@ -592,7 +592,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="row"><div id="mdSet"></div></div>
     <p id="mdIntro" class="p"></p>
     <div class="tiles" id="mdTiles" aria-label="Values to put in order"></div>
-    <div class="row"><span class="src">Smallest on the left, largest on the right. Drag a tile, or tap two tiles to swap them. Arrow keys also move a focused tile.</span></div>
+    <div class="row"><span class="src">Put the smallest on the left and the largest on the right. Drag a tile, or tap two tiles to swap them. Arrow keys also move a focused tile.</span></div>
     <div class="row" id="mdSortRow" hidden><button class="dbtn pri" id="mdSort">Sort them for me</button></div>
     <div class="fbk" id="mdFb" aria-live="polite"></div>
   </section>
@@ -619,7 +619,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <!-- 5 NOMINAL -->
   <section class="part"><p class="kick">Part 5</p><h2>Why the mean of a nominal variable means nothing</h2>
-    <p>The numbers SPSS stores for a nominal variable are only labels. You can put the categories in any order and number them any way you like, and nothing is lost: every country keeps its religion, and every religion keeps its count. A measure that changes when you rearrange the categories is reacting to the labels, not to the countries.</p></section>
+    <p>The numbers SPSS stores for a nominal variable are only labels. You can put the categories in any order and number them any way you like, and nothing is lost, because every country keeps its religion and every religion keeps its count. A measure that changes when you rearrange the categories is reacting to the labels, not to the countries.</p></section>
   <section class="dcard" id="nm" data-ds="World.sav">
     <h3>Predominant religion in 191 countries (typerel)</h3>
     <div class="hbars" id="nmBars"></div>
@@ -824,14 +824,14 @@ function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-tit
   rows.forEach(r=>{h+=`<tr${r.flag?' class="flag"':''}>`+r.cells.map((c,i)=>{if(c&&typeof c==='object'){return `<td${c.rh?' class="rh"':''}${c.span?` rowspan="${c.span}"`:''}${c.cs?` colspan="${c.cs}"`:''}${c.tap?` class="tap" tabindex="0" data-exp="${esc(c.tap)}"`:''}>${c.v}</td>`;}return i===0&&r.rh!==false?`<td class="rh">${c}</td>`:`<td>${c}</td>`;}).join('')+'</tr>';});
   h+='</tbody></table>'+(foot?`<div class="sp-fn">${foot}</div>`:'')+'</div>';return h;}
 const EXP={
- mean:(v,u)=>`The mean is ${v}${u||''}: the arithmetic average of the valid cases.`,
- median:(v,u)=>`The median is ${v}${u||''}: half the valid cases are at or below it and half at or above.`,
- mode:(v,u)=>`The mode is ${v}${u||''}: the most common value. If several values tie, SPSS shows the smallest and adds a footnote.`,
- sd:(v)=>`The standard deviation is ${v}: the typical distance of a case from the mean, in the variable's own units.`,
- var:(v)=>`The variance is ${v}: the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
- skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'Close to 0, so roughly symmetric.':num(v)>0?'Above 0: the tail points toward the high values (positive skew).':'Below 0: the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
- kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'Above 0: more peaked than normal (leptokurtic).':'Below 0: flatter than normal (platykurtic).'}`,
- range:(v)=>`The range is ${v}: maximum minus minimum.`,
+ mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
+ median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
+ mode:(v,u)=>`The mode is ${v}${u||''}, the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
+ sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
+ var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
+ skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
+ kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'It is above 0, so the distribution is more peaked than normal (leptokurtic).':'It is below 0, so the distribution is flatter than normal (platykurtic).'}`,
+ range:(v)=>`The range is ${v}, the maximum minus the minimum.`,
  nmiss:(v)=>`${v} cases are missing on this variable (no answer, or a code such as Don't know that is set as missing). They are left out of every statistic above.`
 };
 /* vars: [{name, vals, nTotal}] */
@@ -870,7 +870,7 @@ function stTab(name,label,cats){const T=sum(cats.map(c=>c.n));let cum=0;const w=
   const L=[`<span class="cmd">. tabulate ${name}</span>`,'',lab.slice(0,w).padStart(w)+' |      Freq.     Percent        Cum.','-'.repeat(w+1)+'+-----------------------------------'];
   cats.forEach(c=>{cum+=c.n;L.push(String(c.label).padStart(w)+' | '+String(comma(c.n)).padStart(10)+String((c.n/T*100).toFixed(2)).padStart(12)+String((cum/T*100).toFixed(2)).padStart(12));});
   L.push('-'.repeat(w+1)+'+-----------------------------------');L.push('Total'.padStart(w)+' | '+String(comma(T)).padStart(10)+'      100.00');return L.join('\n');}
-const STNOTE='Stata\'s skewness and kurtosis come out slightly different from SPSS\'s: Stata doesn\'t apply SPSS\'s small-sample correction, and Stata\'s kurtosis is not centered at 0. A normal curve scores <b>3</b> in Stata, so subtract 3 to compare with SPSS.';
+const STNOTE='Stata\'s skewness and kurtosis come out slightly different from SPSS\'s, because Stata doesn\'t apply SPSS\'s small-sample correction and Stata\'s kurtosis is not centered at 0. A normal curve scores <b>3</b> in Stata, so subtract 3 to compare with SPSS.';
 /* host: element to append to. o={spssNote, spssCmd, spss(html), stataNote, stata(text)} */
 function drawers(host,o){host.innerHTML='';
   const d=document.createElement('details');d.className='spss';if(!o.spss){d.hidden=true;}d.innerHTML=`<summary><span class="sp-badge">SPSS</span><span class="sp-lab">Show SPSS output</span></summary><div class="sp-body">${o.spssNote?`<p class="sp-note">${o.spssNote}</p>`:''}<p class="sp-hint">Wide tables scroll sideways.</p><div class="sp-sheet">${o.spss}</div><p class="sp-exp" aria-live="polite"></p></div>`;
@@ -906,15 +906,15 @@ const LV=[
  ['age','Titanic: age','Age of passenger in years','interval','Years are equal steps, and a passenger can be any age.'],
  ['age5','Titanic: age5','Age in five categories (0–5, 5–16, 16–30, 30–60, 60–120)','ordinal','The groups are in order, but they cover different numbers of years.'],
  ['pclass','Titanic: pclass','Passenger class: first, middle or lower','ordinal','First, middle and lower class are in order, but the gap between them isn\'t a fixed amount.'],
- ['sex','Titanic: sex','Sex: male or female','nominal','Two categories with no order between them.'],
- ['survived','Titanic: survived','Did the passenger survive? Yes or no','nominal','Two categories, yes and no. Coding them 0 and 1 doesn\'t make it a scale.'],
+ ['sex','Titanic: sex','Sex: male or female','nominal','It has two categories with no order between them.'],
+ ['survived','Titanic: survived','Did the passenger survive? Yes or no','nominal','It has two categories, yes and no, and coding them 0 and 1 doesn\'t make it a scale.'],
  ['typerel','Countries: typerel','Predominant religion','nominal','Religions are categories with no built-in order.'],
- ['regime','Countries: regime_type3','Regime type (dictatorship, parliamentary, presidential)','nominal','Three kinds of regime, none of them "more" than another.'],
- ['enpp','Countries: enpp3_democ','Effective number of parties (1–3, 4–5, 6–11)','ordinal','Groups in order of how many parties, with unequal widths.'],
- ['gdp','Countries: gdp_10_thou','GDP per capita in $10,000s','interval','Dollars are equal steps.'],
+ ['regime','Countries: regime_type3','Regime type (dictatorship, parliamentary, presidential)','nominal','These are three kinds of regime, and none of them is "more" than another.'],
+ ['enpp','Countries: enpp3_democ','Effective number of parties (1–3, 4–5, 6–11)','ordinal','The groups are in order of how many parties, but they have unequal widths.'],
+ ['gdp','Countries: gdp_10_thou','GDP per capita in $10,000s','interval','Each dollar is an equal step.'],
  ['educ','Survey: education','Highest degree (some high school … PhD)','ordinal','Degrees are in order, but going from a master\'s to a PhD isn\'t the same step as finishing high school.'],
- ['nbr','Counties: NBR','Number of lunatics per county','interval','A count: every additional person is the same step.'],
- ['state','Survey: state','Which state are you from?','nominal','States are categories; no order.']
+ ['nbr','Counties: NBR','Number of lunatics per county','interval','It is a count, so every additional person is the same step.'],
+ ['state','Survey: state','Which state are you from?','nominal','States are categories with no order.']
 ];
 const USE={nominal:[['Mean','x'],['Median','x'],['Mode','u']],ordinal:[['Mean','m'],['Median','u'],['Mode','u']],interval:[['Mean','u'],['Median','u'],['Mode','m']]};
 const pool=$('#lvPool');
@@ -925,7 +925,7 @@ D.binDrop($('#lv'),(t,bin)=>{
     t.insertAdjacentHTML('beforeend',`<span class="chips">${USE[v[3]].map(([n,k])=>`<span class="chip ${k}">${n}${k==='m'?(v[3]==='interval'?' (often)':' (marginal)'):''}</span>`).join('')}</span>`);
     D.fb($('#lvFb'),'ok',`<b>${v[1]}</b> is ${v[3]}. ${v[4]}`);}
   else{t.classList.add('wrong');D.fb($('#lvFb'),'no',`<b>${v[1]}</b> isn't ${bin.dataset.bin}. ${bin.dataset.bin==='interval'?'Are the steps between values really equal?':bin.dataset.bin==='nominal'?'Can its categories be put in a meaningful order?':'Ask whether the categories have an order, and whether the steps are equal.'}`);}
-  if(!pool.children.length)D.fb($('#lvFb'),'ok','All twelve sorted. Green chips are the measures worth reading; amber ones need care; struck-through ones mean nothing for that level.');
+  if(!pool.children.length)D.fb($('#lvFb'),'ok','All twelve are sorted. Green chips are the measures worth reading, amber ones need care, and struck-through ones mean nothing at that level of measurement.');
 });
 
 /* ---------- Part 2: SPSS gives all three ---------- */
@@ -935,11 +935,11 @@ const SPV={
  age:{lab:'age: Age of passenger',coding:'Measured in years (infants have fractions of a year). 264 passengers have no age recorded.',level:'interval',vals:T.age,
    key:[['u'],['u'],['u','n']],interp:()=>`The average passenger was ${T.age_st.mean.toFixed(1)} years old. Half were younger than ${T.age_st.median}. The most common single age was ${T.age_st.mode}, though with ages in years the mode is only somewhat useful.`},
  age5:{lab:'age5: Age in five categories',coding:'<dl class="codes"><dt>1</dt><dd>Infant or young child (0–5)</dd><dt>2</dt><dd>Youth (5–16)</dd><dt>3</dt><dd>Young adult (16–30)</dd><dt>4</dt><dd>Adult (30–60)</dd><dt>5</dt><dd>Elderly (60–120)</dd></dl>',level:'ordinal',vals:cnt(T.age5),
-   key:[['n','m'],['u'],['u']],interp:()=>'The median and the mode are both 3: the typical passenger was a young adult (16–30). The mean of the codes (3.27) is a number between categories that cover different age spans, so it doesn\'t translate into an age.'},
+   key:[['n','m'],['u'],['u']],interp:()=>'The median and the mode are both 3, so the typical passenger was a young adult (16–30). The mean of the codes (3.27) is a number between categories that cover different age spans, so it doesn\'t translate into an age.'},
  pclass:{lab:'pclass: Passenger class',coding:'<dl class="codes"><dt>1</dt><dd>First Class</dd><dt>2</dt><dd>Middle Class</dd><dt>3</dt><dd>Lower Class</dd></dl>',level:'ordinal',vals:cnt(T.pclass),
-   key:[['n','m'],['u'],['u']],interp:()=>'The median and the mode are both 3: most passengers traveled in lower class. A mean of 2.29 sits between middle and lower class, which isn\'t a class anyone traveled in.'},
+   key:[['n','m'],['u'],['u']],interp:()=>'The median and the mode are both 3, so most passengers traveled in lower class. A mean of 2.29 sits between middle and lower class, which isn\'t a class anyone traveled in.'},
  survived:{lab:'survived: Did the passenger survive',coding:'<dl class="codes"><dt>0</dt><dd>No</dd><dt>1</dt><dd>Yes</dd></dl>',level:'nominal',vals:cnt(T.survived),
-   key:[['x'],['x'],['u']],interp:()=>`The mode is 0: most passengers (${D.comma(T.survived[0])} of ${D.comma(T.survived[0]+T.survived[1])}) did not survive. With a 0/1 variable the mean (.38) happens to equal the share coded 1. That is a property of 0/1 coding, which comes back when we use dummy variables in regression.`}
+   key:[['x'],['x'],['u']],interp:()=>`The mode is 0, so most passengers (${D.comma(T.survived[0])} of ${D.comma(T.survived[0]+T.survived[1])}) did not survive. With a 0/1 variable the mean (.38) happens to equal the share coded 1. That is a property of 0/1 coding, which comes back when we use dummy variables in regression.`}
 };
 const RATE=[['u','Useful'],['n','Not useful'],['x','Meaningless']];
 let spCur='age';
@@ -987,15 +987,15 @@ function mdCheck(){const tiles=[...$('#mdTiles').children],v=tiles.map(t=>+t.dat
   tiles.forEach((t,i)=>{if(mids.includes(i))t.classList.add('mid');else t.classList.add(i<mids[0]?'lo':'hi');});
   const below=mids[0],m=n%2?v[mids[0]]:(v[mids[0]]+v[mids[1]])/2;
   D.fb($('#mdFb'),'ok',n%2?`In order. The median is <b>${m}</b>${tiles[mids[0]].querySelector('small')?` (${tiles[mids[0]].querySelector('small').textContent})`:''}: ${below} values are below it and ${below} above.`
-    :`In order. With ${n} values, <b>${v[mids[0]]}</b> and <b>${v[mids[1]]}</b> share the middle (${below} values on each side). The median is halfway between them: (${v[mids[0]]} + ${v[mids[1]]}) ÷ 2 = <b>${m}</b>.`);}
+    :`In order. With ${n} values, <b>${v[mids[0]]}</b> and <b>${v[mids[1]]}</b> share the middle (${below} values on each side). The median is halfway between them, (${v[mids[0]]} + ${v[mids[1]]}) ÷ 2 = <b>${m}</b>.`);}
 D.sortable($('#mdTiles'),mdCheck);
 $('#mdSort').addEventListener('click',()=>{const box=$('#mdTiles');const tiles=[...box.children];const first=new Map(tiles.map(t=>[t,t.getBoundingClientRect()]));
   tiles.sort((a,b)=>+a.dataset.v-+b.dataset.v).forEach(t=>box.appendChild(t));
   tiles.forEach(t=>{const f=first.get(t),l=t.getBoundingClientRect();t.animate([{transform:`translate(${f.left-l.left}px,${f.top-l.top}px)`},{transform:'none'}],{duration:700,easing:'ease-in-out'});});
-  box.dataset.sorted=1;D.fb($('#mdFb'),'info','Sorted. Now tap the two tiles in the middle: 24 values should be below them and 24 above.');});
+  box.dataset.sorted=1;D.fb($('#mdFb'),'info','They are sorted. Now tap the two tiles in the middle, which should have 24 values below them and 24 above.');});
 $('#mdTiles').addEventListener('click',e=>{if(mdKey!=='st'||!$('#mdTiles').dataset.sorted)return;const t=e.target.closest('.tile');if(!t)return;
   t.classList.toggle('mid');const tiles=[...$('#mdTiles').children];const sel=tiles.map((x,i)=>x.classList.contains('mid')?i:-1).filter(i=>i>=0);
-  if(sel.length===2){const v=tiles.map(x=>+x.dataset.v);if(sel[0]===24&&sel[1]===25){const m=(v[24]+v[25])/2;D.fb($('#mdFb'),'ok',`${v[24]} and ${v[25]} share the middle. The median is ${m.toFixed(2)}%: in half the states Mondale won less than ${m.toFixed(2)}% of the vote, and in half he won more. The mean, for comparison, is ${D.mean(v).toFixed(2)}%.`);}
+  if(sel.length===2){const v=tiles.map(x=>+x.dataset.v);if(sel[0]===24&&sel[1]===25){const m=(v[24]+v[25])/2;D.fb($('#mdFb'),'ok',`${v[24]} and ${v[25]} share the middle. The median is ${m.toFixed(2)}%, so in half the states Mondale won less than ${m.toFixed(2)}% of the vote, and in half he won more. The mean, for comparison, is ${D.mean(v).toFixed(2)}%.`);}
     else{D.fb($('#mdFb'),'no','Those two aren\'t the middle pair. Count 25 tiles in from either end.');tiles.forEach(x=>x.classList.remove('mid'));}}});
 // arrow-key moves for the 50-state set are pointless; sorting on tap is handled above
 mdLoad();
@@ -1039,8 +1039,8 @@ function balDraw(){
       const y=Math.abs(xs[0]-xs[1])<tw?ys[k]:ys[0];S('text',{x:tx,y,'text-anchor':anc,class:L[1]},svg,L[2]);});
     $('#balMean').textContent=mu.toFixed(1);$('#balMed').textContent=String(md);}
   else S('text',{x:Math.min(W-40,Math.max(40,X(f))),y:yb+BH+40,'text-anchor':'middle',style:'font-weight:600'},svg,'Triangle at '+f);
-  if(phase===1){if(Math.abs(diff)<=2.5){D.fb($('#balFb'),'ok',`Level. The beam balances at ${f}, and the mean of the 13 counties is ${mu.toFixed(2)}. Notice that it balances well to the right of most counties: the four big counties at 351 and above pull it there. The median is ${md} (Berkshire).`);$('#bal2').hidden=false;}
-    else{$('#balFb').className='fbk show info';$('#balFb').textContent=diff>0?'The beam tips right: there is more weight to the right of the triangle. Move it right.':'The beam tips left: move the triangle left.';}}
+  if(phase===1){if(Math.abs(diff)<=2.5){D.fb($('#balFb'),'ok',`The beam is level. It balances at ${f}, and the mean of the 13 counties is ${mu.toFixed(2)}. Notice that it balances well to the right of most counties, because the four big counties at 351 and above pull it there. The median is ${md} (Berkshire).`);$('#bal2').hidden=false;}
+    else{$('#balFb').className='fbk show info';$('#balFb').textContent=diff>0?'The beam tips right, so there is more weight to the right of the triangle. Move it right.':'The beam tips left, so move the triangle left.';}}
 }
 $('#balR').addEventListener('input',balDraw);
 host.addEventListener('pointerdown',e=>{if(phase!==1)return;const svg=host.querySelector('svg');const mv=ev=>{const p=D.svgPt(svg,ev);$('#balR').value=Math.round(Math.max(0,Math.min(axMax,(p.x-ml)/(W-ml-mr)*axMax)));balDraw();};mv(e);
@@ -1059,7 +1059,7 @@ function nmDraw(flash){const N=D.sum(REL.map(r=>r[1])),mx=Math.max(...REL.map(r=
   let c=0,medCat='';for(const i of order){c+=REL[i][1];if(c>=N/2){medCat=REL[i][0];break;}}
   $('#nmMean').textContent=mu.toFixed(2);$('#nmMed').textContent=medCat;$('#nmMode').textContent=REL[0][0];
   nmHist.push(mu.toFixed(2));$('#nmHist').textContent='Means so far: '+nmHist.slice(-12).join(', ');
-  if(nmHist.length>3)D.fb($('#nmFb'),'info',`Nothing was lost by rearranging: the same ${N} countries, the same eight religions, the same counts, and the same most common religion (${REL[0][0]}, the mode). But the mean of the codes has been ${[...new Set(nmHist)].length} different numbers, and the “middle” category changes with the order. They depend on an order that isn't really there, so for a nominal variable only the mode means anything.`);}
+  if(nmHist.length>3)D.fb($('#nmFb'),'info',`Nothing was lost by rearranging. We still have the same ${N} countries, the same eight religions, the same counts, and the same most common religion (${REL[0][0]}, the mode). But the mean of the codes has been ${[...new Set(nmHist)].length} different numbers, and the “middle” category changes with the order. They depend on an order that isn't really there, so for a nominal variable only the mode means anything.`);}
 function nmPing(){const e=$('#nmModeBox');e.classList.remove('ping');void e.offsetWidth;e.classList.add('ping');}
 $('#nmGo').addEventListener('click',()=>{codes=D.shuffle(codes);nmDraw(true);nmPing();});
 $('#nmReset').addEventListener('click',()=>{codes=REL.map((_,i)=>i+1);nmDraw(true);nmPing();});
@@ -1072,21 +1072,21 @@ const OG={
  age:{ttl:'Titanic age groups (age5)',hue:'var(--s1)',desc:'age5 sorts Titanic passengers into five age groups coded 1 to 5. Here the gaps can be measured, because each group covers a known range of years. Tap a group on the bottom line to see how wide it is.',
    cols:['var(--q1,#8fb3e8)','var(--q2,#5f93db)','var(--q3,#2a78d6)','var(--q4,#1c5cab)','var(--q5,#123f78)'],
    ranges:[[0,5],[5,16],[16,30],[30,60],[60,80]],bottom:'Real ages in years',
-   notes:['Code 1, infant or young child, covers ages 0 to 5: about 5 years.','Code 2, youth, covers ages 5 to 16: 11 years.','Code 3, young adult, covers ages 16 to 30: 14 years.','Code 4, adult, covers ages 30 to 60: 30 years, more than twice as wide as code 3. Yet on the codes it is still one step from 3 to 4.','Code 5, elderly, covers everyone 60 and older.']},
+   notes:['Code 1, infant or young child, covers ages 0 to 5, about 5 years.','Code 2, youth, covers ages 5 to 16, which is 11 years.','Code 3, young adult, covers ages 16 to 30, which is 14 years.','Code 4, adult, covers ages 30 to 60, which is 30 years and more than twice as wide as code 3. Yet on the codes it is still one step from 3 to 4.','Code 5, elderly, covers everyone 60 and older.']},
  agree:{ttl:'Agree or disagree',hue:'var(--s2)',desc:'Many surveys ask people whether they agree with a statement, coded 1 = Strongly agree to 5 = Strongly disagree. The codes are evenly spaced, but the answers may not be. There’s no ruler for this, so the bottom line shows where we think the gaps are larger or smaller. Tap a gap to see why.',
    cols:AGREEC,labels:['Strongly agree','Agree','Neither agree nor disagree','Disagree','Strongly disagree'],pos:[0,1,2.5,4,5],bottom:'Judged distance, not measured',
-   gaps:[['smaller','Smaller than one step. Both answers agree with the statement; only how strongly changes.'],
+   gaps:[['smaller','Smaller than one step. Both answers agree with the statement, and only how strongly changes.'],
          ['larger','Larger than one step. This step leaves the agree side altogether. “Neither” also collects people who have no opinion on the question, so it isn’t a true halfway point.'],
          ['larger','Larger than one step. Moving from no side to disagreeing changes which side someone is on, not just how strongly.'],
-         ['smaller','Smaller than one step. Both answers disagree; only how strongly changes.']]},
+         ['smaller','Smaller than one step. Both answers disagree, and only how strongly changes.']]},
  party:{ttl:'Party identification (ANES)',hue:'var(--dem,#5B9BD5)',desc:'The ANES 7-point party ID runs from 1 = Strong Democrat to 7 = Strong Republican. Studies of how people vote suggest some of these steps are much bigger than others. Tap a gap to see why.',
    cols:PARTYC,labels:['Strong Democrat','Not very strong Democrat','Independent-Democrat','Independent','Independent-Republican','Not very strong Republican','Strong Republican'],pos:[0,1.2,1.55,3.1,4.65,5,6.2],bottom:'Judged distance, not measured',
-   gaps:[['about one step','About one step. Both groups call themselves Democrats; one is less attached.'],
+   gaps:[['about one step','About one step. Both groups call themselves Democrats, and one is just less attached.'],
          ['smaller','Much smaller than it looks. Independents who lean Democratic call themselves independents, but they vote much like partisans. Keith and co-authors found Democratic leaners voting for Democrats at least as loyally as “not very strong” Democrats.'],
          ['larger','Larger than it looks. Pure independents lean toward neither party, so this step goes from people who vote much like Democrats to people with no partisan pull.'],
-         ['larger','Larger than it looks, for the same reason on the Republican side: from no partisan pull to people who vote much like Republicans.'],
+         ['larger','Larger than it looks, for the same reason on the Republican side, since this step goes from no partisan pull to people who vote much like Republicans.'],
          ['smaller','Much smaller than it looks. Independents who lean Republican vote much like “not very strong” Republicans.'],
-         ['about one step','About one step. Both groups call themselves Republicans; one is less attached.']],
+         ['about one step','About one step. Both groups call themselves Republicans, and one is just less attached.']],
    src:'Keith, Bruce E., David B. Magleby, Candice J. Nelson, Elizabeth Orr, Mark C. Westlye, and Raymond E. Wolfinger. 1992. <i>The Myth of the Independent Voter</i>. Berkeley: University of California Press.'}};
 const NUM='fill:#fff;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px';
 function ogNote(o,k,txt){const g=$('#ogGap');g.style.setProperty('--gc',o.hue);g.innerHTML=txt;g.classList.add('show');
@@ -1118,8 +1118,8 @@ function ogDraw(key){const o=OG[key],host=$('#ogSvg');host.innerHTML='';const g=
     $('#ogKey').innerHTML='<dl class="codes">'+o.labels.map((t,i)=>`<dt style="color:${o.cols[i]==='var(--muted)'?'var(--ink-2)':'var(--ink)'}"><i class="sw" style="background:${o.cols[i]}"></i>${i+1}</dt><dd>${t}</dd>`).join('')+'</dl>';}
   for(let c=1;c<=n;c++){S('circle',{cx:X1(c),cy:40,r:12,style:`fill:${o.cols[c-1]};stroke:var(--surface);stroke-width:1.5`},svg);S('text',{x:X1(c),y:44.5,'text-anchor':'middle',style:NUM},svg,String(c));}}
 D.seg($('#ogSeg'),[['age','Titanic ages'],['agree','Agree or disagree'],['party','Party ID']],ogDraw,'age');ogDraw('age');
-D.seg($('#ogQ'),[['y','Yes'],['n','No']],v=>{if(v==='n')D.fb($('#ogFb'),'ok','The codes treat the step from youth (5–16) to young adult (16–30) as the same size as the step from young adult to adult (30–60), even though one covers 14 years and the other 30. So a mean of the codes is a rough guide to which group is typical, not an age. For ordinal variables, read the median and the mode: here both are 3, young adults.');
-  else D.fb($('#ogFb'),'no','Code 4 alone covers 30 years of age, while code 2 covers 11. The codes are evenly spaced; the ages they stand for are not. So the mean of the codes can\'t be turned back into an age.');});
+D.seg($('#ogQ'),[['y','Yes'],['n','No']],v=>{if(v==='n')D.fb($('#ogFb'),'ok','The codes treat the step from youth (5–16) to young adult (16–30) as the same size as the step from young adult to adult (30–60), even though one covers 14 years and the other 30. So a mean of the codes is a rough guide to which group is typical, not an age. For ordinal variables, read the median and the mode, which here are both 3 (young adults).');
+  else D.fb($('#ogFb'),'no','Code 4 alone covers 30 years of age, while code 2 covers 11. The codes are evenly spaced, but the ages they stand for are not. So the mean of the codes can\'t be turned back into an age.');});
 
 /* ---------- Part 7: mode ---------- */
 const WF=DATA.welfare,WN=D.sum(WF.map(r=>r[2]));let cum=0;
@@ -1127,7 +1127,7 @@ $('#moTbl').innerHTML=D.spFreq('PRE: SUMMARY: Federal Budget Spending: welfare p
 D.drawers($('#moOut'),{stata:D.stTab('V201314x','welfare spending',WF.map(r=>({label:`${r[0]}. ${r[1]}`.slice(0,24),n:r[2]}))),stataNote:'The same table in Stata. Stata, too, counts −2 as a valid value until you tell it otherwise (for example, <code>replace V201314x = . if V201314x < 0</code>).'});
 $('#moBars').addEventListener('click',()=>{$('#moChart').hidden=false;$('#moTap').hidden=false;
   D.hist($('#moChart'),{cats:WF.map(r=>({label:(r[0]<0?'−2 DK/RF':r[0]+'. '+r[1].replace('Increased','Incr.').replace('Decreased','Decr.')),n:r[2]})),h:250,catSmall:true,barTap:(i)=>{
-    if(WF[i][0]===3){D.fb($('#moFb'),'ok',`The mode is 3, “Kept the same”: ${D.comma(3522)} people, ${(3522/WN*100).toFixed(1)}% of the sample. That's the most common answer by a wide margin. The highlighted −2 row is a non-answer (don't know or refused). This table lists it under Valid, but it isn't an opinion; it should be set as missing before you compute anything.`);$('#moQ').hidden=false;}
+    if(WF[i][0]===3){D.fb($('#moFb'),'ok',`The mode is 3, “Kept the same,” chosen by ${D.comma(3522)} people, ${(3522/WN*100).toFixed(1)}% of the sample. That's the most common answer by a wide margin. The highlighted −2 row is a non-answer (don't know or refused). This table lists it under Valid, but it isn't an opinion, so it should be set as missing before you compute anything.`);$('#moQ').hidden=false;}
     else D.fb($('#moFb'),'no',`That bar has ${D.comma(WF[i][2])} people. The mode is the tallest bar.`);},aria:'Bar chart of welfare spending answers'});});
 $('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;v==='3'?D.fb($('#moFb2'),'ok','Most people want to keep welfare spending the same. Note that the mode is a plurality, 42.5%, not a majority.'):D.fb($('#moFb2'),'no','Read the label of the tallest bar.');});
 (function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
@@ -1139,7 +1139,7 @@ D.hist($('#raChart'),{counts:SO.counts,xmin:-2.5,xmax:102.5,binw:5,h:230,ticks:[
 $('#raCheck').addEventListener('click',()=>{const a=D.num($('#ra1').value),b=D.num($('#ra2').value),c=D.num($('#ra3').value),d=D.num($('#ra4').value);
   if(a!==0||b!==100)return D.fb($('#raFb'),'no','The range runs from the lowest rating anyone gave to the highest. Look at the bars at each end of the chart.');
   if(c!==SO.counts['0']||d!==SO.counts['100'])return D.fb($('#raFb'),'no','Tap the bars at 0 and at 100 to read their counts.');
-  D.fb($('#raFb'),'ok',`The range is 0 to 100, the whole scale, so it tells you little on its own: ${SO.counts['0']} people out of ${D.comma(SO.n)} gave the coldest rating and ${SO.counts['100']} gave the warmest. Range is sensitive to a handful of extreme cases.`);});
+  D.fb($('#raFb'),'ok',`The range is 0 to 100, the whole scale, so it tells you little on its own. Here ${SO.counts['0']} people out of ${D.comma(SO.n)} gave the coldest rating and ${SO.counts['100']} gave the warmest. Range is sensitive to a handful of extreme cases.`);});
 D.drawers($('#raOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies, southern_therm, with Range, Minimum and Maximum checked under Statistics. The frequency table gives the counts at 0 and 100.',
   spss:D.spStats([{name:'southern_therm',vals:D.expand(SO.counts),nTotal:1212}],['n','range','min','max'])+D.spFreq('Feeling Thermometer: Southerners',Object.entries(SO.counts).map(([k,v])=>({label:k,n:v})),[{label:'System',n:1212-SO.n}]),
   stata:D.stSum('southern_therm','Feeling Thermometer: Southerners',D.expand(SO.counts)),stataNote:'The range is Largest minus Smallest. For the counts at 0 and 100, run <code>tabulate southern_therm</code>.'});
@@ -1153,11 +1153,11 @@ function cfDraw(m){const host=$('#cfChart');
     S('line',{x1:l,x2:W-r,y1:Y(0),y2:Y(0),class:'axis'},svg);
     S('text',{x:12,y:(t+Y(0))/2,transform:`rotate(-90 12 ${(t+Y(0))/2})`,'text-anchor':'middle',class:'ttl'},svg,'Count');
     S('text',{x:(l+W-r)/2,y:Hh-4,'text-anchor':'middle',class:'ttl'},svg,'Each distinct confidence score (every 10th labeled)');
-    $('#cfCap').innerHTML='71 bars, one for each score. Every bar has a count of 1, because no two countries have exactly the same score. The chart is flat, so you can’t see where scores bunch up or where the gaps are.';}
+    $('#cfCap').innerHTML='There are 71 bars, one for each score, and every bar has a count of 1, because no two countries have exactly the same score. The chart is flat, so you can’t see where scores bunch up or where the gaps are.';}
   else{const bins=Array(10).fill(0);CF.forEach(v=>bins[Math.min(9,Math.floor(v/10))]++);const top=bins.indexOf(Math.max(...bins));
     D.hist(host,{values:CF,xmin:0,xmax:100,binw:10,h:250,xlab:'Confidence score, in ranges of 10',aria:'Histogram of confidence',hlBins:new Set(bins.map((_,i)=>i))});
     const tb=host.querySelector(`rect.bar[data-i="${top}"]`);if(tb)tb.classList.add('top');
-    $('#cfCap').innerHTML=`Grouped into ranges of 10, the shape appears: the most common range is ${top*10} to ${top*10+10} (${bins[top]} countries, in orange), with fewer countries toward either end. The y-axis is the number of countries in each range.`;}}
+    $('#cfCap').innerHTML=`Once the scores are grouped into ranges of 10, the shape appears. The most common range is ${top*10} to ${top*10+10} (${bins[top]} countries, in orange), with fewer countries toward either end. The y-axis is the number of countries in each range.`;}}
 D.seg($('#cfSeg'),[['bar','Bar chart'],['hist','Histogram']],cfDraw,'bar');cfDraw('bar');
 D.seg($('#cfQ'),[['a','Every country has its own value'],['b','There are too few countries'],['c','The variable is nominal']],v=>{v==='a'?D.fb($('#cfFb'),'ok','With a 0–100 scale measured to decimals, no two countries share a value, so every bar has a frequency of 1 and the chart shows nothing. A histogram groups values into bins, which is why it suits interval variables. Bar charts suit nominal and ordinal variables, which have few categories.'):D.fb($('#cfFb'),'no','Switch to the bar chart and look at the heights. How many countries share each value?');});
 })();
