@@ -470,7 +470,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
 <main class="wrap">
   <section class="dcard" id="how">
-    <p class="p"><b>How to walk it through.</b> Move the IV from its low code to its high code. The sign (or the change in the group means) tells you whether the DV moves toward its higher or lower codes. Then check what the higher codes mean for that DV. Last, check significance or strength: a sign alone isn't enough to support a claim.</p>
+    <p class="p"><b>How to walk it through.</b> Move the IV from its low code to its high code. The sign (or the change in the group means) tells you whether the DV moves toward its higher or lower codes. Then check what the higher codes mean for that DV. Last, check significance or strength, because a sign alone isn't enough to support a claim.</p>
   </section>
 
   <section class="dcard" id="card" aria-live="polite">
@@ -512,7 +512,7 @@ const C=[
 {t:'Regression · '+TI,iv:['pclass','Passenger class',[[1,'First'],[2,'Second'],[3,'Third']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
  ivF:[[1,'Third'],[2,'Second'],[3,'First']],out:f=>`B (pclass) = ${f?'.181':'−.181'} &nbsp; Sig. = .000`,
  claim:'Passengers in higher classes were more likely to survive.',A:['Higher class, more likely to survive','Higher class, less likely to survive'],a:0,B:['Yes','No'],b:0,
- walk:f=>[['IV',f?'1 (third) → 3 (first): moving up in class':'1 (first) → 3 (third): moving down in class'],['Sign',f?'positive: survival rises':'negative: survival falls'],['Codes','survived: 1 = yes'],['So','higher class went with a better chance of surviving. Watch the class codes: in the original coding a lower number is a higher class.']]},
+ walk:f=>[['IV',f?'1 (third) → 3 (first): moving up in class':'1 (first) → 3 (third): moving down in class'],['Sign',f?'positive: survival rises':'negative: survival falls'],['Codes','survived: 1 = yes'],['So','higher class went with a better chance of surviving. Watch the class codes, because in the original coding a lower number is a higher class.']]},
 {t:'Regression · '+TI,iv:['female','Female passenger',[[0,'No (male)'],[1,'Yes']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
  ivF:[[0,'No (female)'],[1,'Yes (male)']],out:f=>`B (${f?'male':'female'}) = ${f?'−.537':'.537'} &nbsp; Sig. = .000`,
  claim:'Women were more likely to survive than men.',A:['Women more likely to survive','Women less likely to survive'],a:0,B:['Yes','No'],b:0,
@@ -522,19 +522,19 @@ const C=[
  walk:()=>[['IV','older passengers (higher numbers)'],['Sign','negative: survival falls slightly with age'],['Sig.','.073, above .05'],['So','the sign points the claimed way, but we fail to reject H₀. The output doesn’t support the claim.']]},
 {t:'Gamma · '+TI,iv:['age5','Age in five groups',[[1,'Infant or young child (0–5)'],[2,'Youth (5–16)'],[3,'Young adult (16–30)'],[4,'Adult (30–60)'],[5,'Elderly (60–120)']]],dv:['survived','Did the passenger survive?',[[0,'No'],[1,'Yes']]],
  out:()=>'Gamma = −.085',claim:'Older passengers were less likely to survive.',A:['Older groups, less likely to survive','Older groups, more likely to survive'],a:0,B:['Yes','No'],b:1,sigTrap:1,
- walk:()=>[['IV','younger groups (1) → older groups (5)'],['Sign','negative: survival moves toward 0 (no)'],['Strength','|−.085| is below .25: no relationship on the gamma scale'],['So','the sign points the claimed way, but gamma is too weak to support it.']]},
+ walk:()=>[['IV','younger groups (1) → older groups (5)'],['Sign','negative: survival moves toward 0 (no)'],['Strength','|−.085| is below .25, which means no relationship on the gamma scale'],['So','the sign points the claimed way, but gamma is too weak to support it.']]},
 {t:'Regression · '+AN+', GOP voters',iv:['ftjeb','Feeling thermometer: Jeb Bush',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],dv:['fttrump','Feeling thermometer: Trump',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],
  out:()=>'B (ftjeb) = −.030 &nbsp; Sig. = .697',claim:'GOP voters who like Bush rate Trump lower.',A:['Warmer toward Bush, cooler toward Trump','Warmer toward Bush, warmer toward Trump'],a:0,B:['Yes','No'],b:1,sigTrap:1,
  walk:()=>[['IV','warmer toward Bush (higher numbers)'],['Sign','negative: slightly cooler toward Trump'],['Sig.','.697, well above .05'],['So','the sign points the claimed way, but we fail to reject H₀. The output doesn’t support the claim.']]},
 {t:'Regression · '+AN+', GOP voters',iv:['ftcruz','Feeling thermometer: Ted Cruz',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],dv:['fttrump','Feeling thermometer: Trump',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],
  out:()=>'B (ftcruz) = .169 &nbsp; Sig. = .017',claim:'GOP voters who like Cruz rate Trump lower.',A:['Warmer toward Cruz, cooler toward Trump','Warmer toward Cruz, warmer toward Trump'],a:1,B:['Yes','No'],b:1,
- walk:()=>[['IV','warmer toward Cruz (higher numbers)'],['Sign','positive: warmer toward Trump too'],['Sig.','.017, below .05'],['So','the relationship is real but runs the other way: Cruz fans rated Trump higher.']]},
+ walk:()=>[['IV','warmer toward Cruz (higher numbers)'],['Sign','positive: warmer toward Trump too'],['Sig.','.017, below .05'],['So','the relationship is real but runs the other way, since Cruz fans rated Trump higher.']]},
 {t:'Regression · '+AN+', Democratic voters',iv:['ftobama','Feeling thermometer: Barack Obama',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],dv:['fthrc','Feeling thermometer: Hillary Clinton',[[0,'Very cold'],[50,'No feeling'],[100,'Very warm']]],
  out:()=>'B (ftobama) = .524 &nbsp; Sig. = .000',claim:'Democrats who like Obama rate Clinton higher.',A:['Warmer toward Obama, warmer toward Clinton','Warmer toward Obama, cooler toward Clinton'],a:0,B:['Yes','No'],b:0,
  walk:()=>[['IV','warmer toward Obama (higher numbers)'],['Sign','positive: warmer toward Clinton, about half a point per point'],['Sig.','.000, which means p < .001'],['So','the claim holds.']]},
 {t:'Lambda · '+SA,iv:['WhiteInterviewerDummy','Was the interviewer white?',[[0,'No'],[1,'Yes']]],dv:['ANCVoterDummy','Did the respondent vote for the ANC?',[[0,'No'],[1,'Yes']]],
  out:()=>'Lambda (ANCVoterDummy dependent) = .240',claim:'With a white interviewer, people were less likely to say they voted ANC.',A:['Less likely with a white interviewer','More likely with a white interviewer','Lambda can’t tell us the direction'],a:2,B:['Yes','No','Not from lambda alone'],b:2,
- walk:()=>[['Lambda','has no sign: it only says how much knowing the IV improves your guess of the DV'],['Look at','the column percentages in the crosstab to see which way it runs'],['So','a moderate relationship; the direction has to come from the table, not from lambda.']]}];
+ walk:()=>[['Lambda','has no sign, since it only says how much knowing the IV improves your guess of the DV'],['Look at','the column percentages in the crosstab to see which way it runs'],['So','a moderate relationship, but the direction has to come from the table, not from lambda.']]}];
 let order=[],pos=0,f=false,A=null,B=null,done=0,right=0,checked=false;
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 const cod=(role,v,rows)=>`<div class="cod"><span class="role">${role}</span><span class="nm">${v[0]}</span><span class="lb">${v[1]}</span><dl class="codes">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl></div>`;
