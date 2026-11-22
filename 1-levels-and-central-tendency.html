@@ -449,6 +449,8 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
 :root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
 
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
 details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
 details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
@@ -686,8 +688,22 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div id="rgOut"></div>
   </section>
 
+  <!-- 7b MEDIAN IN A FREQUENCY TABLE -->
+  <section class="part"><p class="kick">Part 8</p><h2>Find the median in a frequency table</h2>
+    <p>The median is the answer given by the middle person once everyone is lined up in order, here from “Increased a lot” to “Decreased a lot.” With thousands of people we don't line them up by hand. Instead we read the Cumulative Percent column, which adds up the Valid Percent as you go down the rows. The median is the first row where the cumulative percent reaches 50%, because that row holds the middle person.</p></section>
+  <section class="dcard" id="fm">
+    <h3>Federal budget spending on welfare programs, 2020 ANES</h3>
+    <p class="p">This is the same table as in Part 7. Tap any number or label to see what it means, then find the median.</p>
+    <div class="row"><span class="src">The −2 answers are</span><div class="seg" role="radiogroup" aria-label="How the −2 answers are treated" id="fmMiss"></div></div>
+    <p class="src" style="margin:0">Wide tables scroll sideways.</p>
+    <div class="sp-sheet" id="fmTbl"></div>
+    <p class="sp-exp fmExp" id="fmExp" aria-live="polite"><span class="sp-hint2">Tap a number in the table.</span></p>
+    <div class="qline">The median answer is <select id="fmSel"><option value="">choose</option><option value="1">1. Increased a lot</option><option value="2">2. Increased a little</option><option value="3">3. Kept the same</option><option value="4">4. Decreased a little</option><option value="5">5. Decreased a lot</option></select> <button class="dbtn" id="fmCk">Check</button></div>
+    <div class="fbk" id="fmFb" aria-live="polite"></div>
+  </section>
+
   <!-- 8 RANGE -->
-  <section class="part"><p class="kick">Part 8</p><h2>Range, and why bar charts don't suit interval variables</h2>
+  <section class="part"><p class="kick">Part 9</p><h2>Range, and why bar charts don't suit interval variables</h2>
     <p>The range runs from the lowest observed value to the highest. Feeling thermometers run from 0 (cold) to 100 (warm).</p></section>
   <section class="dcard" id="ra" data-ds="NES2004.sav">
     <h3>How do you feel about Southerners? (southern_therm, 2004 ANES)</h3>
@@ -837,7 +853,7 @@ const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const seSkew=n=>Math.sqrt(6*n*(n-1)/((n-2)*(n+1)*(n+3))),seKurt=n=>2*seSkew(n)*Math.sqrt((n*n-1)/((n-3)*(n+5)));
 function spFmt(v,d){return sp(v,d);}
 function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-title">${title}</p><table class="sp"><thead><tr>${head.map(c=>`<th${c===''?' class="rh"':''}>${c}</th>`).join('')}</tr></thead><tbody>`;
-  rows.forEach(r=>{h+=`<tr${r.flag?' class="flag"':''}>`+r.cells.map((c,i)=>{if(c&&typeof c==='object'){return `<td${c.rh?' class="rh"':''}${c.span?` rowspan="${c.span}"`:''}${c.cs?` colspan="${c.cs}"`:''}${c.tap?` class="tap" tabindex="0" data-exp="${esc(c.tap)}"`:''}>${c.v}</td>`;}return i===0&&r.rh!==false?`<td class="rh">${c}</td>`:`<td>${c}</td>`;}).join('')+'</tr>';});
+  rows.forEach(r=>{h+=`<tr${r.flag?' class="flag"':''}>`+r.cells.map((c,i)=>{if(c&&typeof c==='object'){const cl=[c.rh?'rh':'',c.tap?'tap':''].filter(Boolean).join(' ');return `<td${cl?` class="${cl}"`:''}${c.span?` rowspan="${c.span}"`:''}${c.cs?` colspan="${c.cs}"`:''}${c.tap?` tabindex="0" data-exp="${esc(c.tap)}"`:''}>${c.v}</td>`;}return i===0&&r.rh!==false?`<td class="rh">${c}</td>`:`<td>${c}</td>`;}).join('')+'</tr>';});
   h+='</tbody></table>'+(foot?`<div class="sp-fn">${foot}</div>`:'')+'</div>';return h;}
 const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
@@ -1148,7 +1164,45 @@ $('#moBars').addEventListener('click',()=>{$('#moChart').hidden=false;$('#moTap'
 $('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;v==='3'?D.fb($('#moFb2'),'ok','Most people want to keep welfare spending the same. Note that the mode, at 42.5%, is a plurality rather than a majority.'):D.fb($('#moFb2'),'no','Read the label of the tallest bar.');});
 (function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
 
-/* ---------- Part 8: range ---------- */
+/* ---------- Part 8: median in a frequency table ---------- */
+(function(){let miss=false;
+  const lab=r=>`${r[0]}. ${r[1]}`,ALL=D.sum(WF.map(r=>r[2]));
+  function draw(){
+    const cats=WF.filter(r=>!(miss&&r[0]<0)),V=D.sum(cats.map(r=>r[2])),T=ALL,mid=V/2;let cum=0,cumN=0,medRow=-1;
+    const rows=[];
+    cats.forEach((r,i)=>{const n=r[2],vp=n/V*100,before=cum;cum+=vp;cumN+=n;const isMed=medRow<0&&cumN>=mid;if(isMed)medRow=i;
+      const name=lab(r),non=r[0]<0;
+      const tCum=non?`This row is a non-answer (don't know or refused), but it is listed under Valid, so SPSS starts the running total with it. Its cumulative percent is ${cum.toFixed(1)}.`:
+        isMed?`<b>This is the median row.</b> The cumulative percent was ${before.toFixed(1)} before this row and reaches ${cum.toFixed(1)} here, so it passes 50% in this row. The middle person, number ${D.comma(Math.ceil(mid))} of ${D.comma(V)} valid cases, answered “${r[1]}.” That makes the median ${r[0]}, “${r[1]}.”`:
+        cum<50?`The cumulative percent is only ${cum.toFixed(1)} here, so fewer than half of the valid cases have reached this row. Keep going down.`:
+        `The cumulative percent had already passed 50 in an earlier row, so the middle person isn't in this row.`;
+      rows.push({flag:non,cells:[i===0?{v:'Valid',rh:true,span:cats.length+1}:null,
+        {v:name,rh:true,tap:non?'Codes below 0 are non-answers. This file still counts −2 as Valid, so it sits at the top of the running total. Set it as missing before you read the median, since a non-answer isn\'t a point on the scale.':`${D.comma(n)} people chose “${r[1]}.”`},
+        {v:D.comma(n),tap:`Frequency is the number of people who gave this answer, here ${D.comma(n)}.`},
+        {v:(n/T*100).toFixed(1),tap:`Percent is ${D.comma(n)} out of all ${D.comma(T)} cases in the file, missing ones included, which gives ${(n/T*100).toFixed(1)}%.`},
+        {v:vp.toFixed(1),tap:`Valid Percent is ${D.comma(n)} out of the ${D.comma(V)} valid cases, which gives ${vp.toFixed(1)}%. The cumulative percent adds these up.`},
+        {v:cum.toFixed(1),tap:tCum}].filter(x=>x!==null)});});
+    rows.push({cells:[{v:'Total',rh:true},{v:D.comma(V),tap:`There are ${D.comma(V)} valid cases. The middle one is about number ${D.comma(Math.ceil(mid))}, which is where the cumulative percent crosses 50.`},(V/T*100).toFixed(1),'100.0','']});
+    if(miss){const m=WF.find(r=>r[0]<0);rows.push({cells:[{v:'Missing',rh:true,span:2},{v:lab(m),rh:true,tap:'You set −2 as missing, so these people drop out of Valid Percent and Cumulative Percent. The Percent column still counts them, because it uses every case in the file.'},D.comma(m[2]),(m[2]/T*100).toFixed(1),'','']});rows.push({cells:[{v:'Total',rh:true},D.comma(m[2]),(m[2]/T*100).toFixed(1),'','']});}
+    rows.push({cells:[{v:'Total',rh:true},{v:'',rh:true},D.comma(T),'100.0','','']});
+    $('#fmTbl').innerHTML=D.spTable('PRE: SUMMARY: Federal Budget Spending: welfare programs',['','',
+      'Frequency','Percent','Valid Percent','Cumulative Percent'],rows);
+    const ths=$('#fmTbl').querySelectorAll('thead th');const HX=['','','Frequency counts the people who gave each answer.','Percent divides by every case in the file, including missing ones.','Valid Percent divides by the valid cases only.','Cumulative Percent is a running total of Valid Percent. The median is the first row where it reaches 50.'];
+    ths.forEach((t,i)=>{if(HX[i]){t.classList.add('tap');t.tabIndex=0;t.dataset.exp=HX[i];}});
+    $('#fmExp').innerHTML='<span class="sp-hint2">Tap a number in the table.</span>';
+    return cats[medRow];}
+  let med=draw();
+  D.seg($('#fmMiss'),[['v','counted as Valid (as downloaded)'],['m','set as missing']],v=>{miss=v==='m';med=draw();$('#fmFb').className='fbk';
+    if(miss)$('#fmExp').innerHTML='With −2 set as missing, the Valid Percent and Cumulative Percent columns are recomputed from the '+D.comma(D.sum(WF.filter(r=>r[0]>=0).map(r=>r[2])))+' real answers. Check whether the median row moves.';},'v');
+  const pick=c=>{$('#fmTbl').querySelectorAll('.tap.sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');$('#fmExp').innerHTML=c.dataset.exp;};
+  $('#fmTbl').addEventListener('click',e=>{const c=e.target.closest('.tap');if(c)pick(c);});
+  $('#fmTbl').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const c=e.target.closest('.tap');if(c){e.preventDefault();pick(c);}});
+  $('#fmCk').addEventListener('click',()=>{const v=+$('#fmSel').value;if(!v)return;
+    if(v===med[0])D.fb($('#fmFb'),'ok',`The median is ${med[0]}, “${med[1]},” the first row where the cumulative percent reaches 50. It matches the mode here, but the two don't have to match. The mode is the tallest row, and the median is wherever the running total crosses 50.${miss?' Setting −2 as missing shifted every cumulative percent a little, but the median stayed in the same row.':' Try setting −2 as missing, which is the right first step, and see whether the median moves.'}`);
+    else D.fb($('#fmFb'),'no',`Find the first row where Cumulative Percent reaches 50. For answer ${v} it is ${(()=>{const cats=WF.filter(r=>!(miss&&r[0]<0)),V=D.sum(cats.map(r=>r[2]));let c=0;for(const r of cats){c+=r[2]/V*100;if(r[0]===v)return c.toFixed(1);}return '?';})()}.`);});
+})();
+
+/* ---------- Part 9: range ---------- */
 const SO=DATA.nes.southern_therm;
 D.hist($('#raChart'),{counts:SO.counts,xmin:-2.5,xmax:102.5,binw:5,h:230,ticks:[0,10,20,30,40,50,60,70,80,90,100],xlab:'Feeling thermometer (0 = cold, 100 = warm)',
   barTap:(i,b)=>{const vals=Object.entries(SO.counts).filter(([k])=>+k>=b.x0&&+k<b.x1);$('#raTap').textContent=vals.length?vals.map(([k,v])=>`${v} people rated Southerners ${k}`).join('; ')+'.':'No one rated Southerners in that range.';},aria:'Southerners thermometer'});

@@ -421,6 +421,8 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
 :root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
 
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
 details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
 details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
@@ -796,7 +798,7 @@ const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const seSkew=n=>Math.sqrt(6*n*(n-1)/((n-2)*(n+1)*(n+3))),seKurt=n=>2*seSkew(n)*Math.sqrt((n*n-1)/((n-3)*(n+5)));
 function spFmt(v,d){return sp(v,d);}
 function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-title">${title}</p><table class="sp"><thead><tr>${head.map(c=>`<th${c===''?' class="rh"':''}>${c}</th>`).join('')}</tr></thead><tbody>`;
-  rows.forEach(r=>{h+=`<tr${r.flag?' class="flag"':''}>`+r.cells.map((c,i)=>{if(c&&typeof c==='object'){return `<td${c.rh?' class="rh"':''}${c.span?` rowspan="${c.span}"`:''}${c.cs?` colspan="${c.cs}"`:''}${c.tap?` class="tap" tabindex="0" data-exp="${esc(c.tap)}"`:''}>${c.v}</td>`;}return i===0&&r.rh!==false?`<td class="rh">${c}</td>`:`<td>${c}</td>`;}).join('')+'</tr>';});
+  rows.forEach(r=>{h+=`<tr${r.flag?' class="flag"':''}>`+r.cells.map((c,i)=>{if(c&&typeof c==='object'){const cl=[c.rh?'rh':'',c.tap?'tap':''].filter(Boolean).join(' ');return `<td${cl?` class="${cl}"`:''}${c.span?` rowspan="${c.span}"`:''}${c.cs?` colspan="${c.cs}"`:''}${c.tap?` tabindex="0" data-exp="${esc(c.tap)}"`:''}>${c.v}</td>`;}return i===0&&r.rh!==false?`<td class="rh">${c}</td>`:`<td>${c}</td>`;}).join('')+'</tr>';});
   h+='</tbody></table>'+(foot?`<div class="sp-fn">${foot}</div>`:'')+'</div>';return h;}
 const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
