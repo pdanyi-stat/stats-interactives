@@ -773,7 +773,7 @@ function attach(pre){
   const d=document.createElement('details');d.className='spss';
   d.innerHTML='<summary><span class="sp-badge">SPSS</span><span class="sp-lab">Show SPSS-style output</span></summary><div class="sp-body"></div>';
   let anchor=pre;
-  if(!pre.closest('.tfig')){ // the published-tables page already has its own Stata toggle
+  { // every Stata output, the published tables included, sits in a Stata drawer after the SPSS one
     const w=document.createElement('details');w.className='stata-wrap';
     w.innerHTML='<summary><span class="sp-badge">Stata</span><span class="sp-lab">Show Stata output</span></summary><div class="st-body"></div>';
     pre.parentNode.insertBefore(w,pre);w.querySelector('.st-body').appendChild(pre);anchor=w;}
@@ -825,7 +825,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   <div class="wrap">
     <p class="kicker">Statistical methods · Practice module</p>
     <h1>What would it look like published?</h1>
-    <p class="dek">Research articles don't print Stata output. They print a table built from it, with stars, notes and a few fit statistics. Each table here remakes a model you have already run in this series, on the same data, so you can practice reading the published format.</p>
+    <p class="dek">Research articles don't print the raw output from SPSS or any other statistical software. They print a table built from it, with stars, notes and a few fit statistics. Each table here remakes a model you have already run in this series, on the same data, so you can practice reading the published format.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -850,7 +850,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 
 <main class="wrap">
   <section class="intro" aria-label="About this page">
-    <p class="lede">Every number on this page comes from a real regression on the site's data. Tap any number, column heading, variable name or the notes line to see what it means. Below each table you can switch to the Stata output for the same model and check that the numbers match.</p>
+    <p class="lede">Every number on this page comes from a real regression on the site's data. Tap any number, column heading, variable name or the notes line to see what it means. Below each table you can open the SPSS output for the same model (and the Stata output, if you use Stata) and check that the numbers match.</p>
     <div class="layouts">
       <div><h3>Export style</h3><p>Tables 1 and 3 each show one model, with raw variable names and a column for each statistic, the way statistics programs export it.</p></div>
       <div><h3>Journal style</h3><p>Tables 2 and 4–8 set several models side by side, one per column, with each standard error in parentheses under its coefficient.</p></div>
@@ -873,12 +873,12 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 
   <figure class="tfig" id="t1" aria-labelledby="t1h">
     <header class="thead"><p class="tkick">Table 1 · Module 8 · Export style · One model</p><h2 id="t1h">Metro share and the 2016 vote</h2>
-      <p class="sub">This is the opening model of <a href="8-bivariate-regression.html">Module 8</a>, which regresses Trump's 2016 vote share in the 50 states and D.C. on the share of the population living in metro areas. Stata command: <code>regress trump_pct metro_pct</code></p></header>
+      <p class="sub">This is the opening model of <a href="8-bivariate-regression.html">Module 8</a>, which regresses Trump's 2016 vote share in the 50 states and D.C. on the share of the population living in metro areas. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>metro_pct</code> as the Independent(s).</p></header>
     <div class="desk"><div class="paper" id="t1paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t1exp" aria-live="polite"><span class="hint">Tap any number, column heading, variable name or the notes line.</span></p>
-    <div class="sorow" id="t1row"><button class="tbtn" id="t1so" aria-expanded="false" aria-controls="t1pre">Show as Stata output</button><p class="say">This is the same model as Stata prints it.</p></div>
-    <pre class="stata" id="t1pre" hidden></pre>
+    <div class="sorow" id="t1row"><p class="say">The output below is the same model as SPSS and Stata print it.</p></div>
+    <pre class="stata" id="t1pre"></pre>
     <div class="mcq" id="t1q"></div>
     </div>
   </figure>
@@ -889,20 +889,20 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper" id="t2paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t2exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
-    <div class="sorow" id="t2row"><button class="tbtn" id="t2so" aria-expanded="false" aria-controls="t2pre">Show as Stata output</button><span class="msel" id="t2sel"></span></div>
-    <pre class="stata" id="t2pre" hidden></pre>
+    <div class="sorow" id="t2row"><span class="msel" id="t2sel"></span></div>
+    <pre class="stata" id="t2pre"></pre>
     <div class="mcq" id="t2q"></div>
     </div>
   </figure>
 
   <figure class="tfig" id="t3" aria-labelledby="t3h">
     <header class="thead"><p class="tkick">Table 3 · Module 9 · Export style · One model</p><h2 id="t3h">Five state traits and the 2016 vote</h2>
-      <p class="sub">This <a href="9-multiple-regression.html">Module 9</a> model regresses Trump's 2016 vote share in the 50 states and D.C. on five state traits. Statistics programs can export a table like this one, which keeps the raw variable names. Stata command: <code>regress trump_pct white_pov hs_pct metro_pct income_k gini</code></p></header>
+      <p class="sub">This <a href="9-multiple-regression.html">Module 9</a> model regresses Trump's 2016 vote share in the 50 states and D.C. on five state traits. Statistics programs can export a table like this one, which keeps the raw variable names. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>white_pov</code>, <code>hs_pct</code>, <code>metro_pct</code>, <code>income_k</code> and <code>gini</code> as the Independent(s).</p></header>
     <div class="desk"><div class="paper" id="t3paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t3exp" aria-live="polite"><span class="hint">Tap any number, column heading, variable name or the notes line.</span></p>
-    <div class="sorow" id="t3row"><button class="tbtn" id="t3so" aria-expanded="false" aria-controls="t3pre">Show as Stata output</button><p class="say">This is the same model as Stata prints it.</p></div>
-    <pre class="stata" id="t3pre" hidden></pre>
+    <div class="sorow" id="t3row"><p class="say">The output below is the same model as SPSS and Stata print it.</p></div>
+    <pre class="stata" id="t3pre"></pre>
     <div class="mcq" id="t3q"></div>
     </div>
   </figure>
@@ -913,8 +913,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper" id="t4paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t4exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
-    <div class="sorow" id="t4row"><button class="tbtn" id="t4so" aria-expanded="false" aria-controls="t4pre">Show as Stata output</button><span class="msel" id="t4sel"></span></div>
-    <pre class="stata" id="t4pre" hidden></pre>
+    <div class="sorow" id="t4row"><span class="msel" id="t4sel"></span></div>
+    <pre class="stata" id="t4pre"></pre>
     <div class="mcq" id="t4q"></div>
     </div>
   </figure>
@@ -925,8 +925,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper" id="t5paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t5exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
-    <div class="sorow" id="t5row"><button class="tbtn" id="t5so" aria-expanded="false" aria-controls="t5pre">Show as Stata output</button><span class="msel" id="t5sel"></span></div>
-    <pre class="stata" id="t5pre" hidden></pre>
+    <div class="sorow" id="t5row"><span class="msel" id="t5sel"></span></div>
+    <pre class="stata" id="t5pre"></pre>
     <div class="mcq" id="t5q"></div>
     </div>
   </figure>
@@ -937,8 +937,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper" id="t6paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t6exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
-    <div class="sorow" id="t6row"><button class="tbtn" id="t6so" aria-expanded="false" aria-controls="t6pre">Show as Stata output</button><span class="msel" id="t6sel"></span></div>
-    <pre class="stata" id="t6pre" hidden></pre>
+    <div class="sorow" id="t6row"><span class="msel" id="t6sel"></span></div>
+    <pre class="stata" id="t6pre"></pre>
     <div class="mcq" id="t6q"></div>
     </div>
   </figure>
@@ -949,20 +949,20 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper" id="t7paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t7exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
-    <div class="sorow" id="t7row"><button class="tbtn" id="t7so" aria-expanded="false" aria-controls="t7pre">Show as Stata output</button><span class="msel" id="t7sel"></span></div>
-    <pre class="stata" id="t7pre" hidden></pre>
+    <div class="sorow" id="t7row"><span class="msel" id="t7sel"></span></div>
+    <pre class="stata" id="t7pre"></pre>
     <div class="mcq" id="t7q"></div>
     </div>
   </figure>
 
   <figure class="tfig" id="t8" aria-labelledby="t8h">
     <header class="thead"><p class="tkick">Table 8 · Titanic practice · Journal style · Six models</p><h2 id="t8h">Who survived the Titanic?</h2>
-      <p class="sub">These are six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass (<code>gen middle_class = pclass==2</code> and <code>gen lower_class = pclass==3</code>), with first class as the reference. Stata command for the full model: <code>regress survived age female middle_class lower_class trav_alone the_freeriders the_one_percent</code></p></header>
+      <p class="sub">These are six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass, so that middle_class is 1 for second class and lower_class is 1 for third class, with first class as the reference. In SPSS, the full model is “Analyze” → “Regression” → “Linear,” with <code>survived</code> as the Dependent and <code>age</code>, <code>female</code>, <code>middle_class</code>, <code>lower_class</code>, <code>trav_alone</code>, <code>the_freeriders</code> and <code>the_one_percent</code> as the Independent(s).</p></header>
     <div class="desk"><div class="paper wide" id="t8paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t8exp" aria-live="polite"><span class="hint">Tap any number, model number or the notes line.</span></p>
-    <div class="sorow" id="t8row"><button class="tbtn" id="t8so" aria-expanded="false" aria-controls="t8pre">Show as Stata output</button><p class="say">This is Model 6, the full model, as Stata prints it.</p></div>
-    <pre class="stata" id="t8pre" hidden></pre>
+    <div class="sorow" id="t8row"><p class="say">The output below is Model 6, the full model.</p></div>
+    <pre class="stata" id="t8pre"></pre>
     <div class="mcq" id="t8q"></div>
     </div>
   </figure>
@@ -973,8 +973,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper wide" id="t9paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t9exp" aria-live="polite"><span class="hint">Tap any number, column heading or the note.</span></p>
-    <div class="sorow" id="t9row"><button class="tbtn" id="t9so" aria-expanded="false" aria-controls="t9pre">Show as Stata output</button><p class="say" id="t9say"></p></div>
-    <pre class="stata" id="t9pre" hidden></pre>
+    <div class="sorow" id="t9row"><p class="say" id="t9say"></p></div>
+    <pre class="stata" id="t9pre"></pre>
     <div class="mcq" id="t9q"></div>
     </div>
   </figure>
@@ -985,8 +985,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="desk"><div class="paper wide" id="t10paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t10exp" aria-live="polite"><span class="hint">Tap any number, column heading or the note.</span></p>
-    <div class="sorow" id="t10row"><button class="tbtn" id="t10so" aria-expanded="false" aria-controls="t10pre">Show as Stata output</button><p class="say" id="t10say"></p></div>
-    <pre class="stata" id="t10pre" hidden></pre>
+    <div class="sorow" id="t10row"><p class="say" id="t10say"></p></div>
+    <pre class="stata" id="t10pre"></pre>
     <div class="mcq" id="t10q"></div>
     </div>
   </figure>
@@ -1107,14 +1107,14 @@ function explainA(spec,f,vars){
     ph:'The p-value tests H₀, which says this coefficient is 0 in the population. It answers one question, which is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. It is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>',
     my:`Mean dependent var is the mean of <i>${spec.dv}</i> across the ${f.n} cases: ${f.my.toFixed(1)}${spec.yu}. Together with the SD next to it, it gives you a sense of scale for the coefficients.`,
     sy:`SD dependent var = ${d3(f.sy)}: ${spec.sdTxt}`,
-    r2:`R² = ${d3(f.r2)}: ${k===1?'the IV removes':'together the '+k+' IVs remove'} ${Math.round(f.r2*100)}% of the squared error you make by guessing the mean for every case (Module 7). This table reports R² only. Adjusted R², which charges a penalty for each IV, is ${d3(f.adj)} (see the Stata output). Check which one a table reports.`,
+    r2:`R² = ${d3(f.r2)}: ${k===1?'the IV removes':'together the '+k+' IVs remove'} ${Math.round(f.r2*100)}% of the squared error you make by guessing the mean for every case (Module 7). This table reports R² only. Adjusted R², which charges a penalty for each IV, is ${d3(f.adj)} (see the Model Summary in the SPSS output). Check which one a table reports.`,
     n:`Number of obs = ${f.n}, which covers the 50 states plus D.C. Always compare N with the size of the dataset. Here nothing is missing, so every case is used. When N is smaller than the dataset, cases were dropped, usually because some variable was missing for them.`,
     f:k===1?`The F-test checks H₀ that the slope is 0. With one IV that is the same H₀ as the slope's t-test, and F = t²: (${d2(f.t[0])})² ≈ ${(f.t[0]**2).toFixed(1)}. F = ${d3(f.F)}, with 1 and ${f.df} degrees of freedom.`:`The F-test checks H₀ that all ${k} slopes are 0 at once. F = ${d3(f.F)}, with ${k} and ${f.df} degrees of freedom.`,
     pf:k===1?`Prob &gt; F = ${f.pF<0.0005?'0.000':f.pF.toFixed(3)}. With one IV it is the same as the slope's p, because F tests the same H₀. ${f.pF<0.0005?'It is rounded, not zero, so p &lt; .001. Reject H₀.':''}`:`Prob &gt; F = 0.000 is rounded, not zero, so p &lt; .001. Reject H₀ that all ${k} slopes are 0. Taken together, the IVs predict ${spec.yShort} better than the mean alone.`,
     notes:'Read the notes before the stars. This table uses * p&lt;.05, ** p&lt;.01, *** p&lt;.001, so one star means significant at .05 and three stars means p &lt; .001. Not every table uses these cutoffs. Some software and journals give a star at p &lt; .1, so the same star can mean different things in different tables. <a href="6-difference-in-means.html#errors">Why .05? Type I and II errors →</a>'
   };
   vars.concat('_cons').forEach(v=>{
-    E['v:'+v]=v==='_cons'?'Constant is the intercept, which Stata calls _cons.':`<i>${v}</i> is ${spec.what[v]}`;
+    E['v:'+v]=v==='_cons'?'Constant is the intercept. SPSS labels it (Constant), and Stata labels it _cons.':`<i>${v}</i> is ${spec.what[v]}`;
     E['se:'+v]=`The standard error of this coefficient is ${d3(SE(v))}. Divide the coefficient by it to get t: ${d3(B(v))} ÷ ${d3(SE(v))} ≈ ${d2(T(v))}.`;
     E['t:'+v]=`t = ${d3(B(v))} ÷ ${d3(SE(v))} ≈ ${d2(T(v))}. `+(Math.abs(T(v))>f.tc?`That is beyond ±${tcrit}, so p is below .05.`:`That is inside ±${tcrit}, so p is above .05.`);
     E['p:'+v]= P(v)<0.0005
@@ -1171,12 +1171,12 @@ function explainB(spec,fits){
         x=vm.dummy?cap(`${hold}${vm.one} ${m.dumVerb} ${amt} ${b<0?m.less:m.more} than ${vm.zero}.`)
                   :cap(`${hold}each ${vm.unit} goes with ${m.pred} ${amt} ${b<0?'lower':'higher'}.`);
         if(!s)x+=` No stars, so p is at least .05 (here ${pTxt(p)}). If H₀ were true, a coefficient this far from 0 would turn up ${pq(p)}. `+(p<0.1?'That is close to .05, but close does not count, and at α = .05 we fail to reject H₀. A table that gives a star at p &lt; .1 would print one here, which is why you read the notes first.':'Fail to reject H₀. That is not evidence of no effect, only a sign that there is not enough evidence of one.');
-        else x+=` It has ${starWord(s)}, so p &lt; ${cut(s)}${s==='***'?(p<0.0005?' (Stata shows 0.000)':''):` (here ${pTxt(p)})`}. If H₀ were true, a coefficient this far from 0 would turn up ${pq(p)}. Reject H₀.`;
+        else x+=` It has ${starWord(s)}, so p &lt; ${cut(s)}${s==='***'?(p<0.0005?' (SPSS shows .000)':''):` (here ${pTxt(p)})`}. If H₀ were true, a coefficient this far from 0 would turn up ${pq(p)}. Reject H₀.`;
       }
       E['b:'+key]=x+((spec.extra||{})['b:'+key]?' '+spec.extra['b:'+key]:'');L['b:'+key]=`${W} · ${lab}`;
       const br=Number(b.toFixed(dp)),sr=Number(se.toFixed(dp)),tr=br/sr,tc=f.tc;
       let y=`The number in parentheses, ${dd(se)}, is the standard error. Coefficient ÷ SE gives t: ${dd(b)} ÷ ${dd(se)} ≈ ${Math.abs(tr)>=10?neg(tr.toFixed(1)):d2(tr)}.`;
-      if(Math.abs(tr-t)/Math.abs(t)>0.04)y+=` With the unrounded numbers Stata gets t = ${d2(t)}. Rounding a small standard error to ${dp===3?'three':'two'} decimals moves t a lot.`;
+      if(Math.abs(tr-t)/Math.abs(t)>0.04)y+=` With the unrounded numbers the software gets t = ${d2(t)}. Rounding a small standard error to ${dp===3?'three':'two'} decimals moves t a lot.`;
       y+=Math.abs(t)>tc?` That is beyond ±${tc.toFixed(2)}, so p is below .05.`:` That is inside ±${tc.toFixed(2)}, so p is above .05.`;
       E['se:'+key]=y+((spec.extra||{})['se:'+key]?' '+spec.extra['se:'+key]:'');L['se:'+key]=`${W} · standard error of ${lab}`;
     });
@@ -1205,12 +1205,11 @@ function wireTable(id,E,labels,onCol){
   paper.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const cell=e.target.closest('.c');if(cell){e.preventDefault();pick(cell);}});
 }
 function wireStata(id,outFor,K){
-  const btn=$('#'+id+'so'),pre=$('#'+id+'pre'),sel=$('#'+id+'sel');let cur=0;
+  const pre=$('#'+id+'pre'),sel=$('#'+id+'sel');let cur=0;
   const show=j=>{cur=j;pre.innerHTML=outFor(j);if(sel)sel.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===j)));};
-  if(sel&&K>1){sel.innerHTML='<span>Model</span>'+Array.from({length:K},(_,j)=>`<button type="button" aria-pressed="${j===0}" aria-label="Show Model ${j+1}">(${j+1})</button>`).join('');
-    sel.querySelectorAll('button').forEach((b,j)=>b.addEventListener('click',()=>{show(j);if(pre.hidden)btn.click();}));}
+  if(sel&&K>1){sel.innerHTML='<span>Output for model</span>'+Array.from({length:K},(_,j)=>`<button type="button" aria-pressed="${j===0}" aria-label="Show Model ${j+1}">(${j+1})</button>`).join('');
+    sel.querySelectorAll('button').forEach((b,j)=>b.addEventListener('click',()=>show(j)));}
   show(0);
-  btn.addEventListener('click',()=>{const open=pre.hidden;pre.hidden=!open;btn.setAttribute('aria-expanded',String(open));btn.textContent=open?'Hide Stata output':'Show as Stata output';});
   return show;
 }
 
@@ -1308,11 +1307,11 @@ const pair=(a,b)=>`${a} → ${b}`;
     {q:`N is ${nfmt(F[0].n)} in Model 1 but ${nfmt(F[2].n)} in Model 3. Why?`,a:0,o:[
       ['More respondents are missing a rating of Laura Bush than of Hillary Clinton.',`The data have ${nfmt(F[0].N0)} respondents. A respondent drops out of a model if any of its variables is missing, and more people skipped the Laura Bush rating.`],
       ['The Hillary Clinton models use a different survey.','All four columns use the same 2004 NES respondents.'],
-      ['Stata dropped outliers from Model 1.','<code>regress</code> never drops outliers on its own. Cases drop out only when a variable is missing.']]},
-    {q:`Model 1 prints ${d2(b(0,'dem_therm'))} with (${d2(s0)}) under it. Dividing gives about ${neg(tr.toFixed(1))}, but Stata reports t = ${d2(t0)}. Why?`,a:1,o:[
-      ['Stata made an error.','Stata works with the unrounded numbers. The table rounds them.'],
+      ['The software dropped outliers from Model 1.','Regression never drops outliers on its own. Cases drop out only when a variable is missing.']]},
+    {q:`Model 1 prints ${d2(b(0,'dem_therm'))} with (${d2(s0)}) under it. Dividing gives about ${neg(tr.toFixed(1))}, but the output reports t = ${d2(t0)}. Why?`,a:1,o:[
+      ['The software made an error.','The software works with the unrounded numbers, and the table rounds them.'],
       ['The standard error was rounded to two decimals, and rounding a small number moves t a lot.',`The unrounded SE is ${s0.toFixed(4)}. Either way t is far beyond ±1.96.`],
-      ['The table uses a different model from Stata.','It is the same model with the same respondents, and only the rounding differs.']]},
+      ['The table uses a different model from the output.','It is the same model with the same respondents, and only the rounding differs.']]},
     {q:`Laura Bush's Republican coefficient is ${d2(b(1,'rep_therm'))} and Hillary Clinton's Democratic coefficient is ${d2(b(2,'dem_therm'))}. Does the table show that the second is significantly larger?`,a:2,o:[
       ['Yes. Both have three stars, and the second is bigger.','Stars test each coefficient against 0 rather than against each other.'],
       ['Yes. Their difference is bigger than either standard error.','Comparing a difference with the standard errors by eye is not a test.'],
@@ -1444,7 +1443,7 @@ const pair=(a,b)=>`${a} → ${b}`;
       ['Gender doesn\'t matter for Laura Bush\'s rating.',`Female has ${starWord(stars(p(0,'female')))} in Model 1. It matters for Y, but it is only weakly tied to the Democratic rating.`],
       ['The change between the tables is significant.','A difference between two columns, or two tables, is not itself a test.']]},
     {q:`Why is N in Model 1 (${nfmt(F[0].n)}) the same as in Table 2's Model 1?`,a:2,o:[
-      ['Stata kept the sample fixed on purpose.','<code>regress</code> uses every case with no missing values on the model\'s variables. It doesn\'t fix the sample across models.'],
+      ['The software kept the sample fixed on purpose.','Regression uses every case with no missing values on the model\'s variables. It doesn\'t fix the sample across models.'],
       ['Female has missing values, but they cancel out.','Missing values never cancel out. Any missing variable drops the case.'],
       ['No one is missing gender, so adding Female drops no one.','The same respondents are in both models.']]}
   ]);
@@ -1479,7 +1478,7 @@ const pair=(a,b)=>`${a} → ${b}`;
       ['The models use completely different respondents.',`N barely changes (${nfmt(T5[0].n)} → ${nfmt(F[0].n)}). A handful of dropped cases can't explain a coefficient falling by three quarters.`],
       ['Women were removed from the model.','Female is in both models. Nobody was removed for being a woman, since the dummy just holds gender constant.']]},
     {q:`Why is N ${nfmt(F[0].n)} here when Table 5's Model 1 had ${nfmt(T5[0].n)}?`,a:1,o:[
-      ['Stata drops a few cases at random in bigger models.','<code>regress</code> never drops cases at random.'],
+      ['The software drops a few cases at random in bigger models.','Regression never drops cases at random.'],
       ['Respondents missing the Republican rating now drop out too.','A case is dropped if any variable in the model is missing, and this model adds the Republican rating.'],
       ['Adding Female dropped the men.','Female is a dummy, so men are coded 0 and stay in the model.']]},
     {q:`In Model 1, the Democratic coefficient is ${d2(b(0,'dem_therm'))} and the Republican coefficient is ${d2(b(0,'rep_therm'))}. Can you compare them directly?`,a:0,o:[
@@ -1487,9 +1486,9 @@ const pair=(a,b)=>`${a} → ${b}`;
       ['No. Coefficients can never be compared.','They can be compared when the IVs share a unit. When units differ (dollars vs. percent), you need standardized coefficients (Module 9).'],
       ['Yes, because both have three stars.','Stars only test each coefficient against 0. Comparability comes from the shared 0–100 scale.']]},
     {q:`Female is ${d2(b(1,'female'))}${stars(p(1,'female'))} for Hillary Clinton. How would you report its p-value?`,a:2,o:[
-      [`p = ${cut(stars(p(1,'female')))}.`,`${cap(starWord(stars(p(1,'female'))))} means p &lt; ${cut(stars(p(1,'female')))}, not p = ${cut(stars(p(1,'female')))}. The exact p is in the Stata output.`],
+      [`p = ${cut(stars(p(1,'female')))}.`,`${cap(starWord(stars(p(1,'female'))))} means p &lt; ${cut(stars(p(1,'female')))}, not p = ${cut(stars(p(1,'female')))}. The exact p is in the output below the table.`],
       ['p &lt; .05, since it has stars.',`That is true but incomplete. Each extra star means a lower cutoff, and ${starWord(stars(p(1,'female')))} here means p &lt; ${cut(stars(p(1,'female')))}.`],
-      [`p &lt; ${cut(stars(p(1,'female')))} from the stars, and the Stata output gives p = ${pS(p(1,'female'))}.`,`If H₀ were true, a gap this large would turn up ${pq(p(1,'female'))}.`]]}
+      [`p &lt; ${cut(stars(p(1,'female')))} from the stars, and the output gives p = ${pS(p(1,'female'))}.`,`If H₀ were true, a gap this large would turn up ${pq(p(1,'female'))}.`]]}
   ]);
 })();
 
@@ -1517,7 +1516,7 @@ const pair=(a,b)=>`${a} → ${b}`;
   wireTable(id,R.E,R.L,show);
   quiz($('#t7q'),[
     {q:`South has ${starWord(stars(p(2,'south')))} in Model 3. What does that tell you?`,a:0,o:[
-      [`p &lt; ${cut(stars(p(2,'south')))}, so we reject H₀ at α = .05.`,`The notes say ${stars(p(2,'south'))} means p &lt; ${cut(stars(p(2,'south')))}. The Stata output gives p = ${pS(p(2,'south'))}.`],
+      [`p &lt; ${cut(stars(p(2,'south')))}, so we reject H₀ at α = .05.`,`The notes say ${stars(p(2,'south'))} means p &lt; ${cut(stars(p(2,'south')))}. The output gives p = ${pS(p(2,'south'))}.`],
       ['p &lt; .1, so it is not significant at .05.','Some tables use that cutoff for one star, but these notes say * means p &lt; .05. Read the notes before the stars.'],
       ['The Southern gap is small.',`Stars are about p rather than size. The gap is ${d2(b(2,'south'))} points, which is larger than in Model 1.`]]},
     {q:`Why does South go from ${d2(b(0,'south'))} in Model 1 to ${d2(b(2,'south'))}${stars(p(2,'south'))} in Model 3?`,a:0,o:[
@@ -1530,7 +1529,7 @@ const pair=(a,b)=>`${a} → ${b}`;
       ['It is a rounding coincidence.','The two constants agree to every decimal, because they are the mean of the same non-Southern states.']]},
     {q:'N is 51 in Models 1 and 2 but 50 in Models 3 and 4. Are data missing?',a:2,o:[
       ['Yes, one state is missing a value.','No variable is missing for any case in these data.'],
-      ['Yes, Stata dropped an outlier.','<code>regress</code> never drops outliers on its own.'],
+      ['Yes, the software dropped an outlier.','Regression never drops outliers on its own.'],
       ['No. D.C. was left out on purpose, as the group label says.','When N changes across columns, look for the reason, which is usually missing data or, as here, a deliberate change in the sample.']]}
   ]);
 })();
@@ -1565,7 +1564,7 @@ const pair=(a,b)=>`${a} → ${b}`;
     colTxt:['Model 1 has one IV, age. It is the bivariate model from Step 6 of the <a href="practice-titanic.html#s6">Titanic practice</a>.','Model 2 adds Female.',
       'Model 3 adds the two class dummies, with first class as the reference. It is the same model as Step 8 of the <a href="practice-titanic.html#s8">Titanic practice</a>, where you can switch which class is the reference.',
       'Model 4 adds traveling alone.','Model 5 adds the freeriders, the passengers who paid £0.',
-      'Model 6 adds the top 1% of fares. It is the full model, and you can see it as Stata and SPSS output below the table.'],
+      'Model 6 adds the top 1% of fares. It is the full model, and you can see it as SPSS and Stata output below the table.'],
     consTxt:['Age 0 is a newborn, which sits at the very edge of the data.','That is a newborn boy (age 0, Female = 0).','That is a newborn boy in first class.',
       'That is a newborn boy in first class, traveling with family.','That is a newborn boy in first class, traveling with family, whose fare was paid.',
       'That is a newborn boy in first class, traveling with family, whose fare was paid but was below the top 1%.'],
@@ -1578,8 +1577,8 @@ const pair=(a,b)=>`${a} → ${b}`;
   spec.extra['b:trav_alone:3']=`On their own, passengers traveling alone survived at ${pc(avg('survived',alone))} and those with family at ${pc(avg('survived',fam))}. That gap disappears here because ${pc(1-avg('female',alone))} of those traveling alone were men, and gender and class are already held constant.`;
   spec.extra['b:the_freeriders:4']=`Only ${fr.length} passengers rode for free${avg('female',fr)===0?', and every one of them was a man':''}. Once gender is held constant there is little left for this dummy to explain, and with so few cases its standard error is large.`;
   spec.extra['b:the_one_percent:5']=`Only ${top.length} passengers paid a top 1% fare, all of them in first class, so with class held constant this dummy compares them with the rest of first class. With so few cases its standard error is large.`;
-  const nTxt=j=>`N = ${nfmt(F[j].n)} for Model ${j+1}, which is one fewer than Models 1–4. One passenger's fare is missing, so we can't tell whether he rode for free, and <code>regress</code> drops him. Because N differs across columns, Models 5 and 6 are fit to one fewer case than the others.`;
-  spec.x={'n:0':`N = ${nfmt(F[0].n)} for Model 1. The data have ${nfmt(F[0].N0)} passengers, and ${nfmt(F[0].miss)} of them have no recorded age, so <code>regress</code> drops them. Age is in every model, so every column leaves them out.`,'n:4':nTxt(4),'n:5':nTxt(5)};
+  const nTxt=j=>`N = ${nfmt(F[j].n)} for Model ${j+1}, which is one fewer than Models 1–4. One passenger's fare is missing, so we can't tell whether he rode for free, and the regression drops him. Because N differs across columns, Models 5 and 6 are fit to one fewer case than the others.`;
+  spec.x={'n:0':`N = ${nfmt(F[0].n)} for Model 1. The data have ${nfmt(F[0].N0)} passengers, and ${nfmt(F[0].miss)} of them have no recorded age, so the regression drops them. Age is in every model, so every column leaves them out.`,'n:4':nTxt(4),'n:5':nTxt(5)};
   layoutB($('#t8paper'),spec,F);
   const R=explainB(spec,F);
   wireStata(id,()=>stataOut('survived',ALL,F[5]),1);
@@ -1625,9 +1624,9 @@ function ttestOut(cmd,a,b,ca,cb){
     ` Pr(T &lt; t) = ${pl.toFixed(4)}         Pr(|T| &gt; |t|) = ${T.p.toFixed(4)}          Pr(T &gt; t) = ${(1-pl).toFixed(4)}`].join('\n');}
 /* Stata output for one row at a time: tap a row to switch */
 function wireRowStata(id,outFor,nameFor){
-  const btn=$('#'+id+'so'),pre=$('#'+id+'pre'),say=$('#'+id+'say');
-  const show=i=>{pre.innerHTML=outFor(i);if(say)say.innerHTML=`This is the test for <b>${nameFor(i)}</b>. Tap another row to switch.`;};
-  show(0);btn.addEventListener('click',()=>{const open=pre.hidden;pre.hidden=!open;btn.setAttribute('aria-expanded',String(open));btn.textContent=open?'Hide Stata output':'Show as Stata output';});
+  const pre=$('#'+id+'pre'),say=$('#'+id+'say');
+  const show=i=>{pre.innerHTML=outFor(i);if(say)say.innerHTML=`The output below is the test for <b>${nameFor(i)}</b>. Tap another row to switch.`;};
+  show(0);
   return show;}
 
 /* ======================= Table 9: Titanic survival by group (comparison table) ======================= */
