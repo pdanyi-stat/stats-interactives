@@ -583,7 +583,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <!-- 3 MEDIAN -->
   <section class="part"><p class="kick">Part 3</p><h2>Find the median by putting the values in order</h2>
     <p>The median is the value with as many observations below it as above it. With an even number of observations, it is halfway between the two middle values.</p></section>
-  <section class="dcard" id="md">
+  <section class="dcard" id="md" data-ds="LunaticData.sav StateVote_1980_1984.sav">
     <div class="row"><div id="mdSet"></div></div>
     <p id="mdIntro" class="p"></p>
     <div class="tiles" id="mdTiles" aria-label="Values to put in order"></div>
@@ -689,7 +689,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <div class="fbk" id="cfFb" aria-live="polite"></div>
   </section>
 
-  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study; 1984 state results from the Describing Attributes of Data notes.</footer>
+  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study; 1984 state results from the Describing Attributes of Data notes (StateVote_1980_1984.sav).</footer>
   <nav class="pager" aria-label="Previous and next"><a href="hypotheses-and-variables.html"><span class="k">← Previous · Start here</span><span class="t">Hypotheses and variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="2-skew-and-kurtosis.html"><span class="k">Next · Module 2 →</span><span class="t">Skew and kurtosis</span></a></nav>
 </main>
 
@@ -877,12 +877,12 @@ return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mea
 })();
 
 /* dataset download buttons */
-(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav'];
-const INSTR=['2014ElectionSurvey_F26.sav'];
-const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014'};
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav'];
+const INSTR=[];
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote'};
 function run(){
-  document.querySelectorAll('.dcard[data-ds]').forEach(card=>{const h=card.querySelector('h3');if(!h||h.parentElement.classList.contains('dshead'))return;
-    const row=document.createElement('div');row.className='dshead';h.before(row);row.appendChild(h);
+  document.querySelectorAll('.dcard[data-ds]').forEach(card=>{if(card.querySelector('.dsbtns'))return;const h=card.querySelector(':scope > h3');
+    const row=document.createElement('div');row.className='dshead';if(h){h.before(row);row.appendChild(h);}else card.prepend(row);
     const box=document.createElement('div');box.className='dsbtns';row.appendChild(box);
     card.dataset.ds.split(/\s+/).forEach(f=>{if(HOSTED.includes(f)){const a=document.createElement('a');a.className='dsbtn';a.href='data/'+f;a.setAttribute('download',f);a.title=f;a.setAttribute('aria-label',`Download ${f}`);a.innerHTML=`<span aria-hidden="true">↓</span> Download ${NICE[f]||f} data`;box.appendChild(a);}
       else if(INSTR.includes(f)){const s=document.createElement('span');s.className='dsbtn held';s.title=f;s.textContent=`${NICE[f]||f} data: from your instructor`;box.appendChild(s);}});});
