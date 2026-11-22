@@ -352,6 +352,7 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+.about{margin:0 0 8px;font-size:15px;line-height:1.6;color:var(--ink-2);max-width:80ch}
 </style>
 <!-- spss-start -->
 <style>
@@ -750,7 +751,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 7 of 10</p>
     <h1>Proportional reduction in error</h1>
-    <p class="dek">Lambda, gamma and r² look like three unrelated statistics. They answer one question: once you know X, how many fewer mistakes do you make predicting Y? Play the guessing game three ways, at three levels of measurement.</p>
+    <p class="dek">Lambda, gamma and r² look like three unrelated statistics, but each one answers the same question. Once you know the independent variable (X), how many fewer mistakes do you make when you guess the dependent variable (Y)? We will play that guessing game three times, once for each level of measurement.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -775,14 +776,14 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 <main class="wrap">
   <section aria-label="The idea">
     <div class="idea">
-      <div><span class="k">E₁</span><div class="big">Errors without X</div><p>Predict every case using only Y's own distribution: its mode, a coin flip, or its mean.</p></div>
-      <div><span class="k">E₂</span><div class="big">Errors with X</div><p>Predict each case using what you know about its X: the mode within its column, the order of X, or the regression line.</p></div>
-      <div><span class="k">PRE</span><div class="big">(E₁ − E₂) / E₁</div><p>The share of errors that knowing X eliminates. 0 means X doesn't help at all; 1 means no errors left.</p></div>
+      <div><span class="k">E₁</span><div class="big">Errors without X</div><p>First we guess every case using only what we know about Y itself. Depending on the level of measurement, that guess is Y's mode, a coin flip, or Y's mean.</p></div>
+      <div><span class="k">E₂</span><div class="big">Errors with X</div><p>Then we guess each case again, this time using what we know about its X. That means the mode within its column, the order of the cases on X, or the regression line.</p></div>
+      <div><span class="k">PRE</span><div class="big">(E₁ − E₂) / E₁</div><p>This is the share of our errors that knowing X eliminates. A value of 0 means X does not help at all, and a value of 1 means knowing X leaves no errors.</p></div>
     </div>
     <div class="measures">
-      <a href="#lambda"><b>λ Lambda</b><span>Nominal Y. Guess the most common category.</span></a>
-      <a href="#gamma"><b>γ Gamma</b><span>Ordinal X and Y. Guess which of two cases ranks higher.</span></a>
-      <a href="#rsq"><b>r² R-squared</b><span>Interval Y. Guess a number; errors are squared distances.</span></a>
+      <a href="#lambda"><b>λ Lambda</b><span>For a nominal Y, we guess the most common category.</span></a>
+      <a href="#gamma"><b>γ Gamma</b><span>For ordinal X and Y, we guess which of two cases ranks higher.</span></a>
+      <a href="#rsq"><b>r² R-squared</b><span>For an interval Y, we guess a number and measure each error as a squared distance.</span></a>
     </div>
   </section>
 
@@ -790,12 +791,12 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="part" id="lambda" aria-labelledby="lh">
     <p class="kick">Nominal · Lambda</p>
     <h2 id="lh">Guess the vote</h2>
-    <p class="lede">Without X, your best strategy is to guess <b style="color:var(--ink)">the most common answer (the mode)</b> for everyone. With X, guess <b style="color:var(--ink)">the most common answer (the mode) within each column</b>. Lambda measures how many errors the second strategy saves. Start with 20 people, then scale up to full survey tables.</p>
+    <p class="lede">Recall that lambda is the measure of correlation we use for nominal variables. Without knowing X, your best strategy is to guess <b style="color:var(--ink)">the most common answer (the mode)</b> for everyone. Once you know X, you guess <b style="color:var(--ink)">the most common answer (the mode) within each column</b> instead. Lambda tells us what share of the first strategy's errors the second strategy saves. We will start with 20 people so that you can count every guess, and then move up to full survey tables.</p>
   </section>
 
   <section class="card" aria-labelledby="simpleh" style="margin-top:4px">
     <h3 id="simpleh" style="font-size:19px">Guess the party of 20 voters</h3>
-    <p style="margin:0 0 6px;color:var(--ink-2);max-width:78ch">Ten women and ten men, drawn at random from the Democrats and Republicans in the 2004 National Election Study. Your job: guess each person's party. The strategy never changes: <b style="color:var(--ink)">always guess the most common party (the mode)</b>. First you don't know their gender, then you do. Count the wrong guesses each time.</p>
+    <p style="margin:0 0 6px;color:var(--ink-2);max-width:78ch">These 20 people are ten women and ten men, drawn at random from the Democrats and Republicans in the 2004 National Election Study. You will guess each person's party twice, and both times you <b style="color:var(--ink)">guess the most common party (the mode)</b>. The first time you don't know anyone's gender, and the second time you do. Count your wrong guesses each time, since those counts are what lambda compares.</p>
     <div class="legend2"><span><i class="dot" style="background:var(--dem);box-shadow:inset 0 0 0 1px var(--dem-ink)"></i>D = Democrat</span><span><i class="dot" style="background:var(--rep);box-shadow:inset 0 0 0 1px var(--rep-ink)"></i>R = Republican</span><span>W / M under each voter = woman / man</span><span><b style="color:var(--ink)">✓</b> right guess</span><span><b style="color:var(--ink)">✗</b> wrong guess (faded)</span></div>
     <div class="row" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
       <div class="btns" id="ssteps"><button data-s="1">1 · Guess without gender</button><button data-s="2">2 · Guess within each gender</button><button data-s="3">3 · Do the math</button></div>
@@ -808,11 +809,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   </section>
   <section aria-label="From the example to real tables" style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:6px 0 2px">
     <h3 style="margin:0 0 4px;font-size:18px">Lambda with real survey tables</h3>
-    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The steps are the same with larger tables. A vote choice is <b style="color:var(--ink)">nominal</b> (it has no built-in order), so lambda is the right measure, and the strategy does not change: guess <b style="color:var(--ink)">the most common answer (the mode)</b>.</p>
+    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The steps are the same with larger tables. A vote choice is <b style="color:var(--ink)">nominal</b> (it has no built-in order), so lambda is still the right measure, and you still guess <b style="color:var(--ink)">the most common answer (the mode)</b>. The only thing that changes is the size of the tables, which now have more categories and thousands of respondents instead of 20.</p>
     <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;color:var(--ink-2);display:grid;gap:3px">
       <li><b style="color:var(--ink)">E₁</b>: wrong guesses when everyone gets the overall mode (the outlined total).</li>
       <li><b style="color:var(--ink)">E₂</b>: wrong guesses when each column gets its own mode (the blue cells).</li>
-      <li><b style="color:var(--ink)">λ = (E₁ − E₂) / E₁</b>. What changes is only the size: more categories, and thousands of respondents instead of 20.</li>
+      <li><b style="color:var(--ink)">λ = (E₁ − E₂) / E₁</b>, the same formula you used for the 20 voters.</li>
     </ul>
   </section>
   <section class="controls" aria-label="Lambda controls">
@@ -823,7 +824,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="grid2">
     <figure>
       <div class="fighead"><h2><span class="step">A</span><span id="ltitle"></span></h2></div>
-      <p class="sub">Cells show counts and column percentages. <b style="color:var(--s1-ink)">Blue cells</b> are each column's <b style="color:var(--ink)">most common answer (mode)</b>: your guess when you know X. The outlined total is the <b style="color:var(--ink)">overall mode</b>: your guess when you don't.</p>
+      <p class="about" id="labout"></p>
+      <p class="sub">Each cell shows a count and a column percentage. The <b style="color:var(--s1-ink)">blue cells</b> mark each column's <b style="color:var(--ink)">most common answer (mode)</b>, which is your guess once you know X. The outlined total is the <b style="color:var(--ink)">overall mode</b>, which is your guess when you don't know X.</p>
       <div class="xt-wrap"><table class="xt" id="ltab"></table></div>
       <p class="xnote" id="lnote"></p>
     </figure>
@@ -847,12 +849,12 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="part" id="gamma" aria-labelledby="gh">
     <p class="kick">Ordinal · Gamma</p>
     <h2 id="gh">Do pairs line up?</h2>
-    <p class="lede">With ordered categories, gamma asks a different question. Pick two people at random. If one ranks higher on X, guess that the same person ranks higher on Y. Pairs that agree are <b style="color:var(--s1-ink)">concordant</b>, pairs that disagree are <b style="color:var(--miss-ink)">discordant</b>, and pairs tied on either variable are set aside.</p>
+    <p class="lede">When both variables have ordered categories, we use gamma, and gamma asks a slightly different question. Take two people at random. If one of them ranks higher on X, gamma guesses that the same person also ranks higher on Y. Pairs where that guess is right are called <b style="color:var(--s1-ink)">concordant</b>, pairs where it is wrong are called <b style="color:var(--miss-ink)">discordant</b>, and pairs that are tied on either variable are set aside.</p>
   </section>
 
   <section class="card" aria-labelledby="gsimpleh" style="margin-top:4px">
     <h3 id="gsimpleh" style="font-size:19px">Who is more conservative?</h3>
-    <p style="margin:0 0 6px;color:var(--ink-2);max-width:80ch">Six voters from the 2004 National Election Study, placed by <b style="color:var(--ink)">party ID</b> (X) and <b style="color:var(--ink)">ideology</b> (Y). Both are ordered, so gamma doesn't guess anyone's category. It guesses <b style="color:var(--ink)">order</b>: for any pair of voters, <b style="color:var(--ink)">which one is more conservative?</b></p>
+    <p style="margin:0 0 6px;color:var(--ink-2);max-width:80ch">Here are six voters from the 2004 National Election Study, placed by <b style="color:var(--ink)">party ID</b> (X) and <b style="color:var(--ink)">ideology</b> (Y). Since both variables are ordered, gamma does not guess anyone's category. It guesses the <b style="color:var(--ink)">order</b> of each pair instead, asking <b style="color:var(--ink)">which of the two voters is more conservative</b>.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px">
       <div class="btns" id="gsteps"><button data-s="1">1 · Meet the voters</button><button data-s="2">2 · Pair them up</button><button data-s="3">3 · Guess without X</button><button data-s="4">4 · Guess with X</button><button data-s="5">5 · Do the math</button></div>
       <button id="gdraw" style="margin-left:auto">Draw 6 different voters</button>
@@ -864,7 +866,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   </section>
   <section aria-label="From the example to real gamma tables" style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:6px 0 2px">
     <h3 style="margin:0 0 4px;font-size:18px">Gamma with real survey tables</h3>
-    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The pair comparison works the same way with thousands of respondents. Both variables are <b style="color:var(--ink)">ordinal</b>, and we again predict the <b style="color:var(--ink)">order within pairs</b>, setting ties aside.</p>
+    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">Comparing pairs works the same way with thousands of respondents. Both variables are <b style="color:var(--ink)">ordinal</b>, so we again predict the <b style="color:var(--ink)">order within each pair</b> and set the tied pairs aside.</p>
     <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;color:var(--ink-2);display:grid;gap:3px">
       <li><b style="color:var(--ink)">E₁</b>: half of the untied pairs, the coin flip.</li>
       <li><b style="color:var(--ink)">E₂</b>: the discordant pairs, where “higher on X, higher on Y” guesses wrong.</li>
@@ -879,7 +881,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="grid2">
     <figure>
       <div class="fighead"><h2><span class="step">B</span><span id="gtitle"></span></h2></div>
-      <p class="sub">Darker cells hold more respondents. The latest pair is marked <b style="color:var(--s2-ink)">A</b> and <b>B</b>.</p>
+      <p class="about" id="gabout"></p>
+      <p class="sub">Darker cells hold more respondents. The most recent pair you drew is marked <b style="color:var(--s2-ink)">A</b> and <b>B</b>.</p>
       <div class="xt-wrap"><table class="xt" id="gtab"></table></div>
       <p class="xnote" id="gnote"></p>
       <div class="pair" id="pair"></div>
@@ -908,12 +911,12 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="part" id="rsq" aria-labelledby="rh">
     <p class="kick">Interval · R-squared</p>
     <h2 id="rh">Guess the mean, or use the line?</h2>
-    <p class="lede">For a number, the best single guess is the mean, ȳ. Each error is the vertical distance from a point to that guess, squared and added up: E₁. Knowing X, guess from the regression line instead: E₂. Switch between the two and watch the error sticks move.</p>
+    <p class="lede">When Y is a number, the best single guess we can make without X is the mean, ȳ. Each error is the vertical distance from a point to that guess, and we square those distances and add them up to get E₁. Once we know X, we guess from the regression line instead, and the squared distances to the line add up to E₂. Switch between the two guesses and watch how the error sticks change.</p>
   </section>
 
   <section class="card" aria-labelledby="rsimpleh" style="margin-top:4px">
     <h3 id="rsimpleh" style="font-size:19px">Guess six ratings of Laura Bush</h3>
-    <p style="margin:0 0 6px;color:var(--ink-2);max-width:80ch">Six respondents from the 2004 National Election Study. Y is how warmly each rates <b style="color:var(--ink)">Laura Bush</b> (0–100); X is how warmly they rate the <b style="color:var(--ink)">Republican Party</b>. Y is a number, so now a guess can be off by a little or by a lot. We measure each miss as a distance, square it, and add them up.</p>
+    <p style="margin:0 0 6px;color:var(--ink-2);max-width:80ch">Here are six respondents from the 2004 National Election Study. Y is how warmly each of them rates <b style="color:var(--ink)">Laura Bush</b> on a 0 to 100 feeling thermometer, and X is how warmly they rate the <b style="color:var(--ink)">Republican Party</b> on the same scale. Since Y is a number, a guess can now be off by a little or by a lot, so we measure each miss as a distance, square it, and add the squares up.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px">
       <div class="btns" id="rsteps"><button data-s="1">1 · Meet the respondents</button><button data-s="2">2 · Guess without X</button><button data-s="3">3 · Guess with X</button><button data-s="4">4 · Do the math</button></div>
       <button id="rdraw" style="margin-left:auto">Draw 6 different respondents</button>
@@ -925,7 +928,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   </section>
   <section aria-label="From the example to the county data" style="border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:6px 0 2px">
     <h3 style="margin:0 0 4px;font-size:18px">r² with real county data</h3>
-    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">The same calculation with 200 counties. Y is <b style="color:var(--ink)">interval</b>-level, so errors are squared distances.</p>
+    <p style="margin:0;font-size:15px;color:var(--ink-2);max-width:80ch">Now we do the same calculation with 200 U.S. counties. Y is measured at the <b style="color:var(--ink)">interval</b> level, so the errors are again squared distances.</p>
     <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;color:var(--ink-2);display:grid;gap:3px">
       <li><b style="color:var(--ink)">E₁</b>: squared errors when every county is guessed at the mean, ȳ. Stata calls it the <b style="color:var(--ink)">Total SS</b>.</li>
       <li><b style="color:var(--ink)">E₂</b>: squared errors when each county is guessed from the regression line. Stata calls it the <b style="color:var(--ink)">Residual SS</b>.</li>
@@ -960,10 +963,10 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <section>
       <h2>Try this</h2>
       <ol>
-        <li>Open <b>vote by gender</b>. Men and women vote a little differently, yet λ = 0: Labour is the most common answer in both columns, so knowing gender never changes your guess. Click <b>Edit the counts</b> and move about 70 women from Labour to Conservative. The moment Conservative becomes the women's mode, λ moves off zero.</li>
+        <li>Open <b>vote by gender</b>. Men and women vote a little differently, yet λ = 0, because Labour is the most common answer in both columns and so knowing gender never changes your guess. Click <b>Edit the counts</b> and move about 70 women from Labour to Conservative. The moment Conservative becomes the women's mode, λ moves off zero.</li>
         <li>Compare <b>vote by support for the regime</b> (Chile) with <b>vote by education</b>. Which X would you rather know?</li>
         <li>In gamma, draw pairs one at a time and read each verdict. Then click <b>+1,000</b> and compare your running γ with the exact value.</li>
-        <li>Pick <b>political knowledge by Euroscepticism</b>. Gamma is negative: the better rule is “higher on X, lower on Y.” PRE is the size of γ, whatever its sign.</li>
+        <li>Pick <b>political knowledge by Euroscepticism</b>. Gamma is negative here, which means the better rule is “higher on X, lower on Y.” The PRE interpretation uses the size of γ, whatever its sign.</li>
         <li>In r², switch <b>Predict Y with</b> back and forth. Then choose <b>Biden 2020 by Clinton 2016</b>: the sticks nearly vanish.</li>
       </ol>
     </section>
@@ -1139,6 +1142,8 @@ setPeople(presetPeople()); buildStage(); layoutStage();
 if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;layoutStage();}}).observe($('#stage'));}
 
 /* ===================== LAMBDA ===================== */
+const ABOUT={"sq": "In October 1988, Chileans voted in a plebiscite on whether General Augusto Pinochet, who had ruled as head of a military government since 1973, would stay on as president for eight more years. A “Yes” vote kept Pinochet in power, and a “No” vote meant open elections. In April and May of that year, the research institute FLACSO/Chile surveyed 2,700 Chileans about how they planned to vote. The dependent variable is that vote intention, with four categories: Yes (for Pinochet), No (against him), Undecided, and will Abstain. It is nominal, since those four answers have no natural order. The independent variable is the survey's scale of support for the status quo, meaning the regime as it stood, where higher scores mean more support. The scale is standardized, so 0 is the average respondent, and we have collapsed it into three groups so that it fits in a table: Oppose (below −0.5), Mixed, and Support (above 0.5). The 2,519 people who answered both questions appear below.", "edu": "This is the same 1988 survey of Chilean voters, taken a few months before the plebiscite on Pinochet, with the same dependent variable, which is vote intention (Yes for Pinochet, No, Undecided, or Abstain). This time the independent variable is education, recorded in three categories: primary, secondary and post-secondary schooling. Education has an order, but lambda only uses its categories as groups, so the order plays no part here. Compare how much knowing someone's education helps you guess their vote with how much knowing their support for the regime helped.", "eu": "These data come from the British Election Panel Study, which interviewed the same British voters from 1997 to 2001. The dependent variable is the party each of the 1,525 respondents voted for in the 2001 general election, which is Conservative, Labour or Liberal Democrat (people who voted for other parties are left out). The independent variable is an 11-point scale of attitudes toward European integration, where higher scores mean a more Eurosceptic view, meaning more opposition to closer ties with the European Union. We have collapsed it into three groups: Pro-EU (1 to 4), Middle (5 to 7) and Sceptic (8 to 11).", "gender": "This table uses the same British Election Panel Study and the same dependent variable, the party each respondent voted for in the 2001 general election (Conservative, Labour or Liberal Democrat). The independent variable is gender, recorded as women and men. Look at the column percentages as well as the blue cells, because this table shows something lambda cannot see.", "econ": "These data come from the British Election Panel Study (1997 to 2001). The independent variable is how each respondent rated the national economy, from 1 (poor) to 5 (good). The dependent variable is how they rated Tony Blair, the Labour prime minister, from 1 (low) to 5 (high). Almost no one gave Blair a 3, so the one respondent who did is left out. Both variables run from low to high, so a positive gamma would mean that people who thought better of the economy also thought better of Blair.", "hague": "These data come from the British Election Panel Study (1997 to 2001). The independent variable is attitude toward European integration, collapsed from an 11-point scale into Pro-EU (1 to 4), Middle (5 to 7) and Sceptic (8 to 11), so moving right across the columns means a more Eurosceptic view. The dependent variable is how respondents rated William Hague, the Conservative leader, from 1 (low) to 5 (high), so moving down the rows means a warmer rating.", "know": "These data come from the British Election Panel Study (1997 to 2001). The independent variable is attitude toward European integration, collapsed into Pro-EU, Middle and Sceptic, so moving right means a more Eurosceptic view. The dependent variable is political knowledge, the number of questions (0 to 3) each respondent answered correctly about where the parties stood on Europe, so moving down the rows means more knowledge."};
+
 const L={i:0,T:null,edit:false};
 const lsel=$('#lsel');
 XT.L.forEach((d,i)=>{const o=document.createElement('option');o.value=i;o.textContent=d.title;lsel.appendChild(o);});
@@ -1157,7 +1162,7 @@ function lbuild(){
   h+=`<tr><th class="rh">Total</th>`; d.cols.forEach((c,j)=>h+=`<td class="tot" data-ct="${j}"><span class="c"></span></td>`); h+=`<td class="grand"><span class="c" id="lgrand"></span></td></tr></tbody>`;
   tb.innerHTML=h;
   if(L.edit) tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{ const i=+inp.closest('td').dataset.i,j=+inp.closest('td').dataset.j; L.T[i][j]=Math.max(0,Math.floor(+inp.value||0)); lupdate(); }));
-  $('#ltitle').textContent=d.title;
+  $('#ltitle').textContent=d.title;$('#labout').textContent=ABOUT[d.id]||'';
   lupdate();
 }
 function lupdate(){
@@ -1285,7 +1290,7 @@ function gbuild(){
   d.rows.forEach((r,i)=>{ h+=`<tr><th class="rh">${r}</th>`; d.cols.forEach((c,j)=>{ h+= G.edit? `<td data-i="${i}" data-j="${j}"><input type="number" min="0" step="1" value="${T[i][j]}" aria-label="${r}, ${c}"></td>` : `<td data-i="${i}" data-j="${j}"><span class="c"></span></td>`; }); h+='</tr>'; });
   h+='</tbody>'; tb.innerHTML=h;
   if(G.edit) tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{const i=+inp.closest('td').dataset.i,j=+inp.closest('td').dataset.j;G.T[i][j]=Math.max(0,Math.floor(+inp.value||0));G.c=G.d=G.t=0;G.last=null;gupdate();}));
-  $('#gtitle').textContent=d.title; $('#gnote').textContent=d.note;
+  $('#gtitle').textContent=d.title;$('#gabout').textContent=ABOUT[d.id]||''; $('#gnote').textContent=d.note;
   gupdate();
 }
 function gupdate(){
