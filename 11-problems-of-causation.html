@@ -712,7 +712,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <p class="src">Dots are nudged slightly so that golfers with the same scores don't hide each other. The dashed line marks the same score in both rounds.</p>
     <div class="btnrow"><button class="primary" id="gfPlay">▶ Play round 2 again</button><button id="gfOwn">Show each highlighted golfer's usual score</button><button id="gfNew">Play a new tournament</button></div>
     <p class="say2" id="gfSay"></p>
-    <p class="p">Tap any blue or orange golfer to follow her over eight rounds.</p>
+    <p class="p">Tap near any blue or orange golfer to follow her over eight rounds, or step through all 20 with the buttons.</p>
+    <div class="btnrow"><button id="gfPrev">◀ Previous golfer</button><button id="gfNext">Next golfer ▶</button><span class="note" id="gfWho"></span></div>
     <div id="gfTs"></div>
     <p class="say2" id="gfTsSay"></p>
   </section>
@@ -1077,7 +1078,8 @@ function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=46,pr=14,pt=12,pb=42,
   P.filter(p=>!p.g).forEach(p=>s+=`<circle cx="${xs(p.r1+p.jx)}" cy="${ys(yy(p))}" r="3.4" style="fill:var(--axis)" opacity=".7"/>`);
   if(done)s+=`<line x1="${xs(L)}" y1="${ys(my+sl*(L-mx))}" x2="${xs(H)}" y2="${ys(my+sl*(H-mx))}" style="stroke:var(--surface)" stroke-width="7"/><line x1="${xs(L)}" y1="${ys(my+sl*(L-mx))}" x2="${xs(H)}" y2="${ys(my+sl*(H-mx))}" style="stroke:var(--ink-2)" stroke-width="3"/>`;
   if(!done)s+=`<text x="${pl+8}" y="${pt+14}" font-size="12.5" font-weight="700" style="fill:var(--ink)">${k===0?'Round 1':'Round 2 coming in…'}</text>`;
-  P.filter(p=>p.g).forEach(p=>{const c=p.g==='best'?'var(--s1-line)':'var(--s2)',cx=xs(p.r1+p.jx),cy=ys(yy(p));
+  GF.pos=[];GF.sc=F.w;
+  P.filter(p=>p.g).forEach(p=>{const c=p.g==='best'?'var(--s1-line)':'var(--s2)',cx=xs(p.r1+p.jx),cy=ys(yy(p));GF.pos.push({i:p.i,cx,cy});
     if(gfOwn&&done)s+=`<line x1="${cx}" y1="${ys(p.sk)}" x2="${cx}" y2="${cy}" style="stroke:${c}" stroke-width="1.5" stroke-dasharray="2 3"/><path d="M ${cx} ${ys(p.sk)-6} L ${cx+6} ${ys(p.sk)} L ${cx} ${ys(p.sk)+6} L ${cx-6} ${ys(p.sk)} Z" style="fill:var(--surface);stroke:${c}" stroke-width="2"/>`;
     s+=`<circle class="gfp" data-i="${p.i}" cx="${cx}" cy="${cy}" r="${p.i===gfPick?7.5:5.5}" style="fill:${c};stroke:${p.i===gfPick?'var(--ink)':'var(--surface)'};cursor:pointer" stroke-width="${p.i===gfPick?2.5:1.5}"><title>First round ${p.r1}, second round ${p.r2}</title></circle>`;});
   el.innerHTML=F.svg(s);if(!done)return;
@@ -1086,8 +1088,14 @@ function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=46,pr=14,pt=12,pb=42,
 function gfFollow(){const p=GF.P[gfPick],r=rng(GF.seed*7+p.i),v=[p.r1,p.r2];for(let k=2;k<8;k++)v.push(Math.round(p.sk+gaussR(r)*2.5));
   const lo=Math.min(63,...v)-1,hi=Math.max(84,...v)+1;
   tsChart($('gfTs'),{n:8,lo,hi,ticks:[66,70,74,78,82].filter(t=>t>lo&&t<hi),xl:v.map((_,i)=>'R'+(i+1)),xt:'Round',series:[{v,c:p.g==='best'?'var(--s1-line)':'var(--s2)',big:[0],bc:p.g==='best'?'var(--s1-line)':'var(--s2)'}],mean:{v:p.sk,t:`her usual score (${p.sk.toFixed(1)})`},h:190});
+  {const o=gfOrder(),j=o.indexOf(gfPick);$('gfWho').textContent=`Golfer ${j+1} of ${o.length}, ranked by first round`;}
   $('gfTsSay').innerHTML=`This golfer shot <b>${p.r1}</b> in round 1, one of the ${p.g==='best'?'best':'worst'} in the field, and her usual score is about <b>${p.sk.toFixed(1)}</b>. Over the next seven rounds she scatters around that usual level, because round 1 was ${p.g==='best'?'a good day with some luck in it':'a bad day with some bad luck in it'}. Nothing about her game changed.`;}
-$('gfChart').addEventListener('click',e=>{const c=e.target.closest('.gfp');if(!c)return;gfPick=+c.dataset.i;gfDraw();gfFollow();});
+$('gfChart').style.cursor='pointer';
+$('gfChart').addEventListener('click',e=>{const sv=$('gfChart').querySelector('svg');if(!sv||!GF||!GF.pos)return;const b=sv.getBoundingClientRect(),k=GF.sc/b.width,x=(e.clientX-b.left)*k,y=(e.clientY-b.top)*k;
+  let best=null,bd=1e9;GF.pos.forEach(q=>{const d=Math.hypot(q.cx-x,q.cy-y);if(d<bd){bd=d;best=q;}});if(best&&bd<70*k){gfPick=best.i;gfDraw();gfFollow();}});
+const gfOrder=()=>GF.P.filter(p=>p.g).sort((a,b)=>a.r1-b.r1||a.jx-b.jx).map(p=>p.i);
+const gfStep=d=>{const o=gfOrder();let j=o.indexOf(gfPick);j=(j+d+o.length)%o.length;gfPick=o[j];gfDraw();gfFollow();};
+$('gfPrev').onclick=()=>gfStep(-1);$('gfNext').onclick=()=>gfStep(1);
 $('gfOwn').onclick=()=>{gfOwn=!gfOwn;$('gfOwn').textContent=gfOwn?'Hide the usual scores':'Show each highlighted golfer\'s usual score';gfDraw();};
 $('gfNew').onclick=()=>gfRun(Math.floor(R()*1e9));$('gfPlay').onclick=gfPlay;
 (function(){const r=rng(156);gfRun(156);gfStop();gfK=0;gfDraw();onVisible($('gfChart'),gfPlay);})();
