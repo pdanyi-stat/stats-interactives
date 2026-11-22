@@ -486,11 +486,12 @@ ul.p,ol.p{padding-left:20px;display:grid;gap:6px}
 .regs button[aria-pressed="true"]{background:var(--s2);color:#fff;border-color:var(--s2)}
 ol.refs{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2);display:grid;gap:6px}
 @media (prefers-reduced-motion:reduce){.loopdot{display:none}}
-p.say2[id],#ceSay,p.verdict{margin:0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:15px;line-height:1.6}
+p.say2[id],#ceSay,#ceSay2,p.verdict{margin:0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:15px;line-height:1.6}
 p.say2[id]:empty{display:none}
-p.say2[id] b,#ceSay b,p.verdict b,#ceSay .say2{color:#181A1D}
+p.say2[id] b,#ceSay b,#ceSay2 b,p.verdict b,#ceSay .say2,#ceSay2 .say2{color:#181A1D}
 p.say2[id] a,#ceSay a{color:#0b3f73;font-weight:600}
-#ceSay[hidden]{display:none!important}
+#ceSay[hidden],#ceSay2[hidden]{display:none!important}
+#ceSay2{display:grid;gap:10px}
 .exs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 @media (max-width:760px){.exs{grid-template-columns:1fr}}
 .ex{display:grid;gap:8px;align-content:start;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--page)}
@@ -652,6 +653,11 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
       <p class="say2">The missing step is how the death is reported. Sociologists have studied this link for half a century. David Phillips (1974) examined suicide rates in the US and Britain from 1947 to 1968 and found that suicides rose after highly publicized suicide stories. He named the pattern the Werther effect, after the hero of Goethe's 1774 novel <i>The Sorrows of Young Werther</i>.</p>
       <p class="say2">More recently, a 2020 review of 31 studies in the <i>BMJ</i> (Niederkrotenthaler and colleagues) found that suicides rose by 13% on average in the weeks after the media reported a celebrity's death by suicide. The influence runs through the coverage, which is why suicide prevention groups publish guidelines for how journalists should report these deaths.</p>
     </div>
+    <div class="btnrow" id="ceMoreRow" hidden><button class="primary" id="ceMore">Look closer at the coverage</button></div>
+    <div id="ceSay2" class="cocard" hidden>
+      <p class="say2">The research also points to what in the coverage carries the influence. In the same 2020 review, when the media reported the method a celebrity used, deaths by that same method rose by 30%. Coverage does more than spread the news of a death, because it can also pass along information about the means. That is why reporting guidelines ask journalists not to describe how someone died.</p>
+      <p class="say2">The same step explains why doctors and mental health professionals ask a person in crisis whether they have made a plan. The National Institute of Mental Health's screening guide tells clinicians to ask about a plan, including the method and access to the means, and it treats a detailed, workable plan as more serious than thoughts that haven't been worked out. A plan and the means to carry it out are the links between distress and an attempt, so they are where clinicians, and careful reporting, try to break the chain.</p>
+    </div>
     <p class="support">If this topic is hard for you right now, you can <a href="tel:988">call 988</a> or <a href="sms:988">text 988</a> to reach the 988 Suicide &amp; Crisis Lifeline in the US at any hour. You can also chat with the Lifeline online at <a href="https://988lifeline.org">988lifeline.org</a>.</p>
   </section>
 
@@ -760,6 +766,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
       <li>Levitt, Steven D. 1998. "The Economics of Crime and the Criminal Justice System." <i>NBER Reporter</i>, Fall. <a href="https://www.nber.org/reporter/fall-1998/economics-crime-and-criminal-justice-system">nber.org</a></li>
       <li>Lott, John R., Jr. 1987. "Political Cheating." <i>Public Choice</i> 52 (2): 169–186.</li>
       <li>Niederkrotenthaler, Thomas, et al. 2020. "Association between Suicide Reporting in the Media and Suicide: Systematic Review and Meta-Analysis." <i>BMJ</i> 368: m575.</li>
+      <li>National Institute of Mental Health. 2020. "Brief Suicide Safety Assessment (Adult Outpatient)." <i>Ask Suicide-Screening Questions (ASQ) Toolkit</i>. <a href="https://www.nimh.nih.gov/research/research-conducted-at-nimh/asq-toolkit-materials">nimh.nih.gov</a></li>
       <li>Phillips, David P. 1974. "The Influence of Suggestion on Suicide: Substantive and Theoretical Implications of the Werther Effect." <i>American Sociological Review</i> 39 (3): 340–354.</li>
       <li>Teorell, Jan, Michael Coppedge, Staffan Lindberg, and Svend-Erik Skaaning. 2019. "Measuring Polyarchy Across the Globe, 1900–2017." <i>Studies in Comparative International Development</i> 54 (1): 71–95.</li>
       <li>Vigen, Tyler. <i>Spurious Correlations</i>. <a href="https://www.tylervigen.com/spurious-correlations">tylervigen.com</a></li>
@@ -818,6 +825,9 @@ function diagram(svg,kind,L){
   else if(kind==='inter'||kind==='inter0'){h=kind==='inter'?160:120;const n3=[64,C,356],nn=122;s+=node(n3[0],60,nn,nh,L.x,'x',{max:11})+node(n3[2],60,nn,nh,L.y,'y',{max:11});
     if(kind==='inter')s+=node(n3[1],60,nn,nh,L.z,'z',{max:12})+arrow(n3[0]+nn/2+2,60,n3[1]-nn/2-2,60)+arrow(n3[1]+nn/2+2,60,n3[2]-nn/2-2,60)+lbl(C,128,L.note||'X works through Z');
     else s+=`<rect x="${n3[1]-nn/2+6}" y="${60-nh/2}" width="${nn-12}" height="${nh}" rx="10" fill="none" style="stroke:#B3261E" stroke-width="2" stroke-dasharray="4 4"/>`+lbl(n3[1],56,'explanatory',{col:'ink-2'})+lbl(n3[1],73,'gap',{col:'ink-2'})+arrow(n3[0]+nn/2+2,60,n3[1]-nn/2+4,60,{dash:1})+arrow(n3[1]+nn/2-4,60,n3[2]-nn/2-2,60,{dash:1});}
+  else if(kind==='inter2'){const st=[[L.x,'x'],[L.z,'z'],[L.z2,'z'],[L.y,'y']],bw=280,bh=50,g=26;h=st.length*(bh+g)-g+44;
+    st.forEach(([t,r],i)=>{const cy=14+bh/2+i*(bh+g);s+=node(C,cy,bw,bh,t,r,{max:30,tag:r==='z'?'Z'+(i):r.toUpperCase()});if(i<st.length-1)s+=arrow(C,cy+bh/2+2,C,cy+bh/2+g-2);});
+    s+=lbl(C,h-10,L.note||'');}
   else if(kind==='def'){const open=L.open,P=L.parts||[],xi=L.xi||0,rh=36,gp=8;h=open?66+P.length*(rh+gp)+8:130;
     s+=`<rect x="14" y="10" width="392" height="${h-20}" rx="14" style="fill:color-mix(in srgb,var(--s2) 8%,var(--surface));stroke:var(--s2)" stroke-width="2.5"/>`+`<text x="28" y="31" font-size="12" font-weight="700" style="fill:var(--s2)">Y</text>`+lbl(C,38,L.y,{fs:16,col:'ink',fw:700});
     if(!open){s+=lbl(C,82,'tap to open',{col:'muted',fs:14});}
@@ -968,7 +978,8 @@ function chDraw(){const mid=CH.slice(1,1+chN);let h=`<span class="nd x">${CH[0]}
   $('chSay').textContent=chN===0?'As stated, the claim leaves a wide gap between being young and voting left. What is it about youth that would do this?':chN===1?'Young people tend to have less wealth. That narrows the gap, but why would less wealth lead to a left preference?':'People with less wealth have less to fear from taxation, and that makes left parties more appealing. Each step is a smaller leap than the one big jump from youth to left preference, so the argument is both sounder and easier to believe. In a paper you may not have data on every step, but you should still say what the steps are.';}
 $('chAdd').onclick=()=>{if(chN<2)chN++;chDraw();};$('chReset').onclick=()=>{chN=0;chDraw();};chDraw();
 diagram($('ceDg'),'inter0',{x:'Celebrity suicide',y:'Total suicides'});$('ceDg').setAttribute('aria-label','Diagram: celebrity suicide, an explanatory gap, then total suicides');
-$('ceGo').onclick=()=>{diagram($('ceDg'),'inter',{x:'Celebrity suicide',z:'News coverage of the death',y:'Total suicides',note:'the influence runs through the coverage'});$('ceDg').setAttribute('aria-label','Diagram: celebrity suicide, then news coverage, then total suicides');$('ceSay').hidden=false;$('ceGo').disabled=true;};
+$('ceGo').onclick=()=>{diagram($('ceDg'),'inter',{x:'Celebrity suicide',z:'News coverage of the death',y:'Total suicides',note:'the influence runs through the coverage'});$('ceDg').setAttribute('aria-label','Diagram: celebrity suicide, then news coverage, then total suicides');$('ceSay').hidden=false;$('ceGo').disabled=true;$('ceMoreRow').hidden=false;};
+$('ceMore').onclick=()=>{diagram($('ceDg'),'inter2',{x:'Celebrity suicide',z:'News coverage of the death',z2:'Coverage passes along information about the means',y:'Total suicides',note:'two steps carry the influence'});$('ceDg').setAttribute('aria-label','Diagram: celebrity suicide, then news coverage, then information about the means, then total suicides');$('ceSay2').hidden=false;$('ceMore').disabled=true;};
 
 /* ========== Part 6: definition ========== */
 let dfOpen=false;const DAHL=['Elected officials','Free, fair and frequent elections','Freedom of expression','Alternative sources of information','Associational autonomy','Inclusive citizenship'];
