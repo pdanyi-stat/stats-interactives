@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Problems of causation (draft)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#F4F5F6;
+  --surface:#FFFFFF;
+  --ink:#16191C;
+  --ink-2:#4A4F55;
+  --muted:#5F6266;
+  --grid:#E3E5E8;
+  --axis:#B9BCC0;
+  --line:rgba(22,25,28,.12);
+  --accent:#004C97;          /* masthead rule, kicker */
+  --pop:#75787B;             /* population bars */
+  --s1:#004C97;--s1-edge:transparent;--s1-line:#004C97;--accent-ink:#004C97;              /* sample means (blue) */
+  --s1-ink:#004C97;
+  --s2:#C25E00;              /* the current sample (orange) */
+  --s2-ink:#9A4A00;
+  --code-bg:#EDEFF1;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+    --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+    --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+  --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+  --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1-line);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+button.primary{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-color:var(--s1-ink);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 6 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; --q1:#cde2fb; --q2:#86b6ef; --q3:#3987e5; --q4:#1c5cab; --q5:#0d366b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-b1{color:var(--s2-ink);font-weight:600}
+.k-b2{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--ink-2);font-weight:600}
+.chart svg{display:block}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:92ch}
+.steps b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:92px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1-ink)}
+.calc{font-family:var(--font-mono);font-size:13px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.big{font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ramp{display:inline-block;width:70px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--q1),var(--q3),var(--q5))}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.ghost{height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0}
+/* filled equation */
+.terms{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;margin-top:6px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:17px;font-weight:600;padding:3px 8px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.b1{border-color:var(--s2);color:var(--s2-ink)} .term .t.b2{border-color:var(--s1-ink);color:var(--s1-ink)} .term .t.v{border-color:var(--ink)} .term .t.op{border:0;padding:3px 0;color:var(--ink-2)}
+.term .n{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);line-height:1.2;max-width:14ch}
+/* OVB */
+.ovb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:center}
+@media (max-width:860px){.ovb{grid-template-columns:1fr}}
+.decomp{font-size:15px;display:grid;gap:8px}
+.decomp .eqn{font-family:var(--font-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.verdict{display:inline-block;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;background:var(--ink);color:var(--surface)}
+/* model builder */
+.ivlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;margin:6px 0 10px}
+.ivlist label{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+.ivlist input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+.fitbars{display:grid;gap:10px;margin-top:6px}
+.fb .lab{font-size:13.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.fb .lab b{color:var(--ink)}
+.track{height:16px;border-radius:4px;background:var(--page);border:1px solid var(--line);position:relative;overflow:hidden}
+.fill{height:100%;background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fill.adj{background:var(--s2)}
+.ghostmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55;transition:left .5s}
+@media (prefers-reduced-motion: reduce){.fill,.ghostmark{transition:none}}
+pre.stata .b1{color:var(--s2-ink);font-weight:600}
+pre.stata .b2{color:var(--s1-ink);font-weight:600}
+pre.stata .ns{color:var(--muted)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#B07A12;--amber-bg:#FFF1D6;--amber-ink:#6B4A00;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:9px 14px;border-radius:7px;border:2px solid var(--amber)}
+.fljumpbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.fljumpbox p{margin:0;font-size:14.5px;color:var(--ink);max-width:75ch}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
+
+/* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
+svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):not([stroke]){stroke:var(--s1-edge);stroke-width:1px}
+svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
+svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
+svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+
+</style>
+<style>
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
+.dcard{scroll-margin-top:70px}
+.p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+.p b{color:var(--ink)}
+ul.p,ol.p{padding-left:20px;display:grid;gap:6px}
+.draft{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:6px 0 0;padding:9px 12px;border:2px solid #B3261E;border-radius:8px;background:color-mix(in srgb,#B3261E 9%,var(--surface));font-size:14.5px;color:var(--ink)}
+.draft b{font:700 14px var(--font-mono);letter-spacing:.06em;color:#B3261E}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .draft b{color:#FF8A80}:root:not([data-theme="light"]) .draft{border-color:#E0675E}}
+:root[data-theme="dark"] .draft b{color:#FF8A80}
+.dg{width:100%;max-width:460px;display:block;margin:0 auto}
+.dgwrap{background:color-mix(in srgb,var(--page) 60%,var(--surface));border:1px solid var(--line);border-radius:10px;padding:8px}
+.dgcap{margin:6px 0 0;text-align:center;font:600 13px var(--font-mono);color:var(--muted)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btnrow .note{font-size:13.5px;color:var(--muted)}
+.big{font-size:15px;padding:9px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:14.5px}
+.chips button[aria-pressed="true"]{background:var(--selbg,#DCE8F5);color:var(--selink,#003D7A);border-color:var(--s1-line)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chips button[aria-pressed="true"]{--selbg:#1E3550;--selink:#CFE3FA}}
+:root[data-theme="dark"] .chips button[aria-pressed="true"]{--selbg:#1E3550;--selink:#CFE3FA}
+.chips button.right{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));border-color:#6d9b4e;color:var(--ink)}
+.chips button.wrong{background:color-mix(in srgb,#c2453a 12%,var(--surface));border-color:#c26a63;color:var(--ink)}
+.checks{display:grid;gap:8px}
+.chk{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 10px;align-items:start;text-align:left;padding:10px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-size:15px;line-height:1.5;color:var(--ink);width:100%}
+.chk .lt{grid-row:span 2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--font-body);border:2px solid var(--axis);color:var(--muted);background:var(--page)}
+.chk .nm{font-weight:600}
+.chk .ex{font-size:14.5px;color:var(--ink-2);display:none}
+.chk.open .ex{display:block}
+.chk.pass .lt{background:#2E7D32;border-color:#2E7D32;color:#fff}
+.chk.fail .lt{background:#B3261E;border-color:#B3261E;color:#fff}
+.chk.unk .lt{background:#B5862A;border-color:#B5862A;color:#1d1600}
+.chk .vd{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-left:8px}
+.chk.pass .vd{color:#2E7D32}.chk.fail .vd{color:#C0392B}.chk.unk .vd{color:#9A6B12}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chk.pass .vd{color:#81C784}:root:not([data-theme="light"]) .chk.fail .vd{color:#FF8A80}:root:not([data-theme="light"]) .chk.unk .vd{color:#E8C170}}
+:root[data-theme="dark"] .chk.pass .vd{color:#81C784}:root[data-theme="dark"] .chk.fail .vd{color:#FF8A80}:root[data-theme="dark"] .chk.unk .vd{color:#E8C170}
+.verdict{margin:0;font-size:15px;line-height:1.55;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--ink)}
+.vz{width:100%;display:block}
+.vz text{font-family:var(--font-body)}
+.say2{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.say2 b{color:var(--ink)}
+.kk{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2)}
+.kk span{display:inline-flex;align-items:center;gap:6px}
+.kk i{display:inline-block;width:12px;height:12px;border-radius:50%}
+.kk i.ln{height:3px;width:16px;border-radius:2px}
+.src{font-size:13px;color:var(--muted)}
+.support{margin:0;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);font-size:14.5px;color:var(--ink-2)}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain .nd{padding:7px 11px;border-radius:8px;border:2px solid var(--axis);background:var(--surface);font-size:14.5px;font-weight:600;color:var(--ink)}
+.chain .nd.x{border-color:var(--s1-line)}.chain .nd.y{border-color:var(--s2)}.chain .nd.z{border-style:dashed;border-color:var(--ink-2)}
+.chain .gap{font:600 12px var(--font-mono);color:#B3261E;border:1px dashed #B3261E;border-radius:6px;padding:4px 6px;text-align:center}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chain .gap{color:#FF8A80;border-color:#FF8A80}}
+:root[data-theme="dark"] .chain .gap{color:#FF8A80;border-color:#FF8A80}
+.chain .ar{color:var(--muted);font-weight:700}
+.dots{display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap}
+.dots i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--s1-line) 22%,var(--surface));border:1px solid color-mix(in srgb,var(--s1-line) 45%,var(--line))}
+.dots i.on{background:var(--s1-line);border-color:var(--s1-line)}
+.dots i.cur{background:var(--s2);border-color:var(--s2);transform:scale(1.25)}
+.claim{margin:0;font-size:17px;line-height:1.5;color:var(--ink);padding:12px 14px;border-left:5px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 7%,var(--surface));border-radius:8px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.tl input[type=range]{width:100%;accent-color:var(--s1-ink)}
+.tlrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tlrow div{font-size:13px;line-height:1.35;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--muted);opacity:.45;transition:opacity .25s}
+.tlrow div.on{opacity:1;color:var(--ink);border-color:var(--s1-line)}
+.tlrow div b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+@media (max-width:520px){.tlrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.regs{display:flex;flex-wrap:wrap;gap:6px}
+.regs button{font-size:13.5px;padding:5px 10px}
+.regs button[aria-pressed="true"]{background:var(--s2);color:#fff;border-color:var(--s2)}
+ol.refs{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2);display:grid;gap:6px}
+@media (prefers-reduced-motion:reduce){.loopdot{display:none}}
+</style>
+<style id="toggle-sel">
+button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
+:root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
+</style>
+<style id="sec-lines">
+:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
+:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
+main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
+main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
+main section.part:first-child{margin-top:8px!important}
+main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
+.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
+.pager a.nx .k{color:var(--nxk)}
+.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
+@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
+@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 11: </span><b>Problems of causation</b></span><a href="index.html">Done ✓</a></nav>
+<div class="rule"></div>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Statistical methods · Module 11 · Draft</p>
+    <h1>Problems of causation</h1>
+    <p class="draft"><b>[DRAFT ONLY]</b> <span>This module is still being written, so its parts and examples may change or move.</span></p>
+    <p class="dek">When two variables move together, we are tempted to tell a story in which one causes the other. This module covers what it takes to call a relationship causal, and then the common ways a correlation can lead us to the wrong story.</p>
+    <ul class="modnav" aria-label="Modules in this series">
+      <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
+      <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
+      <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
+      <li><a href="3-dispersion.html">3 Dispersion</a></li>
+      <li><a href="4-sampling-distributions.html">4 Sampling distributions</a></li>
+      <li><a href="5-confidence-intervals.html">5 Confidence intervals</a></li>
+      <li><a href="6-difference-in-means.html">6 Difference in means</a></li>
+      <li><a href="7-pre-measures.html">7 PRE measures</a></li>
+      <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
+      <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
+      <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
+      <li><a href="practice-direction.html">Practice: Which way?</a></li>
+      <li><a href="practice-titanic.html">Practice: Titanic</a></li>
+      <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
+      <li><a href="exam-prep.html">Exam prep</a></li>
+      <li aria-current="page"><a href="11-problems-of-causation.html">11 Problems of causation (draft)</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 1 REQUIREMENTS -->
+  <section class="part"><p class="kick">Part 1</p><h2>When does a correlation suggest a cause?</h2>
+    <p class="lede">A correlation is the presence of covariation between two variables, meaning that as the values on one variable change, the values on the second change systematically with it. You have likely heard that correlation does not imply causation. In fact a correlation often suggests a cause quite strongly, so our job is to ask whether that suggestion holds up once we start questioning it.</p></section>
+  <section class="dcard" id="req">
+    <h3>Four requirements for calling a relationship causal</h3>
+    <ol class="p">
+      <li>The cause must come before the effect (temporal priority).</li>
+      <li>The relationship must be non-spurious, which means it cannot be random or accidental.</li>
+      <li>We must eliminate rival explanations for what produces the correlation.</li>
+      <li>We need a mechanism, a plausible and preferably observed story that connects the cause to the outcome.</li>
+    </ol>
+    <p class="p">Pick a claim, then tap each requirement to see whether the claim meets it.</p>
+    <div class="chips" id="rqPick"></div>
+    <p class="claim" id="rqClaim"></p>
+    <div class="dgwrap"><svg class="dg" id="rqDg" role="img"></svg></div>
+    <div class="checks" id="rqChecks"></div>
+    <p class="verdict" id="rqVerdict" hidden></p>
+  </section>
+
+  <!-- 2 SPURIOUS -->
+  <section class="part"><p class="kick">Part 2</p><h2>Spurious relationships (X → ? → Y)</h2>
+    <p class="lede">A spurious relationship is one in which two things correlate without any reasonable mechanism between them. The world produces a great many patterns by pure accident, so if a story connecting the two is nearly impossible to tell, the relationship might be spurious.</p></section>
+  <section class="dcard" id="sp">
+    <h3>The pattern machine</h3>
+    <div class="dgwrap"><svg class="dg" id="spDg" role="img" aria-label="Diagram: X and Y linked only by a question mark"></svg></div>
+    <p class="p">Each time you press the button, the computer draws 40 series of 20 yearly values. Every series is a random walk, so each year it moves up or down by chance from where it was the year before, and no series has anything to do with any other. The machine then checks all 780 possible pairs and shows you the pair that moves together most closely.</p>
+    <div class="btnrow"><button class="primary big" id="spGo">Draw 40 new series</button></div>
+    <div class="kk"><span><i class="ln" style="background:var(--s1-line)"></i><b id="spA">Series A</b></span><span><i class="ln" style="background:var(--s2)"></i><b id="spB">Series B</b></span></div>
+    <div id="spChart"></div>
+    <p class="src">Both series are shown in standard units (z-scores) so that they fit on one axis.</p>
+    <p class="say2" id="spSay"></p>
+    <p class="p">Tyler Vigen's <a href="https://www.tylervigen.com/spurious-correlations">Spurious Correlations</a> site collects hundreds of real examples built the same way, by searching many data series for pairs that happen to match.</p>
+  </section>
+
+  <!-- 3 OMITTED -->
+  <section class="part"><p class="kick">Part 3</p><h2>Omitted variables (Z → X and Y)</h2>
+    <p class="lede">Sometimes the story we tell between X and Y is wrong because X and Y share a common cause, Z, that drives each of them. These relationships often look spurious until the common cause is revealed.</p></section>
+  <section class="dcard" id="om">
+    <h3>Your gas bill and your marshmallows</h3>
+    <p class="p">Suppose that over three years your monthly natural gas bill is strongly correlated with the average size of the marshmallows you eat. The months below are simulated for illustration, with the heating bill in dollars on the x axis and the average width of your marshmallows in centimeters on the y axis. Does your heat bill cause your marshmallows to shrink?</p>
+    <div class="row" style="border:0;padding:0;justify-content:flex-start;flex-wrap:wrap"><div class="seg" id="omSeg" role="radiogroup" aria-label="Show the months"></div></div>
+    <div class="kk" id="omKey"></div>
+    <div id="omChart"></div>
+    <p class="say2" id="omSay"></p>
+    <div class="dgwrap" id="omDgW" hidden><svg class="dg" id="omDg" role="img"></svg></div>
+  </section>
+  <section class="dcard" id="wl" data-ds="World.sav">
+    <h3>Spurious, or an omitted variable? Wealth and civil liberties</h3>
+    <p class="p">The World data from class has GDP per capita in US dollars and the 2004 Freedom House rating for 177 countries. The rating is reversed so that 1 is least free and 7 is most free. Tap a region to see how the relationship looks inside it.</p>
+    <div class="regs" id="wlRegs"></div>
+    <div id="wlChart"></div>
+    <p class="src">The x axis uses a log scale, so each labeled step to the right multiplies GDP per capita by 10. Points are spread slightly up and down so that countries with the same rating don't hide each other.</p>
+    <p class="say2" id="wlSay"></p>
+  </section>
+
+  <!-- 4 ENDOGENEITY -->
+  <section class="part"><p class="kick">Part 4</p><h2>Endogeneity (X ⇄ Y)</h2>
+    <p class="lede">With endogeneity, the story we tell from X to Y is wrong because X and Y are locked in a feedback loop, where one has influenced the other in the past and the other has pushed back (the slides give it a less polite name). We risk endogeneity problems whenever we lack information about which thing came first.</p></section>
+  <section class="dcard" id="en">
+    <h3>Happiness and leisure</h3>
+    <p class="p">Countries where people have more leisure time also tend to be happier. Try stating the relationship in one direction, and then in the other.</p>
+    <div class="chips" id="enPick"></div>
+    <div class="dgwrap"><svg class="dg" id="enDg" role="img"></svg></div>
+    <p class="say2" id="enSay"></p>
+  </section>
+  <section class="dcard" id="cs">
+    <h3>Does campaign money help incumbents?</h3>
+    <p class="p">In US House elections, Gary Jacobson found that the challenger's spending was strongly related to the vote, while the incumbent's spending showed a relationship that was weak, near zero, or even in the wrong direction. Taken at face value, that would mean money does almost nothing for incumbents.</p>
+    <div class="dgwrap"><svg class="dg" id="csDg" role="img" aria-label="Diagram: incumbent spending and a close race feed each other"></svg></div>
+    <p class="p">The trouble is that incumbents raise and spend more when they see a strong challenger coming. The threat of a close race drives the spending at the same time that the spending fights the threat, so the incumbents who spend the most are the ones in the most danger. A simple correlation can't pull those two arrows apart, which is why the effect of incumbent spending is still argued over.</p>
+  </section>
+
+  <!-- 5 INTERVENING -->
+  <section class="part"><p class="kick">Part 5</p><h2>Intervening variables (X → Z → Y)</h2>
+    <p class="lede">Here the story between X and Y goes wrong because it skips a step. The missing step is a mechanism, present in most cases, that carries the influence of X to Y. These relationships often look reasonable, but the story seems to have a stretch in it.</p></section>
+  <section class="dcard" id="ch">
+    <h3>Youth and left-party voting</h3>
+    <p class="p">Age is strongly related to political ideology, and youthful voters disproportionately favor left parties. Is being young itself the cause? Tap the button to fill in the chain one step at a time and watch the explanatory gaps close.</p>
+    <div class="chain" id="chChain" aria-live="polite"></div>
+    <div class="btnrow"><button class="primary" id="chAdd">Add a step</button><button id="chReset">Start over</button></div>
+    <p class="say2" id="chSay"></p>
+  </section>
+  <section class="dcard" id="ce">
+    <h3>Celebrity suicides and total suicides</h3>
+    <p class="p">Celebrity suicides correlate with the total number of suicides in a country. Can we conclude that the death of a celebrity causes people to take their own lives at higher rates, or does the story need more?</p>
+    <div class="dgwrap"><svg class="dg" id="ceDg" role="img"></svg></div>
+    <div class="btnrow"><button class="primary" id="ceGo">Find the missing step</button></div>
+    <p class="say2" id="ceSay" hidden>The missing step is how the death is reported. A 2020 review of 31 studies in the <i>BMJ</i> (Niederkrotenthaler and colleagues) found that suicides rose by 13% on average in the weeks after the media reported a celebrity's death by suicide. The influence runs through the coverage, which is why suicide prevention groups publish guidelines for how journalists should report these deaths.</p>
+    <p class="support">If this topic is hard for you right now, you can call or text 988 to reach the Suicide &amp; Crisis Lifeline in the US at any hour.</p>
+  </section>
+
+  <!-- 6 DEFINITION -->
+  <section class="part"><p class="kick">Part 6</p><h2>Definition problems (X = Y)</h2>
+    <p class="lede">Sometimes the story fails because X is not really distinct from Y. We risk this often when we look for relationships between a big, multifaceted concept and one of the things that make it up.</p></section>
+  <section class="dcard" id="df" data-ds="World.sav">
+    <h3>Democracy and periodic elections</h3>
+    <p class="p">Democracy is correlated with periodic elections. Before you count that as a finding, tap the box to open up what we usually mean by democracy.</p>
+    <div class="dgwrap"><svg class="dg" id="dfDg" role="img" style="cursor:pointer" tabindex="0" aria-label="Democracy box. Press to open it."></svg></div>
+    <p class="say2" id="dfSay"></p>
+    <p class="p">The same problem shows up in real data. The World data has two measures of democracy for 189 countries, a yes/no variable for whether the regime is a democracy and the Freedom House rating from Part 3.</p>
+    <div id="dfChart"></div>
+    <p class="say2" id="dfSay2"></p>
+  </section>
+
+  <!-- 7 REVERSE -->
+  <section class="part"><p class="kick">Part 7</p><h2>Reverse causation (Y → X)</h2>
+    <p class="lede">Reverse causation means the story we tell misses that Y is actually the cause of X. These claims can look reasonable, but they often lack a clear statement of when X happened in relation to Y. They can look like endogeneity problems, but they differ in that we can eventually identify which came first and diagnose the problem.</p></section>
+  <section class="dcard" id="rv">
+    <h3>Do police cause crime?</h3>
+    <p class="p">Steven Levitt pointed out that Newark had a violent crime rate four times higher than Omaha's and also had twice as many police per capita. The bars below put each city on a scale where Omaha equals 1.</p>
+    <div id="rvChart"></div>
+    <div class="chips" id="rvPick"></div>
+    <div class="dgwrap"><svg class="dg" id="rvDg" role="img"></svg></div>
+    <p class="say2" id="rvSay"></p>
+  </section>
+  <section class="dcard tl" id="tl">
+    <h3>Time in the district and impending retirement</h3>
+    <p class="p">The time a representative spends in their district correlates with impending retirement. Does spending less time at home lead a member to retire? Drag the slider through the final term of a hypothetical member and watch the order in which things happen.</p>
+    <input type="range" id="tlR" min="0" max="3" step="1" value="0" aria-label="Point in the member's final term">
+    <div class="tlrow" id="tlRow"></div>
+    <p class="say2" id="tlSay"></p>
+  </section>
+
+  <!-- 8 REVERSION -->
+  <section class="part"><p class="kick">Part 8</p><h2>Reversion to the mean</h2>
+    <p class="lede">Reversion (or regression) to the mean happens when one sample produces an extreme value and the samples that follow are more typical. Extreme results are usually partly luck, so the next result tends to drift back toward the average, and that drift can look like the effect of whatever we did in between.</p></section>
+  <section class="dcard" id="co">
+    <h3>Fire the coach</h3>
+    <p class="p">Here are 30 simulated teams playing a 17-game season. Each team has a true skill level that stays the same from one season to the next, and each season's record mixes that skill with luck. No coach in this simulation makes any difference at all. After the first season, the 10 worst teams are split by a coin flip, so that 5 fire their coach and 5 keep theirs.</p>
+    <div class="btnrow"><button class="primary big" id="coGo">Play two seasons</button><button id="coMany">Repeat 1,000 times</button></div>
+    <div class="kk"><span><i style="background:#B3261E"></i>fired the coach</span><span><i style="background:var(--s1-line)"></i>kept the coach</span></div>
+    <div id="coChart"></div>
+    <p class="say2" id="coSay"></p>
+  </section>
+  <section class="dcard" id="rm">
+    <h3>Where else reversion fools us</h3>
+    <p class="p">Extreme values can happen at random, but a second, systematic source exists too. Cases are often chosen for treatment because they are extreme at the moment, and that choice can produce the appearance of an effect where there may not be one.</p>
+    <ul class="p">
+      <li><b>The seeking-help problem.</b> People seek treatment, homeopathic medicine included, when they feel their worst. Most of us would feel better a few days later anyway, so whatever we took gets the credit.</li>
+      <li><b>The policing problem.</b> Broken-windows policing argues that heavy policing of minor infractions in areas with rising crime will reduce both minor and serious crime. Since the policing goes to places at their worst, crime there is likely to fall back regardless, so the policy will look like it works whether or not it does.</li>
+      <li><b>The membership drive.</b> Suppose you lead a student group that usually has about 20 members, and one year an unusually large membership drive brings it to 40. Two years later the group is down to 18 and doesn't recover much. Your co-leaders say tastes have changed, but the likelier story is that 40 was the extreme year and the group has returned to its normal size.</li>
+      <li><b>The magazine-cover jinx.</b> Athletes who appear on the cover of <i>Sports Illustrated</i> often have a worse season next. As Daniel Kahneman explains in <i>Thinking, Fast and Slow</i>, they made the cover after an exceptional season that was probably helped along by luck, and luck doesn't last.</li>
+    </ul>
+    <p class="p">We can guard against reversion in two ways. First, we remember that it exists and that one of the samples we are comparing may simply be a random extreme. Second, we think about how cases come to be treated in the real world, since cases chosen because they are extreme will tend to look better afterward whatever we do to them.</p>
+  </section>
+
+  <!-- 9 DIAGNOSE -->
+  <section class="part"><p class="kick">Part 9</p><h2>Diagnose it</h2>
+    <p class="lede">Each card makes a causal claim. Pick the problem that best describes it, and the diagram will redraw to show what is more likely going on.</p></section>
+  <section class="dcard" id="dx">
+    <div class="foot"><span id="dxN"></span><span class="dots" id="dxDots"></span></div>
+    <p class="claim" id="dxClaim"></p>
+    <div class="chips" id="dxPick"></div>
+    <div class="fbk" id="dxFb" aria-live="polite"></div>
+    <div class="dgwrap" id="dxDgW" hidden><svg class="dg" id="dxDg" role="img"></svg></div>
+    <div class="btnrow"><button id="dxNext">Next claim →</button></div>
+  </section>
+
+  <section class="dcard" id="refs">
+    <h3>Sources</h3>
+    <ol class="refs">
+      <li>Jacobson, Gary C. 1985. "Money and Votes Reconsidered: Congressional Elections, 1972–1982." <i>Public Choice</i> 47 (1): 7–62.</li>
+      <li>Jacobson, Gary C. 1990. "The Effects of Campaign Spending in House Elections: New Evidence for Old Arguments." <i>American Journal of Political Science</i> 34 (2): 334–362.</li>
+      <li>Kahneman, Daniel. 2011. <i>Thinking, Fast and Slow</i>. New York: Farrar, Straus and Giroux.</li>
+      <li>Levitt, Steven D. 1998. "The Economics of Crime and the Criminal Justice System." <i>NBER Reporter</i>, Fall. <a href="https://www.nber.org/reporter/fall-1998/economics-crime-and-criminal-justice-system">nber.org</a></li>
+      <li>Niederkrotenthaler, Thomas, et al. 2020. "Association between Suicide Reporting in the Media and Suicide: Systematic Review and Meta-Analysis." <i>BMJ</i> 368: m575.</li>
+      <li>Vigen, Tyler. <i>Spurious Correlations</i>. <a href="https://www.tylervigen.com/spurious-correlations">tylervigen.com</a></li>
+      <li>World data (World.sav, class dataset). GDP per capita, Freedom House rating of democracy (2004, reversed) and regime type.</li>
+    </ol>
+  </section>
+
+  <nav class="pager" aria-label="Previous and next"><a href="exam-prep.html"><span class="k">← Previous · Exam prep</span><span class="t">Practice for the final</span></a><a class="home" href="index.html">All modules</a><span></span></nav>
+</main>
+<script>
+const WORLD={"W": [["Albania", 1535, 5.0, "C&E Europe"], ["Algeria", 1785, 2.5, "Africa"], ["Angola", 857, 2.5, "Africa"], ["Antigua & Barbuda", 10449, 6.0, "S. America"], ["Argentina", 2797, 6.0, "S. America"], ["Armenia", 771, 3.5, "C&E Europe"], ["Australia", 20822, 7.0, "Asia-Pacific"], ["Austria", 25356, 7.0, "W. Europe"], ["Azerbaijan", 745, 2.5, "C&E Europe"], ["Bahamas", 15797, 7.0, "S. America"], ["Bahrain", 11007, 3.0, "Middle East"], ["Bangladesh", 351, 4.0, "Asia-Pacific"], ["Barbados", 9423, 7.0, "S. America"], ["Belarus", 1441, 1.5, "C&E Europe"], ["Belgium", 23749, 7.0, "W. Europe"], ["Belize", 3332, 6.5, "S. America"], ["Benin", 411, 6.0, "Africa"], ["Bhutan", 695, 2.5, "Asia-Pacific"], ["Bolivia", 886, 5.0, "S. America"], ["Bosnia", 1362, 4.5, "C&E Europe"], ["Botswana", 3080, 6.0, "Africa"], ["Brazil", 2593, 5.5, "S. America"], ["United Kingdom", 26444, 7.0, "W. Europe"], ["Bulgaria", 1944, 6.5, "C&E Europe"], ["Burkina Faso", 264, 3.5, "Africa"], ["Burundi", 102, 3.0, "Africa"], ["Cambodia", 321, 2.5, "Asia-Pacific"], ["Cameroon", 575, 2.0, "Africa"], ["Canada", 22777, 7.0, "N. America"], ["Cape Verde", 1345, 7.0, "Africa"], ["Central African Republic", 274, 2.5, "Africa"], ["Chad", 240, 2.5, "Africa"], ["Chile", 4115, 7.0, "S. America"], ["China", 989, 1.5, "Asia-Pacific"], ["Colombia", 1850, 4.0, "S. America"], ["Comoros", 437, 4.0, "Africa"], ["Congo Kinshasa", 111, 2.0, "Africa"], ["Congo Brazzaville", 825, 3.5, "Africa"], ["Costa Rica", 4271, 7.0, "S. America"], ["Cote d'Ivoire", 707, 4.5, "Africa"], ["Croatia", 5025, 6.0, "C&E Europe"], ["Cyprus", 13210, 7.0, "W. Europe"], ["Czech Republic", 6808, 7.0, "C&E Europe"], ["Denmark", 32179, 7.0, "Scandinavia"], ["Djibouti", 861, 3.0, "Africa"], ["Dominica", 3438, 7.0, "S. America"], ["Dominican Rep", 2514, 6.0, "S. America"], ["Ecuador", 1897, 5.0, "S. America"], ["Egypt", 1354, 2.5, "Middle East"], ["El Salvador", 2226, 5.5, "S. America"], ["Equatorial Guinea", 4394, 1.5, "Africa"], ["Eritrea", 150, 1.5, "Africa"], ["Estonia", 4792, 7.0, "C&E Europe"], ["Ethiopia", 90, 3.0, "Africa"], ["Fiji", 2281, 4.5, "Asia-Pacific"], ["Finland", 25295, 7.0, "Scandinavia"], ["France", 24061, 7.0, "W. Europe"], ["Gabon", 3780, 3.5, "Africa"], ["Gambia", 257, 4.0, "Africa"], ["Georgia", 656, 4.5, "C&E Europe"], ["Germany", 24051, 7.0, "W. Europe"], ["Ghana", 304, 6.0, "Africa"], ["Greece", 12494, 6.5, "W. Europe"], ["Grenada", 4060, 6.5, "S. America"], ["Guatemala", 1941, 4.0, "S. America"], ["Guinea-Bissau", 141, 4.0, "Africa"], ["Guinea", 415, 2.5, "Africa"], ["Guyana", 937, 6.0, "S. America"], ["Haiti", 415, 1.5, "S. America"], ["Honduras", 966, 5.0, "S. America"], ["Hungary", 6481, 7.0, "C&E Europe"], ["Iceland", 29749, 7.0, "Scandinavia"], ["India", 487, 5.5, "Asia-Pacific"], ["Indonesia", 817, 4.5, "Asia-Pacific"], ["Iran", 1652, 2.0, "Middle East"], ["Ireland", 30982, 7.0, "W. Europe"], ["Israel", 15792, 6.0, "Middle East"], ["Italy", 20528, 7.0, "W. Europe"], ["Jamaica", 3008, 5.5, "S. America"], ["Japan", 31407, 6.5, "Asia-Pacific"], ["Jordan", 1799, 3.5, "Middle East"], ["Kazakhstan", 1656, 2.5, "C&E Europe"], ["Kenya", 393, 5.0, "Africa"], ["Kiribati", 562, 7.0, "Asia-Pacific"], ["Korea South", 10006, 6.5, "Asia-Pacific"], ["Kuwait", 15193, 3.5, "Middle East"], ["Kyrgyzstan", 320, 2.5, "C&E Europe"], ["Laos", 304, 1.5, "Asia-Pacific"], ["Latvia", 3595, 6.5, "C&E Europe"], ["Lebanon", 3894, 2.5, "Middle East"], ["Lesotho", 402, 5.5, "Africa"], ["Liberia", 171, 3.5, "Africa"], ["Libya", 3512, 1.0, "Middle East"], ["Lithuania", 3977, 6.0, "C&E Europe"], ["Luxembourg", 47354, 7.0, "W. Europe"], ["Macedonia", 1860, 5.0, "C&E Europe"], ["Madagascar", 268, 5.0, "Africa"], ["Malawi", 177, 4.0, "Africa"], ["Malaysia", 3905, 4.0, "Asia-Pacific"], ["Maldives", 2182, 2.5, "Asia-Pacific"], ["Mali", 296, 6.0, "Africa"], ["Malta", 9748, 7.0, "W. Europe"], ["Marshall Islands", 1996, 7.0, "Asia-Pacific"], ["Mauritania", 348, 2.5, "Africa"], ["Mauritius", 3740, 7.0, "Africa"], ["Mexico", 6320, 6.0, "N. America"], ["Micronesia, Fed Stat", 1902, 7.0, "Asia-Pacific"], ["Moldova", 382, 4.5, "C&E Europe"], ["Mongolia", 457, 6.0, "Asia-Pacific"], ["Morocco", 1218, 3.5, "Middle East"], ["Mozambique", 195, 4.5, "Africa"], ["Namibia", 1463, 5.5, "Africa"], ["Nepal", 230, 3.0, "Asia-Pacific"], ["Netherlands", 25886, 7.0, "W. Europe"], ["New Zealand", 14872, 7.0, "Asia-Pacific"], ["Nicaragua", 749, 5.0, "S. America"], ["Niger", 190, 5.0, "Africa"], ["Nigeria", 328, 4.0, "Africa"], ["Norway", 41974, 7.0, "Scandinavia"], ["Oman", 8002, 2.5, "Middle East"], ["Pakistan", 408, 2.5, "Asia-Pacific"], ["Palau", 6495, 7.0, "Asia-Pacific"], ["Panama", 4182, 6.5, "S. America"], ["Papua New Guinea", 523, 5.0, "Asia-Pacific"], ["Paraguay", 1000, 5.0, "S. America"], ["Peru", 2113, 5.5, "S. America"], ["Philippines", 975, 5.5, "Asia-Pacific"], ["Poland", 4894, 7.0, "C&E Europe"], ["Portugal", 11948, 7.0, "W. Europe"], ["Qatar", 28634, 2.5, "Middle East"], ["Romania", 2052, 5.5, "C&E Europe"], ["Russia", 2405, 2.5, "C&E Europe"], ["Rwanda", 212, 2.5, "Africa"], ["Sao Tome", 326, 6.0, "Africa"], ["Saudi Arabia", 8612, 1.0, "Middle East"], ["Senegal", 503, 5.5, "Africa"], ["Seychelles", 8320, 5.0, "Africa"], ["Sierra Leone", 150, 4.5, "Africa"], ["Singapore", 20886, 3.5, "Asia-Pacific"], ["Slovakia", 4403, 7.0, "C&E Europe"], ["Slovenia", 11181, 7.0, "C&E Europe"], ["Solomon Islands", 541, 5.0, "Asia-Pacific"], ["South Africa", 2299, 6.5, "Africa"], ["Spain", 15961, 7.0, "W. Europe"], ["Sri Lanka", 873, 5.0, "Asia-Pacific"], ["St. Kitts & Nevis", 7745, 6.5, "S. America"], ["St. Lucia", 4124, 6.5, "S. America"], ["St. Vincent & Grenadine", 3082, 6.5, "S. America"], ["Sudan", 412, 1.0, "Africa"], ["Suriname", 2199, 6.5, "S. America"], ["Swaziland", 1091, 2.0, "Africa"], ["Sweden", 26929, 7.0, "Scandinavia"], ["Switzerland", 36687, 7.0, "W. Europe"], ["Syria", 1224, 1.0, "Middle East"], ["Tajikistan", 193, 2.5, "C&E Europe"], ["Tanzania", 267, 4.5, "Africa"], ["Thailand", 2060, 5.5, "Asia-Pacific"], ["Togo", 291, 2.5, "Africa"], ["Tonga", 1347, 4.0, "Asia-Pacific"], ["Trinidad", 7384, 5.0, "S. America"], ["Tunisia", 2149, 2.5, "Middle East"], ["Turkey", 2638, 5.0, "Middle East"], ["Turkmenistan", 1601, 1.0, "C&E Europe"], ["Uganda", 236, 3.5, "Africa"], ["Ukraine", 851, 4.5, "C&E Europe"], ["UAE", 22051, 2.0, "Middle East"], ["United States", 36006, 7.0, "N. America"], ["Uruguay", 3609, 7.0, "S. America"], ["Uzbekistan", 314, 1.5, "C&E Europe"], ["Vanuatu", 1138, 6.0, "Asia-Pacific"], ["Venezuela", 3760, 4.5, "S. America"], ["Vietnam", 436, 1.5, "Asia-Pacific"], ["Western Samoa", 1484, 6.0, "Asia-Pacific"], ["Yemen", 537, 3.0, "Middle East"], ["Yugoslavia", 1922, 5.5, "C&E Europe"], ["Zambia", 361, 4.0, "Africa"], ["Zimbabwe", 639, 1.5, "Africa"]], "D": [[0, 2.5], [1, 5.0], [0, 2.5], [1, 7.0], [0, 2.5], [1, 6.0], [1, 6.0], [1, 3.5], [1, 7.0], [1, 7.0], [0, 2.5], [1, 7.0], [0, 3.0], [1, 4.0], [1, 7.0], [0, 1.5], [1, 7.0], [1, 6.5], [1, 6.0], [0, 2.5], [1, 5.0], [0, 4.5], [0, 6.0], [1, 5.5], [1, 7.0], [0, 2.5], [1, 6.5], [0, 3.5], [0, 3.0], [0, 2.5], [0, 2.0], [1, 7.0], [1, 7.0], [1, 2.5], [0, 2.5], [1, 7.0], [0, 1.5], [1, 4.0], [0, 4.0], [0, 2.0], [0, 3.5], [1, 7.0], [1, 4.5], [1, 6.0], [0, 1.0], [1, 7.0], [1, 7.0], [1, 7.0], [0, 3.0], [1, 7.0], [1, 6.0], [0, 5.0], [0, 2.5], [1, 5.5], [0, 1.5], [0, 1.5], [1, 7.0], [0, 3.0], [0, 4.5], [1, 7.0], [1, 7.0], [0, 3.5], [0, 4.0], [0, 4.5], [1, 7.0], [1, 6.0], [1, 6.5], [1, 6.5], [1, 4.0], [1, 4.0], [0, 2.5], [1, 6.0], [1, 1.5], [1, 5.0], [1, 7.0], [1, 7.0], [1, 5.5], [1, 4.5], [0, 2.0], [0, 2.0], [1, 7.0], [1, 6.0], [1, 7.0], [1, 5.5], [1, 6.5], [0, 3.5], [0, 2.5], [1, 5.0], [1, 7.0], [0, 1.0], [1, 6.5], [0, 3.5], [0, 2.5], [0, 1.5], [1, 6.5], [0, 2.5], [1, 5.5], [0, 3.5], [0, 1.0], [1, 7.0], [1, 6.0], [1, 7.0], [1, 5.0], [1, 5.0], [1, 4.0], [0, 4.0], [0, 2.5], [1, 6.0], [1, 7.0], [1, 7.0], [0, 2.5], [1, 7.0], [1, 6.0], [1, 7.0], [1, 4.5], [1, 6.0], [0, 3.5], [0, 4.5], [0, 1.0], [1, 5.5], [1, 7.0], [1, 3.0], [1, 7.0], [1, 7.0], [1, 5.0], [1, 5.0], [1, 4.0], [1, 7.0], [0, 2.5], [0, 2.5], [1, 7.0], [1, 6.5], [1, 5.0], [0, 5.0], [0, 5.5], [1, 5.5], [1, 7.0], [1, 7.0], [0, 2.5], [1, 5.5], [1, 2.5], [0, 2.5], [1, 7.0], [1, 6.0], [0, 1.0], [1, 5.5], [0, 5.0], [1, 4.5], [0, 3.5], [1, 7.0], [1, 7.0], [1, 5.0], [0, 1.5], [1, 6.5], [1, 7.0], [1, 5.0], [1, 6.5], [1, 6.5], [1, 6.5], [0, 1.0], [1, 6.5], [0, 2.0], [1, 7.0], [1, 7.0], [0, 1.0], [1, 6.5], [0, 2.5], [0, 4.5], [1, 5.5], [0, 2.5], [0, 4.0], [1, 5.0], [0, 2.5], [1, 5.0], [0, 1.0], [0, 3.5], [1, 4.5], [0, 2.0], [1, 7.0], [1, 7.0], [0, 1.5], [1, 6.0], [1, 4.5], [0, 1.5], [0, 6.0], [0, 3.0], [0, 5.5], [1, 4.0], [0, 1.5]]};
+(function(){
+const $=id=>document.getElementById(id);
+const css=v=>`var(--${v})`;
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let R=rng(20261122);
+const gauss=()=>{let u=0,v=0;while(!u)u=R();while(!v)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+function corr(x,y){const mx=mean(x),my=mean(y);let a=0,b=0,c=0;for(let i=0;i<x.length;i++){const dx=x[i]-mx,dy=y[i]-my;a+=dx*dy;b+=dx*dx;c+=dy*dy;}return a/Math.sqrt(b*c);}
+const f2=r=>(r<0?'−':'')+Math.abs(r).toFixed(2).replace(/^0/,'');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const W=el=>Math.max(280,Math.min(760,el.clientWidth||340));
+
+/* ---------- arrow diagrams ---------- */
+const COL={x:'s1-line',y:'s2',z:'ink-2'};
+function wrapTxt(t,max){const w=t.split(' ');const L=[];let cur='';for(const x of w){if((cur+' '+x).trim().length>max&&cur){L.push(cur);cur=x;}else cur=(cur+' '+x).trim();}if(cur)L.push(cur);return L;}
+function node(cx,cy,w,h,label,role,opt={}){const L=wrapTxt(label,opt.max||14);const dash=role==='z'?' stroke-dasharray="6 4"':'';
+  let s=`<rect x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="10" style="fill:var(--surface);stroke:${css(COL[role])}" stroke-width="2.5"${dash}/>`;
+  const tag=opt.tag||role.toUpperCase();
+  s+=`<text x="${cx-w/2+8}" y="${cy-h/2+15}" font-size="12" font-weight="700" style="fill:${css(COL[role])}">${tag}</text>`;
+  const y0=cy-(L.length-1)*8+6;
+  L.forEach((l,i)=>s+=`<text x="${cx}" y="${y0+i*16}" text-anchor="middle" font-size="14" font-weight="600" style="fill:var(--ink)">${esc(l)}</text>`);return s;}
+function arrow(x1,y1,x2,y2,o={}){const a=Math.atan2(y2-y1,x2-x1),L=11,col=o.col||'ink-2';
+  const hx=x2-L*Math.cos(a),hy=y2-L*Math.sin(a);
+  let s=`<line x1="${x1}" y1="${y1}" x2="${hx}" y2="${hy}" style="stroke:${css(col)}" stroke-width="${o.w||2.5}"${o.dash?' stroke-dasharray="5 5"':''}/>`;
+  s+=`<polygon points="${x2},${y2} ${hx-6*Math.sin(a)},${hy+6*Math.cos(a)} ${hx+6*Math.sin(a)},${hy-6*Math.cos(a)}" style="fill:${css(col)}"/>`;return s;}
+function lbl(x,y,t,o={}){return `<text x="${x}" y="${y}" text-anchor="middle" font-size="${o.fs||13}" font-weight="${o.fw||600}" style="fill:${css(o.col||'muted')}">${esc(t)}</text>`;}
+function diagram(svg,kind,L){
+  const w=420,C=210,nw=146,nh=62;let h=150,s='';const X=[76,344];
+  if(kind==='claim'){s+=node(X[0],80,nw,nh,L.x,'x')+node(X[1],80,nw,nh,L.y,'y')+arrow(X[0]+nw/2+4,80,X[1]-nw/2-4,80,{col:'ink'})+lbl(C,135,L.note||'the claim');}
+  else if(kind==='spur'){s+=node(X[0],80,nw,nh,L.x,'x')+node(X[1],80,nw,nh,L.y,'y')+`<line x1="${X[0]+nw/2+4}" y1="80" x2="${X[1]-nw/2-4}" y2="80" style="stroke:var(--axis)" stroke-width="2.5" stroke-dasharray="3 7"/>`+`<circle cx="${C}" cy="80" r="20" style="fill:var(--surface);stroke:#B3261E" stroke-width="2.5"/>`+lbl(C,88,'?',{fs:24,fw:700,col:'ink'})+lbl(C,135,L.note||'no story connects them');}
+  else if(kind==='omit'){h=240;s+=node(C,42,220,nh,L.z,'z',{max:22})+node(X[0],180,nw,nh,L.x,'x')+node(X[1],180,nw,nh,L.y,'y')+arrow(C-60,74,X[0]+10,147)+arrow(C+60,74,X[1]-10,147)+`<line x1="${X[0]+nw/2+4}" y1="180" x2="${X[1]-nw/2-4}" y2="180" style="stroke:var(--axis)" stroke-width="2" stroke-dasharray="5 6"/>`+lbl(C,231,L.note||'correlated, but neither causes the other',{fs:12.5});}
+  else if(kind==='endo'){h=210;const cy=104,tY=cy-nh/2-2,bY=cy+nh/2+2,x0=X[0]+30,x1=X[1]-30;s+=node(X[0],cy,nw,nh,L.x,'x')+node(X[1],cy,nw,nh,L.y,'y');
+    const top=`M ${x0} ${tY} C ${x0+50} 12, ${x1-50} 12, ${x1} ${tY}`,bot=`M ${x1} ${bY} C ${x1-50} ${h-12}, ${x0+50} ${h-12}, ${x0} ${bY}`;
+    const oT=L.dir==='yx'?' opacity=".2"':'',oB=L.dir==='xy'?' opacity=".2"':'';
+    s+=`<path d="${top}" fill="none" style="stroke:var(--s1-line)" stroke-width="2.5"${oT}/><path d="${bot}" fill="none" style="stroke:var(--s2)" stroke-width="2.5"${oB}/>`;
+    s+=`<polygon points="${x1},${tY} ${x1-5},${tY-15} ${x1-14},${tY-6}" style="fill:var(--s1-line)"${oT}/><polygon points="${x0},${bY} ${x0+5},${bY+15} ${x0+14},${bY+6}" style="fill:var(--s2)"${oB}/>`;
+    if(L.dir!=='yx')s+=`<rect x="${C-95}" y="16" width="190" height="20" rx="4" style="fill:var(--surface)"/>`+lbl(C,31,L.up||'X pushes Y',{col:'s1-ink'});
+    if(L.dir!=='xy')s+=`<rect x="${C-95}" y="${h-37}" width="190" height="20" rx="4" style="fill:var(--surface)"/>`+lbl(C,h-22,L.down||'Y pushes X',{col:'s2-ink'});
+    if(L.dir==='both')s+=`<circle class="loopdot" r="6" style="fill:var(--ink)"><animateMotion dur="3.2s" repeatCount="indefinite" path="${top} L ${x1} ${bY} ${bot.replace('M','L')} Z"/></circle>`;}
+  else if(kind==='inter'||kind==='inter0'){h=kind==='inter'?160:120;const n3=[64,C,356],nn=122;s+=node(n3[0],60,nn,nh,L.x,'x',{max:11})+node(n3[2],60,nn,nh,L.y,'y',{max:11});
+    if(kind==='inter')s+=node(n3[1],60,nn,nh,L.z,'z',{max:12})+arrow(n3[0]+nn/2+2,60,n3[1]-nn/2-2,60)+arrow(n3[1]+nn/2+2,60,n3[2]-nn/2-2,60)+lbl(C,128,L.note||'X works through Z');
+    else s+=`<rect x="${n3[1]-nn/2+6}" y="${60-nh/2}" width="${nn-12}" height="${nh}" rx="10" fill="none" style="stroke:#B3261E" stroke-width="2" stroke-dasharray="4 4"/>`+lbl(n3[1],56,'explanatory',{col:'ink-2'})+lbl(n3[1],73,'gap',{col:'ink-2'})+arrow(n3[0]+nn/2+2,60,n3[1]-nn/2+4,60,{dash:1})+arrow(n3[1]+nn/2-4,60,n3[2]-nn/2-2,60,{dash:1});}
+  else if(kind==='def'){const open=L.open;h=open?200:130;
+    s+=`<rect x="14" y="10" width="392" height="${h-20}" rx="14" style="fill:color-mix(in srgb,var(--s2) 8%,var(--surface));stroke:var(--s2)" stroke-width="2.5"/>`+`<text x="28" y="31" font-size="12" font-weight="700" style="fill:var(--s2)">Y</text>`+lbl(C,38,L.y,{fs:16,col:'ink',fw:700});
+    if(!open){s+=lbl(C,82,'tap to open',{col:'muted',fs:14});}
+    else{L.parts.forEach((p,i)=>{const cx=112+(i%2)*196,cy=82+Math.floor(i/2)*58,isX=i===0;s+=`<rect x="${cx-90}" y="${cy-21}" width="180" height="42" rx="8" style="fill:var(--surface);stroke:${isX?'var(--s1-line)':'var(--axis)'}" stroke-width="${isX?3:1.5}"/>`+(isX?`<text x="${cx-82}" y="${cy-7}" font-size="11" font-weight="700" style="fill:var(--s1-line)">X</text>`:'')+lbl(cx,cy+6,p,{col:'ink',fs:13.5});});}}
+  else if(kind==='rev'){s+=node(X[0],80,nw,nh,L.x,'x')+node(X[1],80,nw,nh,L.y,'y')+arrow(X[1]-nw/2-4,80,X[0]+nw/2+4,80,{col:'s2'})+lbl(C,135,L.note||'Y comes first',{col:'s2-ink'});}
+  else if(kind==='reg'){h=205;s+=node(X[0],46,nw,nh,L.x,'x')+node(X[1],46,nw,nh,L.y,'y')+`<line x1="${X[0]+nw/2+4}" y1="46" x2="${X[1]-nw/2-4}" y2="46" style="stroke:var(--axis)" stroke-width="2" stroke-dasharray="5 6"/>`+lbl(C,40,'gets the credit',{fs:12})+node(C+60,166,220,nh,L.z||'Luck from the extreme period fades','z',{max:22})+arrow(X[1]-10,166-nh/2-2,X[1]-10,46+nh/2+3);}
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.innerHTML=s;}
+
+/* ---------- generic SVG chart helpers ---------- */
+function frame(el,h){const w=W(el);return {w,h,svg:(inner)=>`<svg class="vz" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img">${inner}</svg>`};}
+function ticks(lo,hi,n){const step=Math.pow(10,Math.floor(Math.log10((hi-lo)/n)));const m=[1,2,2.5,5,10].find(k=>(hi-lo)/(k*step)<=n)*step;const t=[];for(let v=Math.ceil(lo/m)*m;v<=hi+1e-9;v+=m)t.push(+v.toFixed(10));return t;}
+
+/* ========== Part 1: requirements checklist ========== */
+const REQN=['The cause comes before the effect','The relationship is non-spurious','Rival explanations are ruled out','There is a mechanism'];
+const CL=[
+ {k:'Police and crime',claim:'Cities with more police per capita have more violent crime, so police cause violent crime.',x:'More police',y:'More violent crime',
+  c:[['unk','We don\'t know which came first. A city with a lot of crime is likely to hire more police, so the crime may well have come first.'],
+     ['pass','This is not a chance match between two unrelated series, since there are real reasons police and crime would be linked.'],
+     ['fail','Big, dense cities tend to have both more crime and larger police forces, and nothing here rules that out.'],
+     ['fail','It is hard to tell a believable story in which officers produce violent crime, while the story in the other direction is easy to tell.']],
+  v:'This claim fails the checklist. Levitt\'s reading is that high crime leads cities to hire more police, which is reverse causation (Part 7).'},
+ {k:'Wealth and liberty',claim:'Wealthier countries have more civil liberties, so wealth produces liberty.',x:'GDP per capita',y:'Civil liberties',
+  c:[['unk','Wealth and liberty both build up over long histories, so it is hard to say which came first.'],
+     ['pass','With r = .54 across 177 countries in the World data (GDP on a log scale) and plausible stories linking the two, this is unlikely to be a fluke.'],
+     ['fail','History, region and oil wealth could each drive both, and Part 3 shows that the relationship changes a great deal from one region to another.'],
+     ['unk','There are plausible stories, such as a growing middle class demanding rights, but these data don\'t show that step.']],
+  v:'This claim is suggestive but not yet causal. The strongest worry is an omitted variable (Part 3).'},
+ {k:'Firing the coach',claim:'Teams that fire their coach after a terrible season do better the next season, so firing the coach works.',x:'Fire the coach',y:'Better next season',
+  c:[['pass','The firing comes before the better season, so the time order is right.'],
+     ['fail','A terrible season is partly bad luck, and luck rarely repeats, so the next season tends to be better whether or not the coach goes.'],
+     ['fail','We would need teams with equally bad seasons that kept their coach, and the claim has none.'],
+     ['pass','A new coach could plausibly change how a team plays, so a mechanism is easy to imagine.']],
+  v:'This claim fails because of reversion to the mean (Part 8). The simulation there shows teams improving just as much when they keep their coach.'}];
+let rq=0;const rqOpen=new Set();
+function rqDraw(){const c=CL[rq];$('rqClaim').textContent=c.claim;diagram($('rqDg'),'claim',{x:c.x,y:c.y});$('rqDg').setAttribute('aria-label',`Claim diagram: ${c.x} causes ${c.y}`);
+  $('rqPick').innerHTML=CL.map((o,i)=>`<button type="button" data-i="${i}" aria-pressed="${i===rq}">${o.k}</button>`).join('');
+  const V={pass:['✓','Met'],fail:['✗','Not met'],unk:['?','Unclear']};
+  $('rqChecks').innerHTML=REQN.map((n,i)=>{const o=rqOpen.has(i),[st,ex]=c.c[i];return `<button type="button" class="chk ${o?'open '+st:''}" data-i="${i}" aria-expanded="${o}"><span class="lt">${o?V[st][0]:i+1}</span><span class="nm">${n}${o?`<span class="vd">${V[st][1]}</span>`:''}</span><span class="ex">${ex}</span></button>`;}).join('');
+  const done=rqOpen.size===4;$('rqVerdict').hidden=!done;if(done)$('rqVerdict').textContent=c.v;}
+$('rqPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;rq=+b.dataset.i;rqOpen.clear();rqDraw();});
+$('rqChecks').addEventListener('click',e=>{const b=e.target.closest('.chk');if(!b)return;rqOpen.add(+b.dataset.i);rqDraw();});
+rqDraw();
+
+/* ========== Part 2: pattern machine ========== */
+diagram($('spDg'),'spur',{x:'Random series A',y:'Random series B',note:'only chance connects them'});
+let SP=null;
+function spRun(){const N=40,T=20,S=[];for(let i=0;i<N;i++){let v=0;const a=[];for(let t=0;t<T;t++){v+=gauss();a.push(v);}S.push(a);}
+  let best=[0,1,0],n8=0;for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){const r=corr(S[i],S[j]);if(Math.abs(r)>.8)n8++;if(Math.abs(r)>Math.abs(best[2]))best=[i,j,r];}
+  SP={S,best,n8};spDraw();}
+function z(a){const m=mean(a),sd=Math.sqrt(mean(a.map(x=>(x-m)**2)));return a.map(x=>(x-m)/sd);}
+function spDraw(){if(!SP)return;const el=$('spChart'),F=frame(el,220),[i,j,r]=SP.best;const A=z(SP.S[i]),B0=z(SP.S[j]),B=r<0?B0.map(x=>-x):B0;
+  const pl=34,pr=10,pt=10,pb=26,xs=t=>pl+t*(F.w-pl-pr)/19,ys=v=>pt+(2.6-v)*(F.h-pt-pb)/5.2;let s='';
+  [-2,-1,0,1,2].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v<0?'−'+(-v):v}</text>`);
+  [1,5,10,15,20].forEach(t=>s+=`<text x="${xs(t-1)}" y="${F.h-8}" text-anchor="${t===20?'end':t===1?'start':'middle'}" font-size="11" style="fill:var(--muted)">yr ${t}</text>`);
+  const pth=(a,c)=>`<polyline fill="none" points="${a.map((v,t)=>xs(t)+','+ys(v)).join(' ')}" style="stroke:${c}" stroke-width="2.2"/>`+a.map((v,t)=>`<circle cx="${xs(t)}" cy="${ys(v)}" r="3" style="fill:${c};stroke:var(--surface)" stroke-width="1.5"/>`).join('');
+  s+=pth(A,'var(--s1-line)')+pth(B,'var(--s2)');el.innerHTML=F.svg(s);
+  $('spA').textContent=`Random series ${i+1}`;$('spB').textContent=`Random series ${j+1}`+(r<0?' (flipped)':'');
+  $('spSay').innerHTML=`This run found <b>r = ${f2(r)}</b> between series ${i+1} and series ${j+1}${r<0?', so the second series is drawn upside down to show how closely the two mirror each other':''}. Of the 780 pairs, <b>${SP.n8}</b> have a correlation stronger than .8 in one direction or the other, even though none of the series has anything to do with any other. A search through enough data will always turn up a few pairs like these.`;}
+$('spGo').onclick=spRun;spRun();
+
+/* ========== Part 3a: marshmallows ========== */
+const OM=(()=>{const r=rng(1984),g=()=>{let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};const P=[];
+  for(let m=0;m<36;m++){const mo=m%12,T=52-26*Math.cos(2*Math.PI*(mo-0.5)/12)+g()*5,cold=[10,11,0,1,2].includes(mo);
+    const bill=Math.max(18,28+2.4*Math.max(0,62-T)+g()*12);const size=cold?1.4+g()*.28:3.1+g()*.34;P.push({mo,T,cold,bill,size});}return P;})();
+let omMode='all';
+function omDraw(){const el=$('omChart'),F=frame(el,260),pl=40,pr=12,pt=10,pb=34;const xmax=Math.ceil(Math.max(...OM.map(p=>p.bill))/40)*40;
+  const xs=v=>pl+v*(F.w-pl-pr)/xmax,ys=v=>pt+(4.2-v)*(F.h-pt-pb)/3.8;let s='';
+  [0.5,1.5,2.5,3.5].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text>`);
+  ticks(0,xmax,F.w<420?4:6).forEach(v=>s+=`<text x="${xs(v)}" y="${F.h-18}" text-anchor="middle" font-size="11" style="fill:var(--muted)">$${v}</text>`);
+  s+=`<text x="${(pl+F.w)/2}" y="${F.h-3}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Monthly gas bill</text>`;
+  const fit=(P,c)=>{const x=P.map(p=>p.bill),y=P.map(p=>p.size),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b,lo=Math.min(...x),hi=Math.max(...x);return `<line x1="${xs(lo)}" y1="${ys(my+sl*(lo-mx))}" x2="${xs(hi)}" y2="${ys(my+sl*(hi-mx))}" style="stroke:${c}" stroke-width="2.5"/>`;};
+  const split=omMode==='split';
+  if(!split)s+=fit(OM,'var(--ink-2)');else{s+=fit(OM.filter(p=>p.cold),'var(--s1-line)')+fit(OM.filter(p=>!p.cold),'var(--s2)');}
+  OM.forEach(p=>{const c=!split?'var(--ink-2)':p.cold?'var(--s1-line)':'var(--s2)';s+=`<circle cx="${xs(p.bill)}" cy="${ys(p.size)}" r="5" style="fill:${c};stroke:var(--surface)" stroke-width="1.5" opacity=".9"/>`;});
+  el.innerHTML=F.svg(s);
+  const rA=corr(OM.map(p=>p.bill),OM.map(p=>p.size)),C=OM.filter(p=>p.cold),H=OM.filter(p=>!p.cold),rc=corr(C.map(p=>p.bill),C.map(p=>p.size)),rh=corr(H.map(p=>p.bill),H.map(p=>p.size));
+  $('omKey').innerHTML=split?'<span><i style="background:var(--s1-line)"></i>cold months (November to March)</span><span><i style="background:var(--s2)"></i>warm months (April to October)</span>':'<span><i style="background:var(--ink-2)"></i>one simulated month</span><span><i class="ln" style="background:var(--ink-2)"></i>least-squares line</span>';
+  $('omDgW').hidden=!split;
+  $('omSay').innerHTML=!split?`Across all 36 months <b>r = ${f2(rA)}</b>, so the higher the gas bill, the smaller the marshmallows. Now split the months by the weather.`:
+    `Within the cold months r = ${f2(rc)}, and within the warm months r = ${f2(rh)}. Once the weather is held roughly constant, the gas bill tells us much less about marshmallow size than it seemed to. Cold weather is the common cause, since it raises the heating bill and also sends you to hot cocoa with mini marshmallows, while warm weather brings campfire s'mores and the big ones.`;}
+D_seg($('omSeg'),[['all','All months together'],['split','Split by the weather']],v=>{omMode=v;omDraw();},'all');
+diagram($('omDg'),'omit',{z:'Cold weather (cocoa season)',x:'Gas bill',y:'Marshmallow size'});
+omDraw();
+function D_seg(host,opts,cb,init){host.innerHTML=opts.map(o=>`<button type="button" data-v="${o[0]}" aria-pressed="${o[0]===init}">${o[1]}</button>`).join('');host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;host.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});}
+
+/* ========== Part 3b: wealth and liberty (World data) ========== */
+const WL=WORLD.W.map(r=>({c:r[0],g:r[1],f:r[2],reg:r[3],j:(rng(r[0].length*97+r[1])()-.5)*.36}));
+const REGS=['Africa','Asia-Pacific','C&E Europe','Middle East','N. America','S. America','Scandinavia','W. Europe'];
+let wlReg=null;
+$('wlRegs').innerHTML=`<button type="button" data-r="" aria-pressed="true">All countries</button>`+REGS.map(r=>`<button type="button" data-r="${r}" aria-pressed="false">${r}</button>`).join('');
+$('wlRegs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wlReg=b.dataset.r||null;$('wlRegs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));wlDraw();});
+const rOf=P=>corr(P.map(p=>Math.log10(p.g)),P.map(p=>p.f));
+function wlDraw(){const el=$('wlChart'),F=frame(el,280),pl=34,pr=12,pt=12,pb=36,lo=2,hi=5;
+  const xs=v=>pl+(Math.log10(v)-lo)*(F.w-pl-pr)/(hi-lo),ys=v=>pt+(7.4-v)*(F.h-pt-pb)/6.8;let s='';
+  [1,2,3,4,5,6,7].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text>`);
+  [[100,'$100'],[1000,'$1,000'],[10000,'$10,000'],[100000,'$100,000']].forEach(([v,t])=>s+=`<text x="${xs(v)}" y="${F.h-20}" text-anchor="${v===100?'start':v===100000?'end':'middle'}" font-size="11" style="fill:var(--muted)">${t}</text>`);
+  s+=`<text x="${(pl+F.w)/2}" y="${F.h-4}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">GDP per capita (log scale)</text>`;
+  WL.forEach(p=>{const on=!wlReg||p.reg===wlReg;s+=`<circle cx="${xs(p.g)}" cy="${ys(p.f+p.j)}" r="${on&&wlReg?5:4}" style="fill:${on?(wlReg?'var(--s2)':'var(--s1-line)'):'var(--axis)'};stroke:var(--surface)" stroke-width="1" opacity="${on?.85:.35}"><title>${esc(p.c)}: $${p.g.toLocaleString()}, rating ${p.f}</title></circle>`;});
+  if(wlReg==='Middle East')WL.filter(p=>['Qatar','UAE','Bahrain'].includes(p.c)).forEach(p=>s+=`<text x="${xs(p.g)-8}" y="${ys(p.f+p.j)+4}" text-anchor="end" font-size="12" font-weight="600" style="fill:var(--ink)">${p.c}</text>`);
+  el.innerHTML=F.svg(s);
+  const all=rOf(WL);
+  if(!wlReg){const rr=REGS.map(r=>[r,WL.filter(p=>p.reg===r)]).filter(([r,P])=>P.length>=10).map(([r,P])=>`${r} ${f2(rOf(P))}`);
+    const big=REGS.map(r=>WL.filter(p=>p.reg===r)).filter(P=>P.length>=10),nw=big.filter(P=>rOf(P)<all).length;
+    $('wlSay').innerHTML=`Across all 177 countries <b>r = ${f2(all)}</b> (with GDP on the log scale), so wealthier countries do tend to be freer. Inside the ${big.length} regions with at least 10 countries, the correlations are ${rr.join(', ')}, so the relationship is weaker than the world figure in ${nw} regions and stronger in ${big.length-nw}. A relationship that changes this much from place to place suggests that something about the regions, such as their histories or where their wealth comes from, shapes how wealth and liberty go together. Region is not itself a cause, so this does not settle what Z is, but it shows why we would want to look for one.`;return;}
+  const P=WL.filter(p=>p.reg===wlReg);
+  if(P.length<10){$('wlSay').innerHTML=P.every(p=>p.f===P[0].f)?`${wlReg} has only ${P.length} countries in these data, and every one is rated ${P[0].f}, so there is no variation in freedom to correlate.`:`${wlReg} has only ${P.length} countries in these data, which is too few for a correlation worth reading.`;return;}
+  const r=rOf(P);let t=`Inside ${wlReg} (${P.length} countries) <b>r = ${f2(r)}</b>, compared with ${f2(all)} for the whole world.`;
+  if(wlReg==='Middle East')t+=' Qatar, the UAE and Bahrain are among the wealthier countries in the data but are rated among the least free, since their wealth comes largely from oil.';
+  $('wlSay').innerHTML=t;}
+wlDraw();
+
+/* ========== Part 4: endogeneity ========== */
+const EN={xy:['Leisure → happiness','More time off lets people rest, see family and pursue hobbies, and that makes them happier.'],
+  yx:['Happiness → leisure','Happier and healthier people may value and protect their free time, and they may support shorter work weeks and longer vacations.'],
+  both:['Both at once','Each story is believable, and each can feed the other year after year. Since both have been running for decades, a single correlation can\'t tell us how much of it flows in each direction.']};
+let en='both';
+function enDraw(){$('enPick').innerHTML=Object.entries(EN).map(([k,v])=>`<button type="button" data-k="${k}" aria-pressed="${k===en}">${v[0]}</button>`).join('');
+  diagram($('enDg'),'endo',{x:'Leisure time',y:'Happiness',dir:en,up:'leisure raises happiness',down:'happiness protects leisure'});$('enDg').setAttribute('aria-label','Diagram: '+EN[en][0]);$('enSay').textContent=EN[en][1];}
+$('enPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;en=b.dataset.k;enDraw();});enDraw();
+diagram($('csDg'),'endo',{x:'Incumbent spending',y:'A close race',dir:'both',up:'spending fights the threat',down:'the threat drives spending'});
+
+/* ========== Part 5: chains ========== */
+const CH=['Youth','Less wealth','Reduced fear of taxation','Left preference'];let chN=0;
+function chDraw(){const mid=CH.slice(1,1+chN);let h=`<span class="nd x">${CH[0]}</span>`;
+  const items=[...mid,CH[3]];const gapsLeft=2-chN;
+  items.forEach((t,i)=>{const last=i===items.length-1;h+=`<span class="ar">→</span>`;if(last&&gapsLeft>0)h+=`<span class="gap">explanatory gap</span><span class="ar">→</span>`;h+=`<span class="nd ${last?'y':'z'}">${t}</span>`;});
+  if(chN===0)h=`<span class="nd x">${CH[0]}</span><span class="ar">→</span><span class="gap">explanatory gap</span><span class="ar">→</span><span class="nd y">${CH[3]}</span>`;
+  $('chChain').innerHTML=h;$('chAdd').disabled=chN>=2;
+  $('chSay').textContent=chN===0?'As stated, the claim leaves a wide gap between being young and voting left. What is it about youth that would do this?':chN===1?'Young people tend to have less wealth. That narrows the gap, but why would less wealth lead to a left preference?':'People with less wealth have less to fear from taxation, and that makes left parties more appealing. Each step is a smaller leap than the one big jump from youth to left preference, so the argument is both sounder and easier to believe. In a paper you may not have data on every step, but you should still say what the steps are.';}
+$('chAdd').onclick=()=>{if(chN<2)chN++;chDraw();};$('chReset').onclick=()=>{chN=0;chDraw();};chDraw();
+diagram($('ceDg'),'inter0',{x:'Celebrity suicide',y:'Total suicides'});$('ceDg').setAttribute('aria-label','Diagram: celebrity suicide, an explanatory gap, then total suicides');
+$('ceGo').onclick=()=>{diagram($('ceDg'),'inter',{x:'Celebrity suicide',z:'News coverage of the death',y:'Total suicides',note:'the influence runs through the coverage'});$('ceDg').setAttribute('aria-label','Diagram: celebrity suicide, then news coverage, then total suicides');$('ceSay').hidden=false;$('ceGo').disabled=true;};
+
+/* ========== Part 6: definition ========== */
+let dfOpen=false;
+function dfDraw(){diagram($('dfDg'),'def',{y:'Democracy',open:dfOpen,parts:['Periodic elections','Civil liberties','Rule of law','Peaceful handover of power']});
+  $('dfSay').textContent=dfOpen?'Periodic elections are one of the things that make a country a democracy in the first place. Correlating democracy with elections mostly correlates the concept with a piece of itself, so the result is close to true by definition and tells us nothing about causes.':'';
+  $('dfDg').setAttribute('aria-label',dfOpen?'Democracy box, opened. Its parts are periodic elections, civil liberties, rule of law and peaceful handover of power.':'Democracy box. Press to open it.');}
+$('dfDg').onclick=()=>{dfOpen=true;dfDraw();};$('dfDg').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();dfOpen=true;dfDraw();}};dfDraw();
+(function(){const D=WORLD.D,g0=D.filter(d=>d[0]===0).map(d=>d[1]),g1=D.filter(d=>d[0]===1).map(d=>d[1]),r=corr(D.map(d=>d[0]),D.map(d=>d[1]));
+  function draw(){const el=$('dfChart'),F=frame(el,172),pl=118,pr=16,xs=v=>pl+(v-1)*(F.w-pl-pr)/6;let s='';
+    [1,2,3,4,5,6,7].forEach(v=>s+=`<line x1="${xs(v)}" x2="${xs(v)}" y1="8" y2="${F.h-30}" style="stroke:var(--grid)"/><text x="${xs(v)}" y="${F.h-16}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${v}</text>`);
+    s+=`<text x="${F.w/2}" y="${F.h-2}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Freedom House rating (7 = most free)</text>`;
+    [[g0,'Not a democracy',44,'var(--s2)'],[g1,'Democracy',110,'var(--s1-line)']].forEach(([g,t,y,c])=>{const rr=rng(y);s+=`<text x="${pl-10}" y="${y+4}" text-anchor="end" font-size="12.5" font-weight="600" style="fill:var(--ink)">${t}</text>`;
+      g.forEach(v=>s+=`<circle cx="${xs(v)+(rr()-.5)*10}" cy="${y+(rr()-.5)*20}" r="3.2" style="fill:${c}" opacity=".55"/>`);const m=mean(g);s+=`<line x1="${xs(m)}" x2="${xs(m)}" y1="${y-14}" y2="${y+14}" style="stroke:var(--ink)" stroke-width="3"/><text x="${xs(m)}" y="${y-19}" text-anchor="middle" font-size="11.5" font-weight="700" style="fill:var(--ink)">mean ${m.toFixed(1)}</text>`;});
+    el.innerHTML=F.svg(s);}
+  draw();window.addEventListener('resize',draw);
+  $('dfSay2').innerHTML=`Countries coded as democracies average ${mean(g1).toFixed(1)} on the Freedom House rating, against ${mean(g0).toFixed(1)} for the rest, and <b>r = ${f2(r)}</b> across ${D.length} countries. That is a strong correlation, but it mostly shows that two ways of measuring democracy agree with each other, not that one causes the other.`;})();
+
+/* ========== Part 7: reverse causation ========== */
+(function(){function bars(){const el=$('rvChart'),F=frame(el,130),pl=140,pr=62,xs=v=>pl+v*(F.w-pl-pr)/4;let s='';
+  [0,1,2,3,4].forEach(v=>s+=`<line x1="${xs(v)}" x2="${xs(v)}" y1="4" y2="${F.h-20}" style="stroke:var(--grid)"/><text x="${xs(v)}" y="${F.h-6}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${v}×</text>`);
+  [['Violent crime rate',[1,4],14],['Police per capita',[1,2],62]].forEach(([t,[o,n],y])=>{s+=`<text x="${pl-10}" y="${y+20}" text-anchor="end" font-size="12.5" font-weight="600" style="fill:var(--ink)">${t}</text>`;
+    s+=`<rect x="${pl}" y="${y}" width="${xs(o)-pl}" height="16" rx="3" style="fill:var(--axis)"/><text x="${xs(o)+6}" y="${y+12}" font-size="11.5" style="fill:var(--ink-2)">Omaha</text>`;
+    s+=`<rect x="${pl}" y="${y+20}" width="${xs(n)-pl}" height="16" rx="3" style="fill:var(--s2)"/><text x="${xs(n)+6}" y="${y+32}" font-size="11.5" font-weight="600" style="fill:var(--ink)">Newark</text>`;});
+  el.innerHTML=F.svg(s);}bars();window.addEventListener('resize',bars);
+  const RV={xy:['Police → crime','If police caused crime, adding officers would make a city more violent. It is hard to tell that story in a believable way.'],yx:['Crime → police','A city with high violent crime has every reason to hire more officers, so the crime came first and the police followed. This is the reading Levitt considered likely.']};
+  let k='xy';function d(){$('rvPick').innerHTML=Object.entries(RV).map(([a,v])=>`<button type="button" data-k="${a}" aria-pressed="${a===k}">${v[0]}</button>`).join('');
+    if(k==='xy')diagram($('rvDg'),'claim',{x:'Police per capita',y:'Violent crime',note:'the naive story'});else diagram($('rvDg'),'rev',{x:'Police per capita',y:'Violent crime',note:'crime drives hiring'});
+    $('rvDg').setAttribute('aria-label','Diagram: '+RV[k][0]);$('rvSay').textContent=RV[k][1];}
+  $('rvPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;k=b.dataset.k;d();});d();})();
+(function(){const T=[['Early in the term','The member privately decides not to run again.'],['A few months later','With no campaign ahead, trips home for fundraising and events become less frequent.'],['Later still','Observers notice the member is around the district less often.'],['End of the term','The member announces their retirement.']];
+  const S=['The decision to retire comes first, before anyone can see it.','The decision starts to change behavior, so time in the district falls.','From the outside, it looks as if less time at home came before retirement.','The announcement makes the correlation visible. Less time in the district did not cause the retirement, because the retirement decision caused the drop in time spent at home.'];
+  function d(){const v=+$('tlR').value;$('tlRow').innerHTML=T.map((t,i)=>`<div class="${i<=v?'on':''}"><b>${t[0]}</b>${t[1]}</div>`).join('');$('tlSay').textContent=S[v];}
+  $('tlR').oninput=d;d();})();
+
+/* ========== Part 8: fire the coach ========== */
+let CO=null;
+function season(sk,r){return sk.map(p=>{let w=0;for(let g=0;g<17;g++)if(r()<p)w++;return w/17;});}
+function coOnce(r){const sk=Array.from({length:30},()=>{let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.min(.85,Math.max(.15,.5+.11*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)));});
+  const s1=season(sk,r),s2=season(sk,r);const worst=s1.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]).slice(0,10).map(x=>x[1]);
+  const idx=worst.slice();for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}const fired=new Set(idx.slice(0,5));
+  const imp=g=>mean(g.map(i=>s2[i]-s1[i]))*100;return {s1,s2,worst,fired,iF:imp(worst.filter(i=>fired.has(i))),iK:imp(worst.filter(i=>!fired.has(i))),all:mean(s2)-mean(s1)};}
+function coDraw(){if(!CO)return;const el=$('coChart'),F=frame(el,300),pl=36,pr=14,pt=14,pb=34,{s1,s2,worst,fired}=CO;
+  const xs=v=>pl+v*(F.w-pl-pr),cols=[pl+ (F.w-pl-pr)*.28,pl+(F.w-pl-pr)*.72],ys=v=>pt+(1-v)*(F.h-pt-pb);let s='';
+  [0,.25,.5,.75,1].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${Math.round(v*100)}%</text>`);
+  s+=`<text x="${cols[0]}" y="${F.h-14}" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Season 1</text><text x="${cols[1]}" y="${F.h-14}" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Season 2</text><text x="${pl}" y="${F.h-1}" font-size="11" style="fill:var(--muted)">winning percentage of each team</text>`;
+  const W=new Set(worst);
+  s1.forEach((v,i)=>{if(W.has(i))return;s+=`<line x1="${cols[0]}" y1="${ys(v)}" x2="${cols[1]}" y2="${ys(s2[i])}" style="stroke:var(--axis)" stroke-width="1.2" opacity=".55"/>`;});
+  worst.forEach((i,k)=>{const c=fired.has(i)?'#B3261E':'var(--s1-line)',o=(k%5-2)*3;s+=`<line x1="${cols[0]+o}" y1="${ys(s1[i])}" x2="${cols[1]+o}" y2="${ys(s2[i])}" style="stroke:${c}" stroke-width="2.5"/><circle cx="${cols[0]+o}" cy="${ys(s1[i])}" r="4.5" style="fill:${c}"/><circle cx="${cols[1]+o}" cy="${ys(s2[i])}" r="4.5" style="fill:${c}"/>`;});
+  el.innerHTML=F.svg(s);}
+const pts=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1);
+$('coGo').onclick=()=>{CO=coOnce(R);coDraw();$('coSay').innerHTML=`The five teams that fired their coach changed by <b>${pts(CO.iF)} points</b> of winning percentage on average, and the five that kept their coach changed by <b>${pts(CO.iK)} points</b>. Both groups usually improve, since a team near the bottom was probably unlucky as well as weak. The gray lines are the other 20 teams.`;};
+$('coMany').onclick=()=>{const r=rng(4242);let F=0,K=0;for(let i=0;i<1000;i++){const o=coOnce(r);F+=o.iF;K+=o.iK;}
+  $('coSay').innerHTML=`Over 1,000 repetitions, the teams that fired their coach improved by <b>${pts(F/1000)} points</b> on average and the teams that kept their coach improved by <b>${pts(K/1000)} points</b>. The improvement is about the same either way, because it comes from luck fading rather than from the new coach. Anyone who looks only at the teams that fired their coach will conclude that firing works.`;};
+$('coGo').click();
+
+/* ========== Part 9: diagnose it ========== */
+const PB=[['spur','Spurious'],['omit','Omitted variable'],['endo','Endogeneity'],['inter','Intervening variable'],['def','Definition problem'],['rev','Reverse causation'],['reg','Reversion to the mean']];
+const DX=[
+ {c:'Ice cream sales and drownings rise and fall together, so eating ice cream makes swimming dangerous.',a:'omit',L:{z:'Hot weather',x:'Ice cream sales',y:'Drownings'},e:'Hot weather is the common cause. It sends people out for ice cream and also sends them swimming, which is when drownings happen.'},
+ {c:'Students who visit the tutoring center most often have lower grades, so tutoring hurts grades.',a:'rev',L:{x:'Tutoring visits',y:'Low grades',note:'struggling students seek help'},e:'Struggling students are the ones who go to tutoring, so the low grades come first and lead to the visits.'},
+ {c:'A city put speed cameras at the intersections that had the most crashes last year, and crashes there fell this year, so the cameras worked.',a:'reg',L:{x:'Speed cameras',y:'Fewer crashes',z:'Last year was unusually bad'},e:'The city chose those intersections because last year was extreme. Crashes there would likely fall back toward normal even without cameras, so we would need comparable intersections without cameras to know.'},
+ {c:'Countries with a free press score higher on measures of civil liberties.',a:'def',L:{y:'Civil liberties',open:true,parts:['Free press','Free speech','Freedom of religion','Freedom to assemble']},e:'A free press is one of the civil liberties that such measures count, so the claim correlates part of the concept with the whole.'},
+ {c:'Over 15 years, the number of pages in a state\'s budget and the number of hot dog stands at its state fair rose and fell together.',a:'spur',L:{x:'Budget pages',y:'Hot dog stands'},e:'No reasonable story links the two. When we search through enough series, some pairs will match by accident.'},
+ {c:'Countries with stronger economic growth have more stable governments, so growth produces stability.',a:'endo',L:{x:'Economic growth',y:'Stable government',dir:'both',up:'growth steadies government',down:'stability aids growth'},e:'Growth can steady a government, and a stable government can make growth easier, so the two feed each other over time.'},
+ {c:'Young voters favor left parties, so being young makes people vote left.',a:'inter',L:{x:'Youth',z:'Less wealth, less fear of taxes',y:'Left preference'},e:'The claim skips steps. Youth works through less wealth and a reduced fear of taxation, as in Part 5.'},
+ {c:'In elementary schools, students with bigger feet read better, so big feet make better readers.',a:'omit',L:{z:'Age',x:'Shoe size',y:'Reading ability'},e:'Age is the common cause. Older children have bigger feet and have also had more years of reading practice.'},
+ {c:'People who take a homeopathic remedy when their cold is at its worst feel better a few days later, so the remedy works.',a:'reg',L:{x:'The remedy',y:'Feeling better',z:'The cold was at its worst'},e:'People take the remedy at their worst moment, and colds improve on their own from there. This is the seeking-help problem.'},
+ {c:'Voter turnout is correlated with political corruption, so high participation causes leaders to be corrupt.',a:'rev',L:{x:'Voter turnout',y:'Corruption',note:'scandal brings voters out'},e:'The story may run the other way. Corruption and scandal can give people a reason to turn out and vote the leaders out.'}];
+let dx=0;const dxDone=new Set();
+function dxDraw(){const q=DX[dx];$('dxN').textContent=`Claim ${dx+1} of ${DX.length}`;$('dxDots').innerHTML=DX.map((_,i)=>`<i class="${i===dx?'cur':dxDone.has(i)?'on':''}"></i>`).join('');
+  $('dxClaim').textContent=q.c;$('dxPick').innerHTML=PB.map(([k,t])=>`<button type="button" data-k="${k}">${t}</button>`).join('');$('dxFb').className='fbk';$('dxFb').innerHTML='';$('dxDgW').hidden=true;}
+$('dxPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const q=DX[dx],k=b.dataset.k;
+  if(k===q.a){b.classList.add('right');$('dxFb').className='fbk show ok';$('dxFb').innerHTML=`<b>Right.</b> ${q.e}`;dxDone.add(dx);
+    diagram($('dxDg'),q.a,q.L);$('dxDg').setAttribute('aria-label','Diagram of what is more likely going on');$('dxDgW').hidden=false;$('dxDots').children[dx].className='cur';$('dxPick').querySelectorAll('button').forEach(x=>x.disabled=true);}
+  else{b.classList.add('wrong');b.disabled=true;$('dxFb').className='fbk show no';$('dxFb').innerHTML=`<b>Not quite.</b> ${HINT[k]}`;}});
+const HINT={spur:'A spurious link has no reasonable story at all, and this one has a story worth checking.',omit:'Look for a third thing that would drive both of these. If you can\'t find one, try another problem.',endo:'Endogeneity needs each variable to push on the other. Ask whether that is really the best description here.',inter:'An intervening variable is a missing middle step. Ask whether the trouble is a missing step or something else.',def:'A definition problem means X is part of Y. Ask whether these two are really the same thing.',rev:'Reverse causation means Y came first. Ask whether that is the main problem here.',reg:'Reversion to the mean needs an extreme starting point that drifts back. Ask whether anything here was chosen for being extreme.'};
+$('dxNext').onclick=()=>{dx=(dx+1)%DX.length;dxDraw();};dxDraw();
+
+let rT;window.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{spDraw();omDraw();wlDraw();coDraw();},120);});
+})();
+</script>
+</body>
+</html>
