@@ -773,7 +773,8 @@ function draw(){const host=$('cbPlot'),W=Math.max(300,Math.min(1040,host.clientW
   const a=pc('s'),b=pc('l');
   if(!shown||!a){$('cbCap').textContent=a?'Reveal the bowl’s mean to see which intervals caught it.':'Grab handfuls to build intervals.';$('cbNote').hidden=true;return;}
   const P=x=>Math.round(100*x[0]/x[1]);$('cbCap').innerHTML=`Intervals that caught the bowl's mean: small handfuls <b>${a[0]} of ${a[1]} (${P(a)}%)</b>, large handfuls <b>${b[0]} of ${b[1]} (${P(b)}%)</b>. Blue lines caught it and red lines missed it. The vertical line is the bowl's mean, ${MU.toFixed(2)}.`;
-  const note=$('cbNote');if(a[1]>=50){note.hidden=false;note.innerHTML=`<b>Why do the small handfuls fall short of 95%?</b> Each interval uses the handful's own SD, and an SD from only ${nS} beans is a shaky estimate. When a small handful happens to have little spread, its interval comes out too narrow and misses. With z = 1.96, intervals from small handfuls catch the true mean less than 95% of the time, while large handfuls come close to 95%. This is the reason for t. See <a href="#whyt">Why t and not z?</a> below.`;}else note.hidden=true;}
+  const note=$('cbNote');if(a[1]>=50){note.hidden=false;const run=P(a)>=95?`In this run the small handfuls caught it ${P(a)}% of the time, which chance can do in ${a[1]} grabs. Keep grabbing, and their rate will usually settle below 95%.`:P(a)<P(b)?`This run shows that pattern, with the small handfuls at ${P(a)}% and the large ones at ${P(b)}%.`:`In this run both rates sit below 95%, which chance can do in ${a[1]} grabs. Keep grabbing to see the long-run pattern.`;
+    note.innerHTML=`<b>Why do small handfuls tend to fall short of 95%?</b> Each interval uses the handful's own SD, and an SD from only ${nS} beans is a shaky estimate. When a small handful happens to have little spread, its interval comes out too narrow and misses. Over many grabs, intervals built with z = 1.96 from small handfuls catch the true mean less than 95% of the time, while large handfuls come close to 95%. ${run} This is the reason for t. See <a href="#whyt">Why t and not z?</a> below.`;}else note.hidden=true;}
 seg($('cbSS'),[3,5],nS,n=>{nS=n;iv.s=[];draw();});seg($('cbLS'),[10,20,30],nL,n=>{nL=n;iv.l=[];draw();});
 $('cbG1').onclick=()=>{const a=grab(nS),b=grab(nL);iv.s.push(a);iv.l.push(b);tray('cbTs','Small',a);tray('cbTl','Large',b);draw();};
 $('cbG100').onclick=()=>{for(let k=0;k<100;k++){iv.s.push(grab(nS));iv.l.push(grab(nL));}tray('cbTs','Small',iv.s[iv.s.length-1]);tray('cbTl','Large',iv.l[iv.l.length-1]);draw();};
@@ -784,6 +785,10 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 </script>
 
 <!-- jelly bean intervals: end -->
+
+
+
+
 
 
 
