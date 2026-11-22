@@ -311,6 +311,17 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 /* colorful bar charts */
 #cf .chart .bar.hl{fill:var(--s1-line);stroke:none}
 #cf .chart .bar.top{fill:var(--s2);stroke:none}
+.btgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.bttile{font:600 14px/1.25 var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-left:4px solid var(--axis);border-radius:8px;padding:8px 10px;min-height:52px;text-align:left;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.bttile small{font:500 11.5px var(--font-body);color:var(--muted)}
+.bttile[aria-current="true"]{border-color:var(--s1-line);box-shadow:0 0 0 2px var(--s1-line) inset}
+.bttile.picked{border-left-color:var(--s2)}
+.bttile.picked small::after{content:" · in your big three";color:var(--s2-ink,var(--s2))}
+.btq{margin:8px 0 2px;font-weight:600;font-size:14.5px;color:var(--ink)}
+.btpicks{display:flex;flex-wrap:wrap;gap:6px}
+.btchip{display:inline-flex;align-items:center;gap:6px;padding:4px 4px 4px 10px;border-radius:999px;background:color-mix(in srgb,var(--s2) 12%,var(--surface));border:1px solid var(--s2);font-size:14px;color:var(--ink)}
+.btchip button{border:0;background:transparent;color:var(--ink-2);font-size:18px;min-width:32px;min-height:32px;cursor:pointer}
+.btlist{margin:8px 0;padding-left:20px;display:grid;gap:6px}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -687,7 +698,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
   <!-- 7 MODE -->
   <section class="part"><p class="kick">Part 7</p><h2>Find the mode in a frequency table</h2>
     <p>The mode is the most common value. In SPSS you find it in the Frequency column of a frequency table. A bar chart of the same table makes it easy to see.</p></section>
-  <section class="dcard" id="mo" data-ds="ANES_2020_Welfare_Spending_F26.sav">
+  <section class="dcard" id="mo" data-ds="ANES_2020_Issues_F26.sav">
     <h3>Federal budget spending on welfare programs, 2020 ANES</h3>
     <div class="sp-sheet" id="moTbl"></div>
     <div id="moOut"></div>
@@ -697,6 +708,21 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="fbk" id="moFb" aria-live="polite"></div>
     <div class="qline" id="moQ" hidden>Most people want to <select id="moSel"><option value="">choose</option><option value="1">increase welfare spending a lot</option><option value="2">increase it a little</option><option value="3">keep it the same</option><option value="4">decrease it a little</option><option value="5">decrease it a lot</option></select> (in 2020). <button class="dbtn" id="moQc">Check</button></div>
     <div class="fbk" id="moFb2" aria-live="polite"></div>
+  </section>
+  <section class="dcard" id="bt" data-ds="ANES_2020_Issues_F26.sav">
+    <h3>Advise a candidate on the big three issues, 2020 ANES</h3>
+    <p class="p">Now consider that you are advising a presidential candidate, and you have survey data on the policy preferences of potential voters from the 2020 ANES. For the speech that launches the campaign, the candidate wants you to zero in on a “big three” issues, so the candidacy can be framed around a message voters can easily digest. Tap an issue to see its bar chart, then pick three issues and the position you would suggest on each.</p>
+    <div class="btgrid" id="btGrid" role="group" aria-label="Issues"></div>
+    <div id="btShow" hidden>
+      <p class="btq" id="btQ"></p>
+      <div id="btChart"></div>
+      <p class="src" id="btN"></p>
+      <div class="qline">Position: <span id="btPos"></span></div>
+      <div class="row"><button class="dbtn pri" id="btAdd">Add to my big three</button></div>
+    </div>
+    <div id="btPicks" class="btpicks"></div>
+    <div class="row"><button class="dbtn pri" id="btCheck" disabled>Check my big three</button><button class="dbtn" id="btReset">Start over</button></div>
+    <div class="fbk" id="btFb" aria-live="polite"></div>
   </section>
   <section class="dcard" id="rg" data-ds="World.sav">
     <h3>Regime type in 168 countries (regime_type3)</h3>
@@ -709,7 +735,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
   <!-- 7b MEDIAN IN A FREQUENCY TABLE -->
   <section class="part"><p class="kick">Part 8</p><h2>Find the median in a frequency table</h2>
     <p>The median is the answer given by the middle person once everyone is lined up in order, here from “Increased a lot” to “Decreased a lot.” With thousands of people we don't line them up by hand. Instead we read the Cumulative Percent column, which adds up the Valid Percent as you go down the rows. The median is the first row where the cumulative percent reaches 50%, because that row holds the middle person.</p></section>
-  <section class="dcard" id="fm" data-ds="ANES_2020_Welfare_Spending_F26.sav">
+  <section class="dcard" id="fm" data-ds="ANES_2020_Issues_F26.sav">
     <h3>Federal budget spending on welfare programs, 2020 ANES</h3>
     <p class="p">This is the same table as in Part 7. Tap any number or label to see what it means, then find the median.</p>
     <div class="row"><span class="src">The −2 answers are</span><div class="seg" role="radiogroup" aria-label="How the −2 answers are treated" id="fmMiss"></div></div>
@@ -744,7 +770,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="fbk" id="cfFb" aria-live="polite"></div>
   </section>
 
-  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study (ANES_2020_Welfare_Spending_F26.sav); 1984 state results from the Describing Attributes of Data notes (StateVote_1980_1984.sav).</footer>
+  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study (ANES_2020_Issues_F26.sav); 1984 state results from the Describing Attributes of Data notes (StateVote_1980_1984.sav).</footer>
   <nav class="pager" aria-label="Previous and next"><a href="hypotheses-and-variables.html"><span class="k">← Previous · Start here</span><span class="t">Hypotheses and variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="2-skew-and-kurtosis.html"><span class="k">Next · Module 2 →</span><span class="t">Skew and kurtosis</span></a></nav>
 </main>
 
@@ -934,9 +960,9 @@ return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mea
 })();
 
 /* dataset download buttons */
-(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav','ANES_2020_Welfare_Spending_F26.sav'];
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav','ANES_2020_Issues_F26.sav'];
 const INSTR=[];
-const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote','ANES_2020_Welfare_Spending_F26.sav':'ANES 2020'};
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote','ANES_2020_Issues_F26.sav':'ANES 2020'};
 function run(){
   document.querySelectorAll('.dcard[data-ds]').forEach(card=>{if(card.querySelector('.dsbtns'))return;const h=card.querySelector(':scope > h3');
     const row=document.createElement('div');row.className='dshead';if(h){h.before(row);row.appendChild(h);}else card.prepend(row);
@@ -1182,6 +1208,53 @@ $('#moBars').addEventListener('click',()=>{$('#moChart').hidden=false;$('#moTap'
     if(WF[i][0]===3){D.fb($('#moFb'),'ok',`The mode is 3, “Kept the same,” which ${D.comma(3522)} people chose (${(3522/WN*100).toFixed(1)}% of the sample). That's the most common answer by a wide margin. The highlighted −2 row is a non-answer (don't know or refused). This table lists it under Valid, but it isn't an opinion, so it should be set as missing before you compute anything.`);$('#moQ').hidden=false;}
     else D.fb($('#moFb'),'no',`That bar has ${D.comma(WF[i][2])} people. The mode is the tallest bar.`);},aria:'Bar chart of welfare spending answers'});});
 $('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;v==='3'?D.fb($('#moFb2'),'ok','Most people want to keep welfare spending the same. Note that the mode, at 42.5%, is a plurality rather than a majority.'):D.fb($('#moFb2'),'no','Read the label of the tallest bar.');});
+/* ---------- Part 7: advise a candidate (big three) ---------- */
+(function(){
+const ISS=[{"v":"V201302x","s":"Social Security","k":"spend","l":"Federal Budget Spending: Social Security","c":[[1,"Increased a lot",2847],[2,"Increased a little",1703],[3,"Kept the same",3351],[4,"Decreased a little",149],[5,"Decreasaed a lot",183]]},{"v":"V201305x","s":"Public schools","k":"spend","l":"Federal Budget Spending: public schools","c":[[1,"Increased a lot",4321],[2,"Increased a little",1218],[3,"Kept the same",2176],[4,"Decreased a little",208],[5,"Decreasaed a lot",324]]},{"v":"V201308x","s":"Border security","k":"spend","l":"Federal Budget Spending: Tightening border security","c":[[1,"Increased a lot",2429],[2,"Increased a little",1050],[3,"Kept the same",2814],[4,"Decreased a little",867],[5,"Decreasaed a lot",1067]]},{"v":"V201311x","s":"Dealing with crime","k":"spend","l":"Federal Budget Spending: dealing with crime","c":[[1,"Increased a lot",2929],[2,"Increased a little",1527],[3,"Kept the same",2825],[4,"Decreased a little",510],[5,"Decreasaed a lot",435]]},{"v":"V201314x","s":"Welfare programs","k":"spend","l":"Federal Budget Spending: welfare programs","c":[[1,"Increased a lot",1289],[2,"Increased a little",1089],[3,"Kept the same",3522],[4,"Decreased a little",1008],[5,"Decreasaed a lot",1305]]},{"v":"V201320x","s":"Aid to the poor","k":"spend","l":"Federal Budget Spending: aid to the poor","c":[[1,"Increased a lot",2560],[2,"Increased a little",1617],[3,"Kept the same",3213],[4,"Decreased a little",446],[5,"Decreasaed a lot",389]]},{"v":"V201317x","s":"Highways","k":"spend","l":"Federal Budget Spending: building and repairing highways","c":[[1,"Increased a lot",3283],[2,"Increased a little",1860],[3,"Kept the same",2829],[4,"Decreased a little",166],[5,"Decreasaed a lot",99]]},{"v":"V201323x","s":"The environment","k":"spend","l":"Federal Budget Spending: protecting the environment","c":[[1,"Increased a lot",3633],[2,"Increased a little",1321],[3,"Kept the same",2654],[4,"Decreased a little",342],[5,"Decreasaed a lot",296]]},{"v":"V202376x","s":"$12K a year for all citizens","k":"fav7","l":"Favor/oppose federal program giving citizens $12K/year","c":[[1,"Favor a great deal",833],[2,"Favor a moderate amount",750],[3,"Favor a little",288],[4,"Neither favor nor oppose",1942],[5,"Oppose a little",213],[6,"Oppose a moderate amount",805],[7,"Oppose a great deal",2522]]},{"v":"V202328x","s":"Affordable Care Act","k":"aca","l":"Approve/disapprove Affordable Care Act","c":[[1,"Approve a great deal",2371],[2,"Approve a moderate amount",1069],[3,"Approve a little",195],[4,"Neither approve nor disapprove",1436],[5,"Disapprove a little",133],[6,"Disapprove a moderate amount",719],[7,"Disapprove a great deal",1459]]},{"v":"V202321","s":"Reducing the deficit","k":"def","l":"Importance of reducing deficit","c":[[1,"Extremely important",2053],[2,"Very important",2771],[3,"Moderately important",1916],[4,"A little important",456],[5,"Not at all important",178]]},{"v":"V202325","s":"Tax on millionaires","k":"fav3","l":"Favor or oppose tax on millionaires","c":[[1,"Favor",4793],[2,"Oppose",1197],[3,"Neither favor nor oppose",1394]]},{"v":"V202336x","s":"Greenhouse gas rules","k":"fav7","l":"Favor/oppose increased regulation on greenhouse emissions","c":[[1,"Favor a great deal",2760],[2,"Favor a moderate amount",1463],[3,"Favor a little",307],[4,"Neiter favor nor oppose",1822],[5,"Oppose a little",103],[6,"Oppose a moderate amount",421],[7,"Oppose a great deal",488]]},{"v":"V202344x","s":"Ban 'assault-style' rifles","k":"fav7","l":"Favor/oppose banning 'assault-style' rifles","c":[[1,"Favor a great deal",3270],[2,"Favor a moderate amount",602],[3,"Favor a little",116],[4,"Neither favor nor oppose",1354],[5,"Oppose a little",159],[6,"Oppose a moderate amount",519],[7,"Oppose a great deal",1361]]},{"v":"V202331x","s":"Vaccines required in schools","k":"fav7","l":"Favor/oppose requiring vaccines in schools","c":[[1,"Favor a great deal",4160],[2,"Favor a moderate amount",1169],[3,"Favor a little",173],[4,"Neiter favor nor oppose",1145],[5,"Oppose a little",107],[6,"Oppose a moderate amount",230],[7,"Oppose a great deal",400]]}];
+const POS={spend:[['inc','Increase spending',[1,2]],['same','Keep it the same',[3]],['dec','Decrease spending',[4,5]]],
+  fav7:[['fav','Favor',[1,2,3]],['opp','Oppose',[5,6,7]]],fav3:[['fav','Favor',[1]],['opp','Oppose',[2]]],
+  aca:[['fav','Support it',[1,2,3]],['opp','Oppose it',[5,6,7]]],def:[['fav','Make it a priority',[1,2]],['opp','Leave it aside',[4,5]]]};
+const OPP={inc:'dec',dec:'inc',fav:'opp',opp:'fav'};
+let cur=null,pos=null;const picks=[];
+const tot=it=>D.sum(it.c.map(c=>c[2])),pct=(it,codes)=>D.sum(it.c.filter(c=>codes.includes(c[0])).map(c=>c[2]))/tot(it)*100;
+const f1=x=>x.toFixed(1)+'%';
+const modeOf=it=>it.c.reduce((a,b)=>b[2]>a[2]?b:a);
+const grid=$('#btGrid');
+grid.innerHTML=ISS.map((it,i)=>`<button type="button" class="bttile" data-i="${i}">${it.s}<small>${it.k==='spend'?'Federal spending':'Policy'}</small></button>`).join('');
+function show(i){cur=i;const it=ISS[i];pos=null;
+  grid.querySelectorAll('.bttile').forEach(b=>+b.dataset.i===i?b.setAttribute('aria-current','true'):b.removeAttribute('aria-current'));
+  $('#btShow').hidden=false;$('#btQ').textContent=it.l+' ('+it.v+')';
+  D.hist($('#btChart'),{ylab:'↑ Percent',pct:true,cats:it.c.map(c=>({label:c[0]+'. '+c[1],n:c[2]})),h:it.c.length>5?290:250,catSmall:true,aria:'Bar chart of answers on '+it.s});
+  $('#btN').textContent=`Percent of the ${D.comma(tot(it))} respondents who gave an answer, as in an SPSS bar chart.`+(it.v.startsWith('V202')?' This question was asked after the election, so fewer people answered it.':'');
+  D.seg($('#btPos'),POS[it.k].map(p=>[p[0],p[1]]),v=>{pos=v;},null);upd();}
+grid.addEventListener('click',e=>{const b=e.target.closest('.bttile');if(b)show(+b.dataset.i);});
+function upd(){
+  $('#btPicks').innerHTML=picks.map((p,k)=>{const it=ISS[p.i],lab=POS[it.k].find(q=>q[0]===p.p)[1];return `<span class="btchip"><b>${k+1}.</b> ${it.s}: ${lab}<button type="button" data-k="${k}" aria-label="Remove ${it.s}">×</button></span>`;}).join('');
+  $('#btCheck').disabled=picks.length!==3;
+  $('#btAdd').disabled=cur==null||picks.length>=3||picks.some(p=>p.i===cur);
+  $('#btAdd').textContent=picks.some(p=>p.i===cur)?'Already in your big three':picks.length>=3?'Your big three is full':'Add to my big three';
+  grid.querySelectorAll('.bttile').forEach(b=>b.classList.toggle('picked',picks.some(p=>p.i===+b.dataset.i)));}
+$('#btAdd').addEventListener('click',()=>{if(cur==null)return;if(!pos){D.fb($('#btFb'),'info','Choose a position for this issue first.');return;}picks.push({i:cur,p:pos});$('#btFb').className='fbk';upd();});
+$('#btPicks').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(!b)return;picks.splice(+b.dataset.k,1);upd();});
+$('#btReset').addEventListener('click',()=>{picks.length=0;$('#btFb').className='fbk';upd();});
+function judge(p){const it=ISS[p.i],P=POS[it.k],me=P.find(q=>q[0]===p.p),side=pct(it,me[2]),m=modeOf(it),mp=m[2]/tot(it)*100;
+  const name=`<b>${it.s}, ${me[1].toLowerCase()}.</b> `;
+  if(p.p==='same')return {g:0,t:name+`“Kept the same” is the mode here (${f1(mp)}) or close to it, but a promise to change nothing gives a launch speech little to say. A big-three issue should point voters toward something your candidate will do.`};
+  const op=P.find(q=>q[0]===OPP[p.p]),other=pct(it,op[2]);
+  const modeNote=me[2].includes(m[0])?`The mode, “${m[1]},” sits on your side (${f1(mp)}).`:`The mode is “${m[1]}” (${f1(mp)}), so the tallest bar alone would not have shown that your side adds up to more.`;
+  let g,t;
+  if(side>=60&&other<=20){g=2;t=`This is a strong pick. ${f1(side)} of respondents are on your side and only ${f1(other)} take the other side. ${modeNote}`;}
+  else if(side>=50&&other<=20){const mid=100-side-other;g=2;t=`This is a solid pick. A majority (${f1(side)}) is on your side and only ${f1(other)} take the other side`+(mid>=25?`, although ${f1(mid)} would rather keep things as they are. `:'. ')+modeNote;}
+  else if(side>=50){g=1;t=`This is a reasonable pick, since a majority (${f1(side)}) is on your side, but ${f1(other)} take the other side, so expect pushback. ${modeNote}`;}
+  else if(side>other){g=0;t=`This one is risky. More respondents are with you (${f1(side)}) than against you (${f1(other)}), but you do not have a majority. ${modeNote}`;}
+  else {g=-1;t=`This position goes against most voters. Only ${f1(side)} are on your side, while ${f1(other)} take the other side.`;}
+  if(other>=25&&side>=40)t+=' Opinion here is split, with large groups at both ends, so it would make a divisive opening message.';
+  return {g,t:name+t};}
+$('#btCheck').addEventListener('click',()=>{const r=picks.map(judge),n2=r.filter(x=>x.g===2).length;
+  const lead=['None of your picks rests on a clear majority with few voters on the other side.','Only one of your picks rests on a clear majority with few voters on the other side.','Two of your picks rest on clear majorities, and the third is weaker.','All three of your picks rest on clear majorities, with few voters on the other side.'][n2];
+  D.fb($('#btFb'),'info',lead+'<ol class="btlist">'+r.map(x=>'<li>'+x.t+'</li>').join('')+'</ol>There is no single right answer, because a real campaign also weighs its own party and base. What the bar charts let you do is see where a clear majority sits on one side and few people sit on the other.');});
+upd();
+})();
 (function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{ylab:'↑ Countries',cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
 
 /* ---------- Part 8: median in a frequency table ---------- */
