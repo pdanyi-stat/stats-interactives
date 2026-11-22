@@ -528,13 +528,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 11: </span><b>Problems of causation</b></span><a href="practice-direction.html" aria-label="Next: Which way does it run?">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 11 of 11</p>
+    <p class="kicker">Research methods · Module 11 of 11</p>
     <h1>Problems of causation</h1>
     <p class="dek">When two variables move together, we are tempted to tell a story in which one causes the other. This module covers what it takes to call a relationship causal, and then the common ways a correlation can lead us to the wrong story.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -915,7 +932,7 @@ function spRun(){const N=40,T=20,S=[];for(let i=0;i<N;i++){let v=0;const a=[];fo
   SP={S,best,n8,all,jit:all.map(()=>R())};spDraw();}
 function z(a){const m=mean(a),sd=Math.sqrt(mean(a.map(x=>(x-m)**2)));return a.map(x=>(x-m)/sd);}
 function spDraw(){if(!SP)return;const el=$('spChart'),F=frame(el,230),[i,j,r]=SP.best;
-  const pl=34,pr=16,pt=10,pb=26,xs=t=>pl+t*(F.w-pl-pr)/19,ys=v=>pt+(2.8-v)*(F.h-pt-pb)/5.6;let s='';
+  const pl=34,pr=16,pt=26,pb=26,xs=t=>pl+t*(F.w-pl-pr)/19,ys=v=>pt+(2.8-v)*(F.h-pt-pb)/5.6;let s='<text x="4" y="13" class="ylab">↑ Standardized value (z-score)</text>';
   [-2,-1,0,1,2].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v<0?'−'+(-v):v}</text>`);
   [1,5,10,15,20].forEach(t=>s+=`<text x="${xs(t-1)}" y="${F.h-8}" text-anchor="${t===20?'end':t===1?'start':'middle'}" font-size="11" style="fill:var(--muted)">yr ${t}</text>`);
   SP.S.forEach((a,k)=>{if(k===i||k===j)return;s+=`<polyline fill="none" points="${z(a).map((v,t)=>xs(t)+','+ys(Math.max(-2.8,Math.min(2.8,v)))).join(' ')}" style="stroke:var(--axis)" stroke-width="1" opacity=".45"/>`;});
@@ -937,10 +954,10 @@ const OM=(()=>{const r=rng(1984),g=()=>{let u=0,v=0;while(!u)u=r();while(!v)v=r(
 let omMode='all';
 function mallow(cx,cy,size,edge,tint){const w=4+4.6*size,hh=w*.72,ry=w*.2,body=tint?`color-mix(in srgb,${edge} 30%,#F4EFE6)`:'#F4EFE6',side=tint?`color-mix(in srgb,${edge} 42%,#E9E1D3)`:'#E9E1D3';
   return `<g><ellipse cx="${cx}" cy="${cy+hh/2}" rx="${w/2}" ry="${ry}" style="fill:${side};stroke:${edge}" stroke-width="1.6"/><rect x="${cx-w/2}" y="${cy-hh/2}" width="${w}" height="${hh}" style="fill:${body}"/><line x1="${cx-w/2}" y1="${cy-hh/2}" x2="${cx-w/2}" y2="${cy+hh/2}" style="stroke:${edge}" stroke-width="1.6"/><line x1="${cx+w/2}" y1="${cy-hh/2}" x2="${cx+w/2}" y2="${cy+hh/2}" style="stroke:${edge}" stroke-width="1.6"/><ellipse cx="${cx}" cy="${cy-hh/2}" rx="${w/2}" ry="${ry}" style="fill:${tint?`color-mix(in srgb,${edge} 14%,#FFFFFF)`:'#FFFFFF'};stroke:${edge}" stroke-width="1.6"/></g>`;}
-function omDraw(){const el=$('omChart'),F=frame(el,290),pl=56,pr=14,pt=14,pb=36;const xmax=Math.ceil(Math.max(...OM.map(p=>p.bill))/40)*40;
+function omDraw(){const el=$('omChart'),F=frame(el,290),pl=40,pr=14,pt=26,pb=36;const xmax=Math.ceil(Math.max(...OM.map(p=>p.bill))/40)*40;
   const xs=v=>pl+v*(F.w-pl-pr)/xmax,ys=v=>pt+(4.2-v)*(F.h-pt-pb)/3.8;let s='';
   [0.5,1.5,2.5,3.5].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text>`);
-  s+=`<text transform="translate(13 ${(pt+F.h-pb)/2}) rotate(-90)" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Marshmallow width (cm)</text>`;
+  s+=`<text x="4" y="13" class="ylab">↑ Marshmallow width (cm)</text>`;
   ticks(0,xmax,F.w<420?4:6).forEach(v=>s+=`<text x="${xs(v)}" y="${F.h-18}" text-anchor="middle" font-size="11" style="fill:var(--muted)">$${v}</text>`);
   s+=`<text x="${(pl+F.w)/2}" y="${F.h-3}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Monthly gas bill</text>`;
   const fit=(P,c)=>{const x=P.map(p=>p.bill),y=P.map(p=>p.size),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b,lo=Math.min(...x),hi=Math.max(...x);const x1=xs(lo),y1=ys(my+sl*(lo-mx)),x2=xs(hi),y2=ys(my+sl*(hi-mx));return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(--surface)" stroke-width="8" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c}" stroke-width="3.5" stroke-linecap="round"/>`;};
@@ -967,11 +984,12 @@ const BAND=[['least effective third','#D2691E'],['middle third','#2E8B57'],['mos
 const rOf=P=>corr(P.map(p=>Math.log10(p.g)),P.map(p=>p.f));
 const partial=(()=>{const x=WL.map(p=>Math.log10(p.g)),y=WL.map(p=>p.f),z=WL.map(p=>p.e),a=corr(x,y),b=corr(x,z),c=corr(y,z);return (a-b*c)/Math.sqrt((1-b*b)*(1-c*c));})();
 let wlMode='all';
-function wlDraw(){const el=$('wlChart'),F=frame(el,280),pl=34,pr=12,pt=12,pb=36,lo=2,hi=5,split=wlMode==='split';
+function wlDraw(){const el=$('wlChart'),F=frame(el,280),pl=34,pr=12,pt=26,pb=36,lo=2,hi=5,split=wlMode==='split';
   const lx=v=>pl+(v-lo)*(F.w-pl-pr)/(hi-lo),xs=v=>lx(Math.log10(v)),ys=v=>pt+(7.4-v)*(F.h-pt-pb)/6.8;let s='';
   [1,2,3,4,5,6,7].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text>`);
   [[100,'$100'],[1000,'$1,000'],[10000,'$10,000'],[100000,'$100,000']].forEach(([v,t])=>s+=`<text x="${xs(v)}" y="${F.h-20}" text-anchor="${v===100?'start':v===100000?'end':'middle'}" font-size="11" style="fill:var(--muted)">${t}</text>`);
   s+=`<text x="${(pl+F.w)/2}" y="${F.h-4}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">GDP per capita (log scale)</text>`;
+  s+=`<text x="4" y="13" class="ylab">↑ Civil liberties (7 = most free)</text>`;
   const fit=(P,c)=>{const x=P.map(p=>Math.log10(p.g)),y=P.map(p=>p.f),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b,L=Math.min(...x),H=Math.max(...x),x1=lx(L),y1=ys(my+sl*(L-mx)),x2=lx(H),y2=ys(my+sl*(H-mx));return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(--surface)" stroke-width="8" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c}" stroke-width="3.5" stroke-linecap="round"/>`;};
   WL.forEach(p=>{const c=split?BAND[p.b][1]:'var(--s1-line)';s+=`<circle cx="${xs(p.g)}" cy="${ys(p.f+p.j)}" r="4" style="fill:${c};stroke:var(--surface)" stroke-width="1" opacity=".8"><title>${esc(p.c)}: $${p.g.toLocaleString()}, rating ${p.f}, effectiveness ${p.e}</title></circle>`;});
   if(!split)s+=fit(WL,'var(--ink)');else [0,1,2].forEach(b=>s+=fit(WL.filter(p=>p.b===b),BAND[b][1]));
@@ -1027,11 +1045,11 @@ $('dfDg').onclick=()=>{dfOpen=!dfOpen;dfDraw();};$('dfDg').onkeydown=e=>{if(e.ke
   let k=2;
   $('dfPick').innerHTML=ING.map(([c,t])=>`<button type="button" data-c="${c}" aria-pressed="${c===k}">${t}</button>`).join('');
   $('dfPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;k=+b.dataset.c;$('dfPick').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();});
-  function draw(){const el=$('dfChart'),F=frame(el,280),pl=58,pr=14,pt=10,pb=40,xs=v=>pl+v*(F.w-pl-pr),ys=v=>pt+(1-v)*(F.h-pt-pb),jr=rng(7);let s='';
+  function draw(){const el=$('dfChart'),F=frame(el,280),pl=40,pr=14,pt=26,pb=40,xs=v=>pl+v*(F.w-pl-pr),ys=v=>pt+(1-v)*(F.h-pt-pb),jr=rng(7);let s='';
     [0,.25,.5,.75,1].forEach(v=>{s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text><text x="${xs(v)}" y="${F.h-22}" text-anchor="${v===0?'start':v===1?'end':'middle'}" font-size="11" style="fill:var(--muted)">${v}</text>`;});
     const name=ING.find(x=>x[0]===k)[1];
     s+=`<text x="${(pl+F.w)/2}" y="${F.h-4}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">${esc(name)}</text>`;
-    s+=`<text transform="translate(12 ${(pt+F.h-pb)/2}) rotate(-90)" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Electoral democracy index</text>`;
+    s+=`<text x="4" y="13" class="ylab">↑ Electoral democracy index</text>`;
     V.forEach(r=>{const jx=(k===5||k===6)?(jr()-.5)*.025:0;s+=`<circle cx="${xs(Math.min(1,Math.max(0,r[k]+jx)))}" cy="${ys(r[1])}" r="3.6" style="fill:var(--s1-line);stroke:var(--surface)" stroke-width="1" opacity=".7"><title>${esc(r[0])}: ${r[k]}, index ${r[1]}</title></circle>`;});
     el.innerHTML=F.svg(s);
     const r=corr(V.map(x=>x[k]),V.map(x=>x[1])),full=V.filter(x=>x[k]>=.99).length,pc=Math.round(100*full/V.length);
@@ -1064,9 +1082,9 @@ $('dfDg').onclick=()=>{dfOpen=!dfOpen;dfDraw();};$('dfDg').onkeydown=e=>{if(e.ke
   const r=rng(435),g=()=>{let u=0,w=0;while(!u)u=r();while(!w)w=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*w);};
   const M=[];for(let i=0;i<435;i++){const ret=i<32;let m=ret?12.4+g()*5:3.5+g()*2.6;M.push({ret,m:Math.max(0,Math.min(40,m)),j:r()});}
   const mean2=f=>mean(M.filter(f).map(x=>x.m));const mR=mean2(x=>!x.ret),mT=mean2(x=>x.ret);
-  function chart(){const el=$('tlChart'),F=frame(el,250),pl=54,pr=12,pt=10,pb=40,ys=v=>pt+(1-v/30)*(F.h-pt-pb),cx=[pl+(F.w-pl-pr)*.3,pl+(F.w-pl-pr)*.74],bw=(F.w-pl-pr)*.32;let s='';
+  function chart(){const el=$('tlChart'),F=frame(el,250),pl=42,pr=12,pt=26,pb=40,ys=v=>pt+(1-v/30)*(F.h-pt-pb),cx=[pl+(F.w-pl-pr)*.3,pl+(F.w-pl-pr)*.74],bw=(F.w-pl-pr)*.32;let s='';
     [0,10,20,30].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}%</text>`);
-    s+=`<text transform="translate(11 ${(pt+F.h-pb)/2}) rotate(-90)" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Roll calls missed</text>`;
+    s+=`<text x="4" y="13" class="ylab">↑ Roll calls missed</text>`;
     [['Running again',0],['Retiring',1]].forEach(([t,k])=>s+=`<text x="${cx[k]}" y="${F.h-20}" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">${t}</text><text x="${cx[k]}" y="${F.h-5}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${k?32:403} members</text>`);
     M.forEach(x=>{const k=x.ret?1:0;s+=`<circle cx="${cx[k]+(x.j-.5)*bw}" cy="${ys(x.m)}" r="${k?4:3}" style="fill:${k?'var(--s2)':'var(--axis)'}" opacity="${k?.85:.6}"/>`;});
     [[mR,0],[mT,1]].forEach(([m,k])=>s+=`<line x1="${cx[k]-bw/2-6}" x2="${cx[k]+bw/2+6}" y1="${ys(m)}" y2="${ys(m)}" style="stroke:var(--ink)" stroke-width="3"/><text x="${cx[k]+bw/2+4}" y="${ys(m)-6}" text-anchor="end" font-size="11.5" font-weight="700" style="fill:var(--ink);stroke:var(--surface);paint-order:stroke" stroke-width="4">mean ${m.toFixed(1)}%</text>`);
@@ -1077,10 +1095,11 @@ $('dfDg').onclick=()=>{dfOpen=!dfOpen;dfDraw();};$('dfDg').onkeydown=e=>{if(e.ke
 /* ========== Part 8: reversion to the mean ========== */
 const gaussR=r=>{let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
 /* small line/bar chart used by several cards */
-function tsChart(el,o){const F=frame(el,o.h||200),pl=o.pl||40,pr=12,pt=12,pb=34,n=o.n,lo=o.lo,hi=o.hi;
+function tsChart(el,o){const F=frame(el,o.h||200),pl=o.pl||40,pr=12,pt=o.yl?26:12,pb=34,n=o.n,lo=o.lo,hi=o.hi;
   const xs=i=>o.bars?pl+(i+.5)*(F.w-pl-pr)/n:pl+i*(F.w-pl-pr)/(n-1),ys=v=>pt+(hi-v)/(hi-lo)*(F.h-pt-pb);let s='';
   o.ticks.forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${o.yf?o.yf(v):v}</text>`);
   o.xl.forEach((t,i)=>{if(t!=='')s+=`<text x="${xs(i)}" y="${F.h-18}" text-anchor="${o.bars?'middle':i===0?'start':i===n-1?'end':'middle'}" font-size="11" style="fill:var(--muted)">${t}</text>`;});
+  if(o.yl)s+=`<text x="4" y="13" class="ylab">↑ ${o.yl}</text>`;
   if(o.xt)s+=`<text x="${(pl+F.w)/2}" y="${F.h-3}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">${o.xt}</text>`;
   if(o.mark)o.mark.filter(m=>o.upto==null||o.upto>=m.i).forEach(m=>s+=`<line x1="${xs(m.i)}" x2="${xs(m.i)}" y1="${pt}" y2="${F.h-pb}" style="stroke:#B3261E" stroke-width="1.5" stroke-dasharray="4 4"/><text x="${xs(m.i)+(m.left?-5:5)}" y="${pt+11}" text-anchor="${m.left?'end':'start'}" font-size="11.5" font-weight="700" style="fill:#B3261E;stroke:var(--page);paint-order:stroke" stroke-width="3">${m.t}</text>`);
   if(o.mean)s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(o.mean.v)}" y2="${ys(o.mean.v)}" style="stroke:var(--ink-2)" stroke-width="2" stroke-dasharray="6 5"/>`;
@@ -1102,9 +1121,9 @@ function gfRun(seed){const r=rng(seed),P=[];for(let i=0;i<156;i++){const sk=72.6
   const by=P.slice().sort((a,b)=>a.r1-b.r1||a.jx-b.jx);by.slice(0,10).forEach(p=>p.g='best');by.slice(-10).forEach(p=>p.g='worst');
   GF={P,seed};gfPick=by[0].i;gfFollow();gfPlay();}
 function gfPlay(){gfStop();gfK=0;gfDraw();$('gfSay').textContent='';gfStop=animate(2200,k=>{gfK=ease(k);gfDraw();});}
-function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=46,pr=14,pt=12,pb=42,lo=63,hi=84,xs=v=>pl+(v-lo)/(hi-lo)*(F.w-pl-pr),ys=v=>pt+(hi-v)/(hi-lo)*(F.h-pt-pb);let s='';
+function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=36,pr=14,pt=26,pb=42,lo=63,hi=84,xs=v=>pl+(v-lo)/(hi-lo)*(F.w-pl-pr),ys=v=>pt+(hi-v)/(hi-lo)*(F.h-pt-pb);let s='';
   for(let v=65;v<=83;v+=3){s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text><text x="${xs(v)}" y="${F.h-24}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${v}</text>`;}
-  s+=`<text x="${(pl+F.w)/2}" y="${F.h-6}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">First-round score (lower is better)</text><text transform="translate(13 ${(pt+F.h-pb)/2}) rotate(-90)" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Second-round score</text>`;
+  s+=`<text x="${(pl+F.w)/2}" y="${F.h-6}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">First-round score (lower is better)</text><text x="4" y="13" class="ylab">↑ Second-round score</text>`;
   s+=`<line x1="${xs(lo)}" y1="${ys(lo)}" x2="${xs(hi)}" y2="${ys(hi)}" style="stroke:var(--ink-2)" stroke-width="2" stroke-dasharray="6 5"/>`;
   const P=GF.P,x=P.map(p=>p.r1),y=P.map(p=>p.r2),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b;GF.sl=sl;
   const L=Math.min(...x),H=Math.max(...x);
@@ -1121,7 +1140,7 @@ function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=46,pr=14,pt=12,pb=42,
   $('gfSay').innerHTML=`The 10 best first rounds averaged <b>${m(B,'r1')}</b>, and the same golfers averaged <b>${m(B,'r2')}</b> the next day. The 10 worst first rounds averaged <b>${m(W,'r1')}</b>, and those golfers averaged <b>${m(W,'r2')}</b> the next day. Both groups moved toward the middle, so the least-squares line is flatter than the 45-degree line (its slope is ${sl.toFixed(2)}, not 1).`+(gfOwn?` The diamonds mark each highlighted golfer's usual score. The second rounds land near the diamonds, so each golfer falls back toward <b>her own</b> usual level, not toward the average of the whole field.`:` Show the usual scores to see where each one was headed.`);}
 function gfFollow(){const p=GF.P[gfPick],r=rng(GF.seed*7+p.i),v=[p.r1,p.r2];for(let k=2;k<8;k++)v.push(Math.round(p.sk+gaussR(r)*2.5));
   const lo=Math.min(63,...v)-1,hi=Math.max(84,...v)+1;
-  tsChart($('gfTs'),{n:8,lo,hi,ticks:[66,70,74,78,82].filter(t=>t>lo&&t<hi),xl:v.map((_,i)=>'R'+(i+1)),xt:'Round',series:[{v,c:p.g==='best'?'var(--s1-line)':'var(--s2)',big:[0],bc:p.g==='best'?'var(--s1-line)':'var(--s2)'}],mean:{v:p.sk,t:`her usual score (${p.sk.toFixed(1)})`},h:190});
+  tsChart($('gfTs'),{yl:'Score',n:8,lo,hi,ticks:[66,70,74,78,82].filter(t=>t>lo&&t<hi),xl:v.map((_,i)=>'R'+(i+1)),xt:'Round',series:[{v,c:p.g==='best'?'var(--s1-line)':'var(--s2)',big:[0],bc:p.g==='best'?'var(--s1-line)':'var(--s2)'}],mean:{v:p.sk,t:`her usual score (${p.sk.toFixed(1)})`},h:190});
   {const o=gfOrder(),j=o.indexOf(gfPick);$('gfWho').textContent=`Golfer ${j+1} of ${o.length}, ranked by first round`;}
   $('gfTsSay').innerHTML=`This golfer shot <b>${p.r1}</b> in round 1, one of the ${p.g==='best'?'best':'worst'} in the field, and her usual score is about <b>${p.sk.toFixed(1)}</b>. Over the next seven rounds she scatters around that usual level, because round 1 was ${p.g==='best'?'a good day with some luck in it':'a bad day with some bad luck in it'}. Nothing about her game changed.`;}
 $('gfChart').style.cursor='pointer';
@@ -1140,7 +1159,7 @@ function teamHist(r,T){const sk=Math.min(.78,Math.max(.24,.5+gaussR(r)*.09));let
 let coSeed=3,coStop=()=>{},coH=null,coU=23;
 function coPick(){let r,h,k=0;do{r=rng(coSeed*131+k++);h=teamHist(r,24);}while(k<400&&!(h.fire.length>=1&&h.fire.length<=3&&h.fire[0]>=3&&h.fire[0]<=20&&h.w[h.fire[0]-2]>h.w[h.fire[0]-1]&&h.w[h.fire[0]-1]>h.w[h.fire[0]]&&h.w[h.fire[0]-3]-h.w[h.fire[0]]>.12&&h.w[h.fire[0]+1]>h.w[h.fire[0]]+.08&&h.w[h.fire[0]+2]>h.w[h.fire[0]]+.08));coH=h;}
 function coTeam(){const h=coH;if(!h)return;
-  tsChart($('coTeam'),{n:24,lo:0,hi:1,ticks:[0,.25,.5,.75,1],yf:v=>Math.round(v*100)+'%',xl:h.w.map((_,i)=>i%4===0||i===23?String(i+1):''),xt:'Season',series:[{v:h.w,c:'var(--s1-line)',big:h.fire}],mean:{v:h.sk,t:`this team's usual level (${Math.round(h.sk*100)}%)`},mark:h.fire.map(t=>({i:t,t:'coach fired'})),upto:coU,h:220});}
+  tsChart($('coTeam'),{yl:'Share of games won',n:24,lo:0,hi:1,ticks:[0,.25,.5,.75,1],yf:v=>Math.round(v*100)+'%',xl:h.w.map((_,i)=>i%4===0||i===23?String(i+1):''),xt:'Season',series:[{v:h.w,c:'var(--s1-line)',big:h.fire}],mean:{v:h.sk,t:`this team's usual level (${Math.round(h.sk*100)}%)`},mark:h.fire.map(t=>({i:t,t:'coach fired'})),upto:coU,h:220});}
 function coSay(){const h=coH,f=h.fire[0],pre=h.w.slice(Math.max(0,f-3),f+1).map(v=>Math.round(v*100)+'%').join(', '),post=h.w.slice(f+1,f+3).map(v=>Math.round(v*100)+'%').join(' and ');
   $('coTeamSay').innerHTML=`This team usually wins about <b>${Math.round(h.sk*100)}%</b> of its games. Before its ${h.fire.length>1?'first ':''}firing it went ${pre}, and the coach was fired after that last season. The next two seasons came in at ${post}, back toward its usual level, even though no coach in this simulation does anything. The firing came at the bottom of a slide, so the rebound was coming anyway.`;}
 function coPlay(){coStop();coPick();coU=0;$('coTeamSay').textContent='';coTeam();coStop=animate(5200,k=>{coU=k*23;coTeam();},coSay);}
@@ -1161,7 +1180,7 @@ $('coNew').onclick=()=>{coSeed++;coPlay();};coPick();coU=0;coTeam();onVisible($(
     if(A&&B){const u=(A.sk*A.n+B.sk*B.n)/(A.n+B.n);s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(u)}" y2="${ys(u)}" style="stroke:var(--ink-2)" stroke-width="2" stroke-dasharray="6 5"/>`;}
     if(A)s+=line(A.a,'var(--surface)',7,1)+line(A.a,'#B3261E',3.5,1)+A.a.map((v,i)=>`<circle cx="${xs(i)}" cy="${ys(v)}" r="3.4" style="fill:#B3261E;stroke:var(--surface)" stroke-width="1.5"/>`).join('');
     if(B)s+=`<polyline fill="none" points="${B.a.map((v,i)=>xs(i)+','+ys(v)).join(' ')}" style="stroke:var(--ink)" stroke-width="2.6" stroke-dasharray="1 6" stroke-linecap="round"/>`;
-    s+=`<text x="${pl+4}" y="14" font-size="12" font-weight="700" style="fill:var(--ink)">${(A?A.n:0).toLocaleString()} fired · ${(B?B.n:0).toLocaleString()} kept</text><text x="${xs(4)+5}" y="${pt+11}" font-size="11.5" font-weight="700" style="fill:#B3261E;stroke:var(--surface);paint-order:stroke" stroke-width="3">coach fired</text>`;
+    s+=`<text x="4" y="13" class="ylab">↑ Share of games won</text><text x="${F.w-pr}" y="13" text-anchor="end" font-size="12" font-weight="700" style="fill:var(--ink)">${(A?A.n:0).toLocaleString()} fired · ${(B?B.n:0).toLocaleString()} kept</text><text x="${xs(4)+5}" y="${pt+11}" font-size="11.5" font-weight="700" style="fill:#B3261E;stroke:var(--surface);paint-order:stroke" stroke-width="3">coach fired</text>`;
     el.innerHTML=F.svg(s)+`<div class="kk" style="margin-top:2px"><span><i style="display:inline-block;width:20px;height:0;border-radius:0;border-top:2px dashed var(--ink-2)"></i>these teams' usual level</span></div>`;}
   function say(){const A=avg(EV.length,true),B=avg(EV.length,false),u=(A.sk*A.n+B.sk*B.n)/(A.n+B.n),f=A.a,k=B.a;
     $('coEvSay').innerHTML=`Across ${A.n.toLocaleString()} firings, these teams slid from <b>${P(f[0])}</b> four seasons before to <b>${P(f[4])}</b> in the season that got the coach fired, and two seasons later they were back up to <b>${P(f[6])}</b>, well on the way back to their usual level of ${P(u)}. The ${B.n.toLocaleString()} teams that kept their coach after an equally bad season made the same V, going from ${P(k[4])} to ${P(k[6])}. Anyone who looks only at the teams that fired their coach will conclude that firing works.`;}
@@ -1174,13 +1193,13 @@ $('coNew').onclick=()=>{coSeed++;coPlay();};coPick();coU=0;coTeam();onVisible($(
 /* ---- four more examples ---- */
 (function(){
   const d1=(u)=>{const sym=[2,4.5,7,8.6,7.8,6.6,5.2,4,3,2.2,1.6,1.1,.8,.6],none=[1.6,3.6,6.1,7.9,8.1,7.2,6,4.7,3.6,2.6,1.9,1.3,.9,.6];
-    tsChart($('ex1'),{n:14,lo:0,hi:10,ticks:[0,5,10],xl:sym.map((_,i)=>i%3===0||i===13?String(i+1):''),xt:'Day of the cold',series:[{v:none,c:'var(--axis)',w:3,r:3},{v:sym,c:'var(--s1-line)',big:[3]}],mean:{v:.5,t:'usual level (feeling fine)'},mark:[{i:3,t:'remedy taken'}],h:180,pl:30,upto:u});};
+    tsChart($('ex1'),{yl:'How bad the cold feels',n:14,lo:0,hi:10,ticks:[0,5,10],xl:sym.map((_,i)=>i%3===0||i===13?String(i+1):''),xt:'Day of the cold',series:[{v:none,c:'var(--axis)',w:3,r:3},{v:sym,c:'var(--s1-line)',big:[3]}],mean:{v:.5,t:'usual level (feeling fine)'},mark:[{i:3,t:'remedy taken'}],h:180,pl:30,upto:u});};
   const r=rng(77),N=30,Y=8,Nb=[];for(let i=0;i<N;i++){const m=40+gaussR(r)*10;let e=0;const v=[];for(let t=0;t<Y;t++){e=.3*e+gaussR(r)*7;v.push(Math.max(5,Math.round(m+e)));}Nb.push({m,v});}
   const top=Nb.map((n,i)=>[n.v[3],i]).sort((a,b)=>b[0]-a[0]).slice(0,5).map(x=>x[1]),avg=Array(Y).fill(0).map((_,t)=>mean(top.map(i=>Nb[i].v[t]))),usual=mean(top.map(i=>Nb[i].m));
-  const d2=(u)=>tsChart($('ex2'),{n:Y,lo:20,hi:75,ticks:[20,40,60],xl:Array(Y).fill(0).map((_,i)=>String(i+1)),xt:'Year',series:Nb.map((n,i)=>top.includes(i)?null:{v:n.v,c:'var(--axis)',w:1,op:.35,dots:false}).filter(Boolean).concat([{v:avg,c:'var(--s2)',w:3,big:[3],bc:'var(--s2)'}]),mean:{v:usual,t:`the five neighborhoods' usual level (about ${usual.toFixed(0)})`},mark:[{i:4,t:'extra policing',left:true}],h:180,pl:30,upto:u});
+  const d2=(u)=>tsChart($('ex2'),{yl:'Crimes per year',n:Y,lo:20,hi:75,ticks:[20,40,60],xl:Array(Y).fill(0).map((_,i)=>String(i+1)),xt:'Year',series:Nb.map((n,i)=>top.includes(i)?null:{v:n.v,c:'var(--axis)',w:1,op:.35,dots:false}).filter(Boolean).concat([{v:avg,c:'var(--s2)',w:3,big:[3],bc:'var(--s2)'}]),mean:{v:usual,t:`the five neighborhoods' usual level (about ${usual.toFixed(0)})`},mark:[{i:4,t:'extra policing',left:true}],h:180,pl:30,upto:u});
   $('ex2s').innerHTML=`The orange line averages the five neighborhoods (out of ${N}) with the most crimes in year 4, which then get extra policing from year 5. Their crime falls from ${avg[3].toFixed(0)} to ${avg[4].toFixed(0)}, back toward their usual level of about ${usual.toFixed(0)}, because a neighborhood's worst year is partly bad luck. The gray lines are the other neighborhoods. Since the policing goes to places at their worst, it will look like it works whether or not it does.`;
-  const d3=(u)=>tsChart($('ex3'),{bars:true,n:7,lo:0,hi:45,ticks:[0,10,20,30,40],xl:['Yr 1','Yr 2','Yr 3','Yr 4','Yr 5','Yr 6','Yr 7'],xt:'Year (the big drive is year 2)',series:[{v:[20,40,25,18,21,19,22]}],hl:[1],mean:{v:20.7,t:'usual size (about 20)'},h:190,pl:30,upto:u});
-  const d4=(u)=>tsChart($('ex4'),{n:10,lo:.22,hi:.36,ticks:[.24,.28,.32,.36],yf:v=>v.toFixed(3).replace(/^0/,''),xl:Array(10).fill(0).map((_,i)=>String(i+1)),xt:'Season',series:[{v:[.271,.288,.279,.296,.283,.338,.291,.286,.279,.284],c:'var(--s1-line)',big:[5]}],mean:{v:.2895,t:'career batting average (.290)'},mark:[{i:5,t:'on the cover',left:true}],h:180,pl:38,upto:u});
+  const d3=(u)=>tsChart($('ex3'),{yl:'Members',bars:true,n:7,lo:0,hi:45,ticks:[0,10,20,30,40],xl:['Yr 1','Yr 2','Yr 3','Yr 4','Yr 5','Yr 6','Yr 7'],xt:'Year (the big drive is year 2)',series:[{v:[20,40,25,18,21,19,22]}],hl:[1],mean:{v:20.7,t:'usual size (about 20)'},h:190,pl:30,upto:u});
+  const d4=(u)=>tsChart($('ex4'),{yl:'Batting average',n:10,lo:.22,hi:.36,ticks:[.24,.28,.32,.36],yf:v=>v.toFixed(3).replace(/^0/,''),xl:Array(10).fill(0).map((_,i)=>String(i+1)),xt:'Season',series:[{v:[.271,.288,.279,.296,.283,.338,.291,.286,.279,.284],c:'var(--s1-line)',big:[5]}],mean:{v:.2895,t:'career batting average (.290)'},mark:[{i:5,t:'on the cover',left:true}],h:180,pl:38,upto:u});
   const D={1:[d1,13,4200],2:[d2,7,4200],3:[d3,7,3800],4:[d4,9,4200]},U={1:null,2:null,3:null,4:null},ST={};
   const play=x=>{const [f,n,dur]=D[x];if(ST[x])ST[x]();U[x]=0;f(0);ST[x]=animate(dur,k=>{U[x]=k*n;f(U[x]);},()=>{U[x]=null;f(null);});};
   [1,2,3,4].forEach(x=>{D[x][0](0);U[x]=0;});

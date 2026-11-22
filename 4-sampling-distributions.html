@@ -604,13 +604,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 4: </span><b>Sampling distributions</b></span><a href="5-confidence-intervals.html" aria-label="Next: Confidence intervals">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 4 of 11</p>
+    <p class="kicker">Research methods · Module 4 of 11</p>
     <h1>Sampling distributions</h1>
     <p class="dek">We rarely get to see a whole population. Instead we see one sample and compute its mean. On this page you will draw thousands of samples from real county election returns and watch where the sample means land. You will see that they center on the truth, and that they cluster more tightly as the samples grow.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -680,8 +697,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 .jb button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
 .jbtray.s{border-top:3px solid var(--s2)} .jbtray.l{border-top:3px solid var(--s1-line)}
 </style>
+<section class="part" style="margin-bottom:14px"><p class="kick">Part 1 · Jelly beans</p><h2 id="jbH">Start with a bowl of jelly beans</h2></section>
 <section class="jb" id="jb" aria-labelledby="jbH">
-  <h2 class="jbh" id="jbH">Start with a bowl of jelly beans</h2>
   <p class="jbt">This bowl holds 150 jelly beans in six flavors. Each flavor stands for a number from 1 (Coconut) to 6 (Licorice), so the bowl is a population with its own mean and SD. A handful is a sample. Throughout this section you'll compare a small handful with a large one, grabbed from the same bowl.</p>
   <div class="jbgrid">
     <figure>
@@ -725,7 +742,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </figure>
   <p class="jbt">The small handfuls make a wide, flat pile, because a small handful has to land far from the bowl's mean before it counts as weird. The large handfuls make a narrow pile, and even a modest miss is surprising. Both piles take on the shape of the normal curve, and the large one does so more closely. The spread of each pile is its standard error. The next section does the same thing with a real population made up of 3,112 U.S. counties.</p>
 </section>
-<h2 class="jbh" style="margin:0 0 12px">The same idea with 3,112 counties</h2>
+<section class="part" style="margin-bottom:14px"><p class="kick">Part 2 · Real counties</p><h2>The same idea with 3,112 counties</h2></section>
 <script>
 (()=>{
 const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);

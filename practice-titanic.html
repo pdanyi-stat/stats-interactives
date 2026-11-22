@@ -751,13 +751,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Who survived the Titanic?</b></span><a href="practice-published-tables.html" aria-label="Next: Practice, what would it look like published?">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Practice module</p>
+    <p class="kicker">Research methods · Practice module</p>
     <h1>Who survived the Titanic?</h1>
     <p class="dek">This page applies every technique from Modules 4–10 to one question, which is who survived the Titanic. You will work through the same survival questions as the labs, from describing the passengers to multiple regression with dummies. The notes here are short, and each step links back to its full module if you need a refresher.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -1097,7 +1114,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </div>
 
   <footer class="src">
-    Data: the 1,309-passenger Titanic list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables age5, female, trav_alone, the_freeriders and the_one_percent computed for PLS2033. Crew are not included. This list is nearly every passenger rather than a random sample; like the labs, the page treats it as a sample to practice inference. Step 2 draws passengers at random with replacement. Confidence intervals use z, as in class; with groups this large, t gives nearly identical intervals. Regression models in Steps 6–8 drop passengers with unknown age.
+    Data: the 1,309-passenger Titanic list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables age5, female, trav_alone, the_freeriders and the_one_percent computed for the course labs. Crew are not included. This list is nearly every passenger rather than a random sample; like the labs, the page treats it as a sample to practice inference. Step 2 draws passengers at random with replacement. Confidence intervals use z, as in class; with groups this large, t gives nearly identical intervals. Regression models in Steps 6–8 drop passengers with unknown age.
   </footer>
 <nav class="pager" aria-label="Previous and next"><a href="practice-direction.html"><span class="k">← Previous · Practice</span><span class="t">Which way does it run?</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="practice-published-tables.html"><span class="k">Next · Practice →</span><span class="t">What would it look like published?</span></a></nav>
 </main>
@@ -1452,7 +1469,7 @@ function renderTest(){
     txt(svg,xs(0)+(zr?-6:6),top+2,'H₀: 0',{class:'mlab',fill:css('--ink'),'text-anchor':zr?'end':'start'});
     txt(svg,xs(T.d),top+2+(Math.abs(xs(T.d)-xs(0))<70?14:0),'diff '+(T.d>=0?'+':'−')+pts(T.d)+' pts',{class:'mlab halo',fill:css('--s1-ink'),'text-anchor':'middle'});
     baseLine(svg,W,H,m); txt(svg,W-m.r,H-2,W<480?'mean 1 − mean 2, points →':'mean 1 − mean 2, percentage points →',{class:'axlab','text-anchor':'end'});
-    txt(svg,m.l,H-2,out?'0 outside the 95% CI':'0 inside the 95% CI',{class:'axlab',fill:out?css('--ink'):css('--muted')});
+    txt(svg,W<480?W-m.r:m.l,W<480?11:H-2,out?'0 outside the 95% CI':'0 inside the 95% CI',{class:'axlab',fill:out?css('--ink'):css('--muted'),'text-anchor':W<480?'end':'start'});
   }
   // lab sheet
   $('#lab5').innerHTML=`<dt>Mean 1 for ${q.g1[0].toLowerCase()} (n = ${com(T.n1)})</dt><dd>${d3(T.m1)}</dd><dt>Mean 2 for ${q.g2[0].toLowerCase()} (n = ${com(T.n2)})</dt><dd>${d3(T.m2)}</dd><dt>Difference (1 − 2)</dt><dd>${d3(T.d)}</dd><dt>Sig. (2-tailed)</dt><dd>${sig(T.p)}</dd><dt>95% CI for the difference</dt><dd>${d3(T.lo)} to ${d3(T.hi)}</dd>`;

@@ -533,13 +533,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 1: </span><b>Levels and central tendency</b></span><a href="2-skew-and-kurtosis.html" aria-label="Next: Skew and kurtosis">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 1 of 11</p>
+    <p class="kicker">Research methods · Module 1 of 11</p>
     <h1>Levels of measurement and central tendency</h1>
     <p class="dek">Which kind of average fits a variable depends on how the variable is measured. The examples come from the Titanic passenger list, 19th-century Massachusetts counties, a dataset of countries, the 1984 presidential election and the ANES.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -762,6 +779,7 @@ const normPdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
 function hist(host,o){
   host.innerHTML='';
   const W=o.w||D_W(host),Hh=o.h||250,m={l:44,r:14,t:o.top||18,b:42};
+  const yl=o.ylab===undefined?(o.pct?'↑ Percent':(o.cats?'↑ Count':'↑ Frequency')):o.ylab;if(yl)m.t=Math.max(m.t,26);
   const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':o.aria||'Histogram'},host);
   let bins=[];
   if(o.cats){bins=o.cats.map((c,i)=>({x0:i,x1:i+1,c:c.n,label:c.label}));}
@@ -796,6 +814,7 @@ function hist(host,o){
   S('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:'axis'},svg);
   if(!o.cats){(o.ticks||niceTicks(xmin,xmax,6)).forEach(t=>{S('line',{x1:X(t),x2:X(t),y1:Y(0),y2:Y(0)+4,class:'axis'},svg);S('text',{x:X(t),y:Y(0)+17,'text-anchor':'middle'},svg,o.tickFmt?o.tickFmt(t):String(t));});}
   if(o.xlab)S('text',{x:(m.l+W-m.r)/2,y:Hh-6,'text-anchor':'middle',class:'ttl'},svg,o.xlab);
+  if(yl)S('text',{x:4,y:13,class:'ylab'},svg,yl);
   if(o.normal&&!o.cats){let d='';for(let i=0;i<=160;i++){const x=xmin+(xmax-xmin)*i/160;const y=normPdf(x,o.normal.m,o.normal.s)*N*o.binw;d+=(i?'L':'M')+X(x).toFixed(1)+','+Y(Math.min(y,ymax)).toFixed(1);}S('path',{d,class:'ncurve'},svg);}
   (o.lines||[]).forEach((L,k)=>{const x=o.cats?X(L.x+0.5):X(L.x);S('line',{x1:x,x2:x,y1:m.t-4,y2:Y(0),class:L.cls},svg);S('text',{x:x+(L.right===false?-5:5),y:m.t+8+(L.dy||0),'text-anchor':L.right===false?'end':'start',class:L.cls==='meanl'?'meant':L.cls==='medl'?'medt':''},svg,L.label);});
   if(o.shade){S('rect',{x:X(o.shade[0]),y:m.t,width:X(o.shade[1])-X(o.shade[0]),height:Y(0)-m.t,class:'shade'},svg,null);svg.insertBefore(svg.lastChild,g);}
@@ -1159,11 +1178,11 @@ const WF=DATA.welfare,WN=D.sum(WF.map(r=>r[2]));let cum=0;
 $('#moTbl').innerHTML=D.spFreq('PRE: SUMMARY: Federal Budget Spending: welfare programs',WF.map(r=>({label:`${r[0]}. ${r[1]}`,n:r[2],flag:r[0]<0})));
 D.drawers($('#moOut'),{stata:D.stTab('V201314x','welfare spending',WF.map(r=>({label:`${r[0]}. ${r[1]}`.slice(0,24),n:r[2]}))),stataNote:'Here is the same table in Stata. Stata, too, counts −2 as a valid value until you tell it otherwise (for example, <code>replace V201314x = . if V201314x < 0</code>).'});
 $('#moBars').addEventListener('click',()=>{$('#moChart').hidden=false;$('#moTap').hidden=false;
-  D.hist($('#moChart'),{cats:WF.map(r=>({label:(r[0]<0?'−2 DK/RF':r[0]+'. '+r[1].replace('Increased','Incr.').replace('Decreased','Decr.')),n:r[2]})),h:250,catSmall:true,barTap:(i)=>{
+  D.hist($('#moChart'),{ylab:'↑ Respondents',cats:WF.map(r=>({label:(r[0]<0?'−2 DK/RF':r[0]+'. '+r[1].replace('Increased','Incr.').replace('Decreased','Decr.')),n:r[2]})),h:250,catSmall:true,barTap:(i)=>{
     if(WF[i][0]===3){D.fb($('#moFb'),'ok',`The mode is 3, “Kept the same,” which ${D.comma(3522)} people chose (${(3522/WN*100).toFixed(1)}% of the sample). That's the most common answer by a wide margin. The highlighted −2 row is a non-answer (don't know or refused). This table lists it under Valid, but it isn't an opinion, so it should be set as missing before you compute anything.`);$('#moQ').hidden=false;}
     else D.fb($('#moFb'),'no',`That bar has ${D.comma(WF[i][2])} people. The mode is the tallest bar.`);},aria:'Bar chart of welfare spending answers'});});
 $('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;v==='3'?D.fb($('#moFb2'),'ok','Most people want to keep welfare spending the same. Note that the mode, at 42.5%, is a plurality rather than a majority.'):D.fb($('#moFb2'),'no','Read the label of the tallest bar.');});
-(function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
+(function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{ylab:'↑ Countries',cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
 
 /* ---------- Part 8: median in a frequency table ---------- */
 (function(){let miss=false;
@@ -1205,7 +1224,7 @@ $('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;
 
 /* ---------- Part 9: range ---------- */
 const SO=DATA.nes.southern_therm;
-D.hist($('#raChart'),{counts:SO.counts,xmin:-2.5,xmax:102.5,binw:5,h:230,ticks:[0,10,20,30,40,50,60,70,80,90,100],xlab:'Feeling thermometer (0 = cold, 100 = warm)',
+D.hist($('#raChart'),{ylab:'↑ Respondents',counts:SO.counts,xmin:-2.5,xmax:102.5,binw:5,h:230,ticks:[0,10,20,30,40,50,60,70,80,90,100],xlab:'Feeling thermometer (0 = cold, 100 = warm)',
   barTap:(i,b)=>{const vals=Object.entries(SO.counts).filter(([k])=>+k>=b.x0&&+k<b.x1);$('#raTap').textContent=vals.length?vals.map(([k,v])=>`${v} people rated Southerners ${k}`).join('; ')+'.':'No one rated Southerners in that range.';},aria:'Southerners thermometer'});
 $('#raCheck').addEventListener('click',()=>{const a=D.num($('#ra1').value),b=D.num($('#ra2').value),c=D.num($('#ra3').value),d=D.num($('#ra4').value);
   if(a!==0||b!==100)return D.fb($('#raFb'),'no','The range runs from the lowest rating anyone gave to the highest. Look at the bars at each end of the chart.');
@@ -1216,17 +1235,17 @@ D.drawers($('#raOut'),{spssNote:'Analyze → Descriptive Statistics → Frequenc
   stata:D.stSum('southern_therm','Feeling Thermometer: Southerners',D.expand(SO.counts)),stataNote:'The range is Largest minus Smallest. For the counts at 0 and 100, run <code>tabulate southern_therm</code>.'});
 const CF=DATA.world.conf;
 function cfDraw(m){const host=$('#cfChart');
-  if(m==='bar'){host.innerHTML='';const vals=CF.slice().sort((a,b)=>a-b),W=D.W(host),Hh=250,l=44,r=10,t=14,b=70;const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':'Bar chart with one bar per value'},host);
+  if(m==='bar'){host.innerHTML='';const vals=CF.slice().sort((a,b)=>a-b),W=D.W(host),Hh=250,l=44,r=10,t=26,b=70;const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':'Bar chart with one bar per value'},host);
     const bw=(W-l-r)/vals.length,Y=v=>Hh-b-v/3*(Hh-t-b);
     [0,1,2,3].forEach(k=>{S('line',{x1:l,x2:W-r,y1:Y(k),y2:Y(k),class:'gridl'},svg);S('text',{x:l-6,y:Y(k)+4,'text-anchor':'end'},svg,String(k));});
     vals.forEach((v,i)=>{const x=l+i*bw;const rc=S('rect',{x:x+0.5,y:Y(1),width:Math.max(1,bw-1),height:Y(0)-Y(1),class:'bar hl'},svg);S('title',{},rc,`${v.toFixed(2)}: 1 country`);
       if(i%10===0||i===vals.length-1){const tx=x+bw/2;S('line',{x1:tx,x2:tx,y1:Y(0),y2:Y(0)+4,class:'axis'},svg);S('text',{x:tx,y:Y(0)+10,transform:`rotate(-55 ${tx} ${Y(0)+10})`,'text-anchor':'end',style:'font-size:11px'},svg,v.toFixed(2));}});
     S('line',{x1:l,x2:W-r,y1:Y(0),y2:Y(0),class:'axis'},svg);
-    S('text',{x:12,y:(t+Y(0))/2,transform:`rotate(-90 12 ${(t+Y(0))/2})`,'text-anchor':'middle',class:'ttl'},svg,'Count');
+    S('text',{x:4,y:13,class:'ylab'},svg,'↑ Countries');
     S('text',{x:(l+W-r)/2,y:Hh-4,'text-anchor':'middle',class:'ttl'},svg,'Each distinct confidence score (every 10th labeled)');
     $('#cfCap').innerHTML='There are 71 bars, one for each score, and every bar has a count of 1, because no two countries have exactly the same score. The chart is flat, so you can’t see where scores bunch up or where the gaps are.';}
   else{const bins=Array(10).fill(0);CF.forEach(v=>bins[Math.min(9,Math.floor(v/10))]++);const top=bins.indexOf(Math.max(...bins));
-    D.hist(host,{values:CF,xmin:0,xmax:100,binw:10,h:250,xlab:'Confidence score, in ranges of 10',aria:'Histogram of confidence',hlBins:new Set(bins.map((_,i)=>i))});
+    D.hist(host,{ylab:'↑ Countries',values:CF,xmin:0,xmax:100,binw:10,h:250,xlab:'Confidence score, in ranges of 10',aria:'Histogram of confidence',hlBins:new Set(bins.map((_,i)=>i))});
     const tb=host.querySelector(`rect.bar[data-i="${top}"]`);if(tb)tb.classList.add('top');
     $('#cfCap').innerHTML=`Once the scores are grouped into ranges of 10, the shape appears. The most common range is ${top*10} to ${top*10+10} (${bins[top]} countries, in orange), with fewer countries toward either end. The y-axis is the number of countries in each range.`;}}
 D.seg($('#cfSeg'),[['bar','Bar chart'],['hist','Histogram']],cfDraw,'bar');cfDraw('bar');

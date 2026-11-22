@@ -757,13 +757,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 7: </span><b>PRE measures</b></span><a href="8-bivariate-regression.html" aria-label="Next: Bivariate regression">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 7 of 11</p>
+    <p class="kicker">Research methods · Module 7 of 11</p>
     <h1>Proportional reduction in error</h1>
     <p class="dek">Lambda, gamma and r² look like three unrelated statistics, but each one answers the same question. Once you know the independent variable (X), how many fewer mistakes do you make when you guess the dependent variable (Y)? We will play that guessing game three times, once for each level of measurement.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -804,7 +821,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 
   <!-- ================= LAMBDA ================= -->
   <section class="part" id="lambda" aria-labelledby="lh">
-    <p class="kick">Nominal · Lambda</p>
+    <p class="kick">Part 1 · Lambda (nominal)</p>
     <h2 id="lh">Guess the vote</h2>
     <p class="lede">Recall that lambda is the measure of correlation we use for nominal variables. Without knowing X, your best strategy is to guess <b style="color:var(--ink)">the most common answer (the mode)</b> for everyone. Once you know X, you guess <b style="color:var(--ink)">the most common answer (the mode) within each column</b> instead. Lambda tells us what share of the first strategy's errors the second strategy saves. We will start with 20 people so that you can count every guess, and then move up to full survey tables.</p>
   </section>
@@ -862,7 +879,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 
   <!-- ================= GAMMA ================= -->
   <section class="part" id="gamma" aria-labelledby="gh">
-    <p class="kick">Ordinal · Gamma</p>
+    <p class="kick">Part 2 · Gamma (ordinal)</p>
     <h2 id="gh">Do pairs line up?</h2>
     <p class="lede">When both variables have ordered categories, we use gamma, and gamma asks a slightly different question. Take two people at random. If one of them ranks higher on X, gamma guesses that the same person also ranks higher on Y. Pairs where that guess is right are called <b style="color:var(--s1-ink)">concordant</b>, pairs where it is wrong are called <b style="color:var(--miss-ink)">discordant</b>, and pairs that are tied on either variable are set aside.</p>
   </section>
@@ -924,7 +941,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 
   <!-- ================= R-SQUARED ================= -->
   <section class="part" id="rsq" aria-labelledby="rh">
-    <p class="kick">Interval · R-squared</p>
+    <p class="kick">Part 3 · R-squared (interval)</p>
     <h2 id="rh">Guess the mean, or use the line?</h2>
     <p class="lede">When Y is a number, the best single guess we can make without X is the mean, ȳ. Each error is the vertical distance from a point to that guess, and we square those distances and add them up to get E₁. Once we know X, we guess from the regression line instead, and the squared distances to the line add up to E₂. Switch between the two guesses and watch how the error sticks change.</p>
   </section>

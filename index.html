@@ -205,6 +205,12 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+.dek2{margin-top:10px!important}
+.srcd summary{cursor:pointer;font-weight:600;color:var(--ink-2);min-height:44px;display:flex;align-items:center;gap:8px;list-style:none}
+.srcd summary::-webkit-details-marker{display:none}
+.srcd summary::before{content:"▸";color:var(--accent-ink);transition:transform .15s}
+.srcd[open] summary::before{transform:rotate(90deg)}
+.srcd p{margin:6px 0 0}
 </style>
 <style id="hub-look">
 .groups{gap:34px}
@@ -234,14 +240,32 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Interactive modules</p>
+    <p class="kicker">Intro to Political Science Research Methods</p>
     <h1>See the statistics move</h1>
-    <p class="dek">These are interactive modules for PLS2033 (Statistical Methods). The examples use election returns and survey data, including the 2004 National Election Study. You can draw samples, drag points and flip switches, and watch the ideas behind the formulas at work.</p>
+    <p class="dek">This site is a companion to the course, and it works alongside lecture and the labs. Use a module to review an idea after class or to get a feel for a technique before you run it in SPSS.</p>
+    <p class="dek dek2">The modules run from hypotheses and describing data, through sampling, confidence intervals and significance tests, to measures of association, regression and the problems of calling a relationship causal.</p>
   </div>
 </header>
 
@@ -302,14 +326,12 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 
     <section class="exambox" aria-labelledby="examH">
       <span class="examtag">Exam prep</span>
-      <h2 id="examH">Practice for the PLS2033 final</h2>
+      <h2 id="examH">Practice for the final exam</h2>
       <p>Download a sample of a dataset, run the analyses in SPSS and enter your results. The page checks each answer and explains any mistakes. A new sample gives you a new set of answers to work out.</p>
       <a class="examgo" href="exam-prep.html">Open exam prep →</a>
     </section>
 
-  <footer class="src">
-    Data sources: county presidential returns compiled by Tony McGovern (tonmcg/US_County_Level_Election_Results_08-24); FiveThirtyEight's 2016 poll and state data; the British Election Panel Study and the 1988 Chilean plebiscite survey (carData); Florida 2000 county returns (carData); OpenIntro's midterm elections data; the 2004 American National Election Study; the Titanic passenger list (titanic3, Vanderbilt Biostatistics); the 2020 and 2024 American National Election Studies and the 2016 ANES Pilot Study; Pew Research Center's 2014 post-election survey; Gallup's January 2025 party-ideology results (respondent-level data imputed to match the published percentages); the 1995 South Africa election survey; the 1854 Massachusetts lunatics data; and a cross-national dataset of countries (World.sav, PLS2033 course files). Most datasets accessed through the Rdatasets collection.
-  </footer>
+  <footer class="src"><details class="srcd"><summary>Data sources for all modules</summary><p>County presidential returns compiled by Tony McGovern (tonmcg/US_County_Level_Election_Results_08-24); FiveThirtyEight's 2016 poll and state data; the British Election Panel Study and the 1988 Chilean plebiscite survey (carData); Florida 2000 county returns (carData); OpenIntro's midterm elections data; the 2004 American National Election Study; the Titanic passenger list (titanic3, Vanderbilt Biostatistics); the 2020 and 2024 American National Election Studies and the 2016 ANES Pilot Study; Pew Research Center's 2014 post-election survey; Gallup's January 2025 party-ideology results (respondent-level data imputed to match the published percentages); the 1995 South Africa election survey; the 1854 Massachusetts lunatics data; and a cross-national dataset of countries (World.sav, from the course files). Most of the datasets were accessed through the Rdatasets collection.</p></details></footer>
 </main>
 </body>
 </html>

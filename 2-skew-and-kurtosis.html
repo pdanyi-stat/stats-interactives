@@ -501,13 +501,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 2: </span><b>Skew and kurtosis</b></span><a href="3-dispersion.html" aria-label="Next: Measures of dispersion">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 2 of 11</p>
+    <p class="kicker">Research methods · Module 2 of 11</p>
     <h1>Skew and kurtosis</h1>
     <p class="dek">There are two ways to compare a variable's distribution with the normal curve. Skew asks whether it is lopsided, and kurtosis asks whether it is peaked or flat. The examples use the Titanic passenger list, the 2004 ANES feeling thermometers, GDP per capita for 177 countries and the Massachusetts counties.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -686,6 +703,7 @@ const normPdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
 function hist(host,o){
   host.innerHTML='';
   const W=o.w||D_W(host),Hh=o.h||250,m={l:44,r:14,t:o.top||18,b:42};
+  const yl=o.ylab===undefined?(o.pct?'↑ Percent':(o.cats?'↑ Count':'↑ Frequency')):o.ylab;if(yl)m.t=Math.max(m.t,26);
   const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':o.aria||'Histogram'},host);
   let bins=[];
   if(o.cats){bins=o.cats.map((c,i)=>({x0:i,x1:i+1,c:c.n,label:c.label}));}
@@ -720,6 +738,7 @@ function hist(host,o){
   S('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:'axis'},svg);
   if(!o.cats){(o.ticks||niceTicks(xmin,xmax,6)).forEach(t=>{S('line',{x1:X(t),x2:X(t),y1:Y(0),y2:Y(0)+4,class:'axis'},svg);S('text',{x:X(t),y:Y(0)+17,'text-anchor':'middle'},svg,o.tickFmt?o.tickFmt(t):String(t));});}
   if(o.xlab)S('text',{x:(m.l+W-m.r)/2,y:Hh-6,'text-anchor':'middle',class:'ttl'},svg,o.xlab);
+  if(yl)S('text',{x:4,y:13,class:'ylab'},svg,yl);
   if(o.normal&&!o.cats){let d='';for(let i=0;i<=160;i++){const x=xmin+(xmax-xmin)*i/160;const y=normPdf(x,o.normal.m,o.normal.s)*N*o.binw;d+=(i?'L':'M')+X(x).toFixed(1)+','+Y(Math.min(y,ymax)).toFixed(1);}S('path',{d,class:'ncurve'},svg);}
   (o.lines||[]).forEach((L,k)=>{const x=o.cats?X(L.x+0.5):X(L.x);S('line',{x1:x,x2:x,y1:m.t-4,y2:Y(0),class:L.cls},svg);S('text',{x:x+(L.right===false?-5:5),y:m.t+8+(L.dy||0),'text-anchor':L.right===false?'end':'start',class:L.cls==='meanl'?'meant':L.cls==='medl'?'medt':''},svg,L.label);});
   if(o.shade){S('rect',{x:X(o.shade[0]),y:m.t,width:X(o.shade[1])-X(o.shade[0]),height:Y(0)-m.t,class:'shade'},svg,null);svg.insertBefore(svg.lastChild,g);}
@@ -942,7 +961,7 @@ function shDraw(){const r=shape(+$('#shA').value,+$('#shB').value);const host=$(
   const sl=Math.abs(r.sk)<0.1?'no skew':r.sk>0?'positive skew':'negative skew',kl=Math.abs(r.ku)<0.1?'normal peak':r.ku>0?'leptokurtic (peaked)':'platykurtic (flat)';$('#shL').textContent=sl+', '+kl;
   $('#shMM').textContent=Math.abs(r.m-r.med)<0.01?'The mean and the median both sit at the peak.':`The mean sits ${Math.abs(r.m-r.med)<0.1?'just':''} ${r.m>r.med?'to the right of':'to the left of'} the median, because the long tail pulls it there.`.replace('  ',' ');}
 ['#shA','#shB'].forEach(s=>$(s).addEventListener('input',shDraw));shDraw();
-(function(){const v=thermVals('cheney_therm');D.hist($('#chChart'),{values:v,xmin:-5,xmax:105,binw:10,h:220,normal:{m:D.mean(v),s:D.sd(v)},xlab:'Feeling thermometer for Dick Cheney',tickFmt:t=>t<0||t>100?'':t,aria:'Cheney thermometer'});})();
+(function(){const v=thermVals('cheney_therm');D.hist($('#chChart'),{ylab:'↑ Respondents',values:v,xmin:-5,xmax:105,binw:10,h:220,normal:{m:D.mean(v),s:D.sd(v)},xlab:'Feeling thermometer for Dick Cheney',tickFmt:t=>t<0||t>100?'':t,aria:'Cheney thermometer'});})();
 (function(){const a=thermVals('cheney_therm');D.drawers($('#chOut'),{spssNote:'Read Kurtosis in the Statistics table. SPSS scores a normal curve as 0.',spss:D.spStats([{name:'cheney_therm',vals:a,nTotal:1212}],['n','mean','median','sd','skew','kurt']),stata:D.stSum('cheney_therm','Feeling Thermometer: Cheney',a)});})();
 D.seg($('#chQ'),[['lep','leptokurtic'],['pla','platykurtic']],v=>{v==='pla'?D.fb($('#chFb'),'ok',`Kurtosis = ${D.sp(NES.cheney_therm.kurt,3)}. The distribution is flatter than the normal curve, because many people rated Cheney very low, many rated him very high, and many fell in the middle. A flat distribution like this means feelings about him were spread across the whole scale.`):D.fb($('#chFb'),'no','Compare the bars with the dashed curve. Are the cases piled into a tall peak, or spread out toward both ends?');},'');
 
@@ -954,11 +973,12 @@ function wstats(p){const W=D.sum(p);const w=p.map(x=>x/W);const m=D.sum(w.map((x
 function sbPct(){const mo=+$('#sbM').value,sp=+$('#sbS').value,far=+$('#sbF').value/100;
   const base=[0,1,2,3,4,5,6,7,8].map(k=>Math.exp(-Math.abs(k-mo)/sp)),bt=D.sum(base);
   return base.map((b,k)=>((1-far)*b/bt+(k>=5?far/4:0))*100);}
-function sbRender(){const pct=sbPct(),host=$('#sbSk'),W=D.W(host),H=250,L=40,R=8,T0=14,B=30,cw=(W-L-R)/9,ph=H-T0-B,base=T0+ph;host.innerHTML='';
+function sbRender(){const pct=sbPct(),host=$('#sbSk'),W=D.W(host),H=250,L=40,R=8,T0=26,B=30,cw=(W-L-R)/9,ph=H-T0-B,base=T0+ph;host.innerHTML='';
   const svg=S('svg',{viewBox:`0 0 ${W} ${H}`,class:'chart',role:'img','aria-label':'Your distribution'},host);
   const top=Math.min(100,Math.max(20,Math.ceil(Math.max(...pct,shown?Math.max(...real):0)*1.12/20)*20)),Y=p=>base-p/top*ph,Xc=k=>L+cw*(k+0.5);
   D.niceTicks(0,top,4).forEach(t=>{S('line',{x1:L,x2:W-R,y1:Y(t),y2:Y(t),class:'gridl'},svg);S('text',{x:L-6,y:Y(t)+4,'text-anchor':'end'},svg,t+'%');});
   pct.forEach((p,k)=>{S('rect',{x:L+cw*k+3,y:Y(p),width:cw-6,height:Math.max(0,base-Y(p)),rx:3,fill:'var(--s1)'},svg);S('text',{x:Xc(k),y:Y(p)-5,'text-anchor':'middle',style:'font:600 11.5px var(--font-mono);fill:var(--ink)'},svg,p<0.5?'<1%':Math.round(p)+'%');});
+  S('text',{x:4,y:13,class:'ylab'},svg,'↑ Percent of passengers');
   if(shown)real.forEach((p,k)=>S('rect',{x:L+cw*k+6,y:Y(p),width:cw-12,height:base-Y(p),fill:'none',stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'5 4'},svg));
   S('line',{x1:L,x2:W-R,y1:base,y2:base,class:'axis'},svg);
   for(let k=0;k<9;k++)S('text',{x:Xc(k),y:H-9,'text-anchor':'middle',style:'font:600 13px var(--font-mono);fill:var(--ink)'},svg,String(k));
@@ -985,7 +1005,7 @@ function snFit(m,s,g){const a=Math.min(Math.abs(g),0.99),c=Math.pow(a/((4-Math.P
   return x=>{const z=(x-xi)/w;return 2/w*Math.exp(-z*z/2)/Math.sqrt(2*Math.PI)*Phi(al*z);};}
 function pgBronto(card,on){const c=card.dataset.c,v=thermVals(c),st=NES[c],host=card.querySelector('.mini');
   const base={values:v,xmin:-5,xmax:105,binw:10,tickFmt:t=>t<0||t>100?'':t,ticks:[0,50,100],aria:'Distribution'};
-  if(!on){D.hist(host,{...base,h:120,top:6,normal:{m:D.mean(v),s:D.sd(v)}});return;}
+  if(!on){D.hist(host,{...base,ylab:'↑ Respondents',h:136,top:6,normal:{m:D.mean(v),s:D.sd(v)}});return;}
   const m=D.mean(v),s=D.sd(v),g=st.skew,f=snFit(m,s,g),N=v.length,cnt=x=>f(x)*N*10;
   const bins=new Array(11).fill(0);v.forEach(x=>bins[Math.min(10,Math.max(0,Math.floor((x+5)/10)))]++);
   const xs=[];for(let i=0;i<=220;i++)xs.push(-5+110*i/220);const ys=xs.map(cnt),pk=Math.max(...ys),xm=xs[ys.indexOf(pk)];
@@ -1054,7 +1074,7 @@ pgSlots();
 /* ---------- Part 5: GDP and PHOME ---------- */
 const G=DATA.world.gdp.map(r=>r[1]),Gm=D.mean(G),Gmd=D.median(G);let gpick=null;
 function gdDraw(){const lines=[];if(gpick!=null){lines.push({x:gpick,cls:'',label:'Your pick'});lines.push({x:Gm,cls:'meanl',label:'Mean '+D.sp(Gm,4),dy:16});lines.push({x:Gmd,cls:'medl',label:'Median '+D.sp(Gmd,4),dy:32});}
-  const r=D.hist($('#gdChart'),{values:G,xmin:0,xmax:5,binw:0.25,h:240,ticks:[0,1,2,3,4,5],tickFmt:t=>'$'+(t*10)+'k',xlab:'GDP per capita',lines,onX:v=>{gpick=v;gdDraw();
+  const r=D.hist($('#gdChart'),{ylab:'↑ Countries',values:G,xmin:0,xmax:5,binw:0.25,h:240,ticks:[0,1,2,3,4,5],tickFmt:t=>'$'+(t*10)+'k',xlab:'GDP per capita',lines,onX:v=>{gpick=v;gdDraw();
     $('#gdLeg').hidden=false;$('#gdQs').hidden=false;D.fb($('#gdFb0'),'info',`You picked about ${D.sp(v,2)}, which is $${D.comma(v*1e4)}. Compare your pick with the mean and median lines. ${G.filter(x=>x<Gm).length} of the 177 countries are below the mean.`);},aria:'GDP per capita histogram'});
   if(gpick!=null){const ln=r.svg.querySelectorAll('line');ln.forEach(l=>{if(!l.getAttribute('class'))l.setAttribute('style','stroke:var(--ink);stroke-width:2;stroke-dasharray:3 3');});}}
 gdDraw();
@@ -1089,7 +1109,7 @@ choiceCheck($('#phQ'),[['mean','The mean'],['median','The median'],['mode','The 
 let caExtra=false;
 function caDraw(){let a=$('#caIn').value.split(/[^0-9.]+/).map(Number).filter(x=>x>0&&x<130);if(a.length<3)a=DATA.ages9;if(caExtra)a=a.concat([90,95]);
   const m=D.mean(a),md=D.median(a);
-  D.hist($('#caChart'),{values:a,xmin:15,xmax:100,binw:1,h:180,ticks:[20,30,40,50,60,70,80,90,100],xlab:'Age',lines:[{x:m,cls:'meanl',label:'Mean '+m.toFixed(1)},{x:md,cls:'medl',label:'Median '+md,dy:16}],aria:'Class ages'});
+  D.hist($('#caChart'),{ylab:'↑ Students',values:a,xmin:15,xmax:100,binw:1,h:180,ticks:[20,30,40,50,60,70,80,90,100],xlab:'Age',lines:[{x:m,cls:'meanl',label:'Mean '+m.toFixed(1)},{x:md,cls:'medl',label:'Median '+md,dy:16}],aria:'Class ages'});
   $('#caM').textContent=m.toFixed(1);$('#caMd').textContent=String(md);$('#caS').textContent=a.length>2?D.fx(D.skew(a),2):'';
   if(caExtra){const b=a.slice(0,-2);D.fb($('#caFb'),'info',`Without the two older students: mean ${D.mean(b).toFixed(1)}, median ${D.median(b)}. With them: mean ${m.toFixed(1)}, median ${md}. Two people moved the mean ${(m-D.mean(b)).toFixed(1)} years and the median ${(md-D.median(b)).toFixed(1)} years. The mean now sits above almost everyone in the class.`);}else $('#caFb').className='fbk';}
 $('#caIn').addEventListener('input',caDraw);$('#caAdd').addEventListener('click',e=>{caExtra=!caExtra;e.target.setAttribute('aria-pressed',caExtra);e.target.textContent=caExtra?'Remove them':'Add the 90- and 95-year-olds';caDraw();});

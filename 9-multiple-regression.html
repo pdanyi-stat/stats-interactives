@@ -679,13 +679,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 9: </span><b>Multiple regression</b></span><a href="10-dummy-variables.html" aria-label="Next: Dummy variables">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 9 of 11</p>
+    <p class="kicker">Research methods · Module 9 of 11</p>
     <h1>Multiple regression</h1>
     <p class="dek">A bivariate slope mixes the effect of X with everything that travels with X. Adding a control variable separates them. On this page you will see what “holding constant” does to the data, why slopes shrink, grow or flip, and how R² and adjusted R² respond as a model grows.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -1003,7 +1020,7 @@ function renderB(){
   el('line',{x1:L.x+20,y1:L.y-24,x2:T.x-30,y2:T.y+24,stroke:css('--ink-2'),'stroke-width':2,'marker-end':'url(#ah3)','marker-start':'url(#ah3)','stroke-dasharray':'5 4'},svg);
   node(L.x,L.y,'X₁',VK[st.x1].short); node(R.x,R.y,'Y','Trump share'); node(T.x,T.y,'X₂',VK[st.x2].short);
   const lab=(x,y,t,col,anchor='middle')=>{const e=el('text',{x,y,'text-anchor':anchor,class:'mlab',fill:col},svg);e.textContent=t;};
-  lab(W/2,L.y-8,'β₁ = '+sgn(b1),css('--s2-ink'));
+  lab(W/2,(R.x-L.x-124<100)?L.y-30:L.y-8,'β₁ = '+sgn(b1),css('--s2-ink'));
   lab((T.x+R.x)/2+18,(T.y+R.y)/2-6,'β₂ = '+sgn(b2),css('--s1-ink'),'start');
   lab((L.x+T.x)/2-16,(L.y+T.y)/2-6,'δ = '+sgn(dl),css('--ink-2'),'end');
   let verdict;
@@ -1045,7 +1062,7 @@ function renderC(animate){
   const lg=el('g',{'clip-path':'url(#cclip)'},svg);
   const s2=X2.slice().sort((a,b)=>a-b), q=p=>s2[Math.floor(p*(N-1))];
   [[q(0.1),'low'],[mean(X2),'avg'],[q(0.9),'high']].forEach(([v,l])=>{ el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(b0+b2*v+b1*xlo),y2:ys(b0+b2*v+b1*xhi),stroke:colorFor(v,x2lo,x2hi),'stroke-width':1.75,'stroke-dasharray':'6 4'},lg);
-    if(l!=='avg'){ const tx=el('text',{x:m.l+6,y:ys(b0+b2*v+b1*(xlo+(xhi-xlo)*0.03))+(l==='high'?(b2<0?14:-6):(b2<0?-6:14)),'text-anchor':'start',class:'axlab'},svg); tx.textContent=`${l} ${VK[st.x2].short} (${fx(st.x2,v)})`; } });
+    if(l!=='avg'){ let ly=ys(b0+b2*v+b1*(xlo+(xhi-xlo)*0.03))+(l==='high'?(b2<0?14:-6):(b2<0?-6:14));const py=ys(b0+b1*st.v1+b2*st.v2)-6;if(Math.abs(ly-py)<15)ly=ly<py?py-15:py+15;const tx=el('text',{x:m.l+6,y:ly,'text-anchor':'start',class:'axlab halo'},svg); tx.textContent=`${l} ${VK[st.x2].short} (${fx(st.x2,v)})`; } });
   el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(b0+b2*st.v2+b1*xlo),y2:ys(b0+b2*st.v2+b1*xhi),stroke:css('--s2'),'stroke-width':3},lg);
   const triG=el('g',{},svg), prG=el('g',{},svg);
   Cg={xs,ys,triG,prG,m,H,W,b0,b1,b2};
@@ -1062,11 +1079,11 @@ function drawTri(){ if(!Cg) return; const {xs,ys,triG,b0,b1,b2}=Cg; triG.innerHT
   el('line',{x1:X2,x2:X2,y1:Y1,y2:Y2,stroke:css('--s2'),'stroke-width':3.5},triG);
   for(const [x,y] of [[X1,Y1],[X2,Y2]]) el('circle',{cx:x,cy:y,r:5,fill:css('--s2'),stroke:css('--surface'),'stroke-width':2},triG);
   const dy=yv(x2)-yv(x1);
-  if(Math.abs(Y2-Y1)>14){const right=X2<Cg.W-150;const t=el('text',{x:X2+(right?8:-8),y:(Y1+Y2)/2+4,'text-anchor':right?'start':'end',class:'mlab',fill:css('--s2-ink')},triG);t.textContent='Δŷ = '+(dy>0?'+':'−')+nice(dy);} }
+  if(Math.abs(Y2-Y1)>14){const right=X2<Cg.W-150;const t=el('text',{x:X2+(right?8:-8),y:(Y1+Y2)/2+4,'text-anchor':right?'start':'end',class:'mlab halo',fill:css('--s2-ink')},triG);t.textContent='Δŷ = '+(dy>0?'+':'−')+nice(dy);} }
 function drawPred(){ const {xs,ys,prG,m,H,b0,b1,b2}=Cg; prG.innerHTML=''; const y=b0+b1*st.v1+b2*st.v2; const X=xs(st.v1),Yp=ys(y);
   el('path',{d:`M${X},${H-m.b}L${X},${Yp}L${m.l},${Yp}`,fill:'none',stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'4 3'},prG);
   el('circle',{cx:X,cy:Yp,r:6,fill:css('--ink'),stroke:css('--surface'),'stroke-width':2},prG);
-  const t=el('text',{x:m.l+6,y:Yp-6,class:'mlab',fill:css('--ink')},prG); t.textContent='ŷ = '+y.toFixed(1)+'%'; }
+  const t=el('text',{x:m.l+6,y:Yp-6,class:'mlab halo',fill:css('--ink')},prG); t.textContent='ŷ = '+y.toFixed(1)+'%'; }
 function textC(){
   const c=core(),f=c.ctl,b1=f.b[0],b2=f.b[1],b0=f.b[2];
   const term=(txt,cls,n)=>`<div class="term"><span class="t ${cls}">${txt}</span>${n?`<span class="n">${n}</span>`:''}</div>`, op=s=>`<div class="term"><span class="t op">${s}</span></div>`;
@@ -1120,7 +1137,7 @@ function renderD(){
   el('line',{x1:xs(0),x2:xs(0),y1:m.t,y2:H-m.b,stroke:css('--ink'),'stroke-width':1.5},svg);
   const xl=el('text',{x:W-m.r,y:H-4,'text-anchor':'end',class:'axlab'},svg);xl.textContent=st.units==='sd'?'SDs of Trump share per 1-SD change in X':'points of Trump share per 1-unit change in X';
   rows.forEach((r,i)=>{const y=m.t+(i+.5)*rh, sig=r.p<0.05, col=sig?css('--s1'):css('--muted');
-    const nm=el('text',{x:m.l-10,y:y+4,'text-anchor':'end',class:'mlab',fill:sig?css('--ink'):css('--muted')},svg);nm.textContent=nameOf(r.k).replace(/ \(.*\)/,'');
+    const nm=el('text',{x:m.l-10,y:y+4,'text-anchor':'end',class:'mlab',fill:sig?css('--ink'):css('--muted')},svg);{const full=nameOf(r.k).replace(/ \(.*\)/,''),mc=Math.max(8,Math.floor((m.l-14)/6.6)),ws=full.split(' '),L=[];let cur='';ws.forEach(w=>{if(!cur)cur=w;else if((cur+' '+w).length<=mc)cur+=' '+w;else{L.push(cur);cur=w;}});if(cur)L.push(cur);if(L.length>2){L[1]=L.slice(1).join(' ');L.length=2;}L.forEach((ln,q)=>{const ts=el('tspan',{x:m.l-10,dy:q?13:(L.length>1?-6.5:0)},nm);ts.textContent=ln;});}
     el('line',{x1:xs(r.lo),x2:xs(r.hi),y1:y,y2:y,stroke:col,'stroke-width':3,'stroke-linecap':'round'},svg);
     const ci=el('circle',{cx:xs(r.b),cy:y,r:6,fill:sig?css('--s1'):css('--surface'),stroke:col,'stroke-width':2},svg);
     const hit=el('rect',{x:0,y:y-rh/2,width:W,height:rh,fill:'transparent'},svg);

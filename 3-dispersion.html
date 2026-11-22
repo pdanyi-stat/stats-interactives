@@ -506,13 +506,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Module 3: </span><b>Measures of dispersion</b></span><a href="4-sampling-distributions.html" aria-label="Next: Sampling distributions">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Module 3 of 11</p>
+    <p class="kicker">Research methods · Module 3 of 11</p>
     <h1>Measures of dispersion</h1>
     <p class="dek">How spread out are the observations? The variance and the standard deviation (SD) measure the typical distance of the observations from the mean. The examples use the Massachusetts counties and the Titanic passenger list.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -707,6 +724,7 @@ const normPdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
 function hist(host,o){
   host.innerHTML='';
   const W=o.w||D_W(host),Hh=o.h||250,m={l:44,r:14,t:o.top||18,b:42};
+  const yl=o.ylab===undefined?(o.pct?'↑ Percent':(o.cats?'↑ Count':'↑ Frequency')):o.ylab;if(yl)m.t=Math.max(m.t,26);
   const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':o.aria||'Histogram'},host);
   let bins=[];
   if(o.cats){bins=o.cats.map((c,i)=>({x0:i,x1:i+1,c:c.n,label:c.label}));}
@@ -741,6 +759,7 @@ function hist(host,o){
   S('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:'axis'},svg);
   if(!o.cats){(o.ticks||niceTicks(xmin,xmax,6)).forEach(t=>{S('line',{x1:X(t),x2:X(t),y1:Y(0),y2:Y(0)+4,class:'axis'},svg);S('text',{x:X(t),y:Y(0)+17,'text-anchor':'middle'},svg,o.tickFmt?o.tickFmt(t):String(t));});}
   if(o.xlab)S('text',{x:(m.l+W-m.r)/2,y:Hh-6,'text-anchor':'middle',class:'ttl'},svg,o.xlab);
+  if(yl)S('text',{x:4,y:13,class:'ylab'},svg,yl);
   if(o.normal&&!o.cats){let d='';for(let i=0;i<=160;i++){const x=xmin+(xmax-xmin)*i/160;const y=normPdf(x,o.normal.m,o.normal.s)*N*o.binw;d+=(i?'L':'M')+X(x).toFixed(1)+','+Y(Math.min(y,ymax)).toFixed(1);}S('path',{d,class:'ncurve'},svg);}
   (o.lines||[]).forEach((L,k)=>{const x=o.cats?X(L.x+0.5):X(L.x);S('line',{x1:x,x2:x,y1:m.t-4,y2:Y(0),class:L.cls},svg);S('text',{x:x+(L.right===false?-5:5),y:m.t+8+(L.dy||0),'text-anchor':L.right===false?'end':'start',class:L.cls==='meanl'?'meant':L.cls==='medl'?'medt':''},svg,L.label);});
   if(o.shade){S('rect',{x:X(o.shade[0]),y:m.t,width:X(o.shade[1])-X(o.shade[0]),height:Y(0)-m.t,class:'shade'},svg,null);svg.insertBefore(svg.lastChild,g);}
@@ -918,7 +937,7 @@ $('#clIn').addEventListener('input',cl);cl();
 
 /* ---------- Part 3 ---------- */
 const A=DATA.titanic.age,Am=D.mean(A),As=D.sd(A);let k=1;
-function nr(){const lo=Am-k*As,hi=Am+k*As;D.hist($('#nrChart'),{values:A,xmin:0,xmax:80,binw:5,h:240,xlab:'Age in years',normal:{m:Am,s:As},shade:[Math.max(0,lo),Math.min(80,hi)],
+function nr(){const lo=Am-k*As,hi=Am+k*As;D.hist($('#nrChart'),{ylab:'↑ Passengers',values:A,xmin:0,xmax:80,binw:5,h:240,xlab:'Age in years',normal:{m:Am,s:As},shade:[Math.max(0,lo),Math.min(80,hi)],
   lines:[{x:Am,cls:'meanl',label:'Mean '+Am.toFixed(1)}],aria:'Titanic ages with shaded SD band'});
   const inside=A.filter(x=>x>=lo&&x<=hi).length,exp=erf(k/Math.SQRT2);
   $('#nrR').textContent=`${Math.max(0,lo).toFixed(1)} to ${hi.toFixed(1)}`;$('#nrIn').textContent=(inside/A.length*100).toFixed(1)+'%';$('#nrExp').textContent=(exp*100).toFixed(1)+'%';
@@ -944,7 +963,7 @@ const PW=DATA.pw;
 /* bar chart of a coded variable with mean line and a 1-SD bracket, bars in percent */
 function coded(host,o){const codes=o.codes,cnt=o.counts,N=D.sum(codes.map(c=>cnt[c]||0));const vals=[];codes.forEach(c=>{for(let k=0;k<(cnt[c]||0);k++)vals.push(c);});
   const m=D.mean(vals),s=D.sd(vals);
-  const r=D.hist(host,{cats:codes.map(c=>({label:o.labels[c],n:(cnt[c]||0)/N*100})),h:(o.h||250)+14,ymax:o.ymax||100,top:58,aria:o.title});
+  const r=D.hist(host,{ylab:'',pct:true,cats:codes.map(c=>({label:o.labels[c],n:(cnt[c]||0)/N*100})),h:(o.h||250)+14,ymax:o.ymax||100,top:58,aria:o.title});
   const svg=r.svg,X=v=>r.X(v-codes[0]+0.5),yb=38;
   if(o.party)svg.querySelectorAll('.bar').forEach(b=>{b.setAttribute('fill',`var(--${o.party})`);b.style.fill=`var(--${o.party})`;b.setAttribute('stroke',`var(--${o.party}-ink)`);b.setAttribute('stroke-width','1');});
   S('text',{x:r.m.l,y:12,class:'ttl'},svg,o.title);
@@ -952,7 +971,7 @@ function coded(host,o){const codes=o.codes,cnt=o.counts,N=D.sum(codes.map(c=>cnt
   S('line',{x1:X(m),x2:X(m),y1:yb,y2:r.Y(0),class:'meanl'},svg);
   S('text',{x:r.m.l,y:30,class:'meant'},svg,`Mean ${m.toFixed(2)}, SD ${s.toFixed(2)}`);
   // percent labels
-  codes.forEach((c,i)=>{const p=(cnt[c]||0)/N*100;S('text',{x:r.X(i+0.5),y:r.Y(p)-4,'text-anchor':'middle',style:'font:600 11.5px var(--font-mono);fill:var(--ink)'},svg,p.toFixed(0)+'%');});
+  codes.forEach((c,i)=>{const p=(cnt[c]||0)/N*100;S('text',{x:r.X(i+0.5),y:r.Y(p)-4,'text-anchor':'middle',class:'halo',style:'font:600 11.5px var(--font-mono);fill:var(--ink)'},svg,p.toFixed(0)+'%');});
   S('text',{x:r.W-4,y:12,'text-anchor':'end'},svg,'N = '+D.comma(N));
   return {m,s,N,sk:D.skew(vals),ku:D.kurt(vals)};}
 /* ---------- Part 4: q36 vs q37 ---------- */

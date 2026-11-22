@@ -817,13 +817,30 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Published tables</b></span><a href="exam-prep.html" aria-label="Next: Exam prep">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
-    <p class="kicker">Statistical methods · Practice module</p>
+    <p class="kicker">Research methods · Practice module</p>
     <h1>What would it look like published?</h1>
     <p class="dek">Research articles don't print the raw output from SPSS or any other statistical software. They print a table built from it, with stars, notes and a few fit statistics. Each table here remakes a model you have already run in this series, on the same data, so you can practice reading the published format.</p>
     <ul class="modnav" aria-label="Modules in this series">
@@ -992,7 +1009,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   </figure>
 
   <footer class="src">
-    Data: FiveThirtyEight's <i>hate_crimes</i> state data (Trump's 2016 vote share; metro share, 2015; median household income, 2016; white poverty rate, 2015; adults with a high school degree, 2009; Gini index, 2015), via the <i>fivethirtyeight</i> R package and <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>, N = 51 (50 states and D.C.), with Census regions (D.C. counts as South). 2004 American National Election Study (NES) feeling thermometers (0–100) for Laura Bush, Hillary Clinton and the two parties, and respondent gender; 1,178 respondents, with some ratings missing. Titanic passenger list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables female, trav_alone, the_freeriders and the_one_percent computed for PLS2033; 1,309 passengers, with age missing for 263. Table typeface: Computer Modern (CMU Serif), SIL Open Font License.
+    Data: FiveThirtyEight's <i>hate_crimes</i> state data (Trump's 2016 vote share; metro share, 2015; median household income, 2016; white poverty rate, 2015; adults with a high school degree, 2009; Gini index, 2015), via the <i>fivethirtyeight</i> R package and <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>, N = 51 (50 states and D.C.), with Census regions (D.C. counts as South). 2004 American National Election Study (NES) feeling thermometers (0–100) for Laura Bush, Hillary Clinton and the two parties, and respondent gender; 1,178 respondents, with some ratings missing. Titanic passenger list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables female, trav_alone, the_freeriders and the_one_percent computed for the course labs; 1,309 passengers, with age missing for 263. Table typeface: Computer Modern (CMU Serif), SIL Open Font License.
   </footer>
 <nav class="pager" aria-label="Previous and next"><a href="practice-titanic.html"><span class="k">← Previous · Practice</span><span class="t">Who survived the Titanic?</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="exam-prep.html"><span class="k">Next · Exam prep →</span><span class="t">Practice for the final</span></a></nav>
 </main>
