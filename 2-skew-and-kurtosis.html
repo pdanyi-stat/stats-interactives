@@ -464,6 +464,8 @@ h3 + details.stata-wrap{margin-top:4px}
 @media (max-width:640px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .slot{border:2px dashed var(--axis);border-radius:8px;padding:8px;min-height:58px;font-size:14px;color:var(--muted);background:var(--page)}
 .slot b{display:block;color:var(--ink)}
+.byhand{margin:0;padding:9px 13px;border-radius:8px;font-size:15px;line-height:1.5;background:color-mix(in srgb,var(--s1) 8%,var(--surface));border-left:4px solid var(--s1-line);color:var(--ink-2)}
+.byhand b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -592,6 +594,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <section class="dcard" id="ph">
     <h3>Percent of lunatics cared for at home, Massachusetts counties (PHOME)</h3>
     <p class="p">Each county's percentage is on its marker and in the table. <span class="src">“Lunatics” is the dataset's term, from the era.</span></p>
+    <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the boxes below, or by running PHOME in SPSS with LunaticData.sav.</p>
     <div class="two"><div class="tblwrap"><table class="tbl" id="phTbl" style="max-width:300px"></table></div><div id="phChart" style="align-self:center"></div></div>
     <div class="qline">Mean <input id="ph1" inputmode="decimal"> %</div><div class="fbk" id="phF1" aria-live="polite"></div>
     <div class="qline">Median <input id="ph2" inputmode="decimal"> %</div><div class="fbk" id="phF2" aria-live="polite"></div>

@@ -463,6 +463,14 @@ h3 + details.stata-wrap{margin-top:4px}
 .claim{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--page);display:grid;gap:6px}
 .claim q{font-style:italic;color:var(--ink)}
 .claim .who{font:600 13px var(--font-body);color:var(--muted)}
+.byhand{margin:0;padding:9px 13px;border-radius:8px;font-size:15px;line-height:1.5;background:color-mix(in srgb,var(--s1) 8%,var(--surface));border-left:4px solid var(--s1-line);color:var(--ink-2)}
+.byhand b{color:var(--ink)}
+:root{--dev:#A32626;--dev-ink:#8E1F1F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--dev:#E26464;--dev-ink:#F08C8C}}
+:root[data-theme="dark"]{--dev:#E26464;--dev-ink:#F08C8C}
+sup.fn a{text-decoration:none;color:var(--s1-ink);font-weight:700;padding:0 2px}
+.fn-note{display:block;margin-top:8px}
+#gallup-note{scroll-margin-top:80px}
 </style>
 </head>
 <body>
@@ -502,6 +510,7 @@ h3 + details.stata-wrap{margin-top:4px}
   <section class="dcard" id="va">
     <h3>Lunatics per county, Massachusetts, 1854 (NBR)</h3>
     <p class="p"><span style="font-family:var(--font-mono)">s² = Σ(X − x̄)² ÷ (n − 1)</span>. The mean is <b>180.85</b> and n = 13.</p>
+    <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the buttons below, or by running NBR in SPSS with LunaticData.sav.</p>
     <div id="vaStrip"></div>
     <div class="row"><button class="dbtn pri" id="vaNext">Fill the next row for me</button><button class="dbtn" id="vaAll">Fill them all</button><button class="dbtn" id="vaClear">Clear</button></div>
     <div class="tblwrap"><table class="tbl" id="vaTbl" style="max-width:640px"></table></div>
@@ -615,9 +624,9 @@ h3 + details.stata-wrap{margin-top:4px}
     <p class="kick" style="margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)">Round 2</p>
     <h3>Thanksgiving 2024, ten years later</h3>
     <p class="p">A decade on, Sue and Jim are making the same four claims, word for word. A lot has changed in both parties since 2014, so check whether the 2014 answers still hold. You have two sources this time, and they measure different things.</p>
-    <p class="p"><b>Gallup, January 2025.</b> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, with one difference: “stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
+    <p class="p"><b>Gallup, January 2025.</b><sup class="fn"><a href="#gallup-note" aria-label="Note on the Gallup data">†</a></sup> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, with one difference: “stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
     <div class="two"><div><p class="codes-h">Gallup's own codes (q7 and q6)</p><dl class="codes"><dt>1</dt><dd>More conservative (q6: More liberal)</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More moderate</dd><dt class="miss">9</dt><dd class="miss">No opinion</dd></dl></div><div><p class="codes-h">Recoded to match RepPref and DemPref (the charts below)</p><dl class="codes"><dt>1</dt><dd>More moderate</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More conservative (or more liberal)</dd></dl></div></div>
-    <p class="p">To recode in SPSS: 1 → 3, 2 → 2, 3 → 1 and 9 → System-missing. <span class="src">Gallup doesn't release respondent-level data, so this file was imputed to match its published percentages.</span></p>
+    <p class="p">To recode in SPSS: 1 → 3, 2 → 2, 3 → 1 and 9 → System-missing.</p>
     <div class="two"><div id="r24A"></div><div id="r24B"></div></div>
     <div id="r24Out1"></div>
     <p class="p"><b>ANES 2024.</b> The ANES asked everyone to place themselves on a 7-point liberal–conservative scale (V241177). Split by party, it shows what Republicans and Democrats <i>are</i>, which speaks to claims about a “small faction” or “super liberal” voters. It doesn't say which way they want their party to move.</p>
@@ -628,7 +637,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <div id="vd24" style="display:grid;gap:10px"></div>
   </section>
 
-  <footer class="src">Data: Massachusetts lunatics, 1854 (LunaticData.sav); Titanic passenger list (titanic.sav); Pew Research Center 2014 post-election survey (2014ElectionSurvey_F26.sav); Gallup Reconstructed 2024 (Gallup_Reconstructed_2024_F26.sav), respondent-level data imputed to match Gallup's published January 2025 percentages; ANES 2024 (NES_2024_Party_Placement_and_Ideology_F26.sav). Statistics are unweighted, as SPSS computes them by default.</footer>
+  <footer class="src">Data: Massachusetts lunatics, 1854 (LunaticData.sav); Titanic passenger list (titanic.sav); Pew Research Center 2014 post-election survey (2014ElectionSurvey_F26.sav); Gallup Reconstructed 2024 (Gallup_Reconstructed_2024_F26.sav)<sup>†</sup>; ANES 2024 (NES_2024_Party_Placement_and_Ideology_F26.sav). Statistics are unweighted, as SPSS computes them by default.<span id="gallup-note" class="fn-note"><sup>†</sup> Gallup does not release respondent-level data for this poll. This file is imputed individual-level data, built to reproduce the topline percentages Gallup published for its January 2025 poll in <a href="https://news.gallup.com/poll/656636/democrats-favor-party-moderation-past.aspx">“More Democrats Favor Party Moderation Than in Past”</a> (February 13, 2025). Treat it as an illustration of those toplines, not as Gallup's own data.</span></footer>
   <nav class="pager" aria-label="Previous and next"><a href="2-skew-and-kurtosis.html"><span class="k">← Previous · Module 2</span><span class="t">Skew and kurtosis</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="4-sampling-distributions.html"><span class="k">Next · Module 4 →</span><span class="t">Sampling distributions</span></a></nav>
 </main>
 
@@ -827,11 +836,11 @@ const L=DATA.lun.rows.map(r=>({n:r[0],v:r[1]})),vals=L.map(r=>r.v),mu=D.mean(val
 const maxd=Math.max(...vals.map(v=>Math.abs(v-mu)));let K=1;
 function sqK(){const w=$('#vaPile').clientWidth||600;K=Math.min(130,w*0.42)/maxd;}
 const done=new Set();let cur=-1;
-function strip(){const host=$('#vaStrip'),W=D.W(host),Hh=120,l=20,r=20;host.innerHTML='';const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':'Counties and the mean'},host);
-  const X=v=>l+v/500*(W-l-r);S('line',{x1:l,x2:W-r,y1:90,y2:90,class:'axis'},svg);[0,100,200,300,400,500].forEach(t=>S('text',{x:X(t),y:108,'text-anchor':'middle'},svg,String(t)));
-  S('line',{x1:X(mu),x2:X(mu),y1:8,y2:90,class:'meanl'},svg);S('text',{x:X(mu)+5,y:16,class:'meant'},svg,'Mean '+mu.toFixed(1));
-  const used=[];L.forEach((c,i)=>{let lv=0;while(used.some(u=>u.l===lv&&Math.abs(u.x-X(c.v))<15))lv++;used.push({x:X(c.v),l:lv});const y=80-lv*16;
-    if(i===cur){S('line',{x1:X(mu),x2:X(c.v),y1:y,y2:y,stroke:'var(--s2)','stroke-width':3},svg);S('text',{x:(X(mu)+X(c.v))/2,y:y-8,'text-anchor':'middle',style:'font-weight:600'},svg,`${c.n}: ${D.fx(c.v-mu,2)}`);}
+function strip(){const host=$('#vaStrip'),W=D.W(host),Hh=172,l=20,r=20;host.innerHTML='';const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':'Counties and the mean'},host);
+  const X=v=>l+v/500*(W-l-r);S('line',{x1:l,x2:W-r,y1:142,y2:142,class:'axis'},svg);[0,100,200,300,400,500].forEach(t=>S('text',{x:X(t),y:162,'text-anchor':'middle'},svg,String(t)));
+  S('line',{x1:X(mu),x2:X(mu),y1:8,y2:142,class:'meanl'},svg);S('text',{x:X(mu)+5,y:16,class:'meant'},svg,'Mean '+mu.toFixed(1));
+  const used=[];L.forEach((c,i)=>{let lv=0;while(used.some(u=>u.l===lv&&Math.abs(u.x-X(c.v))<15))lv++;used.push({x:X(c.v),l:lv});const y=130-lv*21;
+    if(i===cur){S('line',{x1:X(mu),x2:X(c.v),y1:y,y2:y,style:'stroke:var(--dev)','stroke-width':4,'stroke-linecap':'round'},svg);const mx=Math.min(W-r-70,Math.max(l+70,(X(mu)+X(c.v))/2));S('text',{x:mx,y:44,'text-anchor':'middle',style:'font-weight:700;fill:var(--dev-ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px'},svg,`${c.n}: ${D.fx(c.v-mu,2)}`);}
     const ci=S('circle',{cx:X(c.v),cy:y,r:7,fill:done.has(i)?'var(--s2)':'var(--s1)'},svg);S('title',{},ci,`${c.n}: ${c.v}`);});}
 $('#vaTbl').innerHTML=`<tr><th class="l">County</th><th>X</th><th>X − mean</th><th>(X − mean)²</th></tr>`+L.map((c,i)=>`<tr data-i="${i}"><td class="l">${c.n}</td><td>${c.v}</td><td><input data-k="d" inputmode="decimal" aria-label="${c.n} minus the mean"></td><td><input data-k="q" inputmode="decimal" aria-label="${c.n} squared"></td></tr>`).join('');
 function rowCheck(i,silent){const tr=$(`#vaTbl tr[data-i="${i}"]`),d=tr.querySelector('[data-k="d"]'),q=tr.querySelector('[data-k="q"]'),dv=L[i].v-mu;
