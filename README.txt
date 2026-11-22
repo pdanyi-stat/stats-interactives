@@ -1,31 +1,33 @@
 Statistical Methods Interactives
 ================================
 
-A static website: plain HTML files with all data built in. No server, database or build step.
+This is a static website. It is made of plain HTML files with all data built in, so it needs no server, database or build step.
 Open index.html in any modern browser, or host the folder anywhere that serves static files.
 
 Files
   index.html                              hub page linking everything
-  1-sampling-distributions.html
-  2-confidence-intervals.html
-  3-difference-in-means.html
-  4-pre-measures.html
-  5-bivariate-regression.html
-  5b-partisans-and-the-first-lady.html    worked example for Module 5
-  6-multiple-regression.html
-  7-dummy-variables.html
+  hypotheses-and-variables.html           start here: hypotheses and variables
+  1-levels-and-central-tendency.html
+  2-skew-and-kurtosis.html
+  3-dispersion.html
+  4-sampling-distributions.html
+  5-confidence-intervals.html
+  6-difference-in-means.html
+  7-pre-measures.html
+  8-bivariate-regression.html
+  8b-partisans-and-the-first-lady.html    worked example for Module 8
+  9-multiple-regression.html
+  10-dummy-variables.html
+  practice-direction.html                 practice: which way does it run?
+  practice-titanic.html                   practice: who survived the Titanic?
+  practice-published-tables.html          practice: what would it look like published?
+  exam-prep.html                          practice final
+  data/                                   datasets students can download
+  STYLE.md                                writing rules for every word of copy
 
-Publish free on GitHub Pages
-  1. Create a free account at github.com and click New repository (e.g. "stats-interactives", Public).
-  2. On the new repository page, click "uploading an existing file" and drag in ALL the files above
-     (not the zip itself). Click Commit changes.
-  3. Go to Settings > Pages. Under "Build and deployment", set Source to "Deploy from a branch",
-     Branch to "main" and folder to "/ (root)". Click Save.
-  4. After a minute or two the site is live at https://<your-username>.github.io/stats-interactives/
-
-Updating a page later
-  Upload the new version of the file with the same name to the repository; GitHub Pages republishes it
-  automatically.
+Publishing
+  The site publishes with GitHub Pages from the main branch. A push to main redeploys it in a minute or two
+  at https://pdanyi-stat.github.io/stats-interactives/
 
 Notes
-  Fonts load from Google Fonts; if that is blocked, pages fall back to the system font and still work.
+  Fonts load from Google Fonts. If that is blocked, pages fall back to the system font and still work.
