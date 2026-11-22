@@ -283,6 +283,34 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+
+/* steady mode tile */
+.stat .steady{border:2px solid #5fae4a;box-shadow:0 0 0 3px color-mix(in srgb,#5fae4a 22%,transparent),0 0 16px color-mix(in srgb,#5fae4a 45%,transparent)}
+.stat .steady span em{display:block;font-style:normal;font-weight:700;color:#3f8a2e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stat .steady span em{color:#8fd27a}}
+:root[data-theme="dark"] .stat .steady span em{color:#8fd27a}
+.stat .steady.ping{animation:steadyPing .9s ease-out}
+@keyframes steadyPing{0%{box-shadow:0 0 0 3px color-mix(in srgb,#5fae4a 40%,transparent),0 0 26px #5fae4a}100%{box-shadow:0 0 0 3px color-mix(in srgb,#5fae4a 22%,transparent),0 0 16px color-mix(in srgb,#5fae4a 45%,transparent)}}
+@media (prefers-reduced-motion:reduce){.stat .steady.ping{animation:none}}
+/* ordinal gaps */
+.ogc .ogseg{cursor:pointer;stroke:var(--surface);stroke-width:0}
+.ogc .ogseg.on{stroke:var(--ink);stroke-width:2.5}
+.ogc .oggap{cursor:pointer}
+.ogc .oggap .gl{stroke-width:7;stroke-linecap:round;opacity:.45}
+.ogc .oggap:hover .gl,.ogc .oggap.on .gl{opacity:1}
+.ogc .oggap .gw{font-size:11.5px;fill:var(--ink-2);font-weight:600}
+.ogc [data-g]:focus{outline:none}.ogc [data-g]:focus-visible .gl,.ogc rect[data-g]:focus-visible{stroke:var(--ink)}
+.gapnote{display:none;margin-top:10px;padding:10px 13px;border-radius:8px;font-size:15px;line-height:1.55;background:color-mix(in srgb,var(--gc,var(--s1)) 12%,var(--surface));border-left:4px solid var(--gc,var(--s1))}
+.gapnote.show{display:block}
+.src-line{margin:8px 0 0;font-size:12.5px;color:var(--muted)}.src-line:empty{display:none}
+#ogKey .codes dt{color:var(--ink)!important}
+:root{--o1:#7A3A00;--o2:#A8520E;--o3:#D9752A;--o4:#EE9A55;--o5:#F5BC88;--pd1:#1F5A99;--pd2:#5B9BD5;--pd3:#A9C8EA;--pi:#8A8F98;--pr3:#F0A8A8;--pr2:#E06666;--pr1:#A83232}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--o1:#F7C79A;--o2:#EE9A55;--o3:#D9752A;--o4:#A8520E;--o5:#7A3A00;--pd1:#8DBBEF;--pd2:#5E97D8;--pd3:#35608F;--pi:#8A8F98;--pr3:#8A4545;--pr2:#DB6E6E;--pr1:#F0A0A0}}
+:root[data-theme="dark"]{--o1:#F7C79A;--o2:#EE9A55;--o3:#D9752A;--o4:#A8520E;--o5:#7A3A00;--pd1:#8DBBEF;--pd2:#5E97D8;--pd3:#35608F;--pi:#8A8F98;--pr3:#8A4545;--pr2:#DB6E6E;--pr1:#F0A0A0}
+#ogKey .codes .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+/* colorful bar charts */
+#cf .chart .bar.hl{fill:var(--s1-line);stroke:none}
+#cf .chart .bar.top{fill:var(--s2);stroke:none}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -482,6 +510,7 @@ h3 + details.stata-wrap{margin-top:4px}
     <p class="dek">Which kind of average fits a variable depends on how the variable is measured. The examples come from the Titanic passenger list, 19th-century Massachusetts counties, a dataset of countries, the 1984 presidential election and the ANES.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
       <li aria-current="page"><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
       <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
       <li><a href="3-dispersion.html">3 Dispersion</a></li>
@@ -492,6 +521,7 @@ h3 + details.stata-wrap{margin-top:4px}
       <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
       <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
       <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
+      <li><a href="practice-direction.html">Practice: Which way?</a></li>
       <li><a href="practice-titanic.html">Practice: Titanic</a></li>
       <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
       <li><a href="exam-prep.html">Exam prep</a></li>
@@ -579,19 +609,27 @@ h3 + details.stata-wrap{margin-top:4px}
     <div class="hbars" id="nmBars"></div>
     <p class="p">Tap <b>Rearrange the categories</b> to put the religions in a new order and number them 1 to 8 in that order. Watch what changes and what doesn't.</p>
     <div class="row"><button class="dbtn pri" id="nmGo">Rearrange the categories</button><button class="dbtn" id="nmReset">Original codes</button></div>
-    <div class="stat"><div class="mean"><span>Mean of the codes</span><b id="nmMean"></b></div><div class="med"><span>Median category</span><b id="nmMed" style="font-size:15px"></b></div><div><span>Mode</span><b id="nmMode" style="font-size:15px"></b></div></div>
+    <div class="stat"><div class="mean"><span>Mean of the codes</span><b id="nmMean"></b></div><div class="med"><span>Median category</span><b id="nmMed" style="font-size:15px"></b></div><div class="steady" id="nmModeBox"><span>Mode <em>stays the same</em></span><b id="nmMode" style="font-size:15px"></b></div></div>
     <p class="hist-means" id="nmHist"></p>
     <div class="fbk" id="nmFb" aria-live="polite"></div>
   </section>
 
   <!-- 6 ORDINAL GAPS -->
   <section class="part"><p class="kick">Part 6</p><h2>Ordinal codes hide unequal gaps</h2>
-    <p>age5 sorts Titanic passengers into five age groups coded 1 to 5. The codes are one step apart, but the groups they stand for are not the same size.</p></section>
+    <p>Ordinal codes are always one step apart, but the categories they stand for aren't always the same distance apart. Pick an example, then tap the bottom line to see where a gap is larger or smaller than one step, and why.</p></section>
   <section class="dcard" id="og">
+    <div class="row"><div id="ogSeg"></div></div>
+    <h3 id="ogTtl"></h3>
+    <p class="p" id="ogDesc"></p>
     <div id="ogSvg"></div>
+    <div id="ogKey"></div>
+    <div class="gapnote" id="ogGap" aria-live="polite"></div>
+    <p class="src-line" id="ogSrc"></p>
+    <div id="ogAge">
     <div class="stat"><div><span>Mean of age5 codes</span><b>3.27</b></div><div><span>Median of age5</span><b>3</b></div><div class="mean"><span>Mean of age in years</span><b>29.88</b></div></div>
     <div class="qline">A mean of 3.27 on age5 sits between code 3 (16–30) and code 4 (30–60). Does it tell you the average age? <div id="ogQ"></div></div>
     <div class="fbk" id="ogFb" aria-live="polite"></div>
+    </div>
   </section>
 
   <!-- 7 MODE -->
@@ -631,8 +669,8 @@ h3 + details.stata-wrap{margin-top:4px}
   </section>
   <section class="dcard" id="cf">
     <h3>Confidence in institutions in 71 countries (confidence)</h3>
-    <p class="p">The World dataset scores each country on how much confidence its public has in the country's institutions, on a scale from 0 (none) to 100 (complete). It is an interval variable, and the scores have decimals, for example 47.97 or 52.31. 71 countries have a score.</p>
-    <p class="p">Ask SPSS for a bar chart of this variable and it draws one bar for every distinct value, with the bar's height showing how many countries have exactly that value. Compare that with a histogram, which groups the scores into ranges first.</p>
+    <p class="p">Here is an example from a cross-national dataset. It scores 71 countries on how much confidence their publics have in the country's institutions, on a scale from 0 (none) to 100 (complete). It's an interval variable, and the scores have decimals, for example 47.97 or 52.31.</p>
+    <p class="p">A bar chart gives every distinct value its own bar, and each bar's height is the number of cases with exactly that value. That works when a variable has a handful of categories, like religion or passenger class, because many cases share each value. On a 0–100 scale measured to two decimals, almost every country has a value of its own, so a bar chart just lines up 71 bars of the same height. A histogram groups the scores into ranges first, and then counts how many countries fall in each range.</p>
     <div class="row"><div id="cfSeg"></div></div>
     <div id="cfChart"></div>
     <p class="p" id="cfCap"></p>
@@ -641,7 +679,7 @@ h3 + details.stata-wrap{margin-top:4px}
   </section>
 
   <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 and 2020 American National Election Studies; 1984 state results from the Describing Attributes of Data notes.</footer>
-  <nav class="pager" aria-label="Previous and next"><span></span><a class="home" href="index.html">All modules</a><a class="nx" href="2-skew-and-kurtosis.html"><span class="k">Next · Module 2 →</span><span class="t">Skew and kurtosis</span></a></nav>
+  <nav class="pager" aria-label="Previous and next"><a href="hypotheses-and-variables.html"><span class="k">← Previous · Start here</span><span class="t">Hypotheses and variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="2-skew-and-kurtosis.html"><span class="k">Next · Module 2 →</span><span class="t">Skew and kurtosis</span></a></nav>
 </main>
 
 <script id="data" type="application/json">{"titanic":{"age":[29.0,0.92,2.0,30.0,25.0,48.0,63.0,39.0,53.0,71.0,47.0,18.0,24.0,26.0,80.0,24.0,50.0,32.0,36.0,37.0,47.0,26.0,42.0,29.0,25.0,25.0,19.0,35.0,28.0,45.0,40.0,30.0,58.0,42.0,45.0,22.0,41.0,48.0,44.0,59.0,60.0,41.0,45.0,42.0,53.0,36.0,58.0,33.0,28.0,17.0,11.0,14.0,36.0,36.0,49.0,36.0,76.0,46.0,47.0,27.0,33.0,36.0,30.0,45.0,27.0,26.0,22.0,47.0,39.0,37.0,64.0,55.0,70.0,36.0,64.0,39.0,38.0,51.0,27.0,33.0,31.0,27.0,31.0,17.0,53.0,4.0,54.0,50.0,27.0,48.0,48.0,49.0,39.0,23.0,38.0,54.0,36.0,36.0,30.0,24.0,28.0,23.0,19.0,64.0,60.0,30.0,50.0,43.0,22.0,60.0,48.0,37.0,35.0,47.0,35.0,22.0,45.0,24.0,49.0,71.0,53.0,19.0,38.0,58.0,23.0,45.0,46.0,25.0,25.0,48.0,49.0,45.0,35.0,40.0,27.0,24.0,55.0,52.0,42.0,55.0,16.0,44.0,51.0,42.0,35.0,35.0,38.0,35.0,38.0,50.0,49.0,46.0,50.0,32.5,58.0,41.0,42.0,45.0,39.0,49.0,30.0,35.0,42.0,55.0,16.0,51.0,29.0,21.0,30.0,58.0,15.0,30.0,16.0,19.0,18.0,24.0,46.0,54.0,36.0,28.0,65.0,44.0,33.0,37.0,30.0,55.0,47.0,37.0,31.0,23.0,58.0,19.0,64.0,39.0,22.0,65.0,28.5,45.5,23.0,29.0,22.0,18.0,17.0,30.0,52.0,47.0,56.0,38.0,22.0,43.0,31.0,45.0,33.0,46.0,36.0,33.0,55.0,54.0,33.0,13.0,18.0,21.0,61.0,48.0,24.0,35.0,30.0,34.0,40.0,35.0,50.0,39.0,56.0,28.0,56.0,56.0,24.0,18.0,24.0,23.0,6.0,45.0,40.0,57.0,32.0,62.0,54.0,43.0,52.0,62.0,67.0,63.0,61.0,48.0,18.0,52.0,39.0,48.0,49.0,17.0,39.0,31.0,40.0,61.0,47.0,35.0,64.0,60.0,60.0,54.0,21.0,55.0,31.0,57.0,45.0,50.0,27.0,50.0,21.0,51.0,21.0,31.0,62.0,36.0,30.0,28.0,30.0,18.0,25.0,34.0,36.0,57.0,18.0,23.0,36.0,28.0,51.0,32.0,19.0,28.0,1.0,4.0,12.0,36.0,34.0,19.0,23.0,26.0,42.0,27.0,24.0,15.0,60.0,40.0,20.0,25.0,36.0,25.0,42.0,42.0,0.83,26.0,22.0,35.0,19.0,44.0,54.0,52.0,37.0,29.0,25.0,45.0,29.0,28.0,29.0,28.0,24.0,8.0,31.0,31.0,22.0,30.0,21.0,8.0,18.0,48.0,28.0,32.0,17.0,29.0,24.0,25.0,18.0,18.0,34.0,54.0,8.0,42.0,34.0,27.0,30.0,23.0,21.0,18.0,40.0,29.0,18.0,36.0,38.0,35.0,38.0,34.0,34.0,16.0,26.0,47.0,21.0,21.0,24.0,24.0,34.0,30.0,52.0,30.0,0.67,24.0,44.0,6.0,28.0,62.0,30.0,7.0,43.0,45.0,24.0,24.0,49.0,48.0,55.0,24.0,32.0,21.0,18.0,20.0,23.0,36.0,54.0,50.0,44.0,29.0,21.0,42.0,63.0,60.0,33.0,17.0,42.0,24.0,47.0,24.0,22.0,32.0,23.0,34.0,24.0,22.0,35.0,45.0,57.0,31.0,26.0,30.0,1.0,3.0,25.0,22.0,17.0,34.0,36.0,24.0,61.0,50.0,42.0,57.0,1.0,31.0,24.0,30.0,40.0,32.0,30.0,46.0,13.0,41.0,19.0,39.0,48.0,70.0,27.0,54.0,39.0,16.0,62.0,32.5,14.0,2.0,3.0,36.5,26.0,19.0,28.0,20.0,29.0,39.0,22.0,23.0,29.0,28.0,50.0,19.0,41.0,21.0,19.0,43.0,32.0,34.0,30.0,27.0,2.0,8.0,33.0,36.0,34.0,30.0,28.0,23.0,0.83,3.0,24.0,50.0,19.0,21.0,26.0,25.0,27.0,25.0,18.0,20.0,30.0,59.0,30.0,35.0,40.0,25.0,41.0,25.0,18.5,14.0,50.0,23.0,28.0,27.0,29.0,27.0,40.0,31.0,30.0,23.0,31.0,12.0,40.0,32.5,27.0,29.0,2.0,4.0,29.0,0.92,5.0,36.0,33.0,66.0,31.0,26.0,24.0,42.0,13.0,16.0,35.0,16.0,25.0,20.0,18.0,30.0,26.0,40.0,0.83,18.0,26.0,26.0,20.0,24.0,25.0,35.0,18.0,32.0,19.0,4.0,6.0,2.0,17.0,38.0,9.0,11.0,39.0,27.0,26.0,39.0,20.0,26.0,25.0,18.0,24.0,35.0,5.0,9.0,3.0,13.0,5.0,40.0,23.0,38.0,45.0,21.0,23.0,17.0,30.0,23.0,13.0,20.0,32.0,33.0,0.75,0.75,5.0,24.0,18.0,40.0,26.0,20.0,18.0,45.0,27.0,22.0,19.0,26.0,22.0,20.0,32.0,21.0,18.0,26.0,6.0,9.0,40.0,32.0,21.0,22.0,20.0,29.0,22.0,22.0,35.0,18.5,21.0,19.0,18.0,21.0,30.0,18.0,38.0,17.0,17.0,21.0,21.0,21.0,28.0,24.0,16.0,37.0,28.0,24.0,21.0,32.0,29.0,26.0,18.0,20.0,18.0,24.0,36.0,24.0,31.0,31.0,22.0,30.0,70.5,43.0,35.0,27.0,19.0,30.0,9.0,3.0,36.0,59.0,19.0,17.0,44.0,17.0,22.5,45.0,22.0,19.0,30.0,29.0,0.33,34.0,28.0,27.0,25.0,24.0,22.0,21.0,17.0,36.5,36.0,30.0,16.0,1.0,0.17,26.0,33.0,25.0,22.0,36.0,19.0,17.0,42.0,43.0,32.0,19.0,30.0,24.0,23.0,33.0,65.0,24.0,23.0,22.0,18.0,16.0,45.0,39.0,17.0,15.0,47.0,5.0,40.5,40.5,18.0,26.0,21.0,9.0,18.0,16.0,48.0,25.0,22.0,16.0,9.0,33.0,41.0,31.0,38.0,9.0,1.0,11.0,10.0,16.0,14.0,40.0,43.0,51.0,32.0,20.0,37.0,28.0,19.0,24.0,17.0,28.0,24.0,20.0,23.5,41.0,26.0,21.0,45.0,25.0,11.0,27.0,18.0,26.0,23.0,22.0,28.0,28.0,2.0,22.0,43.0,28.0,27.0,42.0,30.0,27.0,25.0,29.0,21.0,20.0,48.0,17.0,34.0,26.0,22.0,33.0,31.0,29.0,4.0,1.0,49.0,33.0,19.0,27.0,23.0,32.0,27.0,20.0,21.0,32.0,17.0,21.0,30.0,21.0,33.0,22.0,4.0,39.0,18.5,34.5,44.0,22.0,26.0,4.0,29.0,26.0,1.0,18.0,36.0,25.0,37.0,22.0,26.0,29.0,29.0,22.0,22.0,32.0,34.5,36.0,39.0,24.0,25.0,45.0,36.0,30.0,20.0,28.0,30.0,26.0,20.5,27.0,51.0,23.0,32.0,24.0,22.0,29.0,30.5,35.0,33.0,15.0,35.0,24.0,19.0,55.5,21.0,24.0,21.0,28.0,25.0,6.0,27.0,34.0,24.0,18.0,22.0,15.0,1.0,20.0,19.0,33.0,12.0,14.0,29.0,28.0,18.0,26.0,21.0,41.0,39.0,21.0,28.5,22.0,61.0,23.0,22.0,9.0,28.0,42.0,31.0,28.0,32.0,20.0,23.0,20.0,20.0,16.0,31.0,2.0,6.0,3.0,8.0,29.0,1.0,7.0,2.0,16.0,14.0,41.0,21.0,19.0,32.0,0.75,3.0,26.0,21.0,25.0,22.0,25.0,24.0,28.0,19.0,25.0,18.0,32.0,17.0,24.0,38.0,21.0,10.0,4.0,7.0,2.0,8.0,39.0,22.0,35.0,50.0,47.0,2.0,18.0,41.0,50.0,16.0,25.0,38.5,14.5,24.0,21.0,39.0,1.0,24.0,4.0,25.0,20.0,24.5,29.0,22.0,40.0,21.0,18.0,4.0,10.0,9.0,2.0,40.0,45.0,19.0,30.0,32.0,33.0,23.0,21.0,60.5,19.0,22.0,31.0,27.0,2.0,29.0,16.0,44.0,25.0,74.0,14.0,24.0,25.0,34.0,0.42,16.0,32.0,30.5,44.0,25.0,7.0,9.0,29.0,36.0,18.0,63.0,11.5,40.5,10.0,36.0,30.0,33.0,28.0,28.0,47.0,18.0,31.0,16.0,31.0,22.0,20.0,14.0,22.0,22.0,32.5,38.0,51.0,18.0,21.0,47.0,28.5,21.0,27.0,36.0,27.0,15.0,45.5,14.5,26.5,27.0,29.0],"age_st":{"n":1046,"mean":29.8811,"median":28.0,"sd":14.4135,"var":207.749,"skew":0.408,"kurt":0.147,"min":0.1667,"max":80.0,"mode":24.0},"age5":{"1":56,"2":78,"3":475,"4":404,"5":33},"pclass":{"1":323,"2":277,"3":709},"survived":{"0":809,"1":500}},"lun":{"rows":[["Suffolk",458,6],["Essex",377,47],["Middlesex",357,47],["Worcester",351,64],["Bristol",158,60],["Plymouth",139,68],["Berkshire",119,77],["Hampden",105,69],["Hampshire",94,75],["Franklin",84,81],["Barnstable",78,76],["Dukes",19,79],["Nantucket",12,25]],"nbr":{"n":13,"mean":180.8462,"median":119.0,"sd":149.8126,"var":22443.8077,"skew":0.784,"kurt":-0.919,"min":12.0,"max":458.0,"mode":12.0},"phome":{"n":13,"mean":59.5385,"median":68.0,"sd":22.7472,"var":517.4359,"skew":-1.392,"kurt":1.367,"min":6.0,"max":81.0,"mode":47.0}},"world":{"typerel":{"Roman Catholic":63,"Protestant":35,"Orthodox":13,"Jewish":1,"Muslim":50,"Hindu":2,"eastern":15,"other":12},"regime":{"Dictatorship":75,"Parliamentary democ":56,"Presidential democ":37},"conf":[49.34,52.06,7.3,27.13,46.84,49.68,54.17,71.64,15.65,43.32,70.2,32.5,56.47,38.98,58.2,58.37,73.79,44.18,35.17,63.14,0.52,59.23,41.98,39.18,46.88,55.12,38.63,52.73,45.54,63.63,62.21,50.53,57.69,68.5,37.02,37.03,73.63,48.52,39.22,48.13,12.33,26.04,42.19,58.48,38.11,59.36,66.45,51.24,6.49,63.31,65.61,37.36,26.88,41.15,25.27,39.86,66.4,42.27,56.54,56.55,49.2,78.85,57.07,70.75,36.02,61.79,43.42,21.38,99.86,31.65,60.02]},"nes":{"southern_therm":{"label":"Southerners","counts":{"0":4,"10":2,"15":2,"25":1,"30":12,"35":1,"40":45,"45":1,"50":243,"60":111,"70":192,"72":1,"75":6,"80":12,"85":230,"86":1,"90":13,"95":2,"100":159},"n":1038,"mean":70.2726,"median":70.0,"sd":19.8246,"var":393.0162,"skew":-0.178,"kurt":-0.508,"min":0.0,"max":100.0,"mode":50.0}},"dem84":[["Ala",38.7],["Alask",30.9],["Ariz",32.9],["Ark",38.8],["Calif",41.8],["Colo",35.6],["Conn",39.0],["Del",40.0],["Fla",34.7],["Ga",39.8],["HW",44.3],["Idaho",26.7],["Ill",43.5],["Ind",37.9],["Iowa",46.3],["Kan",33.0],["Ky",39.7],["La",38.6],["Maine",38.9],["Md",47.2],["Mass",48.6],["Mich",40.4],["Minn",50.1],["Miss",37.7],["Mo",40.0],["Mont",38.7],["Neb",29.0],["Nev",32.7],["N.H.",31.1],["N.J.",39.5],["N.Mex",39.7],["N.Y.",46.0],["N.C.",38.0],["N.Dak",34.3],["Ohio",40.5],["Okla",31.0],["Oreg",43.9],["PA",46.3],["R.I.",48.2],["S.C.",35.9],["S.Dak",36.7],["Tenn",41.8],["Tex",36.2],["Utah",24.9],["Vt",41.3],["VA",37.3],["Wash",43.2],["W.VA",44.7],["Wis",45.4],["Wyo",28.6]],"ages9":[17,17,23,35,37,48,57,62,78],"welfare":[[-2,"DK/RF in V201312 or V201313",67],[1,"Increased a lot",1289],[2,"Increased a little",1089],[3,"Kept the same",3522],[4,"Decreased a little",1008],[5,"Decreased a lot",1305]]}</script>
@@ -993,21 +1031,64 @@ function nmDraw(flash){const N=D.sum(REL.map(r=>r[1])),mx=Math.max(...REL.map(r=
   $('#nmMean').textContent=mu.toFixed(2);$('#nmMed').textContent=medCat;$('#nmMode').textContent=REL[0][0];
   nmHist.push(mu.toFixed(2));$('#nmHist').textContent='Means so far: '+nmHist.slice(-12).join(', ');
   if(nmHist.length>3)D.fb($('#nmFb'),'info',`Nothing was lost by rearranging: the same ${N} countries, the same eight religions, the same counts, and the same most common religion (${REL[0][0]}, the mode). But the mean of the codes has been ${[...new Set(nmHist)].length} different numbers, and the “middle” category changes with the order. They depend on an order that isn't really there, so for a nominal variable only the mode means anything.`);}
-$('#nmGo').addEventListener('click',()=>{codes=D.shuffle(codes);nmDraw(true);});
-$('#nmReset').addEventListener('click',()=>{codes=REL.map((_,i)=>i+1);nmDraw(true);});
+function nmPing(){const e=$('#nmModeBox');e.classList.remove('ping');void e.offsetWidth;e.classList.add('ping');}
+$('#nmGo').addEventListener('click',()=>{codes=D.shuffle(codes);nmDraw(true);nmPing();});
+$('#nmReset').addEventListener('click',()=>{codes=REL.map((_,i)=>i+1);nmDraw(true);nmPing();});
 nmDraw();
 
 /* ---------- Part 6: ordinal gaps ---------- */
-(function(){const host=$('#ogSvg');const W=D.W(host),Hh=220,l=30,r=30,X1=c=>l+(c-1)/4*(W-l-r),X2=a=>l+a/80*(W-l-r);
-  const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':'age5 codes compared with real ages'},host);
-  const G=[[0,5],[5,16],[16,30],[30,60],[60,80]];const cols=['var(--q1,#8fb3e8)','var(--q2,#5f93db)','var(--q3,#2a78d6)','var(--q4,#1c5cab)','var(--q5,#123f78)'];
-  S('text',{x:l,y:14,class:'ttl'},svg,'age5 codes');S('line',{x1:l,x2:W-r,y1:40,y2:40,class:'axis'},svg);
-  S('text',{x:l,y:212,class:'ttl'},svg,'Real ages in years');S('line',{x1:l,x2:W-r,y1:150,y2:150,class:'axis'},svg);
-  G.forEach((g,i)=>{const c=i+1;S('rect',{x:X2(g[0]),y:138,width:X2(g[1])-X2(g[0])-1,height:24,fill:cols[i],opacity:.85},svg);
-    S('path',{d:`M${X1(c)},48 C${X1(c)},95 ${(X2(g[0])+X2(g[1]))/2},95 ${(X2(g[0])+X2(g[1]))/2},136`,fill:'none',stroke:cols[i],'stroke-width':2},svg);
-    S('circle',{cx:X1(c),cy:40,r:12,fill:cols[i]},svg);S('text',{x:X1(c),y:44.5,'text-anchor':'middle',style:'fill:#fff;font-weight:700'},svg,String(c));
-    S('text',{x:(X2(g[0])+X2(g[1]))/2,y:180,'text-anchor':'middle'},svg,`${g[0]}–${i===4?'120':g[1]}`);});
-})();
+const PARTYC=['var(--pd1)','var(--pd2)','var(--pd3)','var(--pi)','var(--pr3)','var(--pr2)','var(--pr1)'];
+const AGREEC=['var(--o1)','var(--o2)','var(--o3)','var(--o4)','var(--o5)'];
+const OG={
+ age:{ttl:'Titanic age groups (age5)',hue:'var(--s1)',desc:'age5 sorts Titanic passengers into five age groups coded 1 to 5. Here the gaps can be measured, because each group covers a known range of years. Tap a group on the bottom line to see how wide it is.',
+   cols:['var(--q1,#8fb3e8)','var(--q2,#5f93db)','var(--q3,#2a78d6)','var(--q4,#1c5cab)','var(--q5,#123f78)'],
+   ranges:[[0,5],[5,16],[16,30],[30,60],[60,80]],bottom:'Real ages in years',
+   notes:['Code 1, infant or young child, covers ages 0 to 5: about 5 years.','Code 2, youth, covers ages 5 to 16: 11 years.','Code 3, young adult, covers ages 16 to 30: 14 years.','Code 4, adult, covers ages 30 to 60: 30 years, more than twice as wide as code 3. Yet on the codes it is still one step from 3 to 4.','Code 5, elderly, covers everyone 60 and older.']},
+ agree:{ttl:'Agree or disagree',hue:'var(--s2)',desc:'Many surveys ask people whether they agree with a statement, coded 1 = Strongly agree to 5 = Strongly disagree. The codes are evenly spaced, but the answers may not be. There’s no ruler for this, so the bottom line shows where we think the gaps are larger or smaller. Tap a gap to see why.',
+   cols:AGREEC,labels:['Strongly agree','Agree','Neither agree nor disagree','Disagree','Strongly disagree'],pos:[0,1,2.5,4,5],bottom:'Judged distance, not measured',
+   gaps:[['smaller','Smaller than one step. Both answers agree with the statement; only how strongly changes.'],
+         ['larger','Larger than one step. This step leaves the agree side altogether. “Neither” also collects people who have no opinion on the question, so it isn’t a true halfway point.'],
+         ['larger','Larger than one step. Moving from no side to disagreeing changes which side someone is on, not just how strongly.'],
+         ['smaller','Smaller than one step. Both answers disagree; only how strongly changes.']]},
+ party:{ttl:'Party identification (ANES)',hue:'var(--dem,#5B9BD5)',desc:'The ANES 7-point party ID runs from 1 = Strong Democrat to 7 = Strong Republican. Studies of how people vote suggest some of these steps are much bigger than others. Tap a gap to see why.',
+   cols:PARTYC,labels:['Strong Democrat','Not very strong Democrat','Independent-Democrat','Independent','Independent-Republican','Not very strong Republican','Strong Republican'],pos:[0,1.2,1.55,3.1,4.65,5,6.2],bottom:'Judged distance, not measured',
+   gaps:[['about one step','About one step. Both groups call themselves Democrats; one is less attached.'],
+         ['smaller','Much smaller than it looks. Independents who lean Democratic call themselves independents, but they vote much like partisans. Keith and co-authors found Democratic leaners voting for Democrats at least as loyally as “not very strong” Democrats.'],
+         ['larger','Larger than it looks. Pure independents lean toward neither party, so this step goes from people who vote much like Democrats to people with no partisan pull.'],
+         ['larger','Larger than it looks, for the same reason on the Republican side: from no partisan pull to people who vote much like Republicans.'],
+         ['smaller','Much smaller than it looks. Independents who lean Republican vote much like “not very strong” Republicans.'],
+         ['about one step','About one step. Both groups call themselves Republicans; one is less attached.']],
+   src:'Keith, Bruce E., David B. Magleby, Candice J. Nelson, Elizabeth Orr, Mark C. Westlye, and Raymond E. Wolfinger. 1992. <i>The Myth of the Independent Voter</i>. Berkeley: University of California Press.'}};
+const NUM='fill:#fff;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px';
+function ogNote(o,k,txt){const g=$('#ogGap');g.style.setProperty('--gc',o.hue);g.innerHTML=txt;g.classList.add('show');
+  $('#ogSvg').querySelectorAll('[data-g]').forEach(e=>e.classList.toggle('on',+e.dataset.g===k));}
+function ogDraw(key){const o=OG[key],host=$('#ogSvg');host.innerHTML='';const g=$('#ogGap');g.classList.remove('show');g.innerHTML='';
+  $('#ogTtl').textContent=o.ttl;$('#ogDesc').textContent=o.desc;$('#ogAge').style.display=key==='age'?'':'none';$('#ogSrc').innerHTML=o.src?'Source: '+o.src:'';
+  const n=o.cols.length,W=D.W(host),Hh=232,l=26,r=26,X1=c=>l+(c-1)/(n-1)*(W-l-r);
+  const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart ogc',role:'img','aria-label':o.ttl+': codes compared with the gaps they stand for'},host);
+  S('text',{x:l,y:14,class:'ttl'},svg,'Codes, one step apart');S('line',{x1:l,x2:W-r,y1:40,y2:40,class:'axis'},svg);
+  S('text',{x:l,y:Hh-6,class:'ttl'},svg,o.bottom);
+  const tap=(el,k,txt)=>{el.dataset.g=k;el.setAttribute('tabindex','0');el.setAttribute('role','button');el.addEventListener('click',()=>ogNote(o,k,txt));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ogNote(o,k,txt);}});};
+  if(key==='age'){const X2=a=>l+a/80*(W-l-r);
+    o.ranges.forEach((g2,i)=>{const mid=(X2(g2[0])+X2(g2[1]))/2;
+      S('path',{d:`M${X1(i+1)},50 C${X1(i+1)},98 ${mid},98 ${mid},134`,fill:'none',style:`stroke:${o.cols[i]}`,'stroke-width':2},svg);
+      const rc=S('rect',{x:X2(g2[0]),y:138,width:X2(g2[1])-X2(g2[0])-2,height:26,rx:3,class:'ogseg',style:`fill:${o.cols[i]}`},svg);tap(rc,i,o.notes[i]);
+      S('text',{x:mid,y:182,'text-anchor':'middle'},svg,`${g2[0]}–${i===4?'120':g2[1]}`);});
+    $('#ogKey').innerHTML='';}
+  else{const P=o.pos,mx=P[P.length-1],X2=v=>l+v/mx*(W-l-r),Yb=160;
+    const gapLayer=[];for(let k=0;k<n-1;k++)gapLayer.push(k);
+    for(let c=1;c<=n;c++){const xb=X2(P[c-1]);
+      S('path',{d:`M${X1(c)},50 C${X1(c)},104 ${xb},104 ${xb},${Yb-9}`,fill:'none',style:`stroke:${o.cols[c-1]}`,'stroke-width':2},svg);
+      S('text',{x:xb,y:Yb+30,'text-anchor':'middle',style:'font-weight:600'},svg,String(c));}
+    for(const k of gapLayer){const a=X2(P[k]),b=X2(P[k+1]),w=b-a,hw=Math.max(w,30),hx=(a+b)/2-hw/2;
+      const seg=S('g',{class:'oggap'},svg);S('rect',{x:hx,y:Yb-26,width:hw,height:52,fill:'transparent'},seg);
+      S('line',{x1:a+Math.min(8,w/2-1),x2:b-Math.min(8,w/2-1),y1:Yb,y2:Yb,class:'gl',style:`stroke:${o.hue}`},seg);
+      if(w>=58)S('text',{x:(a+b)/2,y:Yb-14,'text-anchor':'middle',class:'gw'},seg,o.gaps[k][0]);
+      tap(seg,k,o.gaps[k][1]);}
+    for(let c=1;c<=n;c++)S('circle',{cx:X2(P[c-1]),cy:Yb,r:7,style:`fill:${o.cols[c-1]};stroke:var(--surface);stroke-width:2;pointer-events:none`},svg);
+    $('#ogKey').innerHTML='<dl class="codes">'+o.labels.map((t,i)=>`<dt style="color:${o.cols[i]==='var(--muted)'?'var(--ink-2)':'var(--ink)'}"><i class="sw" style="background:${o.cols[i]}"></i>${i+1}</dt><dd>${t}</dd>`).join('')+'</dl>';}
+  for(let c=1;c<=n;c++){S('circle',{cx:X1(c),cy:40,r:12,style:`fill:${o.cols[c-1]};stroke:var(--surface);stroke-width:1.5`},svg);S('text',{x:X1(c),y:44.5,'text-anchor':'middle',style:NUM},svg,String(c));}}
+D.seg($('#ogSeg'),[['age','Titanic ages'],['agree','Agree or disagree'],['party','Party ID']],ogDraw,'age');ogDraw('age');
 D.seg($('#ogQ'),[['y','Yes'],['n','No']],v=>{if(v==='n')D.fb($('#ogFb'),'ok','The codes treat the step from youth (5–16) to young adult (16–30) as the same size as the step from young adult to adult (30–60), even though one covers 14 years and the other 30. So a mean of the codes is a rough guide to which group is typical, not an age. For ordinal variables, read the median and the mode: here both are 3, young adults.');
   else D.fb($('#ogFb'),'no','Code 4 alone covers 30 years of age, while code 2 covers 11. The codes are evenly spaced; the ages they stand for are not. So the mean of the codes can\'t be turned back into an age.');});
 
@@ -1038,15 +1119,16 @@ function cfDraw(m){const host=$('#cfChart');
   if(m==='bar'){host.innerHTML='';const vals=CF.slice().sort((a,b)=>a-b),W=D.W(host),Hh=250,l=44,r=10,t=14,b=70;const svg=S('svg',{viewBox:`0 0 ${W} ${Hh}`,class:'chart',role:'img','aria-label':'Bar chart with one bar per value'},host);
     const bw=(W-l-r)/vals.length,Y=v=>Hh-b-v/3*(Hh-t-b);
     [0,1,2,3].forEach(k=>{S('line',{x1:l,x2:W-r,y1:Y(k),y2:Y(k),class:'gridl'},svg);S('text',{x:l-6,y:Y(k)+4,'text-anchor':'end'},svg,String(k));});
-    vals.forEach((v,i)=>{const x=l+i*bw;const rc=S('rect',{x:x+0.5,y:Y(1),width:Math.max(1,bw-1),height:Y(0)-Y(1),class:'bar'},svg);S('title',{},rc,`${v.toFixed(2)}: 1 country`);
+    vals.forEach((v,i)=>{const x=l+i*bw;const rc=S('rect',{x:x+0.5,y:Y(1),width:Math.max(1,bw-1),height:Y(0)-Y(1),class:'bar hl'},svg);S('title',{},rc,`${v.toFixed(2)}: 1 country`);
       if(i%10===0||i===vals.length-1){const tx=x+bw/2;S('line',{x1:tx,x2:tx,y1:Y(0),y2:Y(0)+4,class:'axis'},svg);S('text',{x:tx,y:Y(0)+10,transform:`rotate(-55 ${tx} ${Y(0)+10})`,'text-anchor':'end',style:'font-size:11px'},svg,v.toFixed(2));}});
     S('line',{x1:l,x2:W-r,y1:Y(0),y2:Y(0),class:'axis'},svg);
     S('text',{x:12,y:(t+Y(0))/2,transform:`rotate(-90 12 ${(t+Y(0))/2})`,'text-anchor':'middle',class:'ttl'},svg,'Count');
     S('text',{x:(l+W-r)/2,y:Hh-4,'text-anchor':'middle',class:'ttl'},svg,'Each distinct confidence score (every 10th labeled)');
     $('#cfCap').innerHTML='71 bars, one for each score. Every bar has a count of 1, because no two countries have exactly the same score. The chart is flat, so you can’t see where scores bunch up or where the gaps are.';}
-  else{D.hist(host,{values:CF,xmin:0,xmax:100,binw:10,h:250,xlab:'Confidence score, in ranges of 10',aria:'Histogram of confidence'});
-    const bins=Array(10).fill(0);CF.forEach(v=>bins[Math.min(9,Math.floor(v/10))]++);const top=bins.indexOf(Math.max(...bins));
-    $('#cfCap').innerHTML=`Grouped into ranges of 10, the shape appears: the most common range is ${top*10} to ${top*10+10} (${bins[top]} countries), with fewer countries toward either end. The y-axis is the number of countries in each range.`;}}
+  else{const bins=Array(10).fill(0);CF.forEach(v=>bins[Math.min(9,Math.floor(v/10))]++);const top=bins.indexOf(Math.max(...bins));
+    D.hist(host,{values:CF,xmin:0,xmax:100,binw:10,h:250,xlab:'Confidence score, in ranges of 10',aria:'Histogram of confidence',hlBins:new Set(bins.map((_,i)=>i))});
+    const tb=host.querySelector(`rect.bar[data-i="${top}"]`);if(tb)tb.classList.add('top');
+    $('#cfCap').innerHTML=`Grouped into ranges of 10, the shape appears: the most common range is ${top*10} to ${top*10+10} (${bins[top]} countries, in orange), with fewer countries toward either end. The y-axis is the number of countries in each range.`;}}
 D.seg($('#cfSeg'),[['bar','Bar chart'],['hist','Histogram']],cfDraw,'bar');cfDraw('bar');
 D.seg($('#cfQ'),[['a','Every country has its own value'],['b','There are too few countries'],['c','The variable is nominal']],v=>{v==='a'?D.fb($('#cfFb'),'ok','With a 0–100 scale measured to decimals, no two countries share a value, so every bar has a frequency of 1 and the chart shows nothing. A histogram groups values into bins, which is why it suits interval variables. Bar charts suit nominal and ordinal variables, which have few categories.'):D.fb($('#cfFb'),'no','Switch to the bar chart and look at the heights. How many countries share each value?');});
 })();
