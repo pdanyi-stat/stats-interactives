@@ -666,7 +666,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 6 of 10</p>
     <h1>Difference in means</h1>
-    <p class="dek">Do two groups really differ, or is the gap in our sample just luck of the draw? Draw samples from real surveys, compare the two group means on one axis, and then repeat the sampling until the distribution of the difference shows whether zero is a plausible value.</p>
+    <p class="dek">Do two groups really differ, or is the gap in our sample just the luck of the draw? On this page you will draw samples from real surveys and compare the two group means on one axis. Then you will repeat the sampling until the distribution of the difference shows whether zero is a plausible value.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -744,7 +744,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="two">
     <figure>
       <div class="fighead"><h2><span class="step">C</span>The t test for this sample</h2></div>
-      <p class="sub">If H₀ were true, t would follow this curve. The orange tails show how often chance alone would produce a t at least this far from zero: that area is the p-value.</p>
+      <p class="sub">If H₀ were true, t would follow this curve. The orange tails show how often chance alone would produce a t at least this far from zero, and that area is the p-value.</p>
       <div class="status" id="cStatus"></div>
       <div class="chart" id="cChart"></div>
     </figure>
@@ -757,7 +757,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="amberbox" id="pvalue" aria-labelledby="pvH">
     <span class="tag">Key idea</span>
     <h2 id="pvH">Reading a p-value</h2>
-    <p>Every test asks the same question: <b>if H₀ were true and nothing were really going on, how often would chance alone give us a difference this large or larger?</b> The p-value is that “how often.”</p>
+    <p>Every test asks the same question. <b>If H₀ were true and nothing were really going on, how often would chance alone give us a difference this large or larger?</b> The p-value is that “how often.”</p>
+    <p>Recall the jelly bean bowl in Module 4, where you rated how surprised you would be by a handful. A p-value puts a number on that same surprise. We imagine a world where H₀ is true, and we ask how often a result like ours would turn up there. A large p means our result would be ordinary in that world, so it is not surprising and we fail to reject H₀. A small p means our result would rarely turn up in a world with no difference, which is surprising enough that we reject H₀ and conclude the difference is plausibly real rather than random.</p>
     <div class="plive" id="pLive"></div>
     <div class="dshift" aria-label="Turning a p-value into a frequency">
       <div><span class="from">p = .05</span><span class="how">move the decimal 2 places</span><span class="to">5 times in 100</span></div>
@@ -765,11 +766,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <div><span class="from">.000</span><span class="how">SPSS (Stata: 0.000) means p &lt; .001: move 3 places</span><span class="to">fewer than 1 in 1,000</span></div>
     </div>
     <ul>
-      <li><b>Match the wording to the sign.</b> p = .05 is about 5 times in 100; p &lt; .05 is <i>fewer than</i> 5 times in 100.</li>
-      <li><b>There are only two possible decisions, and both are about H₀.</b> p &lt; α: reject H₀. p ≥ α: fail to reject H₀. We never “accept” anything: failing to reject means the evidence wasn't strong enough, not that the groups are the same.</li>
+      <li><b>Match your wording to the sign.</b> A p of .05 means about 5 times in 100, while p &lt; .05 means <i>fewer than</i> 5 times in 100.</li>
+      <li><b>There are only two possible decisions, and both are about H₀.</b> If p &lt; α we reject H₀, and if p ≥ α we fail to reject H₀. We never “accept” anything, because failing to reject means the evidence was not strong enough, not that the groups are the same.</li>
       <li><b>p is not the chance that H₀ is true.</b> It's the chance of a result like ours <i>if</i> H₀ were true.</li>
-      <li><b>.05 is a convention we choose</b> (α), not a law of nature. Set α to .01 above and the bar gets higher.</li>
-      <li><b>Same logic in regression.</b> There H₀ says the slope is 0, and p is how often a slope at least this steep would turn up by chance.</li>
+      <li><b>The .05 cutoff (α) is a convention we choose,</b> not a law of nature. Set α to .01 above and the bar gets higher.</li>
+      <li><b>The same logic applies in regression,</b> where H₀ says the slope is 0 and p is how often a slope at least this steep would turn up by chance.</li>
     </ul>
   </section>
 
@@ -778,8 +779,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="sub">A test ends in one of two decisions about H₀, and the world is in one of two states. Two of the four combinations are mistakes.</p>
     <div class="tblwrap"><table class="dec">
       <tr><th></th><th>H₀ is true (no real difference)</th><th>H₀ is false (a real difference)</th></tr>
-      <tr><th>Reject H₀</th><td class="bad"><b>Type I error: a false positive</b><span>Like telling a man “You're pregnant!” We claim a difference that isn't there. Its rate is α.</span></td><td class="good"><b>Correct</b><span>A real difference, detected.</span></td></tr>
-      <tr><th>Fail to reject H₀</th><td class="good"><b>Correct</b><span>No difference, and we don't claim one.</span></td><td class="bad"><b>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β.</span></td></tr>
+      <tr><th>Reject H₀</th><td class="bad"><b>Type I error: a false positive</b><span>Like telling a man “You're pregnant!” We claim a difference that isn't there. Its rate is α.</span></td><td class="good"><b>Correct</b><span>We detect a real difference.</span></td></tr>
+      <tr><th>Fail to reject H₀</th><td class="good"><b>Correct</b><span>There is no difference, and we don't claim one.</span></td><td class="bad"><b>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β.</span></td></tr>
     </table></div>
     <div class="ctlrow" style="margin-top:14px">
       <div class="ctl"><span class="lab" id="eal">Significance level <span style="text-transform:none">α</span></span><div class="seg" role="radiogroup" aria-labelledby="eal" id="eA"></div></div>
@@ -800,16 +801,16 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <summary>Why we presume the null, and why .05 is a convention</summary>
       <div class="whyin">
         <h3>Imagine a world with no relationship</h3>
-        <p>We only ever test one hypothesis: the null. We imagine the logic like this:</p>
+        <p>We only ever test one hypothesis, the null. The logic goes like this:</p>
         <blockquote>“In a world where there truly is no relationship between these two variables, how likely am I to observe the patterns in the data that I am seeing?”</blockquote>
         <p>We make one of two decisions: reject the null, or fail to reject it. We absolutely never “accept” the research hypothesis, and we never accept the null either.</p>
         <h3>The witch trials</h3>
-        <p>In Salem, the accused were presumed guilty and had to prove their innocence. When the defense was weak or the evidence thin, the presumption carried the day, and innocent people were convicted. That is what happens to science if we presume our theory is true and try to disprove it: a lack of evidence, or a poor effort, leads us to conclude a relationship exists just because we failed to disprove it, possibly by doing a bad job.</p>
-        <p>Modern courts flip the burden: the defendant is presumed innocent, and the prosecution has to bring enough evidence to overcome that presumption. Science does the same. H₀ is the presumption of innocence (“nothing is going on”), and the data have to be strong enough to reject it.</p>
+        <p>In Salem, the accused were presumed guilty and had to prove their innocence. When the defense was weak or the evidence thin, the presumption carried the day, and innocent people were convicted. That is what happens to science if we presume our theory is true and try to disprove it. A lack of evidence, or a poor effort, leads us to conclude a relationship exists just because we failed to disprove it, possibly by doing a bad job.</p>
+        <p>Modern courts flip that burden, so the defendant is presumed innocent and the prosecution has to bring enough evidence to overcome that presumption. Science does the same. H₀ is the presumption of innocence (“nothing is going on”), and the data have to be strong enough to reject it.</p>
         <h3>Humble science</h3>
-        <p>We prefer science to be humble, and to build knowledge on an assessment of evidence rather than assumptions of knowledge. Starting from the assumption of no relationship helps us avoid the costly error of concluding there are effects or connections out in the world that don't actually exist: a Type I error, convicting an innocent null. That is why α is kept small.</p>
+        <p>We prefer science to be humble, and to build knowledge on an assessment of evidence rather than assumptions of knowledge. Starting from the assumption of no relationship helps us avoid the costly error of concluding there are effects or connections out in the world that don't actually exist, which is a Type I error (convicting an innocent null). That is why α is kept small.</p>
         <h3>Why we use .05</h3>
-        <p>Setting α = .05 means we accept being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on, not a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The slider above shows the price: a stricter α makes Type II errors more likely, unless we collect more data.</p>
+        <p>Setting α = .05 means we accept being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on, not a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The slider above shows the price of that choice, since a stricter α makes Type II errors more likely unless we collect more data.</p>
       </div>
     </details>
   </figure>
@@ -818,8 +819,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <section>
       <h2>Try this</h2>
       <ol>
-        <li>Start with <b>Euroscepticism</b> at n = 10 and press <b>Run</b>. The differences pile up far from zero. Then try n = 5: does zero creep into the band?</li>
-        <li>Switch to <b>Pinochet support: women vs. men</b>, a small real gap. At n = 25 the test rarely rejects. Raise n to 250 and watch the rejection rate climb.</li>
+        <li>Start with <b>Euroscepticism</b> at n = 10 and press <b>Run</b>. The differences pile up far from zero. Then try n = 5 and see whether zero creeps into the band.</li>
+        <li>Switch to <b>Pinochet support: women vs. men</b>, where the real gap is small. At n = 25 the test rarely rejects. Raise n to 250 and watch the rejection rate climb.</li>
         <li>Turn on <b>Make H₀ true</b>. The differences now center on zero, and the test still rejects about 5% of the time. Those are false positives.</li>
         <li>Use <b>Blair ratings</b> at n = 25 and watch the middle tally. The two group CIs often overlap even when the difference is significant.</li>
         <li>Change α from .05 to .01. Intervals widen and rejections become rarer, under H₀ and when there is a real gap.</li>
@@ -829,11 +830,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <h2>Check yourself</h2>
       <details>
         <summary>The two groups' 95% CIs overlap a little. Can the difference still be significant?</summary>
-        <p>Yes. The standard error of a difference is √(SE₁² + SE₂²), which is smaller than SE₁ + SE₂. So two intervals can overlap while the interval for the difference excludes zero. If the intervals do not overlap at all, the difference is significant; if they overlap, test the difference directly.</p>
+        <p>Yes. The standard error of a difference is √(SE₁² + SE₂²), which is smaller than SE₁ + SE₂. So two intervals can overlap while the interval for the difference excludes zero. If the intervals do not overlap at all, the difference is significant, but if they overlap, you need to test the difference directly.</p>
       </details>
       <details>
         <summary>H₀ is true. At α = .05, how often will the test reject?</summary>
-        <p>About 5% of the time. That is what α means: the false-positive (Type I error) rate you choose in advance. Turn on “Make H₀ true” to check.</p>
+        <p>About 5% of the time. That is what α means, since it is the false-positive (Type I error) rate you choose in advance. Turn on “Make H₀ true” to check.</p>
       </details>
       <details>
         <summary>The true gap is the same at n = 25 and n = 250. Why does the test reject far more often at 250?</summary>
@@ -868,7 +869,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="fx">
     <h3>Standard error of the difference (unequal variances)</h3>
     <math display="block"><mi>SE</mi><mo>=</mo><msqrt><mrow><mfrac><msubsup><mi>SD</mi><mn>1</mn><mn>2</mn></msubsup><msub><mi>n</mi><mn>1</mn></msub></mfrac><mo>+</mo><mfrac><msubsup><mi>SD</mi><mn>2</mn><mn>2</mn></msubsup><msub><mi>n</mi><mn>2</mn></msub></mfrac></mrow></msqrt><mo>=</mo><msqrt><mrow><msubsup><mi>SE</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>SE</mi><mn>2</mn><mn>2</mn></msubsup></mrow></msqrt></math>
-    <p>Always smaller than SE₁ + SE₂, which is why overlapping CIs can hide a significant difference.</p>
+    <p>This is always smaller than SE₁ + SE₂, which is why overlapping CIs can hide a significant difference.</p>
   </div>
   <div class="fx">
     <h3>Pooled version (equal variances)</h3>
@@ -883,12 +884,12 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="fx">
     <h3>Welch–Satterthwaite degrees of freedom</h3>
     <math display="block"><mi>df</mi><mo>=</mo><mfrac><msup><mrow><mo>(</mo><msubsup><mi>SD</mi><mn>1</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>1</mn></msub><mo>+</mo><msubsup><mi>SD</mi><mn>2</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>2</mn></msub><mo>)</mo></mrow><mn>2</mn></msup><mrow><mfrac><msup><mrow><mo>(</mo><msubsup><mi>SD</mi><mn>1</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>1</mn></msub><mo>)</mo></mrow><mn>2</mn></msup><mrow><msub><mi>n</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn></mrow></mfrac><mo>+</mo><mfrac><msup><mrow><mo>(</mo><msubsup><mi>SD</mi><mn>2</mn><mn>2</mn></msubsup><mo>/</mo><msub><mi>n</mi><mn>2</mn></msub><mo>)</mo></mrow><mn>2</mn></msup><mrow><msub><mi>n</mi><mn>2</mn></msub><mo>−</mo><mn>1</mn></mrow></mfrac></mrow></mfrac></math>
-    <p>Used when variances are not assumed equal. Usually not a whole number.</p>
+    <p>We use this when variances are not assumed equal, and it is usually not a whole number.</p>
   </div>
   <div class="fx">
     <h3>Effect size (Cohen's d)</h3>
     <math display="block"><mi>d</mi><mo>=</mo><mfrac><mrow><msub><mi>μ</mi><mn>1</mn></msub><mo>−</mo><msub><mi>μ</mi><mn>2</mn></msub></mrow><mi>σ</mi></mfrac></math>
-    <p>The gap in standard-deviation units. Roughly 0.2 is small, 0.5 medium, 0.8 large. A tiny d can still be “significant” with a big enough n.</p>
+    <p>Cohen's d is the gap between the groups in SD units. Roughly, 0.2 is small, 0.5 is medium and 0.8 is large, and a tiny d can still be “significant” with a big enough n.</p>
   </div>
 </aside>
 
@@ -1029,9 +1030,9 @@ function statusA(R){
   if(!R){$('#aStatus').innerHTML='';$('#aNote').innerHTML='';return;}
   $('#aStatus').innerHTML=`<span class="chip ${R.overlap?'':'strong'}">${L}% CIs ${R.overlap?'overlap':'do not overlap'}</span><span class="chip">difference ${f3(R.d)}, p = ${pfmt(R.p)}</span><span class="chip ${R.reject?'strong':''}">${R.reject?'Reject H₀':'Fail to reject H₀'} at α = ${String(st.alpha).replace(/^0/,'')}</span>`;
   let note='';
-  if(R.overlap && R.reject) note='<b>Overlap, yet significant.</b> The intervals overlap but the test rejects. Overlap is a conservative rule of thumb; the test of the difference (panels B and C) is the real check.';
+  if(R.overlap && R.reject) note='<b>Overlap, yet significant.</b> The intervals overlap, but the test still rejects H₀. Overlap is a conservative rule of thumb, and the test of the difference in panels B and C is the real check.';
   else if(!R.overlap) note='<b>No overlap.</b> When the two intervals do not overlap, the difference is always significant at this level.';
-  else note='<b>Overlap, not significant.</b> The data are consistent with no difference between the groups. That is not proof the groups are equal.';
+  else note='<b>Overlap, not significant.</b> The data are consistent with no difference between the groups, though that is not proof the groups are equal.';
   $('#aNote').innerHTML=note;
 }
 
@@ -1208,7 +1209,7 @@ function tally(){
   const M=st.S.length; let rej=0, ovsig=0, sig=0;
   for(const S of st.S){ const R=test(S); if(R.reject){ rej++; if(R.overlap) ovsig++; } }
   const a=String(st.alpha).replace(/^0/,'');
-  const label= st.h0 ? 'False positives: H₀ is true here, so this should be about '+Math.round(st.alpha*100)+'%' : 'This is the test’s power for a true gap of '+f3(comp().A.m-comp().B.m);
+  const label= st.h0 ? 'These are false positives. H₀ is true here, so this share should be about '+Math.round(st.alpha*100)+'%' : 'This is the test’s power for a true gap of '+f3(comp().A.m-comp().B.m);
   $('#tally').innerHTML=`
     <div><div class="k">Samples drawn</div><div class="v">${M.toLocaleString('en-US')}</div><div class="s">n = ${st.n} per group</div></div>
     <div><div class="k">Rejected H₀ at <span style="text-transform:none">α</span> = ${a}</div><div class="v">${M?(100*rej/M).toFixed(1)+'%':'–'}</div><div class="s">${label}</div></div>
@@ -1269,7 +1270,7 @@ $('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run
     const ax=mk('text',{x:W-m.r,y:H-4,'text-anchor':'end',class:'axlab'},svg);ax.textContent='difference in means, in SDs →';
     const pc=v=>v<0.001?'< 0.1%':(v*100).toFixed(v<0.1?1:0)+'%';
     document.getElementById('eI').textContent=pc(E.a); document.getElementById('eII').textContent=pc(beta); document.getElementById('eP').textContent=pc(power);
-    document.getElementById('eSay').innerHTML=`At α = ${String(E.a).replace(/^0/,'')} with ${E.n} per group, a true difference of ${d} SD goes undetected <b>${pc(beta)}</b> of the time. Make α stricter and the orange tails shrink, but the blue area grows: fewer false positives, more missed differences. Only more data (a bigger n) narrows both curves and shrinks both errors at once.`;
+    document.getElementById('eSay').innerHTML=`At α = ${String(E.a).replace(/^0/,'')} with ${E.n} per group, a true difference of ${d} SD goes undetected <b>${pc(beta)}</b> of the time. Make α stricter and the orange tails shrink, but the blue area grows, which means fewer false positives and more missed differences. Only more data (a bigger n) narrows both curves and shrinks both errors at once.`;
   }
   seg2('eA',[[0.10,'.10'],[0.05,'.05'],[0.01,'.01'],[0.001,'.001']],E.a,v=>{E.a=+v;draw();});
   seg2('eN',[[25,'25'],[50,'50'],[100,'100'],[250,'250']],E.n,v=>{E.n=+v;draw();});
