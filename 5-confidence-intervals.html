@@ -719,7 +719,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 </style>
 <section class="cb" id="cb" aria-labelledby="cbH">
   <h2 class="cbh" id="cbH">Start with the jelly bean bowl</h2>
-  <p class="cbt">This is the bowl from <a href="4-sampling-distributions.html#jb">Module 4</a>: 150 beans coded 1 to 6. Its true mean is 3.43, but pretend you can't see it. All you get is one handful. From that handful you build a 95% interval: the handful's mean ± 1.96 × SE, where SE = the handful's SD ÷ √n. Does the interval catch the bowl's mean?</p>
+  <p class="cbt">This is the bowl from <a href="4-sampling-distributions.html#jb">Module 4</a>, with 150 beans coded 1 to 6. Its true mean is 3.43, but pretend you can't see it. All you get is one handful. From that handful you build a 95% interval, which is the handful's mean ± 1.96 × SE, where SE is the handful's SD ÷ √n. Does the interval catch the bowl's mean?</p>
   <figure>
     <div class="fighead"><h2><span class="step">1</span>One handful, one interval</h2></div>
     <div class="cbkey" id="cbKey"></div>
@@ -737,7 +737,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="cbcap" id="cbCap" aria-live="polite"></p>
     <div class="cbnote" id="cbNote" hidden></div>
   </figure>
-  <p class="cbt">Small handfuls give wide intervals: with only a few beans, the mean could land almost anywhere, so the interval has to be wide to have a chance. Large handfuls give narrow intervals. That's the same contrast as the piles in Module 4, now turned into estimates. The next section does it with 3,112 U.S. counties.</p>
+  <p class="cbt">Small handfuls give wide intervals, because with only a few beans the mean could land almost anywhere, so the interval has to be wide to have a chance. Large handfuls give narrow intervals. That's the same contrast as the piles in Module 4, now turned into estimates. The next section does it with 3,112 U.S. counties.</p>
 </section>
 <h2 class="cbh" style="margin:0 0 12px">The same idea with 3,112 counties</h2>
 <script>
@@ -772,8 +772,8 @@ function draw(){const host=$('cbPlot'),W=Math.max(300,Math.min(1040,host.clientW
   const pc=k=>{const L=iv[k];if(!L.length)return null;const ok=L.filter(q=>q.lo<=MU&&MU<=q.hi).length;return [ok,L.length];};
   const a=pc('s'),b=pc('l');
   if(!shown||!a){$('cbCap').textContent=a?'Reveal the bowl’s mean to see which intervals caught it.':'Grab handfuls to build intervals.';$('cbNote').hidden=true;return;}
-  const P=x=>Math.round(100*x[0]/x[1]);$('cbCap').innerHTML=`Intervals that caught the bowl's mean: small handfuls <b>${a[0]} of ${a[1]} (${P(a)}%)</b>, large handfuls <b>${b[0]} of ${b[1]} (${P(b)}%)</b>. Blue caught it; red missed. The vertical line is the bowl's mean, ${MU.toFixed(2)}.`;
-  const note=$('cbNote');if(a[1]>=50){note.hidden=false;note.innerHTML=`<b>Why do the small handfuls fall short of 95%?</b> Each interval uses the handful's own SD, and an SD from only ${nS} beans is a shaky estimate. When a small handful happens to have little spread, its interval comes out too narrow and misses. With z = 1.96, intervals from small handfuls catch the true mean less than 95% of the time; large handfuls come close to 95%. This is the reason for t. See <a href="#whyt">Why t and not z?</a> below.`;}else note.hidden=true;}
+  const P=x=>Math.round(100*x[0]/x[1]);$('cbCap').innerHTML=`Intervals that caught the bowl's mean: small handfuls <b>${a[0]} of ${a[1]} (${P(a)}%)</b>, large handfuls <b>${b[0]} of ${b[1]} (${P(b)}%)</b>. Blue lines caught it and red lines missed it. The vertical line is the bowl's mean, ${MU.toFixed(2)}.`;
+  const note=$('cbNote');if(a[1]>=50){note.hidden=false;note.innerHTML=`<b>Why do the small handfuls fall short of 95%?</b> Each interval uses the handful's own SD, and an SD from only ${nS} beans is a shaky estimate. When a small handful happens to have little spread, its interval comes out too narrow and misses. With z = 1.96, intervals from small handfuls catch the true mean less than 95% of the time, while large handfuls come close to 95%. This is the reason for t. See <a href="#whyt">Why t and not z?</a> below.`;}else note.hidden=true;}
 seg($('cbSS'),[3,5],nS,n=>{nS=n;iv.s=[];draw();});seg($('cbLS'),[10,20,30],nL,n=>{nL=n;iv.l=[];draw();});
 $('cbG1').onclick=()=>{const a=grab(nS),b=grab(nL);iv.s.push(a);iv.l.push(b);tray('cbTs','Small',a);tray('cbTl','Large',b);draw();};
 $('cbG100').onclick=()=>{for(let k=0;k<100;k++){iv.s.push(grab(nS));iv.l.push(grab(nL));}tray('cbTs','Small',iv.s[iv.s.length-1]);tray('cbTl','Large',iv.l[iv.l.length-1]);draw();};
@@ -784,6 +784,14 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 </script>
 
 <!-- jelly bean intervals: end -->
+
+
+
+
+
+
+
+
 
 
 
@@ -892,9 +900,9 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
         <div class="chart" id="runChart"></div>
         <div class="votesnote" id="votesNote" hidden>
           <b>Why total votes falls short of 95%</b>
-          <p>Total votes is extremely skewed. The median county cast 12,549 votes, but the mean is 50,785, and only about 19% of counties are above the mean. A few very large counties pull the mean up; the largest cast over 4.2 million votes.</p>
+          <p>Total votes is extremely skewed. The median county cast 12,549 votes, but the mean is 50,785, and only about 19% of counties are above the mean. A few very large counties pull the mean up, and the largest cast over 4.2 million votes.</p>
           <p>Most samples contain only typical, smaller counties. Their mean lands below μ, and their SD is small too, so the interval is narrow and sits entirely below μ. That's why nearly every miss here is a red line to the left of μ. The few samples that do catch a big county get a huge SD and a very wide interval.</p>
-          <p>So the trouble is the skew, not the size of the SD. The interval assumes the sample means pile up in a roughly normal shape, and with this much skew they don't until n is very large. Drawing more intervals doesn't fix it, because coverage belongs to the method at a given n. Larger samples help, slowly: in 30,000 simulated 95% t intervals at each size, coverage was about 60% at n = 5, 67% at n = 10, 77% at n = 25, 83% at n = 50 and 87% at n = 100.</p>
+          <p>So the trouble is the skew, not the size of the SD. The interval assumes the sample means pile up in a roughly normal shape, and with this much skew they don't until n is very large. Drawing more intervals doesn't fix it, because coverage belongs to the method at a given n. Larger samples help, but slowly. In 30,000 simulated 95% t intervals at each size, coverage was about 60% at n = 5, 67% at n = 10, 77% at n = 25, 83% at n = 50 and 87% at n = 100.</p>
         </div>
       </figure>
 
@@ -934,7 +942,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
     </section>
     <section class="hcard" aria-labelledby="spH">
       <h3 id="spH">How spread affects the width of the interval</h3>
-      <p class="say" style="margin:0 0 8px;font-size:14px;color:var(--ink-2)">The variable (Biden's 2020 share), n and confidence level stay fixed; only the spread of the places changes. More diverse populations have a bigger SD, so every sample is less certain.</p>
+      <p class="say" style="margin:0 0 8px;font-size:14px;color:var(--ink-2)">The variable (Biden's 2020 share), n and the confidence level stay fixed, and only the spread of the places changes. More diverse populations have a bigger SD, so every sample is less certain.</p>
       <div class="sprow">
         <div class="ctl"><span class="lab" id="spgl">How alike are the places?</span><div class="seg" role="radiogroup" aria-labelledby="spgl" id="spg"></div></div>
       </div>
@@ -947,7 +955,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
       <p class="say" id="spSay" style="font-size:14px;color:var(--ink-2);margin:6px 0 0"></p>
     </section>
   </div>
-  <p style="margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;padding:10px 14px"><b style="color:var(--ink)">Confidence and errors:</b> a 95% interval goes with a test at α = .05. Choosing the confidence level is choosing how often you'll risk a Type I error, a false positive, when nothing is really going on. 95% is a convention, not a law. <a href="6-difference-in-means.html#errors" style="color:var(--s1-ink);font-weight:600">Type I and II errors →</a></p>
+  <p style="margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;padding:10px 14px"><b style="color:var(--ink)">Confidence and errors.</b> A 95% interval goes with a test at α = .05. Choosing the confidence level is choosing how often you'll risk a Type I error, a false positive, when nothing is really going on. 95% is a convention, not a law. <a href="6-difference-in-means.html#errors" style="color:var(--s1-ink);font-weight:600">Type I and II errors →</a></p>
 
   <section class="part" aria-labelledby="p2h">
     <p class="kick">Real data</p>
@@ -988,8 +996,8 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
     <section>
       <h2>Try this</h2>
       <ol>
-        <li>Click <b>+100</b> a few times at 95%. Then switch to <b>80%</b>. The samples stay the same; watch the intervals shrink and the coverage fall to about 80%.</li>
-        <li>Set n = <b>5</b> and switch between <b>t</b> and <b>z</b>. With Biden vote share, z intervals capture μ only about 85% of the time; t intervals come close to 95%.</li>
+        <li>Click <b>+100</b> a few times at 95%. Then switch to <b>80%</b>. The samples stay the same, so watch the intervals shrink and the coverage fall to about 80%.</li>
+        <li>Set n = <b>5</b> and switch between <b>t</b> and <b>z</b>. With Biden vote share, z intervals capture μ only about 85% of the time, while t intervals come close to 95%.</li>
         <li>Choose <b>Biden carried the county</b> with n = 5. Many samples contain no Biden counties, so the interval has zero width and misses. Compare n = 100.</li>
         <li>Choose <b>Total votes cast</b> with n = 10. Even t intervals miss about a third of the time. Extreme skew breaks the normal approximation the interval relies on.</li>
         <li>In <b>Build one by hand</b>, switch from one state to the whole country. With n and the confidence level unchanged, why is the interval wider?</li>
@@ -1000,19 +1008,19 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
       <h2>Check yourself</h2>
       <details>
         <summary>You move from 95% to 99% confidence with the same data. Does the interval get wider or narrower?</summary>
-        <p>Wider. To capture μ more often, the method has to cast a wider net: the critical value rises from about 1.96 to about 2.58. Higher confidence costs precision; only a bigger n buys both.</p>
+        <p>It gets wider. To capture μ more often, the method has to cast a wider net, so the critical value rises from about 1.96 to about 2.58. Higher confidence costs precision, and only a bigger n buys both.</p>
       </details>
       <details>
         <summary>Your interval for Biden share is 25.4 to 38.5. Is there a 95% probability that μ is in that range?</summary>
-        <p>No. μ is a fixed number (33.27), so this particular interval either contains it or doesn't. The 95% is a property of the procedure: across many samples, 95% of intervals built this way capture μ.</p>
+        <p>No. μ is a fixed number (33.27), so this particular interval either contains it or doesn't. The 95% is a property of the procedure, meaning that across many samples, 95% of intervals built this way capture μ.</p>
       </details>
       <details class="ring" id="whyt" style="scroll-margin-top:70px">
         <summary>Why t and not z? (We use z in class; here's when t matters.)</summary>
-        <p>SE = SD / √n uses the <b>sample's</b> SD, which is itself an estimate, so there's a little extra uncertainty. The t distribution has fatter tails to cover it: its critical value is a bit bigger and the interval a bit wider. That matters most in small samples (n = 10: t = 2.26 vs. z = 1.96). Past about 30 the two are close (t = 2.05 at n = 30), and in the hundreds they're nearly identical (t = 1.98 at n = 100), which is why z works well for survey-sized data. Many researchers use t by default for that reason. Try the t/z switch at n = 5.</p>
+        <p>SE = SD / √n uses the <b>sample's</b> SD, which is itself an estimate, so there's a little extra uncertainty. The t distribution has fatter tails to cover it, so its critical value is a bit bigger and the interval a bit wider. That matters most in small samples (n = 10: t = 2.26 vs. z = 1.96). Past about 30 the two are close (t = 2.05 at n = 30), and in the hundreds they're nearly identical (t = 1.98 at n = 100), which is why z works well for survey-sized data. Many researchers use t by default for that reason. Try the t/z switch at n = 5.</p>
       </details>
       <details>
         <summary>A poll of 800 voters reports Clinton 47, Trump 44, margin of error ±3.5. Is the 3-point lead outside the margin of error?</summary>
-        <p>No. The ±3.5 applies to each candidate's share. The lead is a difference of two shares from the same sample, and its margin of error is roughly double: about ±6.6 points here. Reporters often get this wrong.</p>
+        <p>No. The ±3.5 applies to each candidate's share. The lead is a difference of two shares from the same sample, and its margin of error is roughly double, about ±6.6 points here. Reporters often get this wrong.</p>
       </details>
     </section>
   </div>
@@ -1032,22 +1040,22 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
   <div class="fx">
     <h3>Confidence interval for a mean (t)</h3>
     <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>±</mo><msubsup><mi>t</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><mo>*</mo></msubsup><mo>·</mo><mfrac><mi>SD</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
-    <p>SD is the sample's standard deviation. t* comes from the t distribution with n − 1 degrees of freedom; for 95% and n = 25, t*(24) = 2.064.</p>
+    <p>SD is the sample's standard deviation. t* comes from the t distribution with n − 1 degrees of freedom, so for 95% and n = 25, t*(24) = 2.064.</p>
   </div>
   <div class="fx">
     <h3>Large-sample (z) interval</h3>
     <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>±</mo><msup><mi>z</mi><mo>*</mo></msup><mo>·</mo><mfrac><mi>SD</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
-    <p>z* = 1.282, 1.645, 1.960, 2.576 for 80, 90, 95, 99%. Fine when n is large; too narrow when n is small.</p>
+    <p>The z* values are 1.282, 1.645, 1.960 and 2.576 for 80, 90, 95 and 99%. They work well when n is large but give intervals that are too narrow when n is small.</p>
   </div>
   <div class="fx">
     <h3>Interval for a proportion (Wald)</h3>
     <math display="block"><mover><mi>p</mi><mo>^</mo></mover><mo>±</mo><msup><mi>z</mi><mo>*</mo></msup><msqrt><mfrac><mrow><mover><mi>p</mi><mo>^</mo></mover><mo>(</mo><mn>1</mn><mo>−</mo><mover><mi>p</mi><mo>^</mo></mover><mo>)</mo></mrow><mi>n</mi></mfrac></msqrt></math>
-    <p>Breaks down when n·p̂ is small: if p̂ = 0 the interval has zero width. Rule of thumb: at least 10 successes and 10 failures.</p>
+    <p>This interval breaks down when n·p̂ is small, since if p̂ = 0 the interval has zero width. A rule of thumb is to have at least 10 successes and 10 failures.</p>
   </div>
   <div class="fx">
     <h3>Margin of error</h3>
     <math display="block"><mi>MOE</mi><mo>=</mo><msup><mi>z</mi><mo>*</mo></msup><mo>·</mo><mi>SE</mi></math><math display="block"><mo>≈</mo><mspace width=".3em"/><mfrac><mn>1</mn><msqrt><mi>n</mi></msqrt></mfrac><mspace width=".4em"/><mtext>(95%, shares near 50%)</mtext></math>
-    <p>Half the width of the interval. A poll of 1,000 has a margin of error of about ±3.1 points on each share.</p>
+    <p>The margin of error is half the width of the interval. A poll of 1,000 has a margin of error of about ±3.1 points on each share.</p>
   </div>
   <div class="fx">
     <h3>Interval for a lead within one poll</h3>
@@ -1056,7 +1064,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
   </div>
   <div class="fx">
     <h3>What the confidence level means</h3>
-    <p>Before the sample is drawn, the probability that the interval will capture μ is the confidence level. After it is drawn, the interval either contains μ or it doesn't; we just don't know which.</p>
+    <p>Before the sample is drawn, the probability that the interval will capture μ is the confidence level. After it is drawn, the interval either contains μ or it doesn't, and we just don't know which.</p>
   </div>
 </aside>
 
@@ -1230,7 +1238,7 @@ function render(){
     const hit=last.lo<=p.mu&&last.hi>=p.mu;
     it.innerHTML=`<div class="now">This sample: ${p.binary?'p̂':'x̄'} = <b>${p.f(last.est)}${p.u}</b>, ${st.lev}% CI <b>${p.f(last.lo)} to ${p.f(last.hi)}</b>. The true value, ${p.f(p.mu)}${p.u}, is ${hit?'<span class="mark-ok">inside ✓</span>':'<span class="mark-miss">outside ✗</span>'}.</div>
       <div class="card ok"><b>Right:</b> “If we repeated this sampling many times, ${st.lev}% of intervals built this way would capture the true mean.” Panel B checks that claim.</div>
-      <div class="card bad"><b>Wrong:</b> “There is a ${st.lev}% chance the true mean is between ${p.f(last.lo)} and ${p.f(last.hi)}.” The true mean is fixed; this interval ${hit?'does':'does not'} contain it, with certainty.</div>`;
+      <div class="card bad"><b>Wrong:</b> “There is a ${st.lev}% chance the true mean is between ${p.f(last.lo)} and ${p.f(last.hi)}.” The true mean is fixed, so this interval either does or does not contain it. This one ${hit?'does':'does not'}.</div>`;
   } else it.innerHTML='<div class="now">Draw a sample to see its interval.</div>';
   renderHand(p,last);
 }
@@ -1337,11 +1345,11 @@ function zPanels(id,lev){
   rows.forEach(r=>{tb+=`<tr><th class="${Math.abs(r-hitR)<1e-9?'hr':''}">${r.toFixed(1)}</th>`+cols.map(c=>{const v=Phi(r+c).toFixed(4).replace(/^0/,'');const hit=Math.abs(r-hitR)<1e-9&&Math.abs(c-hitC)<1e-9;const near=lev===99&&Math.abs(r-hitR)<1e-9&&Math.abs(c-.07)<1e-9;return `<td class="${hit?'hit':near?'hr':''}">${v}</td>`;}).join('')+'</tr>';});
   tb+='</table>';
   const cap=[
-    `<b>Pick a confidence level.</b> ${lev}% means we want the method to be right ${lev}% of the time: the middle of the curve.`,
-    `<b>That leaves ${100-lev}% to be wrong</b>, split in two. An interval can miss low or miss high, ${tS} each.`,
-    `<b>Our z table is one-tailed:</b> it gives all the area to the left of z. Left of the upper cutoff: ${lev/100} + ${tS} = <b>${cum}</b>.`,
-    lev===95?`<b>Find .9750 inside the table.</b> Read across to its row (1.9) and up to its column (.06): z = 1.9 + .06 = <b>1.96</b>.`
-            :`<b>Find .995.</b> It falls between .9949 (2.57) and .9951 (2.58); the usual choice is <b>2.58</b>. Higher confidence, bigger z, wider interval.`
+    `<b>Pick a confidence level.</b> ${lev}% means we want the method to be right ${lev}% of the time, which is the middle of the curve.`,
+    `<b>That leaves ${100-lev}% to be wrong</b>, and we split it in two because an interval can miss low or miss high, so each side gets ${tS}.`,
+    `<b>Our z table is one-tailed</b>, which means it gives all the area to the left of z. The area to the left of the upper cutoff is ${lev/100} + ${tS} = <b>${cum}</b>.`,
+    lev===95?`<b>Find .9750 inside the table.</b> Read across to its row (1.9) and up to its column (.06), so z = 1.9 + .06 = <b>1.96</b>.`
+            :`<b>Find .995.</b> It falls between .9949 (2.57) and .9951 (2.58), and the usual choice is <b>2.58</b>. Higher confidence means a bigger z and a wider interval.`
   ];
   box.innerHTML='';
   [1,2,3].forEach((md,k)=>{const d=document.createElement('div');d.innerHTML=`<span class="zn">${k+1}</span>`;d.appendChild(pic(md));d.insertAdjacentHTML('beforeend',`<p>${cap[k]}</p>`);box.appendChild(d);});
@@ -1370,7 +1378,7 @@ function renderSpread(){
   const G=SPG[sp.g], sd=+G.sd.toFixed(2), rn=+Math.sqrt(sp.n).toFixed(3), se=+(sd/rn).toFixed(3), me=+(z*se).toFixed(2);
   document.getElementById('spCalc').innerHTML=`SE = SD / √n = ${sd} / ${rn} = ${se}<br>margin = z × SE = ${z} × ${se} = <b>${me}</b> points → interval width ${(2*me).toFixed(2)}`;
   const st0=SPG.state,na=SPG.nation;
-  document.getElementById('spSay').innerHTML=`Dots are counties; the black bracket is ±1 SD; the orange bar is a ${sp.lev}% interval for a sample of ${sp.n}. The country's counties are about ${(na.sd/st0.sd).toFixed(1)}× as spread out as Iowa's, so with the same n and confidence its interval is ${(na.sd/st0.sd).toFixed(1)}× as wide. To get Iowa's precision for the whole country, you'd need about ${Math.round(sp.n*(na.sd/st0.sd)**2)} counties instead of ${sp.n}.`;
+  document.getElementById('spSay').innerHTML=`The dots are counties, the black bracket is ±1 SD, and the orange bar is a ${sp.lev}% interval for a sample of ${sp.n}. The country's counties are about ${(na.sd/st0.sd).toFixed(1)}× as spread out as Iowa's, so with the same n and confidence its interval is ${(na.sd/st0.sd).toFixed(1)}× as wide. To get Iowa's precision for the whole country, you'd need about ${Math.round(sp.n*(na.sd/st0.sd)**2)} counties instead of ${sp.n}.`;
 }
 segment('#spg',['state','region','nation'],sp.g,v=>SPG[v].lab,v=>{sp.g=v;renderSpread();});
 segment('#spn',[10,25,100],sp.n,v=>v,v=>{sp.n=v;renderSpread();});
