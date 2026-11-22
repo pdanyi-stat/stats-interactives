@@ -709,7 +709,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
 <main class="wrap">
   <section class="controls" aria-label="Data">
-    <p style="margin:0;font-size:14.5px;color:var(--ink-2);flex:1 1 360px">DV (Y): <b style="color:var(--ink)">Trump's share of the 2016 presidential vote</b> in the 50 states and D.C. Regions follow the Census Bureau, which counts D.C. as Southern.</p>
+    <p style="margin:0;font-size:14.5px;color:var(--ink-2);flex:1 1 360px">Throughout this page the DV (Y) is <b style="color:var(--ink)">Trump's share of the 2016 presidential vote</b> in the 50 states and D.C. Regions follow the Census Bureau, which counts D.C. as Southern.</p>
     <div class="toggles"><label><input type="checkbox" id="dc" checked> Include D.C. (Trump 4%, an outlier)</label></div>
     <button class="linkish fxbtn" data-open-formulas style="align-self:center"><i>Σ</i> Formulas</button>
   </section>
@@ -742,7 +742,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="part" aria-labelledby="bh">
     <p class="kick">Part 2 · Dummy plus a continuous IV</p>
     <h2 id="bh">A dummy shifts the line up or down, giving parallel lines</h2>
-    <p class="lede">Add metro share as a second IV. Plug in south = 0 and you get the non-South line; plug in south = 1 and the same line moves up or down by the South coefficient. The lines share a slope but have different intercepts. The model assumes the regional gap is the same at every metro share, which is why the two lines are parallel.</p>
+    <p class="lede">Add metro share as a second IV. Plug in south = 0 and you get the non-South line, and plug in south = 1 and the same line moves up or down by the South coefficient. The lines share a slope but have different intercepts. The model assumes the regional gap is the same at every metro share, which is why the two lines are parallel.</p>
   </section>
   <figure>
     <div class="row" style="justify-content:flex-end;margin-bottom:4px"><button class="linkish fxbtn" data-open-formulas><i>Σ</i> Formulas</button></div>
@@ -775,7 +775,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="part" aria-labelledby="ch">
     <p class="kick">Part 3 · More than two categories</p>
     <h2 id="ch">More than two categories need one dummy per region, minus a reference</h2>
-    <p class="lede">A variable with k categories gets k − 1 dummies. The category left out is the reference: the constant is its mean, and every coefficient is a gap from it. Change the reference and the coefficients change, but the predictions don't.</p>
+    <p class="lede">A variable with k categories gets k − 1 dummies. The category left out is the reference, so the constant is its mean and every coefficient is a gap from it. Change the reference and the coefficients change, but the predictions don't.</p>
   </section>
   <figure>
     <div class="row" style="gap:16px;margin-bottom:6px">
@@ -797,7 +797,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="amberbox" id="firstlady" aria-labelledby="flH">
     <span class="tag">Worked example, extended</span>
     <h2 id="flH">The First Lady, controlling for gender</h2>
-    <p>Might gender matter? A First Lady holds a gendered public role, and women and men differ in their partisanship: women have leaned more Democratic than men since the 1980s, and they still do.<sup>1</sup> <span id="flShare"></span> So we redo the worked example, step by step, with one added dummy, <b>female</b> (1 = woman, 0 = man). The data and steps are otherwise identical to the worked example.</p>
+    <p>Might gender matter? A First Lady holds a gendered public role, and women and men differ in their partisanship, since women have leaned more Democratic than men since the 1980s, and they still do.<sup>1</sup> <span id="flShare"></span> So we redo the worked example, step by step, with one added dummy, <b>female</b> (1 = woman, 0 = man). The data and steps are otherwise identical to the worked example.</p>
     <details class="flx" id="flDetails">
       <summary>Open the replication: Laura Bush and Hillary Clinton</summary>
       <div class="flin">
@@ -822,7 +822,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="fn" style="margin:10px 0 0"><sup>1</sup> Center for American Women and Politics, “Gender Gaps in Vote Choice and Party Identification,” <a href="https://cawp.rutgers.edu/data-voters">cawp.rutgers.edu/data-voters</a>; Pew Research Center, “Changing Partisan Coalitions in a Politically Divided Nation,” April 9, 2024 (among registered voters, 52% of men identify with or lean toward the Republican Party, 46% toward the Democratic Party).</p>
   </section>
 
-  <p class="pnote"><b>Reading p for a coefficient:</b> H₀ says the coefficient is 0. p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -831,15 +831,15 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
         <li>In Part 1, switch the reference group. The slope changes sign, the constant becomes the other group's mean, and t and p stay the same.</li>
         <li>Turn off <b>Include D.C.</b> The South's mean jumps and the South gap becomes significant. One outlier among 17 Southern cases matters.</li>
         <li>In Part 2, use the <b>Flip the switch</b> box. Setting south to 0 zeroes out the South term; setting it to 1 adds the gap back.</li>
-        <li>Compare the South coefficient in Part 1 with Part 2. Adding metro share changes it: the same omitted-variable logic as Module 9.</li>
-        <li>In Part 3, tick <b>Try all four dummies</b>. Stata drops one: the four dummies always add up to 1, which duplicates the constant.</li>
+        <li>Compare the South coefficient in Part 1 with Part 2. Adding metro share changes it, which is the same omitted-variable logic as in Module 9.</li>
+        <li>In Part 3, tick <b>Try all four dummies</b>. Stata drops one, because the four dummies always add up to 1, which duplicates the constant.</li>
       </ol>
     </section>
     <section>
       <h2>Check yourself</h2>
       <details>
         <summary>The constant in ŷ = 4.32·South + 47.56 is 47.56. What is it?</summary>
-        <p>The predicted Trump share when South = 0: the mean for non-Southern states. With a dummy-only model the constant is always the reference group's mean.</p>
+        <p>It is the predicted Trump share when South = 0, which is the mean for non-Southern states. With a dummy-only model the constant is always the reference group's mean.</p>
       </details>
       <details>
         <summary>In the parallel-lines model, the South coefficient is about 5.6. Interpret it.</summary>
@@ -855,7 +855,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       </details>
       <details>
         <summary>You change the reference from Northeast to South. What changes and what doesn't?</summary>
-        <p>The constant and every coefficient change, because they are now gaps from the South. Predicted values, R², and the overall F test do not change: it is the same model described from a different starting point.</p>
+        <p>The constant and every coefficient change, because they are now gaps from the South. Predicted values, R², and the overall F test do not change, because it is the same model described from a different starting point.</p>
       </details>
     </section>
   </div>
@@ -874,10 +874,10 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>Its t test is the equal-variance two-sample t test.</p></div>
   <div class="fx"><h3>Dummy plus a continuous IV (parallel lines)</h3>
     <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mi>X</mi><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><mi>D</mi><mo>+</mo><mtext>constant</mtext></math>
-    <p>D = 0: ŷ = β₁X + constant. D = 1: ŷ = β₁X + (constant + β₂). The slope stays the same, and the intercept shifts by β₂. β₂ is the gap between groups holding X constant; the model assumes that gap is the same at every value of X.</p></div>
+    <p>D = 0: ŷ = β₁X + constant. D = 1: ŷ = β₁X + (constant + β₂). The slope stays the same, and the intercept shifts by β₂. β₂ is the gap between groups holding X constant, and the model assumes that gap is the same at every value of X.</p></div>
   <div class="fx"><h3>k categories</h3>
     <math display="block"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>D</mi><mn>1</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>β</mi><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><msub><mi>D</mi><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mtext>constant</mtext></math>
-    <p>constant = mean of the reference category; β<sub>j</sub> = mean of category j − reference mean. In Stata, <code>i.region</code> builds the dummies and <code>ib2.region</code> makes level 2 the reference.</p></div>
+    <p>The constant is the mean of the reference category, and β<sub>j</sub> is the mean of category j minus the reference mean. In Stata, <code>i.region</code> builds the dummies and <code>ib2.region</code> makes level 2 the reference.</p></div>
 </aside>
 
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
@@ -1029,10 +1029,10 @@ function renderBText(F){
   $('#bTerms').innerHTML=term('Predicted Trump share','v','ŷ · DV')+op('=')+term(sgn(b1),'b1','β₁')+op('×')+term('metro','v','X · continuous IV')+op(b2<0?'−':'+')+term(A(b2),'d','β₂')+op('×')+term('south','v','dummy: 0 or 1')+op(c<0?'−':'+')+term(A(c),'','constant');
   const s=st.grpB==='so'?1:0, x=st.bx, y=b1*x+b2*s+c;
   $('#bCalc').innerHTML=`ŷ = <span class="k-b1">${sgn(b1)}</span>×${x} <span class="${s?'':'off'}">${b2<0?'−':'+'} <span class="k-d">${A(b2)}</span>×${s}</span> ${c<0?'−':'+'} ${A(c)}<br>&nbsp;&nbsp;= <b>${y.toFixed(1)}%</b>`;
-  $('#bPred').innerHTML=`A ${s?'Southern':'non-Southern'} state with ${x}% of residents in metro areas: predicted Trump share <b>${y.toFixed(1)}%</b>. ${s?'south = 1 switches the South term on.':'south = 0 zeroes out the South term (struck through).'}`;
-  $('#bGroups').innerHTML=`<span class="k-b1">Non-South</span> (south = 0): ŷ = ${sgn(b1)}×metro ${c<0?'−':'+'} ${A(c)}<br><span class="k-d">South</span> (south = 1): ŷ = ${sgn(b1)}×metro + (${A(c)} ${b2<0?'−':'+'} ${A(b2)})<br>&nbsp;&nbsp;&nbsp;&nbsp;= ${sgn(b1)}×metro ${(c+b2)<0?'−':'+'} ${A(c+b2)}<br><span style="color:var(--muted)">Same slope; only the constant differs.</span>`;
+  $('#bPred').innerHTML=`A ${s?'Southern':'non-Southern'} state with ${x}% of residents in metro areas has a predicted Trump share of <b>${y.toFixed(1)}%</b>. ${s?'south = 1 switches the South term on.':'south = 0 zeroes out the South term (struck through).'}`;
+  $('#bGroups').innerHTML=`<span class="k-b1">Non-South</span> (south = 0): ŷ = ${sgn(b1)}×metro ${c<0?'−':'+'} ${A(c)}<br><span class="k-d">South</span> (south = 1): ŷ = ${sgn(b1)}×metro + (${A(c)} ${b2<0?'−':'+'} ${A(b2)})<br>&nbsp;&nbsp;&nbsp;&nbsp;= ${sgn(b1)}×metro ${(c+b2)<0?'−':'+'} ${A(c+b2)}<br><span style="color:var(--muted)">The slope is the same, and only the constant differs.</span>`;
   const more=b2>=0?'more':'fewer';
-  $('#bSay').innerHTML=`Holding metro share constant, Southern states are predicted to give Trump <b>${Math.abs(b2).toFixed(2)} points ${more}</b> than non-Southern states (p = ${f.p[1].toFixed(3).replace(/^0/,'')}). Without metro share in the model (Part 1) the gap was ${n2(f1.b[0])}: adding a control changed the dummy's coefficient, just as in Module 9.`;
+  $('#bSay').innerHTML=`Holding metro share constant, Southern states are predicted to give Trump <b>${Math.abs(b2).toFixed(2)} points ${more}</b> than non-Southern states (p = ${f.p[1].toFixed(3).replace(/^0/,'')}). Without metro share in the model (Part 1) the gap was ${n2(f1.b[0])}, so adding a control changed the dummy's coefficient, just as in Module 9.`;
   const L=anova(f,'. generate south = (region == 3)\n. regress trump_pct metro_pct south');
   L.push(crow('metro_pct',f,0,'b1'),crow('south',f,1,'d'),crow('_cons',f,2,''),'-'.repeat(78));
   $('#bStata').innerHTML=L.join('\n');
@@ -1076,9 +1076,9 @@ function renderC(){
   REG.forEach(r=>{const n=d.reg.filter(g=>g===r).length, isRef=r===ref, j=others.indexOf(r);
     h+=`<tr class="${isRef?'ref':''}"><td>${r}${isRef?' (reference)':''}</td><td>${n}</td><td>${(st.ctrlC?level(r):means[r]).toFixed(2)}</td><td class="${isRef?'mut':''}">${isRef?'— (in the constant)':`<span class="k-d">${sgn(f.b[j])}</span>`}</td><td class="${isRef?'mut':''}">${isRef?'':pf(f.p[j]).replace(/^0/,'')}</td></tr>`;});
   $('#cTab').innerHTML=h;
-  $('#cSay').innerHTML= (st.trapC?'<b>All four dummies requested:</b> Stata dropped West, so West is now the reference. ':'')+(st.ctrlC
-    ? `Holding metro share constant, each coefficient is the predicted gap from the ${ref} at the same metro share (shown at the average, ${xm.toFixed(1)}%). Metro share: ${sgn(f.b[others.length])} per point.`
-    : `Each coefficient is that region's mean minus the ${ref} mean; the constant (${f.b[ci].toFixed(2)}) is the ${ref} mean. R² = ${f.r2.toFixed(3)} whichever region is the reference.`);
+  $('#cSay').innerHTML= (st.trapC?'<b>You asked for all four dummies,</b> so Stata dropped West, and West is now the reference. ':'')+(st.ctrlC
+    ? `Holding metro share constant, each coefficient is the predicted gap from the ${ref} at the same metro share (shown at the average, ${xm.toFixed(1)}%). Metro share moves the prediction by ${sgn(f.b[others.length])} per point.`
+    : `Each coefficient is that region's mean minus the ${ref} mean, and the constant (${f.b[ci].toFixed(2)}) is the ${ref} mean. R² = ${f.r2.toFixed(3)} whichever region is the reference.`);
   // stata
   const lvl=REG.indexOf(ref)+1, cmd=st.trapC? '. regress trump_pct northeast midwest south west'+(st.ctrlC?' metro_pct':'') : `. regress trump_pct ${lvl===1?'i':'ib'+lvl}.region${st.ctrlC?' metro_pct':''}`;
   let L;
@@ -1189,8 +1189,8 @@ function renderFL(){
   const N=x.length, pw=Math.round(100*mean(g)), who=sx=>sx?'women':'men';
   let h='', stata='';
   const nav=`<div class="row" style="margin-top:10px;gap:8px">${FSTEPS.findIndex(z=>z[0]===v)>0?'<button id="flPrev">← Back</button>':''}${FSTEPS.findIndex(z=>z[0]===v)<FSTEPS.length-1?'<button class="primary" id="flNext">Next step →</button>':''}</div>`;
-  if(v==='look') h=`<h4>1. Always look at your data</h4><p class="say" style="margin:0">The same ${N.toLocaleString('en-US')} respondents as the worked example, and now we also know each one's gender: ${pw}% are women. As before, thermometer answers bunch at round numbers, so one dot can hide dozens of people.</p>`;
-  if(v==='bin') h=`<h4>2. Bin the dots</h4><p class="say" style="margin:0">Group nearby answers into bins and shade each bin by how many respondents fall in it: darker means more people. Gender doesn't change the dots. It changes the line we fit through them, which is the next step.</p>`;
+  if(v==='look') h=`<h4>1. Always look at your data</h4><p class="say" style="margin:0">We have the same ${N.toLocaleString('en-US')} respondents as the worked example, and now we also know each one's gender, which shows that ${pw}% are women. As before, thermometer answers bunch at round numbers, so one dot can hide dozens of people.</p>`;
+  if(v==='bin') h=`<h4>2. Bin the dots</h4><p class="say" style="margin:0">Group nearby answers into bins and shade each bin by how many respondents fall in it, so darker means more people. Gender doesn't change the dots. It changes the line we fit through them, which is the next step.</p>`;
   if(v==='lines') h=`<h4>3. Add the regression lines</h4><p class="say" style="margin:0">With a female dummy in the model, there are two lines with the same slope, one for women and one for men. Holding feelings toward the ${P.label} constant, women rate ${nm} <b>${Math.abs(b2).toFixed(2)} points ${b2>=0?'warmer':'cooler'}</b> than men (p ${pvs(f.p[1])}). If gender made no difference (H₀: β₂ = 0), a gap this large or larger would turn up ${prd(f.p[1])}, so we <b>${f.p[1]<0.05?'reject H₀':'fail to reject H₀'}</b>.</p><p class="say">The party slope barely moves: <b>${s3(F.b0)}</b> in the worked example, <b>${s3(b1)}</b> holding gender constant.</p>`;
   if(v==='predict'){ const xv=pickX(), yv=pred(xv,fl.sex);
     h=`<h4>4. Predict a value</h4><div class="row" style="gap:8px 12px"><select id="flPick" aria-label="X value"><option value="mean">the average (${mx.toFixed(2)})</option><option value="max">the most extreme (100)</option><option value="min">the coldest (0)</option><option value="custom">a value I choose</option></select><div class="seg" role="radiogroup" aria-label="Gender" id="flSex"></div></div>
@@ -1205,14 +1205,14 @@ function renderFL(){
       <tr><td>Party slope</td><td>${s3(D.b1)}</td><td>${s3(R.b1)}</td></tr><tr><td>female</td><td>${s3(D.b2)} (p ${pvs(D.f.p[1])})</td><td>${s3(R.b2)} (p ${pvs(R.f.p[1])})</td></tr>
       <tr><td>Gap, average → 100</td><td><b>${s2(D.gapC)}</b></td><td><b>${s2(R.gapC)}</b></td></tr><tr><td class="mut">Worked example gap</td><td class="mut">${s2(D.gap0)}</td><td class="mut">${s2(R.gap0)}</td></tr></table></div>
       <div style="display:grid;gap:6px;margin-top:10px">${[['dem',D],['rep',R]].map(([k,Z])=>`<div><div style="display:flex;justify-content:space-between;font-size:13.5px"><span>Strong ${PTY[k].pl} like her ${Z.gapC>0?'more':'less'} by</span><b>${Math.abs(Z.gapC).toFixed(2)} points</b></div><div style="height:10px;background:var(--grid);border-radius:4px"><div style="height:10px;border-radius:4px;width:${100*Math.abs(Z.gapC)/mxg}%;background:${k===fl.k?'var(--s2)':'var(--axis)'}"></div></div></div>`).join('')}</div>
-      <p class="say">The worked example's conclusion holds with gender held constant: the gap is larger for her own party (${PTY[own].adj}, ${Math.abs(O.gapC).toFixed(2)} points) than for the other (${Math.abs(X.gapC).toFixed(2)}). Gender adds a separate, smaller shift: women rate ${nm} ${Math.min(D.b2,R.b2).toFixed(1)}–${Math.max(D.b2,R.b2).toFixed(1)} points warmer than men at the same party feeling.</p>`; }
+      <p class="say">The worked example's conclusion holds with gender held constant, since the gap is larger for her own party (${PTY[own].adj}, ${Math.abs(O.gapC).toFixed(2)} points) than for the other (${Math.abs(X.gapC).toFixed(2)}). Gender adds a separate, smaller shift, with women rating ${nm} ${Math.min(D.b2,R.b2).toFixed(1)}–${Math.max(D.b2,R.b2).toFixed(1)} points warmer than men at the same party feeling.</p>`; }
   if(v==='both'){ const B=flBoth(fl.d), fb=B.f;
     h=`<h4>7. Both parties and gender in one model</h4><div class="flcalc">ŷ = ${s3(fb.b[0])} × Dem therm ${fb.b[1]<0?'−':'+'} ${A(fb.b[1])} × Rep therm ${fb.b[2]<0?'−':'+'} ${A(fb.b[2])} × female ${fb.b[3]<0?'−':'+'} ${A(fb.b[3])}</div>
       <ul style="margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink-2);display:grid;gap:4px">
       <li>Holding feelings toward the Republican Party and gender constant, each point warmer toward the Democratic Party changes the predicted rating of ${nm} by <b>${s3(fb.b[0])}</b> (p ${pvs(fb.p[0])}).</li>
       <li>Holding feelings toward the Democratic Party and gender constant, each point warmer toward the Republican Party changes it by <b>${s3(fb.b[1])}</b> (p ${pvs(fb.p[1])}).</li>
       <li>Holding both party feelings constant, women rate ${nm} <b>${Math.abs(fb.b[2]).toFixed(2)} points ${fb.b[2]>=0?'warmer':'cooler'}</b> than men (p ${pvs(fb.p[2])}).</li></ul>
-      <p class="say">Each slope here is smaller than its two-variable version (${s3(flFit(fl.d,'dem').b1)} and ${s3(flFit(fl.d,'rep').b1)}), because people who like one party tend to dislike the other: each party slope was partly carrying the other's effect. The chart shows the ${P.label} slope with the other party held at its average. N = ${B.n.toLocaleString('en-US')}; R² = ${fb.r2.toFixed(3)}.</p>`;
+      <p class="say">Each slope here is smaller than its two-variable version (${s3(flFit(fl.d,'dem').b1)} and ${s3(flFit(fl.d,'rep').b1)}), because people who like one party tend to dislike the other, so each party slope was partly carrying the other's effect. The chart shows the ${P.label} slope with the other party held at its average. N = ${B.n.toLocaleString('en-US')} and R² = ${fb.r2.toFixed(3)}.</p>`;
     stata=stataL(fb,`. regress ${FLV[fl.d]} dem_therm rep_therm female`,['dem_therm','rep_therm','female'],['b1','b1','d']); }
   if(!stata) stata=stataL(f,`. regress ${FLV[fl.d]} ${P.v} female`,[P.v,'female'],['b1','d']);
   const P0=document.getElementById('flPanel'); P0.innerHTML=h+nav;
