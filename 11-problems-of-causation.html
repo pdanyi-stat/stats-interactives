@@ -616,8 +616,11 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
   <section class="dcard" id="cs">
     <h3>Does campaign money help incumbents?</h3>
     <p class="p">In US House elections, Gary Jacobson found that the challenger's spending was strongly related to the vote, while the incumbent's spending showed a relationship that was weak, near zero, or even in the wrong direction. Taken at face value, that would mean money does almost nothing for incumbents.</p>
-    <div class="dgwrap"><svg class="dg" id="csDg" role="img" aria-label="Diagram: incumbent spending and a close race feed each other"></svg></div>
-    <p class="p">The trouble is that incumbents raise and spend more when they see a strong challenger coming. The threat of a close race drives the spending at the same time that the spending fights the threat, so the incumbents who spend the most are the ones in the most danger. A simple correlation can't pull those two arrows apart, which is why the effect of incumbent spending is still argued over.</p>
+    <p class="p">As with leisure and happiness, state this relationship in one direction first, and then in the other.</p>
+    <div class="chips" id="csPick"></div>
+    <div class="dgwrap"><svg class="dg" id="csDg" role="img"></svg></div>
+    <p class="say2" id="csSay"></p>
+    <p class="p">The trouble is that incumbents raise and spend more when they see a strong challenger coming. A simple correlation can't pull those two arrows apart, which is why the effect of incumbent spending is still argued over.</p>
   </section>
 
   <!-- 5 INTERVENING -->
@@ -779,10 +782,10 @@ function diagram(svg,kind,L){
     if(onB)lab+=`<rect x="${C-95}" y="${h-37}" width="190" height="20" rx="4" style="fill:var(--surface)"/>`+lbl(C,h-22,L.down||'Y pushes X',{col:'s2-ink'});
     if(d==='none')s+=lbl(C,cy+5,'which way?',{col:'muted',fs:14});
     const turtle=(path,dur,extra='')=>`<path class="loopdot" d="M -9 -7 L 10 0 L -9 7 L -5 0 Z" style="fill:var(--ink);stroke:var(--surface)" stroke-width="1.5"><animateMotion dur="${dur}" repeatCount="indefinite" rotate="auto" path="${path}"${extra}/></path>`;
+    s+=lab;
     if(L.anim&&d==='both')s+=turtle(`${top} L ${x1} ${bY} ${bot.replace('M','L')} Z`,'4s');
     else if(L.anim&&d==='xy')s+=turtle(top,'2s');
-    else if(L.anim&&d==='yx')s+=turtle(bot,'2s');
-    s+=lab;}
+    else if(L.anim&&d==='yx')s+=turtle(bot,'2s');}
   else if(kind==='inter'||kind==='inter0'){h=kind==='inter'?160:120;const n3=[64,C,356],nn=122;s+=node(n3[0],60,nn,nh,L.x,'x',{max:11})+node(n3[2],60,nn,nh,L.y,'y',{max:11});
     if(kind==='inter')s+=node(n3[1],60,nn,nh,L.z,'z',{max:12})+arrow(n3[0]+nn/2+2,60,n3[1]-nn/2-2,60)+arrow(n3[1]+nn/2+2,60,n3[2]-nn/2-2,60)+lbl(C,128,L.note||'X works through Z');
     else s+=`<rect x="${n3[1]-nn/2+6}" y="${60-nh/2}" width="${nn-12}" height="${nh}" rx="10" fill="none" style="stroke:#B3261E" stroke-width="2" stroke-dasharray="4 4"/>`+lbl(n3[1],56,'explanatory',{col:'ink-2'})+lbl(n3[1],73,'gap',{col:'ink-2'})+arrow(n3[0]+nn/2+2,60,n3[1]-nn/2+4,60,{dash:1})+arrow(n3[1]+nn/2-4,60,n3[2]-nn/2-2,60,{dash:1});}
@@ -859,22 +862,22 @@ const OM=(()=>{const r=rng(1984),g=()=>{let u=0,v=0;while(!u)u=r();while(!v)v=r(
   for(let m=0;m<36;m++){const mo=m%12,T=52-26*Math.cos(2*Math.PI*(mo-0.5)/12)+g()*5,cold=[10,11,0,1,2].includes(mo);
     const bill=Math.max(18,28+2.4*Math.max(0,62-T)+g()*12);const size=cold?1.4+g()*.28:3.1+g()*.34;P.push({mo,T,cold,bill,size});}return P;})();
 let omMode='all';
-function mallow(cx,cy,size,edge){const w=4+4.6*size,hh=w*.72,ry=w*.2;
-  return `<g><ellipse cx="${cx}" cy="${cy+hh/2}" rx="${w/2}" ry="${ry}" style="fill:#E9E1D3;stroke:${edge}" stroke-width="1.6"/><rect x="${cx-w/2}" y="${cy-hh/2}" width="${w}" height="${hh}" style="fill:#F4EFE6"/><line x1="${cx-w/2}" y1="${cy-hh/2}" x2="${cx-w/2}" y2="${cy+hh/2}" style="stroke:${edge}" stroke-width="1.6"/><line x1="${cx+w/2}" y1="${cy-hh/2}" x2="${cx+w/2}" y2="${cy+hh/2}" style="stroke:${edge}" stroke-width="1.6"/><ellipse cx="${cx}" cy="${cy-hh/2}" rx="${w/2}" ry="${ry}" style="fill:#FFFFFF;stroke:${edge}" stroke-width="1.6"/></g>`;}
+function mallow(cx,cy,size,edge,tint){const w=4+4.6*size,hh=w*.72,ry=w*.2,body=tint?`color-mix(in srgb,${edge} 30%,#F4EFE6)`:'#F4EFE6',side=tint?`color-mix(in srgb,${edge} 42%,#E9E1D3)`:'#E9E1D3';
+  return `<g><ellipse cx="${cx}" cy="${cy+hh/2}" rx="${w/2}" ry="${ry}" style="fill:${side};stroke:${edge}" stroke-width="1.6"/><rect x="${cx-w/2}" y="${cy-hh/2}" width="${w}" height="${hh}" style="fill:${body}"/><line x1="${cx-w/2}" y1="${cy-hh/2}" x2="${cx-w/2}" y2="${cy+hh/2}" style="stroke:${edge}" stroke-width="1.6"/><line x1="${cx+w/2}" y1="${cy-hh/2}" x2="${cx+w/2}" y2="${cy+hh/2}" style="stroke:${edge}" stroke-width="1.6"/><ellipse cx="${cx}" cy="${cy-hh/2}" rx="${w/2}" ry="${ry}" style="fill:${tint?`color-mix(in srgb,${edge} 14%,#FFFFFF)`:'#FFFFFF'};stroke:${edge}" stroke-width="1.6"/></g>`;}
 function omDraw(){const el=$('omChart'),F=frame(el,290),pl=56,pr=14,pt=14,pb=36;const xmax=Math.ceil(Math.max(...OM.map(p=>p.bill))/40)*40;
   const xs=v=>pl+v*(F.w-pl-pr)/xmax,ys=v=>pt+(4.2-v)*(F.h-pt-pb)/3.8;let s='';
   [0.5,1.5,2.5,3.5].forEach(v=>s+=`<line x1="${pl}" x2="${F.w-pr}" y1="${ys(v)}" y2="${ys(v)}" style="stroke:var(--grid)"/><text x="${pl-6}" y="${ys(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text>`);
   s+=`<text transform="translate(13 ${(pt+F.h-pb)/2}) rotate(-90)" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Marshmallow width (cm)</text>`;
   ticks(0,xmax,F.w<420?4:6).forEach(v=>s+=`<text x="${xs(v)}" y="${F.h-18}" text-anchor="middle" font-size="11" style="fill:var(--muted)">$${v}</text>`);
   s+=`<text x="${(pl+F.w)/2}" y="${F.h-3}" text-anchor="middle" font-size="12" style="fill:var(--ink-2)">Monthly gas bill</text>`;
-  const fit=(P,c)=>{const x=P.map(p=>p.bill),y=P.map(p=>p.size),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b,lo=Math.min(...x),hi=Math.max(...x);return `<line x1="${xs(lo)}" y1="${ys(my+sl*(lo-mx))}" x2="${xs(hi)}" y2="${ys(my+sl*(hi-mx))}" style="stroke:${c}" stroke-width="2.5" opacity=".85"/>`;};
-  const split=omMode==='split';
-  if(!split)s+=fit(OM,'var(--ink-2)');else{s+=fit(OM.filter(p=>p.cold),'var(--s1-line)')+fit(OM.filter(p=>!p.cold),'var(--s2)');}
-  OM.slice().sort((a,b)=>b.size-a.size).forEach(p=>{const c=!split?'#8C9095':p.cold?'var(--s1-line)':'var(--s2)';s+=mallow(xs(p.bill),ys(p.size),p.size,c);});
+  const fit=(P,c)=>{const x=P.map(p=>p.bill),y=P.map(p=>p.size),mx=mean(x),my=mean(y);let a=0,b=0;x.forEach((v,i)=>{a+=(v-mx)*(y[i]-my);b+=(v-mx)**2;});const sl=a/b,lo=Math.min(...x),hi=Math.max(...x);const x1=xs(lo),y1=ys(my+sl*(lo-mx)),x2=xs(hi),y2=ys(my+sl*(hi-mx));return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(--surface)" stroke-width="8" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c}" stroke-width="3.5" stroke-linecap="round"/>`;};
+  const split=omMode==='split',CC='#1F6FD1',WC='#D2691E';
+  OM.slice().sort((a,b)=>b.size-a.size).forEach(p=>{const c=!split?'#8C9095':p.cold?CC:WC;s+=mallow(xs(p.bill),ys(p.size),p.size,c,split);});
+  if(!split)s+=fit(OM,'var(--ink)');else{s+=fit(OM.filter(p=>p.cold),CC)+fit(OM.filter(p=>!p.cold),WC);}
   el.innerHTML=F.svg(s);
   const rA=corr(OM.map(p=>p.bill),OM.map(p=>p.size)),C=OM.filter(p=>p.cold),H=OM.filter(p=>!p.cold),rc=corr(C.map(p=>p.bill),C.map(p=>p.size)),rh=corr(H.map(p=>p.bill),H.map(p=>p.size));
-  const sw=c=>`<svg width="18" height="16" viewBox="-9 -8 18 16" aria-hidden="true">${mallow(0,0,1.6,c)}</svg>`;
-  $('omKey').innerHTML=split?`<span>${sw('var(--s1-line)')}cold months (November to March)</span><span>${sw('var(--s2)')}warm months (April to October)</span>`:`<span>${sw('#8C9095')}one simulated month, drawn at its marshmallow width</span><span><i class="ln" style="background:var(--ink-2)"></i>least-squares line</span>`;
+  const sw=c=>`<svg width="18" height="16" viewBox="-9 -8 18 16" aria-hidden="true">${mallow(0,0,1.6,c)}</svg>`,sw2=c=>`<svg width="18" height="16" viewBox="-9 -8 18 16" aria-hidden="true">${mallow(0,0,1.6,c,true)}</svg>`;
+  $('omKey').innerHTML=split?`<span>${sw2('#1F6FD1')}<i class="ln" style="background:#1F6FD1"></i>cold months (November to March) and their line</span><span>${sw2('#D2691E')}<i class="ln" style="background:#D2691E"></i>warm months (April to October) and their line</span>`:`<span>${sw('#8C9095')}one simulated month, drawn at its marshmallow width</span><span><i class="ln" style="background:var(--ink)"></i>least-squares line</span>`;
   $('omDgW').hidden=!split;
   $('omSay').innerHTML=!split?`Across all 36 months <b>r = ${f2(rA)}</b>, so the higher the gas bill, the smaller the marshmallows. Now split the months by the weather.`:
     `Within the cold months r = ${f2(rc)}, and within the warm months r = ${f2(rh)}. Once the weather is held roughly constant, the gas bill tells us much less about marshmallow size than it seemed to. Cold weather is the common cause, since it raises the heating bill and also sends you to hot cocoa with mini marshmallows, while warm weather brings campfire s'mores and the big ones.`;}
@@ -910,17 +913,21 @@ function wlDraw(){const el=$('wlChart'),F=frame(el,280),pl=34,pr=12,pt=12,pb=36,
 wlDraw();
 
 /* ========== Part 4: endogeneity ========== */
-const EN={xy:['Leisure → happiness','More time off lets people rest, see family and pursue hobbies, and that makes them happier.'],
+function endoSteps(pick,dg,say,lab,T){let cur='none';const seen=new Set();
+  function draw(){const ready=seen.size===2;
+    $(pick).innerHTML=Object.entries(T).map(([k,v])=>`<button type="button" data-k="${k}" aria-pressed="${k===cur}"${k==='both'&&!ready?' disabled title="Try both directions first"':''}>${v[0]}${k==='both'&&!ready?' (try both directions first)':''}</button>`).join('');
+    diagram($(dg),'endo',Object.assign({dir:cur,anim:cur!=='none'},lab));
+    $(dg).setAttribute('aria-label',cur==='none'?`Diagram: ${lab.x} and ${lab.y}, with no direction chosen yet`:'Diagram: '+T[cur][0]);
+    $(say).textContent=cur==='none'?'Tap a direction to begin.':T[cur][1]+(cur!=='both'&&!ready?' Now try the other direction.':cur!=='both'&&ready?' You have tried both directions, so now run them together.':'');}
+  $(pick).addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;cur=b.dataset.k;if(cur!=='both')seen.add(cur);draw();});draw();}
+endoSteps('enPick','enDg','enSay',{x:'Leisure time',y:'Happiness',up:'leisure raises happiness',down:'happiness protects leisure'},
+ {xy:['Leisure → happiness','More time off lets people rest, see family and pursue hobbies, and that makes them happier.'],
   yx:['Happiness → leisure','Happier and healthier people may value and protect their free time, and they may support shorter work weeks and longer vacations.'],
-  both:['Both at once','Each story is believable, and each can feed the other year after year. Since both have been running for decades, a single correlation can\'t tell us how much of it flows in each direction.']};
-let en='none';const enSeen=new Set();
-function enDraw(){const ready=enSeen.size===2;
-  $('enPick').innerHTML=Object.entries(EN).map(([k,v])=>`<button type="button" data-k="${k}" aria-pressed="${k===en}"${k==='both'&&!ready?' disabled title="Try both directions first"':''}>${v[0]}${k==='both'&&!ready?' (try both directions first)':''}</button>`).join('');
-  diagram($('enDg'),'endo',{x:'Leisure time',y:'Happiness',dir:en,anim:en!=='none',up:'leisure raises happiness',down:'happiness protects leisure'});
-  $('enDg').setAttribute('aria-label',en==='none'?'Diagram: leisure time and happiness, with no direction chosen yet':'Diagram: '+EN[en][0]);
-  $('enSay').textContent=en==='none'?'Tap a direction to begin.':EN[en][1]+(en!=='both'&&!ready?' Now try the other direction.':en!=='both'&&ready?' You have tried both directions, so now run them together.':'');}
-$('enPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;en=b.dataset.k;if(en!=='both')enSeen.add(en);enDraw();});enDraw();
-diagram($('csDg'),'endo',{x:'Incumbent spending',y:'A close race',dir:'both',anim:true,up:'spending fights the threat',down:'the threat drives spending'});
+  both:['Both at once','Each story is believable, and each can feed the other year after year. Since both have been running for decades, a single correlation can\'t tell us how much of it flows in each direction.']});
+endoSteps('csPick','csDg','csSay',{x:'Incumbent spending',y:'A close race',up:'spending fights the threat',down:'the threat drives spending'},
+ {xy:['Spending → the race','Spending should help the incumbent, so more money ought to make the race less close than it would otherwise be.'],
+  yx:['The race → spending','A strong challenger and a tight race push the incumbent to raise and spend more money.'],
+  both:['Both at once','With both arrows running, the incumbents who spend the most are the ones in the most danger, so spending can look useless in the data even if it helps.']});
 
 /* ========== Part 5: chains ========== */
 const CH=['Youth','Less wealth','Reduced fear of taxation','Left preference'];let chN=0;
