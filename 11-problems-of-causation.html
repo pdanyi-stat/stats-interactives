@@ -480,7 +480,13 @@ ul.p,ol.p{padding-left:20px;display:grid;gap:6px}
 .regs{display:flex;flex-wrap:wrap;gap:6px}
 .regs button{font-size:13.5px;padding:5px 10px}
 .regs button[aria-pressed="true"]{background:var(--s2);color:#fff;border-color:var(--s2)}
-ol.refs{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2);display:grid;gap:6px}
+ol.refs{margin:0;padding:4px 16px 14px 36px;font-size:14px;color:var(--ink-2);display:grid;gap:6px}
+details.srcd{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.srcd>summary{cursor:pointer;padding:11px 14px;font:600 15px/1.35 var(--font-body);color:var(--ink);min-height:44px;display:flex;align-items:center;gap:9px;list-style:none}
+details.srcd>summary::-webkit-details-marker{display:none}
+details.srcd>summary::before{content:"";flex:0 0 auto;border-left:6px solid var(--ink-2);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;transition:transform .15s}
+details.srcd[open]>summary::before{transform:rotate(90deg)}
+details.srcd .sp-badge{font:700 11.5px var(--font-mono);letter-spacing:.04em;padding:2px 7px;border-radius:5px;background:var(--ink);color:var(--surface)}
 @media (prefers-reduced-motion:reduce){.loopdot{display:none}}
 p.say2[id],#ceSay,#ceSay2,p.verdict{margin:0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:15px;line-height:1.6}
 p.say2[id]:empty{display:none}
@@ -551,9 +557,9 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <p class="lede">A correlation is the presence of covariation between two variables, meaning that as the values on one variable change, the values on the second change systematically with it. You have likely heard that correlation does not imply causation. In fact a correlation often suggests a cause quite strongly, so our job is to ask whether that suggestion holds up once we start questioning it.</p></section>
   <section class="dcard" id="mech">
     <h3>Social science as storytelling</h3>
-    <p class="p">Theories specify general relationships between things we observe, and a good theory tells us not only that two things are related but how they are related. That "how" is a <b>mechanism</b> (some plausible, and preferably observed, process that runs between one variable and the outcome). Mechanisms are often the stories we tell between our variables to explain something, and good research gathers evidence that makes us less uncertain about those stories.</p>
-    <p class="p">Social scientists use the language of mechanisms in qualitative and quantitative work alike. Alexander George and Andrew Bennett (2005) describe causal mechanisms as stable factors that, under certain conditions, link causes to effects, and they argue that mechanisms matter as much to a causal explanation as the size of an effect does. Case study researchers look for mechanisms through process tracing, which follows the links between possible causes and observed outcomes through histories, documents and interviews. Henry Brady and David Collier (2010) call this kind of evidence a causal-process observation (an insight or piece of data about context, process or mechanism), and they argue that it belongs alongside the rows and columns of a quantitative data set.</p>
-    <p class="p">Statistical work and storytelling depend on each other. A regression can tell us how much Y changes with X, but case studies remain stronger at showing whether and how a variable mattered (George and Bennett 2005, 25), and experiments can isolate a mechanism in individuals that we then look for in the messier world outside the lab. Every problem on this page is, at bottom, a bad story. The correlation is real, but the story we tell between X and Y is wrong, and the fix is a better story backed by better evidence.</p>
+    <p class="p">Theories specify general relationships between things we observe, and a good theory tells us not only that two things are related but how they are related. That "how" is a <b>mechanism</b> (some plausible, and preferably observed, process that runs between one variable and the outcome). Mechanisms are often the stories we tell between our variables to explain something, and good research gathers evidence that makes us less uncertain about those stories (Danyi, PLS2033 lecture slides).</p>
+    <p class="p">Social scientists use the language of mechanisms in qualitative and quantitative work alike. Alexander George and Andrew Bennett (2005) describe causal mechanisms as stable factors that, under certain conditions, link causes to effects, and they argue that mechanisms matter as much to a causal explanation as the size of an effect does. Case studies allow close examination of the social mechanisms that may underlie causation (Janssen Danyi and Danyi 2017), and case study researchers look for those mechanisms through process tracing, which follows the links between possible causes and observed outcomes through histories, documents and interviews. Henry Brady and David Collier (2010) call this kind of evidence a causal-process observation (an insight or piece of data about context, process or mechanism), and they argue that it belongs alongside the rows and columns of a quantitative data set.</p>
+    <p class="p">Statistical work and storytelling depend on each other. A regression can tell us how much Y changes with X, but case studies remain stronger at showing whether and how a variable mattered (George and Bennett 2005, 25), and experiments mostly study individual-level mechanisms that we then look for in the messier world outside the lab (Janssen Danyi and Danyi 2017). Every problem on this page is, at bottom, a bad story. The correlation is real, but the story we tell between X and Y is wrong, and the fix is a better story backed by better evidence.</p>
   </section>
   <section class="dcard" id="req">
     <h3>Four requirements for calling a relationship causal</h3>
@@ -758,8 +764,8 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <div class="btnrow"><button id="dxPrev">← Previous claim</button><button id="dxNext">Next claim →</button></div>
   </section>
 
-  <section class="dcard" id="refs">
-    <h3>Sources</h3>
+  <details class="srcd" id="refs">
+    <summary><span class="sp-badge">Sources</span><span>Show all 29 sources</span></summary>
     <ol class="refs">
       <li>Bartels, Larry M. 2002. "Beyond the Running Tally: Partisan Bias in Political Perceptions." <i>Political Behavior</i> 24 (2): 117–50.</li>
       <li>Brady, Henry E., and David Collier, eds. 2010. <i>Rethinking Social Inquiry: Diverse Tools, Shared Standards</i>. 2nd ed. Lanham, MD: Rowman &amp; Littlefield.</li>
@@ -767,11 +773,13 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
       <li>Chay, Kenneth Y., Patrick J. McEwan, and Miguel Urquiola. 2005. "The Central Role of Noise in Evaluating Interventions That Use Test Scores to Rank Schools." <i>American Economic Review</i> 95 (4): 1237–58.</li>
       <li>Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2026. <i>V-Dem Country-Year Dataset v16</i>. Varieties of Democracy (V-Dem) Project. <a href="https://www.v-dem.net">v-dem.net</a></li>
       <li>Dahl, Robert A. 1998. <i>On Democracy</i>. New Haven, CT: Yale University Press.</li>
+      <li>Danyi, Paul. "Causes and Problems of Correlation" and "Theories and Relationships." PLS2033 lecture slides, Eastern Illinois University.</li>
       <li>Figlio, David N. 1995. "The Effect of Retirement on Political Shirking: Evidence from Congressional Voting." <i>Public Finance Quarterly</i> 23 (2): 226–41.</li>
       <li>George, Alexander L., and Andrew Bennett. 2005. <i>Case Studies and Theory Development in the Social Sciences</i>. Cambridge, MA: MIT Press.</li>
       <li>Gomez, Brad T., Thomas G. Hansford, and George A. Krause. 2007. "The Republicans Should Pray for Rain: Weather, Turnout, and Voting in U.S. Presidential Elections." <i>Journal of Politics</i> 69 (3): 649–63.</li>
       <li>Jacobson, Gary C. 1985. "Money and Votes Reconsidered: Congressional Elections, 1972–1982." <i>Public Choice</i> 47 (1): 7–62.</li>
       <li>Jacobson, Gary C. 1990. "The Effects of Campaign Spending in House Elections: New Evidence for Old Arguments." <i>American Journal of Political Science</i> 34 (2): 334–62.</li>
+      <li>Janssen Danyi, Claudia, and Paul Danyi. 2017. "The Comparative Method of the Most-Similar and Most-Different Systems for Crisis Communication Research." Working paper, Eastern Illinois University. <a href="https://thekeep.eiu.edu/commstudies_fac/45">thekeep.eiu.edu</a></li>
       <li>Kahneman, Daniel. 2011. <i>Thinking, Fast and Slow</i>. New York: Farrar, Straus and Giroux.</li>
       <li>Lenz, Gabriel S. 2012. <i>Follow the Leader? How Voters Respond to Politicians' Policies and Performance</i>. Chicago: University of Chicago Press.</li>
       <li>Levitt, Steven D. 1998. "The Economics of Crime and the Criminal Justice System." <i>NBER Reporter</i>, Fall. <a href="https://www.nber.org/reporter/fall-1998/economics-crime-and-criminal-justice-system">nber.org</a></li>
@@ -789,7 +797,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
       <li>Women's Health Initiative Investigators, Writing Group for the. 2002. "Risks and Benefits of Estrogen Plus Progestin in Healthy Postmenopausal Women." <i>JAMA</i> 288 (3): 321–33.</li>
       <li>World data (World.sav, class dataset). GDP per capita, the Freedom House rating of democracy (2004, reversed) and government effectiveness.</li>
     </ol>
-  </section>
+  </details>
 
   <nav class="pager" aria-label="Previous and next"><a href="10-dummy-variables.html"><span class="k">← Previous · Module 10</span><span class="t">Dummy variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="practice-direction.html"><span class="k">Next · Practice →</span><span class="t">Which way does it run?</span></a></nav>
 </main>
