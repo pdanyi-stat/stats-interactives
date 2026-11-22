@@ -664,6 +664,7 @@ window.SPSSX.attachAll=init;
     <p class="dek">Do two groups really differ, or is the gap in our sample just luck of the draw? Draw samples from real surveys, compare the two group means on one axis, and then repeat the sampling until the distribution of the difference shows whether zero is a plausible value.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
+      <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
       <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
       <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
       <li><a href="3-dispersion.html">3 Dispersion</a></li>
@@ -674,6 +675,7 @@ window.SPSSX.attachAll=init;
       <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
       <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
       <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
+      <li><a href="practice-direction.html">Practice: Which way?</a></li>
       <li><a href="practice-titanic.html">Practice: Titanic</a></li>
       <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
       <li><a href="exam-prep.html">Exam prep</a></li>
@@ -767,7 +769,7 @@ window.SPSSX.attachAll=init;
   </section>
 
   <figure id="errors">
-    <div class="fighead"><h2><span class="step">E</span>Type I and Type II errors</h2></div>
+    <div class="fighead"><h2 id="type-errors" style="scroll-margin-top:70px"><span class="step">E</span>Type I and Type II errors</h2></div>
     <p class="sub">A test ends in one of two decisions about H₀, and the world is in one of two states. Two of the four combinations are mistakes.</p>
     <div class="tblwrap"><table class="dec">
       <tr><th></th><th>H₀ is true (no real difference)</th><th>H₀ is false (a real difference)</th></tr>
@@ -781,7 +783,7 @@ window.SPSSX.attachAll=init;
     </div>
     <div class="errgrid">
       <div>
-        <div class="key"><span><i class="sw" style="height:0;width:18px;border-top:2px solid var(--ink-2);border-radius:0"></i>if H₀ is true</span><span><i class="sw" style="height:0;width:18px;border-top:2px solid var(--s1-line);border-radius:0"></i>if there is a real difference</span><span><i class="sw" style="background:var(--s2)"></i>Type I (α)</span><span><i class="sw" style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);opacity:.45"></i>Type II (β)</span></div>
+        <div class="key"><span><i class="sw" style="height:0;width:18px;border-top:3px solid var(--s2);border-radius:0"></i>if H₀ is true</span><span><i class="sw" style="height:0;width:18px;border-top:3px solid var(--s1-line);border-radius:0"></i>if there is a real difference</span><span><i class="sw" style="background:var(--s2)"></i>Type I (α)</span><span><i class="sw" style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);opacity:.45"></i>Type II (β)</span></div>
         <div class="chart" id="eChart"></div>
       </div>
       <div>
@@ -1252,12 +1254,12 @@ $('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run
     const area=(a,b,mu,col,op)=>{if(b<=a)return;let p=`M${xs(a)},${ys(0)}`;for(let k=0;k<=80;k++){const v=a+(b-a)*k/80;p+=`L${xs(v).toFixed(1)},${ys(npd(v,mu,se)).toFixed(1)}`;}p+=`L${xs(b)},${ys(0)}Z`;mk('path',{d:p,fill:col,'fill-opacity':op},svg);};
     area(-c,c,d,css('--s1'),.3);
     area(lo,-c,0,css('--s2'),.75); area(c,hi,0,css('--s2'),.75);
-    for(const [mu,col,w] of [[0,css('--ink-2'),2],[d,css('--s1'),2.5]]){let p='';for(let k=0;k<=200;k++){const v=lo+(hi-lo)*k/200;p+=(k?'L':'M')+xs(v).toFixed(1)+','+ys(npd(v,mu,se)).toFixed(1);}mk('path',{d:p,fill:'none',stroke:col,'stroke-width':w},svg);}
+    for(const [mu,col,w] of [[0,css('--s2'),2.5],[d,css('--s1'),2.5]]){let p='';for(let k=0;k<=200;k++){const v=lo+(hi-lo)*k/200;p+=(k?'L':'M')+xs(v).toFixed(1)+','+ys(npd(v,mu,se)).toFixed(1);}mk('path',{d:p,fill:'none',stroke:col,'stroke-width':w},svg);}
     mk('line',{x1:m.l,x2:W-m.r,y1:ys(0),y2:ys(0),stroke:css('--axis')},svg);
     for(const v of [-c,c]){mk('line',{x1:xs(v),x2:xs(v),y1:m.t-6,y2:ys(0),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);}
     const T=(x,y,t,col,an)=>{const e=mk('text',{x,y,'text-anchor':an||'middle',class:'mlab',fill:col,style:'paint-order:stroke;stroke:var(--surface);stroke-width:4px'},svg);e.textContent=t;};
     T(xs(c),m.t-9,'reject H₀ beyond the dashed lines',css('--ink'),xs(c)>W*0.6?'end':'middle');
-    T(xs(0),ys(pk)-8,'H₀ true',css('--ink-2')); T(xs(d),ys(npd(d,d,se))+(Math.abs(xs(d)-xs(0))<70?14:-8),'real difference',css('--s1-ink'));
+    T(xs(0),ys(pk)-8,'H₀ true',css('--s2-ink')); T(xs(d),ys(npd(d,d,se))+(Math.abs(xs(d)-xs(0))<70?14:-8),'real difference',css('--s1-ink'));
     const tk=[0,d]; tk.forEach(v=>{mk('line',{x1:xs(v),x2:xs(v),y1:ys(0),y2:ys(0)+5,stroke:css('--axis')},svg);T(xs(v),H-m.b+17,v===0?'0':'+'+v.toFixed(1),css('--ink-2'));});
     const ax=mk('text',{x:W-m.r,y:H-4,'text-anchor':'end',class:'axlab'},svg);ax.textContent='difference in means, in SDs →';
     const pc=v=>v<0.001?'< 0.1%':(v*100).toFixed(v<0.1?1:0)+'%';
