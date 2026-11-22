@@ -673,7 +673,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 9 of 10</p>
     <h1>Multiple regression</h1>
-    <p class="dek">A bivariate slope mixes the effect of X with everything that travels with X. Adding a control variable separates them. See what “holding constant” does to the data, why slopes shrink, grow or flip, and how R² and adjusted R² respond as a model grows.</p>
+    <p class="dek">A bivariate slope mixes the effect of X with everything that travels with X. Adding a control variable separates them. On this page you will see what “holding constant” does to the data, why slopes shrink, grow or flip, and how R² and adjusted R² respond as a model grows.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -702,7 +702,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="ctl"><label class="lab" for="x2">Control, X₂</label><select id="x2"></select></div>
     <button class="linkish fxbtn" data-open-formulas style="align-self:center"><i>Σ</i> Formulas</button>
   </section>
-  <p style="margin:-8px 0 0;font-size:14px;color:var(--ink-2)">DV (Y) throughout: <b style="color:var(--ink)">Trump's share of the 2016 presidential vote</b>, in each of the 50 states and D.C.</p>
+  <p style="margin:-8px 0 0;font-size:14px;color:var(--ink-2)">Throughout this page the DV (Y) is <b style="color:var(--ink)">Trump's share of the 2016 presidential vote</b> in each of the 50 states and D.C.</p>
 
   <!-- A -->
   <figure>
@@ -731,7 +731,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <!-- C -->
   <figure>
     <div class="fighead"><h2><span class="step">C</span>The equation, parallel lines, and predictions</h2></div>
-    <p class="sub">With two IVs the model is ŷ = <span class="k-b1">β₁</span>X₁ + <span class="k-b2">β₂</span>X₂ + <span class="k-cons">constant</span> (y = mx + b with one more term). Fix X₂ at any value and you get a line for X₁; every such line has the same slope, β₁. Slide X₂ and the line moves up or down without tilting.</p>
+    <p class="sub">With two IVs the model is ŷ = <span class="k-b1">β₁</span>X₁ + <span class="k-b2">β₂</span>X₂ + <span class="k-cons">constant</span> (y = mx + b with one more term). Fix X₂ at any value and you get a line for X₁, and every such line has the same slope, β₁. Slide X₂ and the line moves up or down without tilting.</p>
     <div class="terms" id="terms"></div>
     <div class="grid2" style="margin-top:12px">
       <div>
@@ -778,11 +778,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <h3>Output</h3>
     <pre class="stata" id="stata"></pre>
   </section>
-  <p class="publink"><a href="practice-published-tables.html#t3">See this as a published table →</a> A five-IV model in the export style, then three models side by side in the journal style.</p>
+  <p class="publink"><a href="practice-published-tables.html#t3">See this as a published table →</a> It shows a five-IV model in the export style, and then three models side by side in the journal style.</p>
 
-  <section class="fljumpbox" aria-label="Extended worked example"><p>Multiple regression with a dummy on real survey data: the First Lady analysis redone holding gender constant, step by step, ending with both parties and gender in one model.</p><p><a class="fljump" href="10-dummy-variables.html#firstlady">★ Worked example, extended: the First Lady, controlling for gender →</a></p></section>
+  <section class="fljumpbox" aria-label="Extended worked example"><p>The extended worked example uses multiple regression with a dummy on real survey data. It redoes the First Lady analysis holding gender constant, step by step, and ends with both parties and gender in one model.</p><p><a class="fljump" href="10-dummy-variables.html#firstlady">★ Worked example, extended: the First Lady, controlling for gender →</a></p></section>
 
-  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -791,7 +791,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
         <li>Pick <b>Explained away</b>. White poverty looks like a strong predictor of Trump's share, until you hold income constant. Watch the cloud flatten in panel A.</li>
         <li>Pick <b>The sign flips</b>. More high school graduates looks bad for Trump, yet holding income constant the slope turns positive. Panel B shows where the bivariate slope came from.</li>
         <li>In panel C, slide X₂. The line moves but never tilts. The change you get from moving X₁ is the same whatever X₂ is.</li>
-        <li>In panel D, add <b>Random noise</b>. R² rises a little; adjusted R² falls. Click <b>Reroll noise</b> a few times.</li>
+        <li>In panel D, add <b>Random noise</b>. R² rises a little, while adjusted R² falls. Click <b>Reroll noise</b> a few times.</li>
         <li>Add all seven IVs and switch to <b>per 1 SD</b>. Which variable has the biggest effect on a common scale?</li>
       </ol>
     </section>
@@ -799,7 +799,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <h2>Check yourself</h2>
       <details>
         <summary>What does “holding income constant” mean for these 51 states?</summary>
-        <p>We compare states as if they had the same median income. Statistically, we use only the variation in X₁ that is not predictable from income, which is what panel A plots. It is not the same as an experiment: anything left out of the model can still be doing the work.</p>
+        <p>We compare states as if they had the same median income. Statistically, we use only the variation in X₁ that is not predictable from income, which is what panel A plots. It is not the same as an experiment, since anything left out of the model can still be doing the work.</p>
       </details>
       <details>
         <summary>The bivariate slope of white poverty is 2.66; holding income constant it is 0.93. What happened?</summary>
@@ -807,7 +807,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       </details>
       <details>
         <summary>When does leaving out X₂ not bias β₁?</summary>
-        <p>When X₂ doesn't affect Y (β₂ = 0) or when X₂ is unrelated to X₁ (δ = 0). Omitted variable bias needs both: the left-out variable must matter for Y and travel with X₁.</p>
+        <p>Leaving out X₂ does not bias β₁ when X₂ doesn't affect Y (β₂ = 0) or when X₂ is unrelated to X₁ (δ = 0). Omitted variable bias needs both, meaning the left-out variable must matter for Y and also travel with X₁.</p>
       </details>
       <details>
         <summary>Why can R² rise when you add random noise?</summary>
@@ -815,7 +815,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       </details>
       <details>
         <summary>Can you compare coefficients across IVs measured in different units?</summary>
-        <p>Not directly: a 1-point change in unemployment and a $1,000 change in income aren't comparable. Standardized coefficients (Stata's <code>beta</code> option) express each effect per 1-SD change in X, in SDs of Y, which puts them on a common scale.</p>
+        <p>Not directly, because a 1-point change in unemployment and a $1,000 change in income aren't comparable. Standardized coefficients (Stata's <code>beta</code> option) express each effect per 1-SD change in X, in SDs of Y, which puts them on a common scale.</p>
       </details>
     </section>
   </div>
@@ -838,15 +838,15 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>Residualize Y and X₁ on X₂, then regress leftovers on leftovers. That is panel A.</p></div>
   <div class="fx"><h3>Omitted variable bias</h3>
     <math display="block"><msub><mi>b</mi><mtext>bivariate</mtext></msub><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><mo>·</mo><mi>δ</mi></math>
-    <p>δ is the slope from regressing X₂ on X₁. Exact for least squares in any sample.</p></div>
+    <p>δ is the slope from regressing X₂ on X₁, and this holds exactly for least squares in any sample.</p></div>
   <div class="fx"><h3>Adjusted R²</h3>
     <math display="block"><msubsup><mi>R</mi><mtext>adj</mtext><mn>2</mn></msubsup><mo>=</mo><mn>1</mn><mo>−</mo><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>R</mi><mn>2</mn></msup><mo>)</mo><mfrac><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><mrow><mi>n</mi><mo>−</mo><mi>k</mi><mo>−</mo><mn>1</mn></mrow></mfrac></math>
     <p>k is the number of IVs. Each added IV costs a degree of freedom.</p></div>
-  <div class="fx"><h3>Standardized coefficient (Stata: beta)</h3>
+  <div class="fx"><h3>Standardized coefficient (Stata's beta)</h3>
     <math display="block"><msubsup><mi>β</mi><mi>j</mi><mo>*</mo></msubsup><mo>=</mo><msub><mi>β</mi><mi>j</mi></msub><mo>·</mo><mfrac><msub><mi>SD</mi><msub><mi>X</mi><mi>j</mi></msub></msub><msub><mi>SD</mi><mi>Y</mi></msub></mfrac></math>
-    <p>The change in Y, in standard deviations, for a 1-SD change in X<sub>j</sub>.</p></div>
+    <p>This is the change in Y, in SDs, for a 1-SD change in X<sub>j</sub>.</p></div>
   <div class="fx"><h3>Tests</h3>
-    <p>Each coefficient: t = β<sub>j</sub>/SE with n − k − 1 degrees of freedom. Whole model: F tests whether all slopes are zero at once.</p></div>
+    <p>For each coefficient, t = β<sub>j</sub>/SE with n − k − 1 degrees of freedom. For the whole model, F tests whether all slopes are zero at once.</p></div>
 </aside>
 
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
@@ -1062,7 +1062,7 @@ function textC(){
   const A1=anchors(st.x1,c.X1), get=k=>k==='v1'?st.v1:A1[k]; const x1=get(st.from),x2=get(st.to),dx=x2-x1,dy=b1*dx;
   $('#mBig').textContent='Δŷ = '+(dy>0?'+':dy<0?'−':'')+nice(dy);
   $('#mCalc').innerHTML=`Δŷ = <span class="k-b1">β₁</span> × Δx₁ = <span class="k-b1">${sgn(b1)}</span> × ${dx.toFixed(2)} = ${dy<0?'−':''}${nice(dy)}`;
-  $('#mSay').innerHTML=Math.abs(dx)<1e-9?'Pick two different values.':`Holding ${VK[st.x2].short} at ${fx(st.x2,st.v2)}, moving from ${aName[st.from]} ${VK[st.x1].short} (${fx(st.x1,x1)}) to ${aName[st.to]} (${fx(st.x1,x2)}) predicts a <b>${nice(dy)}-point ${dy<0?'decrease':'increase'}</b> in Trump share. Slide X₂: the answer doesn't change.`;
+  $('#mSay').innerHTML=Math.abs(dx)<1e-9?'Pick two different values.':`Holding ${VK[st.x2].short} at ${fx(st.x2,st.v2)}, moving from ${aName[st.from]} ${VK[st.x1].short} (${fx(st.x1,x1)}) to ${aName[st.to]} (${fx(st.x1,x2)}) predicts a <b>${nice(dy)}-point ${dy<0?'decrease':'increase'}</b> in Trump share. Slide X₂ and the answer doesn't change.`;
 }
 for(const id of ['1','2']){
   $('#v'+id).addEventListener('input',e=>{const v=parseFloat(e.target.value);if(!isFinite(v))return;st['v'+id]=v;$('#v'+id+'r').value=v;id==='2'?renderC(false):(drawPred(),(st.from==='v1'||st.to==='v1')&&renderC(false),textC());});
@@ -1110,7 +1110,7 @@ function renderD(){
     const ci=el('circle',{cx:xs(r.b),cy:y,r:6,fill:sig?css('--s1'):css('--surface'),stroke:col,'stroke-width':2},svg);
     const hit=el('rect',{x:0,y:y-rh/2,width:W,height:rh,fill:'transparent'},svg);
     bindTip(hit,()=>`<b>${nameOf(r.k)}</b><br>${st.units==='sd'?'β* (per SD)':'β'} = ${sgn(r.b)}<br>95% CI ${sgn(r.lo)} to ${sgn(r.hi)}<br>p = ${r.p<0.001?'< .001':r.p.toFixed(3)}`);});
-  $('#coefNote').textContent='Filled dots: p < .05, the interval excludes 0. Hollow gray dots: the 95% interval crosses 0, so we can’t rule out no effect, holding the other IVs constant.';
+  $('#coefNote').textContent='Filled dots have p < .05, so their interval excludes 0. Hollow gray dots have a 95% interval that crosses 0, so we can’t rule out no effect, holding the other IVs constant.';
 }
 
 /* ---------- Stata ---------- */
@@ -1154,9 +1154,9 @@ st.trace=Math.max(0,DAT.states.indexOf('West Virginia'));
 (()=>{const sel=$('#traceSel');DAT.states.forEach((n,i)=>{const o=document.createElement('option');o.value=i;o.textContent=n;sel.appendChild(o);});sel.value=st.trace;sel.addEventListener('change',()=>{st.trace=+sel.value;renderA();stepText();});})();
 function stepText(){ const c=core(), i=st.trace, x2=VK[st.x2].short, x1=VK[st.x1].short, nm=DAT.states[i];
   const ey=c.py[i]-c.my, ex=c.px[i]-c.mx1, r=v=>v.toFixed(1);
-  const T={raw:`<b>Step 1. The raw data.</b> Trump's share against ${x1}, with the bivariate line. Color shows ${x2}. If dark and light states sit in different corners, ${x1} and ${x2} travel together, and this slope mixes their effects.`,
-    ylo:`<b>Step 2. Predict Y from ${x2}, keep the leftovers.</b> The line is what ${x2} alone predicts for each state's Trump share. Each stick is a state's <b>leftover</b>: its actual share minus that prediction. ${nm}'s leftover is <b>${ey>=0?'+':'−'}${r(Math.abs(ey))}</b> points${ey>=0?' (more Trump than its '+x2+' predicts)':' (less Trump than its '+x2+' predicts)'}.`,
-    xlo:`<b>Step 3. Predict ${x1} from ${x2}, keep those leftovers too.</b> Same idea for the focus IV: each stick is the part of a state's ${x1} that doesn't simply travel with its ${x2}. ${nm}'s ${x1} leftover is <b>${ex>=0?'+':'−'}${fx(st.x1,Math.abs(ex))}</b>.`,
+  const T={raw:`<b>Step 1. Start with the raw data.</b> This is Trump's share plotted against ${x1}, with the bivariate line. Color shows ${x2}. If dark and light states sit in different corners, ${x1} and ${x2} travel together, and this slope mixes their effects.`,
+    ylo:`<b>Step 2. Predict Y from ${x2} and keep the leftovers.</b> The line is what ${x2} alone predicts for each state's Trump share. Each stick is a state's <b>leftover</b>, which is its actual share minus that prediction. ${nm}'s leftover is <b>${ey>=0?'+':'−'}${r(Math.abs(ey))}</b> points${ey>=0?' (more Trump than its '+x2+' predicts)':' (less Trump than its '+x2+' predicts)'}.`,
+    xlo:`<b>Step 3. Predict ${x1} from ${x2} and keep those leftovers too.</b> This is the same idea for the focus IV, so each stick is the part of a state's ${x1} that doesn't simply travel with its ${x2}. ${nm}'s ${x1} leftover is <b>${ex>=0?'+':'−'}${fx(st.x1,Math.abs(ex))}</b>.`,
     partial:`<b>Step 4. Plot leftovers against leftovers.</b> Each state moves to its two leftovers: ${nm} lands at X₁ leftover ${ex>=0?'+':'−'}${fx(st.x1,Math.abs(ex))}, Y leftover ${ey>=0?'+':'−'}${r(Math.abs(ey))} (shifted back to the means so the axes keep familiar units). The slope of this cloud, <b>${sgn(c.ctl.b[0])}</b>, is exactly ${x1}'s coefficient holding ${x2} constant.`};
   $('#aStep').innerHTML=T[st.view]; }
 function renderSticks(){
@@ -1181,7 +1181,7 @@ function renderSticks(){
     t.textContent=`${DAT.abbr[i]}: leftover ${lv>=0?'+':'−'}${isY?Math.abs(lv).toFixed(1):fx(st.x1,Math.abs(lv))}`; }
   $('#aChips').innerHTML=`<span class="chip">The line predicts ${isY?'Trump share':VK[st.x1].short} from ${VK[st.x2].short}</span><span class="chip">Points <span style="color:var(--s2-ink);font-weight:600">above the line</span> have positive leftovers</span><span class="chip">Points <span style="color:var(--s1-ink);font-weight:600">below</span> have negative leftovers</span>`;
   $('#rampLab').parentElement.parentElement.style.display='none'; $('#lineLab').textContent=`fitted line on ${VK[st.x2].short}`; $('#ghostLab').parentElement.style.display='none';
-  $('#aCap').textContent=isY?`Leftovers sum to zero: the line runs through the middle of the cloud. Whatever pattern remains in these sticks is the part of Trump's share that ${VK[st.x2].short} can't explain.`:`These leftovers are ${VK[st.x1].short} with ${VK[st.x2].short}'s influence removed. Some states have a lot more (or less) ${VK[st.x1].short} than their ${VK[st.x2].short} would suggest.`;
+  $('#aCap').textContent=isY?`The leftovers sum to zero, because the line runs through the middle of the cloud. Whatever pattern remains in these sticks is the part of Trump's share that ${VK[st.x2].short} can't explain.`:`These leftovers are ${VK[st.x1].short} with ${VK[st.x2].short}'s influence removed. Some states have a lot more (or less) ${VK[st.x1].short} than their ${VK[st.x2].short} would suggest.`;
 }
 stepText();
 
