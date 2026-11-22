@@ -394,6 +394,8 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 .pcard h4{margin:0;font-size:16px}
 .pcard.ghost{opacity:.8}
 .pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
 .pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
 
 /* coding scales: one code per line, number first, left aligned */
@@ -958,8 +960,61 @@ const PG=[['cheney_therm','Dick Cheney',0],['hillary_therm','Hillary Clinton',0]
 const picks=[];
 $('#pgCards').innerHTML=PG.map(([c,n,g])=>{const s=NES[c],v=thermVals(c);return `<div class="pcard${g?' ghost':''}" data-c="${c}"><h4>${n}</h4><div class="nums">Mean ${s.mean.toFixed(1)}, median ${D.median(v)}, mode ${D.mode(v)}<br>Skewness ${D.sp(s.skew,3)}, kurtosis ${D.sp(s.kurt,3)}</div>
   <div class="row"><div class="seg" data-q="k"><button type="button" data-v="lep" aria-pressed="false">Lepto</button><button type="button" data-v="pla" aria-pressed="false">Platy</button></div><div class="seg" data-q="s"><button type="button" data-v="pos" aria-pressed="false">Positive</button><button type="button" data-v="neg" aria-pressed="false">Negative</button></div></div>
-  <div class="mini"></div><div class="row"><button class="dbtn" data-sched>Schedule</button><span class="src cfb"></span></div></div>`;}).join('');
-document.querySelectorAll('#pgCards .pcard').forEach(card=>{const c=card.dataset.c,v=thermVals(c);D.hist(card.querySelector('.mini'),{values:v,xmin:-5,xmax:105,binw:10,h:120,top:6,tickFmt:t=>t<0||t>100?'':t,ticks:[0,50,100],normal:{m:D.mean(v),s:D.sd(v)},aria:'Distribution'});});
+  <div class="mini"></div><label class="bq"><input type="checkbox" data-bronto> Put a brontosaurus on it?</label><div class="row"><button class="dbtn" data-sched>Schedule</button><span class="src cfb"></span></div></div>`;}).join('');
+/* ---------- "Put a brontosaurus on it?": a skew-normal body fitted to each guest's mean, SD and skewness ---------- */
+function snFit(m,s,g){const a=Math.min(Math.abs(g),0.99),c=Math.pow(a/((4-Math.PI)/2),2/3),dl=Math.sign(g)*Math.sqrt((Math.PI/2)*c/(1+c));
+  const w=s/Math.sqrt(1-2*dl*dl/Math.PI),xi=m-w*dl*Math.sqrt(2/Math.PI),al=dl/Math.sqrt(1-dl*dl);
+  const Phi=z=>{const t=1/(1+0.3275911*Math.abs(z)/Math.SQRT2),y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-z*z/2);return 0.5*(1+Math.sign(z)*y);};
+  return x=>{const z=(x-xi)/w;return 2/w*Math.exp(-z*z/2)/Math.sqrt(2*Math.PI)*Phi(al*z);};}
+function pgBronto(card,on){const c=card.dataset.c,v=thermVals(c),st=NES[c],host=card.querySelector('.mini');
+  const base={values:v,xmin:-5,xmax:105,binw:10,tickFmt:t=>t<0||t>100?'':t,ticks:[0,50,100],aria:'Distribution'};
+  if(!on){D.hist(host,{...base,h:120,top:6,normal:{m:D.mean(v),s:D.sd(v)}});return;}
+  const m=D.mean(v),s=D.sd(v),g=st.skew,f=snFit(m,s,g),N=v.length,cnt=x=>f(x)*N*10;
+  const bins=new Array(11).fill(0);v.forEach(x=>bins[Math.min(10,Math.max(0,Math.floor((x+5)/10)))]++);
+  const xs=[];for(let i=0;i<=220;i++)xs.push(-5+110*i/220);const ys=xs.map(cnt),pk=Math.max(...ys),xm=xs[ys.indexOf(pk)];
+  const R=D.hist(host,{...base,h:182,top:64,ymax:Math.max(Math.max(...bins)*1.12,pk*1.08),aria:`Distribution with a brontosaurus drawn over it. Its tail points ${g<0?'left':'right'}, so the skew is ${g<0?'negative':'positive'}.`});
+  const {svg,X,Y}=R,dir=g<0?1:-1,W=R.W,y0=Y(0); // dir 1: head faces right (tail left)
+  let seed=c.length*7+3;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280-0.5;};
+  const P=xs.map((x,i)=>[X(x),Y(ys[i])+rnd()*1.2]);
+  const body='M'+P.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L'),gr='color-mix(in srgb,#5a9a3a 30%,var(--surface))';
+  // the head side of the hump: walk from the peak toward the front until the curve drops to a share of the peak
+  const side=xs.map((x,i)=>i).filter(i=>dir>0?xs[i]>=xm:xs[i]<=xm);if(dir<0)side.reverse();
+  const at=fr=>{const i=side.find(k=>ys[k]<=pk*fr);return i==null?side[side.length-1]:i;};
+  const iB=at(0.7),Bx=X(xs[iB]),By=Y(ys[iB]*0.8),Hx=Math.max(24,Math.min(W-26,Bx+dir*26)),Hy=27;
+  const neck=`M${Bx},${By} C${Bx+dir*3},${By-30} ${Hx-dir*12},${Hy+24} ${Hx-dir*3},${Hy+4}`;
+  S('path',{d:body+` L${X(105)},${y0} L${X(-5)},${y0} Z`,fill:gr,'fill-opacity':0.8,stroke:'none'},svg);
+  const cid='nk-'+c,cp=S('clipPath',{id:cid},S('defs',{},svg));S('path',{d:body+` L${X(105)},0 L${X(-5)},0 Z`},cp); // the neck shows only above the back
+  const ng=S('g',{'clip-path':`url(#${cid})`},svg);
+  S('path',{d:neck,fill:'none',stroke:'var(--ink)','stroke-width':11,'stroke-linecap':'round'},ng);
+  S('path',{d:neck,fill:'none',stroke:gr,'stroke-width':7,'stroke-linecap':'round'},ng);
+  S('path',{d:body,fill:'none',stroke:'var(--ink)','stroke-width':2.2,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+  S('ellipse',{cx:Hx,cy:Hy,rx:11.5,ry:7,fill:gr,stroke:'var(--ink)','stroke-width':2.2,transform:`rotate(${-dir*10} ${Hx} ${Hy})`},svg);
+  S('circle',{cx:Hx+dir*4.5,cy:Hy-1.5,r:1.6,fill:'var(--ink)'},svg);
+  S('path',{d:`M${Hx+dir*10},${Hy+3} q${-dir*4},3 ${-dir*8},1.5`,fill:'none',stroke:'var(--ink)','stroke-width':1.4,'stroke-linecap':'round'},svg);
+  // stubby feet, spaced under the hump
+  [-1.1,-0.5,0.15,0.7].map(k=>xm+dir*k*s*0.8).forEach(x=>{const xx=X(Math.max(-2,Math.min(102,x)));S('rect',{x:xx-3.4,y:y0-3,width:6.8,height:10,rx:3,fill:'var(--ink)'},svg);});
+  // arrow toward the tail, labeled with the direction of the skew
+  const ti=(dir>0?side.length&&xs.map((x,i)=>i).filter(i=>xs[i]<=xm).find(i=>ys[i]>=pk*0.05):xs.map((x,i)=>i).filter(i=>xs[i]>=xm).reverse().find(i=>ys[i]>=pk*0.05));
+  const barely=Math.abs(g)<0.5,ax1=X(xm),ax2=X(Math.max(-3,Math.min(103,xs[ti??0]))),ay=y0+36;
+  S('line',{x1:ax1,x2:ax2+dir*4,y1:ay,y2:ay,stroke:'var(--s2)','stroke-width':2.5},svg);
+  S('path',{d:`M${ax2},${ay} l${dir*8},-5 v10 z`,fill:'var(--s2)'},svg);
+  S('text',{x:(ax1+ax2)/2,y:ay-6,'text-anchor':'middle',class:'meant'},svg,(barely?'barely ':'')+(g<0?'negative':'positive')+(barely?'':' skew'));
+  // two of the guests came dressed for the occasion
+  const egg=who=>S('a',{href:`swim.html?who=${who}`,'aria-label':'A hidden game',class:'egg'},svg);
+  const pt=(dx,dy)=>`${(Hx+dir*dx*1.3).toFixed(1)},${(Hy+dy*1.3).toFixed(1)}`;
+  if(c==='edwards_therm'){const a=egg('edwards');
+    S('path',{d:`M${pt(-11,-1)} C${pt(-15,-10)} ${pt(-9,-20)} ${pt(0,-21)} C${pt(9,-22)} ${pt(17,-17)} ${pt(18,-9)} C${pt(19,-4)} ${pt(16,-1)} ${pt(13,-2)} C${pt(14,-7)} ${pt(10,-10)} ${pt(6,-8)} C${pt(2,-6)} ${pt(-5,-4)} ${pt(-11,-1)} Z`,fill:'#F6D55C',stroke:'#7A5C12','stroke-width':1.3,'stroke-linejoin':'round'},a);
+    S('path',{d:`M${pt(-9,-5)} C${pt(-8,-14)} ${pt(2,-18)} ${pt(11,-15)} M${pt(-5,-5)} C${pt(-2,-12)} ${pt(6,-14)} ${pt(14,-10)} M${pt(-1,-6)} C${pt(3,-10)} ${pt(9,-11)} ${pt(15,-6)}`,fill:'none',stroke:'#C49A22','stroke-width':0.9,'stroke-linecap':'round'},a);
+    const [sx,sy]=pt(21,-19).split(',').map(Number);S('path',{d:`M${sx},${sy-3.5} L${sx+1.2},${sy-1.2} L${sx+3.5},${sy} L${sx+1.2},${sy+1.2} L${sx},${sy+3.5} L${sx-1.2},${sy+1.2} L${sx-3.5},${sy} L${sx-1.2},${sy-1.2} Z`,fill:'#FFE680',stroke:'#C9A227','stroke-width':0.5},a);}
+  if(c==='cheney_therm'){const a=egg('cheney'),hX=Bx-dir*13,yy=ys[xs.findIndex(x=>X(x)>=hX)]||pk,hY=Y(yy*0.5);
+    const k=1.35,q=(dx,dy)=>`${(hX+dx*k).toFixed(1)},${(hY+dy*k).toFixed(1)}`;
+    S('path',{d:`M${q(0,7)} C${q(-9,1)} ${q(-9,-6)} ${q(-4.5,-6)} C${q(-1.5,-6)} ${q(0,-4)} ${q(0,-2.5)} C${q(0,-4)} ${q(1.5,-6)} ${q(4.5,-6)} C${q(9,-6)} ${q(9,1)} ${q(0,7)} Z`,fill:'#AEB8C2',stroke:'var(--ink)','stroke-width':1.3,'stroke-linejoin':'round'},a);
+    [[-5.2,-3],[5.2,-3],[0,4.2]].forEach(([dx,dy])=>S('circle',{cx:hX+dx*k,cy:hY+dy*k,r:0.95,fill:'#4E5862'},a));
+    S('circle',{cx:hX,cy:hY-0.6*k,r:2.7*k,fill:'#EEF2F5',stroke:'#4E5862','stroke-width':0.8},a);
+    S('line',{x1:hX,y1:hY-0.6*k,x2:hX+1.8*k,y2:hY-2.3*k,stroke:'#B3261E','stroke-width':0.9,'stroke-linecap':'round'},a);
+    S('path',{d:`M${q(6.5,-6.5)} l${1.6*k},${-2.2*k} M${q(7.6,-5.4)} l${2.3*k},${-1.1*k}`,fill:'none',stroke:'#4E5862','stroke-width':0.9,'stroke-linecap':'round'},a);}
+}
+document.querySelectorAll('#pgCards .pcard').forEach(card=>{pgBronto(card,false);card.querySelector('[data-bronto]').addEventListener('change',e=>pgBronto(card,e.target.checked));});
 $('#pgCards').addEventListener('click',e=>{const card=e.target.closest('.pcard');if(!card)return;const c=card.dataset.c,s=NES[c];
   const b=e.target.closest('.seg button');if(b){b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
     const k=card.querySelector('[data-q="k"] [aria-pressed="true"]'),sg=card.querySelector('[data-q="s"] [aria-pressed="true"]');const out=[];
