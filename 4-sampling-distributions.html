@@ -598,7 +598,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 4 of 10</p>
     <h1>Sampling distributions</h1>
-    <p class="dek">We rarely see a whole population. We see one sample and compute its mean. Draw thousands of samples from real county election returns and watch where the sample means land: they center on the truth, and they cluster tighter as samples grow.</p>
+    <p class="dek">We rarely get to see a whole population. Instead we see one sample and compute its mean. On this page you will draw thousands of samples from real county election returns and watch where the sample means land. You will see that they center on the truth, and that they cluster more tightly as the samples grow.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -693,13 +693,13 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="sub">You shake the bowl and grab a handful. For each pull below, slide to how often you think a handful would come out that way.</p>
     <div class="jbends"><span>◀ Totally shocked. I'm gonna go play the lottery.</span><span>I'm not shocked at all ▶</span></div>
     <div id="jbQs"></div>
-    <p class="jbnote">For scale: the Powerball jackpot is 1 in 292,201,338, about 1 in 292 million.</p>
+    <p class="jbnote">For scale, the odds of winning the Powerball jackpot are 1 in 292,201,338, or about 1 in 292 million.</p>
     <div class="btns"><button class="primary" id="jbReveal">Reveal the real chances</button><button id="jbRedo">Guess again</button></div>
     <div class="jberr" id="jbErr" aria-live="polite"></div>
   </figure>
   <figure>
     <div class="fighead"><h2><span class="step">3</span>Grab handfuls and pile up their means</h2></div>
-    <p class="sub">Each click grabs one small and one large handful, pours them back, and drops each handful's mean, as a cyan mean bean, onto its pile. The shaded ends hold the outer 5% of handfuls: the weird ones.</p>
+    <p class="sub">Each click grabs one small and one large handful, pours them back, and drops each handful's mean, as a cyan mean bean, onto its pile. The shaded ends hold the outer 5% of handfuls, which are the weird ones.</p>
     <div class="btns"><button class="primary" id="jbGrab">Grab one of each</button><button id="jbAuto" aria-pressed="false">Auto</button><button id="jbFast" aria-pressed="false">Fast</button><button id="jb100">+100</button><button id="jbClear">Clear</button>
       <label style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-2)"><input type="checkbox" id="jbCurve" checked> Show normal curve</label></div>
     <div class="jbtrays" id="jbTrays" hidden aria-live="polite">
@@ -708,7 +708,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     </div>
     <div class="chart" id="jbPile" style="margin-top:12px"></div>
   </figure>
-  <p class="jbt">The small handfuls make a wide, flat pile: a small handful has to land far from the bowl's mean before it counts as weird. The large handfuls make a narrow pile, and even a modest miss is surprising. Both piles take on the shape of the normal curve, the large one more closely. The spread of each pile is its standard error. The next section does the same thing with a real population: 3,112 U.S. counties.</p>
+  <p class="jbt">The small handfuls make a wide, flat pile, because a small handful has to land far from the bowl's mean before it counts as weird. The large handfuls make a narrow pile, and even a modest miss is surprising. Both piles take on the shape of the normal curve, the large one more closely. The spread of each pile is its standard error. The next section does the same thing with a real population: 3,112 U.S. counties.</p>
 </section>
 <h2 class="jbh" style="margin:0 0 12px">The same idea with 3,112 counties</h2>
 <script>
@@ -775,7 +775,7 @@ function popChart(){const host=$('jbPop'),W=Math.max(280,Math.min(520,host.clien
   el('line',{x1:X(M-sd),x2:X(M+sd),y1:12,y2:12,style:'stroke:var(--s1-line)','stroke-width':5,'stroke-linecap':'round'},s);
   el('line',{x1:X(M),x2:X(M),y1:6,y2:m.t+ih,style:'stroke:var(--ink)','stroke-width':2,'stroke-dasharray':'4 3'},s);
   host.innerHTML='';host.appendChild(s);
-  $('jbPopSub').textContent=`Mean ${M.toFixed(2)} (dashed line), SD ${sd.toFixed(2)} (blue bar, one SD either side of the mean), N = 150.`;
+  $('jbPopSub').textContent=`The mean is ${M.toFixed(2)} (dashed line) and the SD is ${sd.toFixed(2)} (blue bar, one SD on either side of the mean), with N = 150.`;
   $('jbKey').innerHTML=F.map(f=>`<span><svg width="22" height="14" viewBox="-11 -7 22 14" aria-hidden="true"><path d="${SHAPE}" fill="${f[2]}" stroke="${f[3]}"/></svg><b>${f[0]}</b> ${f[1]}</span>`).join('');}
 /* ---------- step 2: three pulls, each for a small and a large handful ---------- */
 function makeQs(){const order=counts.map((c,i)=>[c,i]).sort((a,b)=>b[0]-a[0]),allOK=order.filter(([c])=>c>=nL).map(([,i])=>i);
@@ -796,7 +796,7 @@ function makeQs(){const order=counts.map((c,i)=>[c,i]).sort((a,b)=>b[0]-a[0]),al
 function readOut(r,c){const s=STOPS[+$(`jbq${r}${c}`).value];$(`jbr${r}${c}`).innerHTML=`${s[1][0].toUpperCase()+s[1].slice(1)}<small>${touched.has(`${r}${c}`)?s[2]:'move the slider'}</small>`;}
 function reveal(){if(touched.size<6){$('jbErr').textContent=`Make all six guesses first (${touched.size} of 6 so far).`;return;}
   Qs.forEach((q,r)=>[0,1].forEach(c=>{const p=q.p[c],gp=STOPS[+$(`jbq${r}${c}`).value][0],diff=Math.log10(Math.max(gp,1e-13))-Math.log10(Math.max(p,1e-300));
-    const v=Math.abs(diff)<0.6?'Close.':diff<0?'Less rare than you guessed.':'Rarer than you guessed.';
+    const v=Math.abs(diff)<0.6?'Close.':diff<0?'This is less rare than you guessed.':'This is rarer than you guessed.';
     const x=$(`jbx${r}${c}`);x.innerHTML=`<b>Real: ${oneIn(p)}</b><br>${pTxt(p)} · ${v}`+mini(gp,p);x.hidden=false;}));
   revealed=true;$('jbReveal').disabled=true;}
 function mini(gp,p){const W=170,L=8,Rr=W-8,lo=-13,hi=Math.log10(1/5),X=q=>L+(Math.min(Math.max(Math.log10(q),lo),hi)-lo)/(hi-lo)*(Rr-L),pb=X(1/292201338);
@@ -863,6 +863,8 @@ fill();popChart();makeQs();pileChart(false);
 </script>
 
 <!-- jelly beans: end -->
+
+
 
 
 
@@ -965,11 +967,11 @@ fill();popChart();makeQs();pileChart(false);
       <h2>Check yourself</h2>
       <details>
         <summary>At n = 25 the standard error of Biden share is about 3.2 points. What will it be at n = 100?</summary>
-        <p>About 1.6 points. The standard error is σ/√n, so quadrupling n divides it by √4 = 2. Precision grows with the square root of the sample size, which is why polls with 4,000 respondents are not four times better than polls with 1,000.</p>
+        <p>It will be about 1.6 points. The standard error is σ/√n, so quadrupling n divides it by √4 = 2. Precision grows with the square root of the sample size, which is why polls with 4,000 respondents are not four times better than polls with 1,000.</p>
       </details>
       <details>
         <summary>The population of county vote shares is right-skewed. What shape is the sampling distribution at n = 50?</summary>
-        <p>Close to normal. The Central Limit Theorem says the distribution of sample means approaches a normal curve as n grows, whatever the population's shape. Its center is still μ.</p>
+        <p>It will be close to normal. The Central Limit Theorem says the distribution of sample means approaches a normal curve as n grows, whatever the population's shape. Its center is still μ.</p>
       </details>
       <details>
         <summary>Why does Total votes cast need a much larger n before the bell shape appears?</summary>
@@ -1000,12 +1002,12 @@ fill();popChart();makeQs();pileChart(false);
   <div class="fx">
     <h3>Population mean and standard deviation</h3>
     <math display="block"><mi>μ</mi><mo>=</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msub><mi>x</mi><mi>i</mi></msub></math><math display="block"><mi>σ</mi><mo>=</mo><msqrt><mrow><mfrac><mn>1</mn><mi>N</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>μ</mi><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></math>
-    <p>Computed once from all N = 3,112 counties. In real research these are the unknowns.</p>
+    <p>These are computed once from all N = 3,112 counties, while in real research they are the unknowns.</p>
   </div>
   <div class="fx">
     <h3>Sample mean</h3>
     <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>x</mi><mi>i</mi></msub></math>
-    <p>A statistic: it changes from sample to sample. Panel C collects those changing values.</p>
+    <p>The sample mean is a statistic, so it changes from sample to sample, and panel C collects those changing values.</p>
   </div>
   <div class="fx">
     <h3>Center of the sampling distribution</h3>
@@ -1015,7 +1017,7 @@ fill();popChart();makeQs();pileChart(false);
   <div class="fx">
     <h3>Standard error of the mean</h3>
     <math display="block"><mi>SE</mi><mo>(</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>=</mo><mfrac><mi>σ</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
-    <p>The standard deviation of the sampling distribution. Quadruple n and the SE halves. In practice σ is unknown and we plug in the sample SD, s.</p>
+    <p>This is the standard deviation of the sampling distribution. If you quadruple n, the SE is cut in half. In practice σ is unknown, so we plug in the sample SD, s.</p>
   </div>
   <div class="fx">
     <h3>Central Limit Theorem</h3>
@@ -1051,19 +1053,19 @@ const POPS = {
   dem:   {key:'dem', var:'biden_pct', title:'Biden vote share, 2020', unit:'%', lo:0, hi:100, w:2.5, floor:true,
           tick:v=>v+'%', val:v=>v.toFixed(1)+'%', mean:v=>v.toFixed(1)+'%', dec:2,
           sub:'Biden’s percentage of all presidential votes cast in each county.', fsd:v=>v.toFixed(1),
-          note:'<b>Right-skewed.</b> Most counties are small, rural and lopsidedly Republican; a long tail of urban counties runs to the right.'},
+          note:'The distribution is <b>right-skewed</b>. Most counties are small, rural and lopsidedly Republican, and a long tail of urban counties runs to the right.'},
   swing: {key:'swing', var:'swing', title:'Swing to Democrats, 2016→2020', unit:' pts', lo:-28, hi:14, w:1, floor:false,
           tick:v=>(v>0?'+':'')+v, val:v=>(v>0?'+':'')+v.toFixed(1), mean:v=>(v>0?'+':'')+v.toFixed(2)+' pts', dec:2,
           sub:'Biden 2020 share minus Clinton 2016 share, in percentage points.', fsd:v=>v.toFixed(1),
-          note:'<b>Roughly bell-shaped</b>, with a thin left tail of counties that swung sharply Republican (mostly in South Texas along the border).'},
+          note:'The distribution is <b>roughly bell-shaped</b>, with a thin left tail of counties that swung sharply Republican (mostly in South Texas along the border).'},
   votes: {key:'votes', var:'votes', title:'Total votes cast, 2020', unit:'', lo:0, hi:300000, w:10000, floor:true, overflow:true,
           tick:fmtK, val:v=>Math.round(v).toLocaleString('en-US'), mean:v=>Math.round(v).toLocaleString('en-US'), dec:0,
           sub:'Ballots cast for president in each county.', fsd:v=>Math.round(v).toLocaleString('en-US'),
-          note:'<b>Extremely right-skewed.</b> Half of counties cast fewer than about 12,500 votes. The last bar collects every county above 300,000.'},
+          note:'The distribution is <b>extremely right-skewed</b>. Half of counties cast fewer than about 12,500 votes, and the last bar collects every county above 300,000.'},
   won:   {key:'won', var:'biden_won', title:'Biden carried the county', unit:'', lo:0, hi:1, w:0.025, floor:true, binary:true,
           tick:v=>v.toFixed(v===0||v===1?0:2), val:v=>v?'Biden':'Trump', mean:v=>v.toFixed(3), dec:4,
           sub:'1 if Biden won the county, 0 if Trump did. The mean is a proportion.', fsd:v=>v.toFixed(3),
-          note:'<b>Only two values.</b> Biden carried about 1 county in 6, yet the sample proportions in panel C still pile up into a bell.'}
+          note:'There are <b>only two values</b>. Biden carried about 1 county in 6, yet the sample proportions in panel C still pile up into a bell.'}
 };
 for (const p of Object.values(POPS)){
   const v = D[p.key]; let s=0, mn=Infinity, mx=-Infinity;
@@ -1281,7 +1283,7 @@ function render(){
   let hl=null; if(xbar!=null){ hl=(ov&&xbar>p.hi)? k : Math.floor((xbar-lo)/w+1e-9); if(hl>=k && !(ov&&xbar>p.hi)) hl=(!st.zoom? k-1 : null); if(hl!=null&&hl<0) hl=null; }
   const M=st.means.length;
   const curve = (st.curve && M>0) ? (x=>{ const z=(x-p.mu)/se; return M*w*Math.exp(-0.5*z*z)/(se*Math.sqrt(2*Math.PI)); }) : null;
-  $('#sdSub').textContent = M ? `${M.toLocaleString('en-US')} sample mean${M>1?'s':''}, each from n = ${n} counties. ${st.zoom?'Zoomed to the region around μ.':'Same horizontal scale as the population in panel A.'}` : 'No samples yet. Draw some.';
+  $('#sdSub').textContent = M ? `${M.toLocaleString('en-US')} sample mean${M>1?'s':''}, each from n = ${n} counties. ${st.zoom?'Zoomed to the region around μ.':'Same horizontal scale as the population in panel A.'}` : 'There are no samples yet, so draw some.';
   histogram($('#sdChart'),{lo,w,k,counts:cS,overflow:ov,color:css('--s1'),hlColor:css('--s2'),hl,ylab:'Samples',xfmt:p.tick,h:280,
     markers:[{x:p.mu,label:'μ = '+p.mean(p.mu),color:css('--ink'),wd:1.5}].concat(xbar!=null?[{x:xbar,label:'latest x̄ = '+p.mean(xbar),color:css('--s2'),text:css('--s2-ink')}]:[]),
     curve, aria:`Histogram of ${M} sample means`,
@@ -1330,7 +1332,7 @@ function statOut(p,n,se){
     <div class="row"><span>SD of your x̄'s (simulated SE)</span><span class="v">${M>1?f(sd):'–'}</span></div>`;
   let vtxt='';
   if(M<30) vtxt='Draw at least a few hundred samples, then compare the two pairs of numbers.';
-  else { const r=sd/se; vtxt=`Your simulated SE is ${(Math.abs(r-1)*100).toFixed(0)}% ${r>=1?'above':'below'} σ/√n after ${M.toLocaleString('en-US')} samples. More samples bring the two closer; a larger n shrinks both.`; }
+  else { const r=sd/se; vtxt=`Your simulated SE is ${(Math.abs(r-1)*100).toFixed(0)}% ${r>=1?'above':'below'} σ/√n after ${M.toLocaleString('en-US')} samples. More samples bring the two closer, and a larger n shrinks both.`; }
   $('#verdict').textContent=vtxt;
 }
 
