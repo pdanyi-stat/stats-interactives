@@ -687,7 +687,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
   <!-- 7 MODE -->
   <section class="part"><p class="kick">Part 7</p><h2>Find the mode in a frequency table</h2>
     <p>The mode is the most common value. In SPSS you find it in the Frequency column of a frequency table. A bar chart of the same table makes it easy to see.</p></section>
-  <section class="dcard" id="mo">
+  <section class="dcard" id="mo" data-ds="ANES_2020_Welfare_Spending_F26.sav">
     <h3>Federal budget spending on welfare programs, 2020 ANES</h3>
     <div class="sp-sheet" id="moTbl"></div>
     <div id="moOut"></div>
@@ -709,7 +709,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
   <!-- 7b MEDIAN IN A FREQUENCY TABLE -->
   <section class="part"><p class="kick">Part 8</p><h2>Find the median in a frequency table</h2>
     <p>The median is the answer given by the middle person once everyone is lined up in order, here from “Increased a lot” to “Decreased a lot.” With thousands of people we don't line them up by hand. Instead we read the Cumulative Percent column, which adds up the Valid Percent as you go down the rows. The median is the first row where the cumulative percent reaches 50%, because that row holds the middle person.</p></section>
-  <section class="dcard" id="fm">
+  <section class="dcard" id="fm" data-ds="ANES_2020_Welfare_Spending_F26.sav">
     <h3>Federal budget spending on welfare programs, 2020 ANES</h3>
     <p class="p">This is the same table as in Part 7. Tap any number or label to see what it means, then find the median.</p>
     <div class="row"><span class="src">The −2 answers are</span><div class="seg" role="radiogroup" aria-label="How the −2 answers are treated" id="fmMiss"></div></div>
@@ -744,7 +744,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="fbk" id="cfFb" aria-live="polite"></div>
   </section>
 
-  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study; 1984 state results from the Describing Attributes of Data notes (StateVote_1980_1984.sav).</footer>
+  <footer class="src">Data: Titanic passenger list (titanic.sav); Massachusetts lunatics, 1854 (LunaticData.sav); World dataset (World.sav); 2004 American National Election Study (NES2004.sav) and 2020 American National Election Study (ANES_2020_Welfare_Spending_F26.sav); 1984 state results from the Describing Attributes of Data notes (StateVote_1980_1984.sav).</footer>
   <nav class="pager" aria-label="Previous and next"><a href="hypotheses-and-variables.html"><span class="k">← Previous · Start here</span><span class="t">Hypotheses and variables</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="2-skew-and-kurtosis.html"><span class="k">Next · Module 2 →</span><span class="t">Skew and kurtosis</span></a></nav>
 </main>
 
@@ -934,9 +934,9 @@ return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mea
 })();
 
 /* dataset download buttons */
-(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav'];
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav','ANES_2020_Welfare_Spending_F26.sav'];
 const INSTR=[];
-const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote'};
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote','ANES_2020_Welfare_Spending_F26.sav':'ANES 2020'};
 function run(){
   document.querySelectorAll('.dcard[data-ds]').forEach(card=>{if(card.querySelector('.dsbtns'))return;const h=card.querySelector(':scope > h3');
     const row=document.createElement('div');row.className='dshead';if(h){h.before(row);row.appendChild(h);}else card.prepend(row);
