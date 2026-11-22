@@ -383,12 +383,12 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 .tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
 .tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
 .tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
-.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:grid;gap:6px;min-width:0}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
 .pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .pcard h4{margin:0;font-size:16px}
 .pcard.ghost{opacity:.8}
 .pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
-.pcard .bq{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
 .pcard svg a.egg{cursor:pointer}
 .pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
 

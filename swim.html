@@ -57,15 +57,20 @@ for(let i=0;i<40;i++)stars.push({x:Math.random(),y:Math.random()*0.55,r:Math.ran
 
 /* ---------- items: Titanic and class themed ---------- */
 const KINDS=[ // weight, width, height above the water
-  {k:'ice',wt:26,w:44,h:36},{k:'door',wt:18,w:56,h:12},{k:'boat',wt:14,w:66,h:32},
-  {k:'ship',wt:12,w:76,h:46},{k:'beans',wt:10,w:38,h:24},{k:'pcube',wt:14,w:30,h:30}];
+  {k:'ice',wt:22,w:44,h:36},{k:'door',wt:16,w:56,h:12},{k:'boat',wt:13,w:66,h:32},{k:'ship',wt:11,w:76,h:46},
+  {k:'beans',wt:9,w:38,h:24},{k:'pcube',wt:12,w:30,h:30},{k:'ring',wt:10,w:30,h:28},{k:'bottle',wt:8,w:38,h:14}];
 const TOT=KINDS.reduce((s,k)=>s+k.wt,0);
-function pick(){let r=Math.random()*TOT;for(const k of KINDS){if((r-=k.wt)<0)return k;}return KINDS[0];}
+let recent=[],doorN=0;
+function pick(){for(let tries=0;tries<8;tries++){let r=Math.random()*TOT,c=KINDS[0];for(const k of KINDS){if((r-=k.wt)<0){c=k;break;}}
+    if(!(recent.length===2&&recent[0]===c.k&&recent[1]===c.k))return c;}return KINDS[0];}
+// spacing: mostly varied, sometimes tight, sometimes a breather. Even the tightest gap (1.15 s) leaves room to land and leap again.
+function gapTime(){const r=Math.random();return r<0.35?1.15+Math.random()*0.35:r<0.75?1.5+Math.random()*0.9:2.4+Math.random()*1.6;}
 function spawn(){if(carp)return;if(score>=RESCUE_AT){carp=true;obs.push({k:'carpathia',w:430,h:132,x:WW+40,seed:0,done:true});nextGap=1e9;return;}
-  const k=pick();obs.push({...k,x:WW+20,seed:Math.random()*1000,done:false,iceH:k.k==='ice'?28+Math.random()*10:0});
-  const v=spd;nextGap=(v*(1.2+Math.random()*1.0)+k.w)/v;}
+  const k=pick();recent=[recent[recent.length-1],k.k].filter(Boolean);const o={...k,x:WW+20,seed:Math.random()*1000,done:false,iceH:k.k==='ice'?28+Math.random()*10:0};
+  if(k.k==='door'&&++doorN%10===0){o.fiddle=true;o.h=36;}                // every tenth door has a violinist, still playing
+  obs.push(o);nextGap=(spd*gapTime()+k.w)/spd;}
 
-function reset(){carp=false;t=0;spd=S0;lift=0;vy=0;air=false;score=0;obs=[];parts=[];nextGap=0.6;state='play';}
+function reset(){carp=false;recent=[];doorN=0;t=0;spd=S0;lift=0;vy=0;air=false;score=0;obs=[];parts=[];nextGap=0.6;state='play';}
 function jump(){if(state==='ready'){reset();}
   else if(state==='over'){if(t>0.45)reset();return;}
   else if(state==='rescued'){if(t>0.6)location.href='practice-titanic.html';return;}
@@ -83,6 +88,8 @@ function dinoBoxes(){const cy=WL+18-lift;return [
 function obsBoxes(o){const bob=Math.sin(t*3+o.seed)*1.5,B=(a,b,h)=>({x0:o.x+a,x1:o.x+b,y0:WL-h+4+bob,y1:WL+4});
   if(o.k==='ship')return [B(4,o.w-4,26),B(18,54,o.h)];               // hull, then the funnels
   if(o.k==='ice')return [B(6,o.w-6,o.iceH)];
+  if(o.k==='door'&&o.fiddle)return [B(4,o.w-4,12),B(20,36,o.h)];
+  if(o.k==='ring')return [B(3,o.w-3,o.h)];
   if(o.k==='carpathia')return [B(0,o.w,62),B(70,330,96),B(150,180,o.h)];
   return [B(4,o.w-4,o.h)];}
 const hit=(a,b)=>a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0;
@@ -151,7 +158,29 @@ function drawItem(o){const bob=Math.sin(t*3+o.seed)*1.5,x=o.x,y=WL+bob;ctx.save(
     ctx.beginPath();ctx.moveTo(x+28,y-h*0.72);ctx.lineTo(x+31,y-h*0.2);ctx.lineTo(x+35,y-h*0.8);ctx.closePath();ctx.fillStyle='#A9D2EE';ctx.fill();}
   else if(o.k==='door'){ctx.translate(x+o.w/2,y-5);ctx.rotate(-0.07+Math.sin(t*2+o.seed)*0.03);
     rr(-o.w/2,-5,o.w,10,2);ctx.fillStyle='#8B5A2B';ctx.fill();ctx.strokeStyle='#4E3217';ctx.lineWidth=1.4;ctx.stroke();
-    ctx.strokeStyle='#6B4220';ctx.lineWidth=1;[-o.w/2+5,-2].forEach(px=>{ctx.strokeRect(px,-3,o.w/2-8,6);});ctx.fillStyle='#E2B23C';ctx.beginPath();ctx.arc(o.w/2-4,0,1.4,0,Math.PI*2);ctx.fill();}
+    ctx.strokeStyle='#6B4220';ctx.lineWidth=1;[-o.w/2+5,-2].forEach(px=>{ctx.strokeRect(px,-3,o.w/2-8,6);});ctx.fillStyle='#E2B23C';ctx.beginPath();ctx.arc(o.w/2-4,0,1.4,0,Math.PI*2);ctx.fill();
+    if(o.fiddle){// a violinist in band uniform, still playing
+      const UNI=dark()?'#6F8CBF':'#22304A',UNI2=dark()?'#5A75A3':'#1B2433';
+      ctx.rotate(0.07);const fx=0,fb=-5;ctx.lineCap='round';
+      ctx.strokeStyle=UNI2;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(fx-2,fb);ctx.lineTo(fx-2,fb-10);ctx.moveTo(fx+2,fb);ctx.lineTo(fx+2,fb-10);ctx.stroke();
+      ctx.fillStyle=UNI;rr(fx-4.5,fb-21,9,12,2.5);ctx.fill();ctx.fillStyle='#E2B23C';[0,1,2].forEach(i=>{ctx.beginPath();ctx.arc(fx,fb-19+i*3.5,0.7,0,Math.PI*2);ctx.fill();});
+      ctx.fillStyle='#F1C27D';ctx.beginPath();ctx.arc(fx+0.5,fb-25,3.6,0,Math.PI*2);ctx.fill();ctx.fillStyle=UNI;ctx.fillRect(fx-3.5,fb-30,8,2.6);ctx.fillRect(fx-2.5,fb-32,6,2.4);
+      ctx.save();ctx.translate(fx+4,fb-21);ctx.rotate(-0.45);ctx.fillStyle='#8B3A12';ctx.beginPath();ctx.ellipse(4,0,4.5,2.4,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#3A1A08';ctx.fillRect(8,-0.6,5,1.2);ctx.restore();
+      const ba=-0.35+Math.sin(t*9)*0.28;ctx.strokeStyle=UNI;ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(fx-3,fb-18);ctx.lineTo(fx-6,fb-14);ctx.stroke();
+      ctx.strokeStyle='#D9C7A0';ctx.lineWidth=0.9;ctx.beginPath();ctx.moveTo(fx-6+Math.cos(ba)*-6,fb-14+Math.sin(ba)*-6);ctx.lineTo(fx-6+Math.cos(ba)*12,fb-14+Math.sin(ba)*12);ctx.stroke();
+      ctx.fillStyle=dark()?'#DDE7F2':UNI;ctx.font='7px Georgia,serif';ctx.textAlign='center';ctx.fillText('♪',fx+12+Math.sin(t*3)*2,fb-30-((t*12)%8));}}
+  else if(o.k==='ring'){// a life ring
+    const cx=x+15,cy=y-12;ctx.translate(cx,cy);ctx.rotate(Math.sin(t*2+o.seed)*0.1);
+    for(let q=0;q<8;q++){ctx.beginPath();ctx.arc(0,0,11.5,q*Math.PI/4,(q+1)*Math.PI/4);ctx.strokeStyle=q%2?'#FFFFFF':'#D32F2F';ctx.lineWidth=7;ctx.stroke();}
+    ctx.beginPath();ctx.arc(0,0,15,0,Math.PI*2);ctx.arc(0,0,8,0,Math.PI*2,true);ctx.strokeStyle='#5D4037';ctx.lineWidth=1;ctx.stroke();
+    ctx.setLineDash([2,3]);ctx.beginPath();ctx.arc(0,0,11.5,0,Math.PI*2);ctx.strokeStyle='#C8B48A';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);}
+  else if(o.k==='bottle'){// a message in a bottle; the note inside says H0
+    ctx.translate(x+19,y-6);ctx.rotate(-0.12+Math.sin(t*2.4+o.seed)*0.06);
+    ctx.beginPath();ctx.moveTo(-17,-6);ctx.lineTo(6,-6);ctx.quadraticCurveTo(10,-6,12,-3);ctx.lineTo(16,-3);ctx.lineTo(16,3);ctx.lineTo(12,3);ctx.quadraticCurveTo(10,6,6,6);ctx.lineTo(-17,6);ctx.quadraticCurveTo(-19,0,-17,-6);ctx.closePath();
+    ctx.fillStyle='rgba(76,150,96,.55)';ctx.fill();ctx.strokeStyle='#2E6B3F';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.fillStyle='#A0773F';ctx.fillRect(16,-2.6,4,5.2);
+    ctx.fillStyle='#F3E6C4';ctx.fillRect(-13,-3.6,16,7.2);ctx.fillStyle='#5D4037';ctx.font='700 6.5px Georgia,serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('H₀',-5,0.4);
+    ctx.beginPath();ctx.moveTo(-14,-4.5);ctx.lineTo(4,-4.5);ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;ctx.stroke();}
   else if(o.k==='boat'){// a lifeboat full of women and children, all waving
     const people=[{dx:12,h:15,c:'#B3261E',s:'#F1C27D'},{dx:22,h:10,c:'#2E7D32',s:'#C68642'},{dx:32,h:15,c:'#6A1B9A',s:'#8D5524'},{dx:42,h:10,c:'#F9A825',s:'#F1C27D'},{dx:52,h:14,c:'#1565C0',s:'#E0AC69'}];
     people.forEach((p,i)=>{const px=x+p.dx,top=y-10-p.h;ctx.fillStyle=p.c;rr(px-4,top+6,8,p.h-2,3);ctx.fill();
