@@ -235,6 +235,7 @@ input[type=range]{flex:1 1 140px;accent-color:var(--s1-ink)}
 .warn{font-size:13px;color:var(--miss-ink);margin:4px 0 0}
 .big{font-size:34px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 /* significance */
+.dlede{margin:0 0 10px;max-width:80ch}
 .steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:90ch}
 .steps b{color:var(--ink)}
 .sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
@@ -690,8 +691,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 8 of 10</p>
     <h1>Bivariate regression</h1>
-    <p class="dek">One line summarizes how Y moves with X. Fit it, read it as an equation, use it to make predictions, and ask whether its slope is steeper than chance alone would produce.</p>
-    <p style="margin:2px 0 0;font-size:14.5px;color:var(--ink-2)">Worked example: <a href="8b-partisans-and-the-first-lady.html" style="color:var(--ink);font-weight:600">Partisans and the First Lady</a> (2004 NES feeling thermometers), a step-by-step lab companion.</p>
+    <p class="dek">A regression line summarizes how Y tends to move as X changes. On this page we will fit that line, read it as an equation, use it to make predictions, and then ask whether its slope is steeper than chance alone would produce.</p>
+    <p style="margin:2px 0 0;font-size:14.5px;color:var(--ink-2)">The worked example, <a href="8b-partisans-and-the-first-lady.html" style="color:var(--ink);font-weight:600">Partisans and the First Lady</a>, walks through a full lab with the 2004 NES feeling thermometers step by step.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -739,8 +740,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="card" aria-labelledby="eqh">
     <h3 id="eqh"><span class="step">B</span>Reading the equation</h3>
     <div class="eqs">
-      <div class="eq"><span class="tag">Algebra class</span><div class="f"><i>y</i> = <span class="k-slope"><i>m</i></span><i>x</i> + <span class="k-cons"><i>b</i></span></div><p><span class="k-slope">m</span> is the slope: rise over run. <span class="k-cons">b</span> is the intercept: where the line crosses x = 0.</p></div>
-      <div class="eq"><span class="tag">Statistics</span><div class="f"><i>ŷ</i> = <span class="k-slope"><i>β</i>₁</span><i>X</i>₁ + <span class="k-cons">constant</span></div><p>Same line, new names. <span class="k-slope">β₁</span> is the coefficient on the IV; the <span class="k-cons">constant</span> (Stata: <code>_cons</code>, often written β₀) is the intercept. The hat on ŷ means “predicted.”</p></div>
+      <div class="eq"><span class="tag">Algebra class</span><div class="f"><i>y</i> = <span class="k-slope"><i>m</i></span><i>x</i> + <span class="k-cons"><i>b</i></span></div><p>Here <span class="k-slope">m</span> is the slope, which is the rise over the run, and <span class="k-cons">b</span> is the intercept, the value of y where the line crosses x = 0.</p></div>
+      <div class="eq"><span class="tag">Statistics</span><div class="f"><i>ŷ</i> = <span class="k-slope"><i>β</i>₁</span><i>X</i>₁ + <span class="k-cons">constant</span></div><p>This is the same line with new names. <span class="k-slope">β₁</span> is the coefficient on the IV, and the <span class="k-cons">constant</span> (Stata calls it <code>_cons</code>, and it is often written β₀) is the intercept. The hat on ŷ tells you the value is “predicted.”</p></div>
     </div>
     <div class="filled">
       <span class="tag">This model, filled in</span>
@@ -752,7 +753,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <!-- C: predict + marginal -->
   <figure>
     <div class="fighead"><h2><span class="step">C</span>Predictions and predicted changes</h2></div>
-    <p class="sub">Plug any value of X into the equation for a point prediction. Pick a starting and ending value of X to see the change the line predicts: the triangle's run is the change in X, its rise is the change in ŷ.</p>
+    <p class="sub">Plug any value of X into the equation and you get a point prediction. You can also pick a starting and an ending value of X to see the change the line predicts. The triangle's run is the change in X, and its rise is the change in ŷ.</p>
     <div class="pc">
       <div>
         <div class="key"><span><i class="sw ols"></i>regression line</span><span><i class="sw" style="background:var(--ink);border-radius:50%"></i>point prediction</span><span><i class="sw" style="background:color-mix(in srgb,var(--s1) 30%,transparent);border:1px solid var(--s1-line)"></i>change triangle</span></div>
@@ -780,11 +781,12 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <!-- D: significance -->
   <figure>
     <div class="fighead"><h2><span class="step">D</span>Testing whether the slope is real</h2></div>
+    <p class="lede dlede">So far we have fit a line and read its slope. Now we have to ask whether that slope is real, or whether a line this steep could easily have turned up by chance. This is the same question we asked when comparing two means in Module 6, and the same one behind the jelly bean bowl in Module 4, where you rated how surprised you would be by a handful. Recall the logic we use. In a world where H₀ is true, and X and Y have no relationship at all, how surprised would we be to see a slope as steep as ours? If a slope like ours would turn up often by chance alone, it is not surprising, and we fail to reject H₀. If it would almost never turn up, it is surprising enough that we reject H₀ and conclude the relationship is plausibly systematic rather than random. The steps below build that world of no relationship directly, by shuffling the data, so that you can see how steep chance slopes tend to be.</p>
     <ol class="steps">
-      <li><b>Suppose X and Y were unrelated.</b> The true slope would be 0, but any one dataset would still show some slope by chance.</li>
-      <li><b>Shuffle Y</b> across the <span class="unitw">state</span>s. That breaks any real link while keeping every value. The line through the shuffled points is a slope produced purely by chance (gray).</li>
-      <li><b>Every line passes through the mean point (x̄, ȳ),</b> so each slope hits the right edge at its own height. Flat lines land in the middle; steep ones land high or low. Stack those landing spots and the bell curve of chance slopes appears, turned on its side.</li>
-      <li><b>Compare the real line.</b> The red dashed lines mark the steepest slopes that still sit in the middle 95% of chance. If the orange line falls outside that wedge, its slope is “statistically significant.”</li>
+      <li><b>Imagine X and Y were unrelated.</b> In that world the true slope would be 0. Even so, any one set of data would still show some slope just by chance, because real points never line up perfectly flat.</li>
+      <li><b>Build that world by shuffling Y.</b> A shuffle deals each <span class="unitw">state</span>'s Y value out to a random <span class="unitw">state</span>. That breaks any real link between X and Y while keeping every value we observed, so whatever slope the shuffled points show was produced purely by chance. Each shuffle draws one gray line.</li>
+      <li><b>Turn the slopes on their side.</b> Every line passes through the mean point (x̄, ȳ), so each one reaches the right edge of the chart at a height set by its slope. Flat lines land in the middle, and steep lines land high or low. Stacking those landing spots on the right builds the distribution of chance slopes, which is the familiar bell curve turned on its side.</li>
+      <li><b>Compare the real line.</b> The red dashed lines mark the steepest slopes that still fall within the middle 95% of chance slopes. If the orange line, our real slope, falls outside that wedge, a slope this steep would turn up less than 5% of the time in a world with no relationship. That is surprising enough to reject H₀, and we call the slope statistically significant.</li>
     </ol>
     <div class="row" style="margin:10px 0 4px">
       <div class="btns"><button class="primary" id="s1">Shuffle once</button><button id="s100">+100 shuffles</button><button id="s1000">+1,000</button><button id="sClr">Clear</button></div>
@@ -801,24 +803,24 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <h3>Output</h3>
     <pre class="stata" id="stata"></pre>
   </section>
-  <p class="publink"><a href="practice-published-tables.html#t1">See the metro share model as a published table →</a></p>
+  <p class="publink"><a href="practice-published-tables.html#t1" id="publink">See this model as a published table →</a></p>
 
   <section class="amberbox wex" aria-labelledby="wexH">
     <span class="tag">Worked example</span>
-    <div><h3 id="wexH">Partisans and the First Lady</h3><p>Do feelings toward the parties shape how people rate Laura Bush? Walk through a full bivariate analysis of 2004 NES data, from binning an overplotted scatterplot to comparing two regressions, with a replication for Hillary Clinton. This is a full analysis of real survey data, and it's worth working through.</p></div>
+    <div><h3 id="wexH">Partisans and the First Lady</h3><p>Do feelings toward the parties shape how people rate Laura Bush? The worked example walks through a full bivariate analysis of the 2004 NES data, from binning a crowded scatterplot to comparing two regressions, and then repeats the analysis for Hillary Clinton.</p></div>
     <a class="wexgo" href="8b-partisans-and-the-first-lady.html">Open the worked example →</a>
   </section>
 
-  <p class="pnote"><b>Reading p for a slope:</b> H₀ says the slope is 0. p is how often a slope at least this far from 0 would turn up by chance if H₀ were true: p = .03 → about 3 times in 100; Stata's 0.000 (SPSS .000) → p &lt; .001 → fewer than 1 in 1,000. p &lt; .05: reject H₀; otherwise fail to reject H₀. .05 is a convention we choose; it sets the risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
       <h2>Try this</h2>
       <ol>
-        <li>Drag a point near the middle of X up and down, then do the same with a point at the far right. Points far from x̄ have more <b>leverage</b>: they pull the slope much harder.</li>
+        <li>Drag a point near the middle of X up and down, then do the same with a point at the far right. Points far from x̄ have more <b>leverage</b>, meaning they pull the slope much harder.</li>
         <li>Turn on <b>Try to beat it with your own line</b> and drag the handles. Your sum of squared errors can match the orange line's, but it can never beat it.</li>
         <li>Choose <b>Florida 2000</b> and find Palm Beach, where the confusing “butterfly ballot” was used. Drag it down to the line and watch the slope and r² change.</li>
-        <li>Choose <b>Midterms</b> and click <b>+1,000 shuffles</b>. The real line sits inside the wedge: unemployment doesn't predict House losses in these data.</li>
+        <li>Choose <b>Midterms</b> and click <b>+1,000 shuffles</b>. The real line sits inside the wedge, so unemployment does not predict House losses in these data.</li>
         <li>In panel C, compare the change from the mean to the max with a 1-SD increase. Which is the fairer way to describe the effect?</li>
       </ol>
     </section>
@@ -826,11 +828,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <h2>Check yourself</h2>
       <details>
         <summary>The slope on metro share is about −0.37. Interpret it.</summary>
-        <p>Each 1-point increase in the share of a state's population living in metro areas is associated with about a 0.37-point decrease in Trump's predicted 2016 vote share. “Associated with,” not “causes”: this is one variable, observational data.</p>
+        <p>Each 1-point increase in the share of a state's population living in metro areas is associated with about a 0.37-point decrease in Trump's predicted 2016 vote share. We say “associated with” rather than “causes,” since this is one variable in observational data.</p>
       </details>
       <details>
         <summary>The constant is 77. Should we predict that a state with no metro residents would give Trump 77%?</summary>
-        <p>No. The lowest metro share in the data is 31%, so x = 0 is far outside the observed range. The constant pins the line in place; it is only a meaningful prediction when x = 0 is a realistic value.</p>
+        <p>No. The lowest metro share in the data is 31%, so x = 0 is far outside the observed range. The constant pins the line in place, but it is only a meaningful prediction when x = 0 is a realistic value.</p>
       </details>
       <details>
         <summary>Why does the line always pass through (x̄, ȳ)?</summary>
@@ -838,7 +840,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       </details>
       <details>
         <summary>Stata reports t = b / SE. What does a t of about −4.9 mean in panel D?</summary>
-        <p>The real slope is almost five standard errors away from zero: far out in the sideways bell, well outside the wedge. A slope that steep would almost never come from shuffled, unrelated data, so p is tiny.</p>
+        <p>The real slope is almost five standard errors away from zero, which puts it far out in the sideways bell and well outside the wedge. A slope that steep would almost never come from shuffled, unrelated data, so p is tiny.</p>
       </details>
       <details>
         <summary>Can a line be steep but not significant?</summary>
@@ -870,10 +872,10 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><msup><mi>r</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mi>SSE</mi><mi>SST</mi></mfrac></math></div>
   <div class="fx"><h3>Standard error of the slope and the t test</h3>
     <math display="block"><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>SSE</mi><mo>/</mo><mo>(</mo><mi>n</mi><mo>−</mo><mn>2</mn><mo>)</mo></mrow></msqrt><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><mi>t</mi><mo>=</mo><mfrac><mrow><msub><mi>β</mi><mn>1</mn></msub><mo>−</mo><mn>0</mn></mrow><mrow><mi>SE</mi><mo>(</mo><msub><mi>β</mi><mn>1</mn></msub><mo>)</mo></mrow></mfrac></math>
-    <p>More scatter around the line (bigger SSE) widens the bell of chance slopes; more spread in X narrows it. Under H₀: β₁ = 0, t follows a t distribution with n − 2 degrees of freedom. 95% CI: β₁ ± t*·SE.</p></div>
+    <p>More scatter around the line (a bigger SSE) widens the bell of chance slopes, while more spread in X narrows it. Under H₀, where β₁ = 0, t follows a t distribution with n − 2 degrees of freedom. The 95% confidence interval is β₁ ± t*·SE.</p></div>
   <div class="fx"><h3>Why the bell lands on the right edge</h3>
     <math display="block"><msub><mi>y</mi><mtext>edge</mtext></msub><mo>=</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>+</mo><mi>b</mi><mo>·</mo><mo>(</mo><msub><mi>x</mi><mtext>edge</mtext></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></math>
-    <p>Each line through (x̄, ȳ) reaches the right edge at a height that is a straight-line function of its slope b. So the distribution of slopes becomes a distribution of heights on that edge: the same bell curve, turned 90°.</p></div>
+    <p>Each line through (x̄, ȳ) reaches the right edge at a height that is a straight-line function of its slope b. So the distribution of slopes becomes a distribution of heights on that edge, which is the same bell curve turned 90°.</p></div>
 </aside>
 
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
@@ -931,7 +933,7 @@ function fit(x,y){
   return {n,mx,my,sxx,sxy,syy,b1,b0,sse,r:sxy/Math.sqrt(sxx*syy),r2:1-sse/syy,df,s,se1,se0,t1,t0,p1,p0,tc,sdx,mnx,mxx};
 }
 function load(i){
-  st.i=i; const d=D(); st.x=d.x.slice(); st.y=d.y.slice(); st.lab=d.lab.slice();
+  st.i=i;{const pl=document.getElementById('publink');if(pl)pl.textContent=D().id==='metro'?'See this model as a published table →':'The metro share model (Trump\u2019s 2016 vote by the share living in metro areas) also appears as a published table →';} const d=D(); st.x=d.x.slice(); st.y=d.y.slice(); st.lab=d.lab.slice();
   let xl=Math.min(...d.x),xh=Math.max(...d.x),yl=Math.min(...d.y),yh=Math.max(...d.y);
   const px=(xh-xl)*0.06,py=(yh-yl)*0.08; st.dom={xlo:xl-px,xhi:xh+px,ylo:yl-py,yhi:yh+py};
   if(d.id==='fl'||d.id==='metro'){ st.dom.xlo=Math.max(0,st.dom.xlo); }
@@ -1020,7 +1022,7 @@ function renderEq(){
   $('#interp').innerHTML=`
     <p><span class="k-slope">Slope:</span> each ${t.xone} is associated with a <b>${nice(f.b1)}-${t.yword==='votes'?'vote':'point'} ${dir}</b> in predicted ${d.dvs}.</p>
     <p><span class="k-cons">Constant:</span> ${t.yf(f.b0)} is the predicted ${d.dvs} when ${t.xname} equals 0. ${inRange?'Zero is inside the observed range, so this is a real prediction.':`No ${d.unitword} in the data is near 0 (the range is ${t.xf(f.mnx)} to ${t.xf(f.mxx)}), so read the constant as where the line crosses the y-axis, not as a prediction.`}</p>
-    <p><b>Fit:</b> r = ${(f.r<0?'−':'')+Math.abs(f.r).toFixed(2)}, so r² = ${f.r2.toFixed(2)}: ${t.xname} accounts for ${(100*f.r2).toFixed(0)}% of the variation in ${d.dvs} across these ${f.n} ${d.unitword}s.</p>`;
+    <p><b>Fit:</b> r = ${(f.r<0?'−':'')+Math.abs(f.r).toFixed(2)}, so r² = ${f.r2.toFixed(2)}, meaning ${t.xname} accounts for ${(100*f.r2).toFixed(0)}% of the variation in ${d.dvs} across these ${f.n} ${d.unitword}s.</p>`;
 }
 
 /* ================= C: prediction + marginal effects ================= */
@@ -1161,7 +1163,7 @@ function renderD(shufY,shufP){
   const ge=st.shuf.filter(b=>Math.abs(b)>=Math.abs(f.b1)).length;
   const sig=f.p1<0.05;
   $('#dChips').innerHTML=`<span class="chip">real slope <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">SE = <b>${cf(f.se1)}</b></span><span class="chip">critical slopes ±${cf(crit)} (t* = ${f.tc.toFixed(2)}, df = ${f.df})</span><span class="chip">t = <b>${f.t1.toFixed(2)}</b></span><span class="chip ${sig?'strong':''}">p ${f.p1<0.0001?'&lt; .0001':'= '+f.p1.toFixed(4).replace(/^0/,'')}</span>`;
-  $('#dSay').innerHTML=(sig?`The real slope falls outside the wedge, so it is significant at .05: reject H₀.`:`The real slope falls inside the wedge, so it is not significant at .05: fail to reject H₀.`)+
+  $('#dSay').innerHTML=(sig?`The real slope falls outside the wedge, so it is significant at the .05 level and we reject H₀.`:`The real slope falls inside the wedge, so it is not significant at the .05 level and we fail to reject H₀.`)+
     (M?(ge===0?` None of your ${M.toLocaleString('en-US')} shuffled slopes was as steep as the real one.`:` In your ${M.toLocaleString('en-US')} shuffles, a slope as steep as the real one turned up ${ge.toLocaleString('en-US')} ${ge===1?'time':'times'}.`):'');
   // tracker: how many chance slopes would pass p < .05 on their own t test
   const rPer=(f.b1!==0)?Math.sign(f.b1)*Math.sqrt(f.r2)/f.b1:0, nn=f.df+2;
@@ -1173,7 +1175,7 @@ function renderD(shufY,shufP){
        <div class="trk-scale"><span>0%</span><span>5% expected</span><span>10%</span></div>
        <p class="trk-say">Shuffling breaks any real link between X and Y, so every one of these “significant” slopes is a false positive, a Type I error. With α = .05, about 5% of chance slopes should pass, and the more you shuffle, the closer your share gets to 5%. <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>`
     : `<p class="trk-h">Shuffle to start counting how many chance slopes would pass p &lt; .05.</p>`;
-  $('#dCap').textContent=`Gray bars on the right stack the slopes from your shuffles: flat lines land in the middle, steep lines in the red tails. The black curve is the bell theory predicts, a t distribution with ${f.df} df scaled by the slope's standard error. The shaded wedge holds lines within the middle 95% of chance.`;
+  $('#dCap').textContent=`The gray bars on the right stack the slopes from your shuffles. Flat lines land in the middle, and steep lines land out in the red tails. The black curve is the distribution theory predicts for those chance slopes, a t distribution with ${f.df} degrees of freedom scaled by the slope's standard error, so the bars should fill in toward its shape as you keep shuffling. The shaded wedge holds every line within the middle 95% of chance.`;
 }
 function doShuffle(k,animate){
   if(animate&&!reduce){ const s=shuffleSlope(); const t0=performance.now(); cancelAnimationFrame(st.anim);
