@@ -641,7 +641,8 @@ window.SPSSX.attachAll=init;
 .jbq>p{margin:0;font-size:15.5px;font-weight:600;color:var(--ink)}
 .jbpair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
 .jbcell{display:grid;gap:4px;min-width:0}
-.jbcell .lab{font-size:11.5px}
+.jbcell .lab{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:0;text-transform:none}
+.jbcell .lab b{display:inline-block;min-width:1.9em;text-align:center;margin-left:4px;padding:1px 8px;border-radius:999px;background:var(--s1);color:#fff;box-shadow:inset 0 0 0 1px var(--s1-edge);font-variant-numeric:tabular-nums}
 .jbcell input{width:100%;accent-color:var(--s1-line)}
 .jbse{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
 .jbread{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3}
@@ -782,7 +783,7 @@ function makeQs(){const order=counts.map((c,i)=>[c,i]).sort((a,b)=>b[0]-a[0]),al
     const f=r.kind==='all'?(n=>pAll(k,n)):(n=>pHalf(k,n));
     return {title:r.kind==='all'?`Every bean is ${name}`:`Half the beans or more are ${name}`,p:[f(nS),f(nL)],txt:r.kind==='all'?[`all ${nS} ${name}`,`all ${nL} ${name}`]:[`${Math.ceil(nS/2)} or more of ${nS} ${name}`,`${Math.ceil(nL/2)} or more of ${nL} ${name}`]};});
   touched=new Set();revealed=false;$('jbErr').textContent='';
-  $('jbQs').innerHTML=Qs.map((q,r)=>`<div class="jbq"><p>${r+1}. ${q.title}</p><div class="jbpair">${[0,1].map(c=>`<div class="jbcell"><span class="lab">Handful of ${c?nL:nS}</span>
+  $('jbQs').innerHTML=Qs.map((q,r)=>`<div class="jbq"><p>${r+1}. ${q.title}</p><div class="jbpair">${[0,1].map(c=>`<div class="jbcell"><span class="lab">Handful of <b>${c?nL:nS}</b></span>
     <input type="range" min="0" max="${STOPS.length-1}" step="1" value="4" id="jbq${r}${c}" aria-label="${q.txt[c]}: how often?"><div class="jbse"><span>shocked</span><span>not</span></div>
     <div class="jbread" id="jbr${r}${c}"></div><div class="jbres" id="jbx${r}${c}" hidden></div></div>`).join('')}</div></div>`).join('');
   Qs.forEach((q,r)=>[0,1].forEach(c=>{const inp=$(`jbq${r}${c}`);readOut(r,c);inp.addEventListener('input',()=>{touched.add(`${r}${c}`);$('jbErr').textContent='';readOut(r,c);});}));
@@ -857,6 +858,8 @@ fill();popChart();makeQs();pileChart(false);
 </script>
 
 <!-- jelly beans: end -->
+
+
 
 
 
