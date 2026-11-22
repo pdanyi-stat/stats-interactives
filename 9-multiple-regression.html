@@ -379,7 +379,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -782,7 +782,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <section class="fljumpbox" aria-label="Extended worked example"><p>The extended worked example uses multiple regression with a dummy on real survey data. It redoes the First Lady analysis holding gender constant, step by step, and ends with both parties and gender in one model.</p><p><a class="fljump" href="10-dummy-variables.html#firstlady">★ Worked example, extended: the First Lady, controlling for gender →</a></p></section>
 
-  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -802,7 +802,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
         <p>We compare states as if they had the same median income. Statistically, we use only the variation in X₁ that is not predictable from income, which is what panel A plots. It is not the same as an experiment, since anything left out of the model can still be doing the work.</p>
       </details>
       <details>
-        <summary>The bivariate slope of white poverty is 2.66; holding income constant it is 0.93. What happened?</summary>
+        <summary>The bivariate slope of white poverty is 2.66, but holding income constant shrinks it to 0.93. What happened?</summary>
         <p>Poorer white populations tend to be in lower-income states, and lower income itself predicts a higher Trump share. Much of white poverty's bivariate slope was really income's effect riding along. Bivariate slope = direct slope + (income's slope × how much income moves with white poverty).</p>
       </details>
       <details>
@@ -811,7 +811,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       </details>
       <details>
         <summary>Why can R² rise when you add random noise?</summary>
-        <p>Least squares will use any variable to shave off a little error in this particular sample, even pure chance. Adjusted R² = 1 − (1 − R²)(n − 1)/(n − k − 1) subtracts a penalty per IV, so it rises only if the new variable improves the fit by more than chance would.</p>
+        <p>Least squares will use any variable to shave off a little error in this particular sample, even when the variable is pure chance. Adjusted R² = 1 − (1 − R²)(n − 1)/(n − k − 1) subtracts a penalty per IV, so it rises only if the new variable improves the fit by more than chance would.</p>
       </details>
       <details>
         <summary>Can you compare coefficients across IVs measured in different units?</summary>
@@ -901,10 +901,10 @@ function ols(cols,y){ // cols: arrays of X; returns b (const last), se, etc.
 
 /* ---------- state ---------- */
 const STORIES=[
-  {id:'flip',title:'The sign flips: high school graduates, holding income constant',x1:'hs',x2:'income'},
-  {id:'away',title:'Explained away: white poverty, holding income constant',x1:'wpov',x2:'income'},
-  {id:'shrink',title:'Shrinks but survives: income, holding metro share constant',x1:'income',x2:'metro'},
-  {id:'grow',title:'Gets stronger: unemployment, holding income constant',x1:'unemp',x2:'income'},
+  {id:'flip',title:'High school graduates, holding income constant (the sign flips)',x1:'hs',x2:'income'},
+  {id:'away',title:'White poverty, holding income constant (explained away)',x1:'wpov',x2:'income'},
+  {id:'shrink',title:'Income, holding metro share constant (shrinks but survives)',x1:'income',x2:'metro'},
+  {id:'grow',title:'Unemployment, holding income constant (gets stronger)',x1:'unemp',x2:'income'},
   {id:'custom',title:'Choose your own X₁ and X₂'}];
 const st={x1:'wpov',x2:'income',view:'raw',t:0,anim:0,v1:null,v2:null,from:'mean',to:'max',tri:null,triAnim:0,sel:new Set(['metro','income']),units:'raw',noise:null,prev:null};
 const sStory=$('#story'),sX1=$('#x1'),sX2=$('#x2');
@@ -1154,10 +1154,10 @@ st.trace=Math.max(0,DAT.states.indexOf('West Virginia'));
 (()=>{const sel=$('#traceSel');DAT.states.forEach((n,i)=>{const o=document.createElement('option');o.value=i;o.textContent=n;sel.appendChild(o);});sel.value=st.trace;sel.addEventListener('change',()=>{st.trace=+sel.value;renderA();stepText();});})();
 function stepText(){ const c=core(), i=st.trace, x2=VK[st.x2].short, x1=VK[st.x1].short, nm=DAT.states[i];
   const ey=c.py[i]-c.my, ex=c.px[i]-c.mx1, r=v=>v.toFixed(1);
-  const T={raw:`<b>Step 1. Start with the raw data.</b> This is Trump's share plotted against ${x1}, with the bivariate line. Color shows ${x2}. If dark and light states sit in different corners, ${x1} and ${x2} travel together, and this slope mixes their effects.`,
+  const T={raw:`<b>Step 1. Start with the raw data.</b> This plots Trump's share against ${x1} and draws the bivariate line. Color shows ${x2}. If dark and light states sit in different corners, ${x1} and ${x2} travel together, and this slope mixes their effects.`,
     ylo:`<b>Step 2. Predict Y from ${x2} and keep the leftovers.</b> The line is what ${x2} alone predicts for each state's Trump share. Each stick is a state's <b>leftover</b>, which is its actual share minus that prediction. ${nm}'s leftover is <b>${ey>=0?'+':'−'}${r(Math.abs(ey))}</b> points${ey>=0?' (more Trump than its '+x2+' predicts)':' (less Trump than its '+x2+' predicts)'}.`,
     xlo:`<b>Step 3. Predict ${x1} from ${x2} and keep those leftovers too.</b> This is the same idea for the focus IV, so each stick is the part of a state's ${x1} that doesn't simply travel with its ${x2}. ${nm}'s ${x1} leftover is <b>${ex>=0?'+':'−'}${fx(st.x1,Math.abs(ex))}</b>.`,
-    partial:`<b>Step 4. Plot leftovers against leftovers.</b> Each state moves to its two leftovers: ${nm} lands at X₁ leftover ${ex>=0?'+':'−'}${fx(st.x1,Math.abs(ex))}, Y leftover ${ey>=0?'+':'−'}${r(Math.abs(ey))} (shifted back to the means so the axes keep familiar units). The slope of this cloud, <b>${sgn(c.ctl.b[0])}</b>, is exactly ${x1}'s coefficient holding ${x2} constant.`};
+    partial:`<b>Step 4. Plot leftovers against leftovers.</b> Each state moves to its two leftovers, so ${nm} lands at X₁ leftover ${ex>=0?'+':'−'}${fx(st.x1,Math.abs(ex))}, Y leftover ${ey>=0?'+':'−'}${r(Math.abs(ey))} (shifted back to the means so the axes keep familiar units). The slope of this cloud, <b>${sgn(c.ctl.b[0])}</b>, is exactly ${x1}'s coefficient holding ${x2} constant.`};
   $('#aStep').innerHTML=T[st.view]; }
 function renderSticks(){
   const c=core(), box=$('#aChart'); box.innerHTML='';

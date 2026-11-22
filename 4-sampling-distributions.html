@@ -304,7 +304,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -708,7 +708,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     </div>
     <div class="chart" id="jbPile" style="margin-top:12px"></div>
   </figure>
-  <p class="jbt">The small handfuls make a wide, flat pile, because a small handful has to land far from the bowl's mean before it counts as weird. The large handfuls make a narrow pile, and even a modest miss is surprising. Both piles take on the shape of the normal curve, the large one more closely. The spread of each pile is its standard error. The next section does the same thing with a real population: 3,112 U.S. counties.</p>
+  <p class="jbt">The small handfuls make a wide, flat pile, because a small handful has to land far from the bowl's mean before it counts as weird. The large handfuls make a narrow pile, and even a modest miss is surprising. Both piles take on the shape of the normal curve, and the large one does so more closely. The spread of each pile is its standard error. The next section does the same thing with a real population made up of 3,112 U.S. counties.</p>
 </section>
 <h2 class="jbh" style="margin:0 0 12px">The same idea with 3,112 counties</h2>
 <script>
@@ -775,7 +775,7 @@ function popChart(){const host=$('jbPop'),W=Math.max(280,Math.min(520,host.clien
   el('line',{x1:X(M-sd),x2:X(M+sd),y1:12,y2:12,style:'stroke:var(--s1-line)','stroke-width':5,'stroke-linecap':'round'},s);
   el('line',{x1:X(M),x2:X(M),y1:6,y2:m.t+ih,style:'stroke:var(--ink)','stroke-width':2,'stroke-dasharray':'4 3'},s);
   host.innerHTML='';host.appendChild(s);
-  $('jbPopSub').textContent=`The mean is ${M.toFixed(2)} (dashed line) and the SD is ${sd.toFixed(2)} (blue bar, one SD on either side of the mean), with N = 150.`;
+  $('jbPopSub').textContent=`The mean is ${M.toFixed(2)} (dashed line) and the SD is ${sd.toFixed(2)} (blue bar, one SD on either side of the mean), and N = 150.`;
   $('jbKey').innerHTML=F.map(f=>`<span><svg width="22" height="14" viewBox="-11 -7 22 14" aria-hidden="true"><path d="${SHAPE}" fill="${f[2]}" stroke="${f[3]}"/></svg><b>${f[0]}</b> ${f[1]}</span>`).join('');}
 /* ---------- step 2: three pulls, each for a small and a large handful ---------- */
 function makeQs(){const order=counts.map((c,i)=>[c,i]).sort((a,b)=>b[0]-a[0]),allOK=order.filter(([c])=>c>=nL).map(([,i])=>i);
@@ -882,6 +882,14 @@ fill();popChart();makeQs();pileChart(false);
 
 
 
+
+
+
+
+
+
+
+
   <section class="controls" aria-label="Simulation controls">
     <div class="ctl">
       <label class="lab" for="pop">Population: 3,112 U.S. counties</label>
@@ -960,7 +968,7 @@ fill();popChart();makeQs();pileChart(false);
         <li>With <b>Biden vote share</b>, click <b>+1,000</b> at n = 2, then at n = 100. How much narrower does panel C get? Turn on <b>Zoom</b> to see the shape.</li>
         <li>Switch to <b>Total votes cast</b>. The population is wildly skewed (Los Angeles County cast 4.3 million votes). At what n does panel C start to look bell-shaped?</li>
         <li>Try <b>Biden carried the county</b>. Each county is a 1 or a 0, so x̄ is a proportion. Compare n = 5 and n = 100.</li>
-        <li>After 1,000 draws, compare <b>Std. dev.</b> of xbar in the output with σ/√n. That standard deviation has a name: the <b>standard error</b>.</li>
+        <li>After 1,000 draws, compare <b>Std. dev.</b> of xbar in the output with σ/√n. We call that standard deviation the <b>standard error</b>.</li>
       </ol>
     </section>
     <section>
@@ -971,7 +979,7 @@ fill();popChart();makeQs();pileChart(false);
       </details>
       <details>
         <summary>The population of county vote shares is right-skewed. What shape is the sampling distribution at n = 50?</summary>
-        <p>It will be close to normal. The Central Limit Theorem says the distribution of sample means approaches a normal curve as n grows, whatever the population's shape. Its center is still μ.</p>
+        <p>It will be close to normal. The Central Limit Theorem says the distribution of sample means approaches a normal curve as n grows, whatever shape the population has. Its center is still μ.</p>
       </details>
       <details>
         <summary>Why does Total votes cast need a much larger n before the bell shape appears?</summary>
@@ -987,7 +995,7 @@ fill();popChart();makeQs();pileChart(false);
   <footer class="src">
     Data: 2020 and 2016 county-level presidential returns, compiled by Tony McGovern in the public repository
     <a href="https://github.com/tonmcg/US_County_Level_Election_Results_08-24">tonmcg/US_County_Level_Election_Results_08-24</a>.
-    N = 3,112 counties and county-equivalents in 49 states and D.C.; Alaska is left out because it reports results by state house district, not by borough.
+    N = 3,112 counties and county-equivalents in 49 states and D.C.; Alaska is left out because it reports results by state house district rather than by borough.
     Samples are drawn without replacement. Swing is Biden's 2020 share minus Clinton's 2016 share, in percentage points.
   </footer>
 <nav class="pager" aria-label="Previous and next"><a href="3-dispersion.html"><span class="k">← Previous · Module 3</span><span class="t">Measures of dispersion</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="5-confidence-intervals.html"><span class="k">Next · Module 5 →</span><span class="t">Confidence intervals</span></a></nav>
@@ -1022,7 +1030,7 @@ fill();popChart();makeQs();pileChart(false);
   <div class="fx">
     <h3>Central Limit Theorem</h3>
     <math display="block"><mover><mi>x</mi><mo>‾</mo></mover><mspace width=".3em"/><mover><mo>∼</mo><mtext>approx.</mtext></mover><mspace width=".3em"/><mi>N</mi><mrow><mo>(</mo><mi>μ</mi><mo>,</mo><mspace width=".25em"/><mfrac><mi>σ</mi><msqrt><mi>n</mi></msqrt></mfrac><mo>)</mo></mrow></math>
-    <p>For large enough n the sample mean is approximately normal, whatever the shape of the population. Heavier skew needs a larger n.</p>
+    <p>For large enough n the sample mean is approximately normal, whatever shape the population has. Heavier skew needs a larger n.</p>
   </div>
   <div class="fx">
     <h3>Proportions (a 0/1 variable)</h3>
@@ -1243,7 +1251,7 @@ function render(){
 
   // B: sample
   const xbar = st.means.length? st.means[st.means.length-1] : null;
-  $('#sampSub').textContent = st.last ? `n = ${st.last.length} counties drawn at random, without replacement. Sample ${st.means.length.toLocaleString('en-US')}.` : 'Click Draw 1 to pull a random sample of counties.';
+  $('#sampSub').textContent = st.last ? `These ${st.last.length} counties were drawn at random without replacement. This is sample ${st.means.length.toLocaleString('en-US')}.` : 'Click Draw 1 to pull a random sample of counties.';
   strip($('#sampChart'), p, st.last, xbar);
   const dr=$('#drawn'); dr.innerHTML='';
   if(st.last){

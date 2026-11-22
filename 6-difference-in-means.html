@@ -372,7 +372,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -763,13 +763,13 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="dshift" aria-label="Turning a p-value into a frequency">
       <div><span class="from">p = .05</span><span class="how">move the decimal 2 places</span><span class="to">5 times in 100</span></div>
       <div><span class="from">p = .01</span><span class="how">move the decimal 2 places</span><span class="to">1 time in 100</span></div>
-      <div><span class="from">.000</span><span class="how">SPSS (Stata: 0.000) means p &lt; .001: move 3 places</span><span class="to">fewer than 1 in 1,000</span></div>
+      <div><span class="from">.000</span><span class="how">SPSS (Stata: 0.000) means p &lt; .001, so move 3 places</span><span class="to">fewer than 1 in 1,000</span></div>
     </div>
     <ul>
       <li><b>Match your wording to the sign.</b> A p of .05 means about 5 times in 100, while p &lt; .05 means <i>fewer than</i> 5 times in 100.</li>
-      <li><b>There are only two possible decisions, and both are about H₀.</b> If p &lt; α we reject H₀, and if p ≥ α we fail to reject H₀. We never “accept” anything, because failing to reject means the evidence was not strong enough, not that the groups are the same.</li>
+      <li><b>There are only two possible decisions, and both are about H₀.</b> If p &lt; α we reject H₀, and if p ≥ α we fail to reject H₀. We never “accept” anything, because failing to reject means the evidence was not strong enough, which is different from showing the groups are the same.</li>
       <li><b>p is not the chance that H₀ is true.</b> It's the chance of a result like ours <i>if</i> H₀ were true.</li>
-      <li><b>The .05 cutoff (α) is a convention we choose,</b> not a law of nature. Set α to .01 above and the bar gets higher.</li>
+      <li><b>The .05 cutoff (α) is a convention we choose</b> rather than a law of nature. Set α to .01 above and the bar gets higher.</li>
       <li><b>The same logic applies in regression,</b> where H₀ says the slope is 0 and p is how often a slope at least this steep would turn up by chance.</li>
     </ul>
   </section>
@@ -801,7 +801,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <summary>Why we presume the null, and why .05 is a convention</summary>
       <div class="whyin">
         <h3>Imagine a world with no relationship</h3>
-        <p>We only ever test one hypothesis, the null. The logic goes like this:</p>
+        <p>We only ever test one hypothesis, which is the null. The logic goes like this:</p>
         <blockquote>“In a world where there truly is no relationship between these two variables, how likely am I to observe the patterns in the data that I am seeing?”</blockquote>
         <p>We make one of two decisions: reject the null, or fail to reject it. We absolutely never “accept” the research hypothesis, and we never accept the null either.</p>
         <h3>The witch trials</h3>
@@ -810,7 +810,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
         <h3>Humble science</h3>
         <p>We prefer science to be humble, and to build knowledge on an assessment of evidence rather than assumptions of knowledge. Starting from the assumption of no relationship helps us avoid the costly error of concluding there are effects or connections out in the world that don't actually exist, which is a Type I error (convicting an innocent null). That is why α is kept small.</p>
         <h3>Why we use .05</h3>
-        <p>Setting α = .05 means we accept being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on, not a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The α buttons at the top of this panel show the price of that choice. Switch α from .05 to .01 and watch β (the Type II error rate) grow, because a stricter α makes Type II errors more likely unless we collect more data. Then raise n per group and watch β come back down.</p>
+        <p>Setting α = .05 means we accept being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on rather than a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The α buttons at the top of this panel show the price of that choice. Switch α from .05 to .01 and watch β (the Type II error rate) grow, because a stricter α makes Type II errors more likely unless we collect more data. Then raise n per group and watch β come back down.</p>
       </div>
     </details>
   </figure>
@@ -842,11 +842,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       </details>
       <details>
         <summary>p = .03. Is there a 3% chance the null hypothesis is true?</summary>
-        <p>No. p is the probability of seeing a difference at least this large if H₀ were true. It is a statement about the data given H₀, not about H₀ given the data.</p>
+        <p>No. p is the probability of seeing a difference at least this large if H₀ were true. It is a statement about the data given H₀ rather than about H₀ given the data.</p>
       </details>
       <details>
         <summary>When should you drop “Assume equal variances”?</summary>
-        <p>When the groups' standard deviations differ noticeably, as with Euroscepticism (Conservatives 2.6, Labour 3.3). The Welch version, Stata's <code>unequal</code> option, is the safer default. With equal group sizes the two versions give nearly identical answers.</p>
+        <p>Drop it when the groups' standard deviations differ noticeably, as they do with Euroscepticism (Conservatives 2.6, Labour 3.3). The Welch version, Stata's <code>unequal</code> option, is the safer default. With equal group sizes the two versions give nearly identical answers.</p>
       </details>
     </section>
   </div>
@@ -1213,7 +1213,7 @@ function tally(){
   $('#tally').innerHTML=`
     <div><div class="k">Samples drawn</div><div class="v">${M.toLocaleString('en-US')}</div><div class="s">n = ${st.n} per group</div></div>
     <div><div class="k">Rejected H₀ at <span style="text-transform:none">α</span> = ${a}</div><div class="v">${M?(100*rej/M).toFixed(1)+'%':'–'}</div><div class="s">${label}</div></div>
-    <div><div class="k">CIs overlapped, yet significant</div><div class="v">${rej?(100*ovsig/rej).toFixed(1)+'%':'–'}</div><div class="s">of the rejections; overlap is not the test</div></div>`;
+    <div><div class="k">CIs overlapped, yet significant</div><div class="v">${rej?(100*ovsig/rej).toFixed(1)+'%':'–'}</div><div class="s">of the rejections, so overlap is not the test</div></div>`;
 }
 function popInfo(){
   const c=comp(), T=truth();

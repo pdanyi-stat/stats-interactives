@@ -389,11 +389,13 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 .tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
 .tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
 .tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
-.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:grid;gap:6px;min-width:0}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
 .pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .pcard h4{margin:0;font-size:16px}
 .pcard.ghost{opacity:.8}
 .pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
 .pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
 
 /* coding scales: one code per line, number first, left aligned */
@@ -614,12 +616,12 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <!-- 6 SUE AND JIM -->
   <section class="part"><p class="kick">Part 6</p><h2>Settle the Thanksgiving argument</h2>
-    <p>Every Thanksgiving, two of your relatives have the same argument about where the two parties are headed and what the people in each party want from their leaders. You have survey data that can settle it. You'll settle it twice: once with data from 2014, and again ten years later with data from 2024.</p></section>
+    <p>Every Thanksgiving, two of your relatives have the same argument about where the two parties are headed and what the people in each party want from their leaders. You have survey data that can settle it. You'll settle it once with data from 2014 and then again with data from 2024, which came ten years later.</p></section>
   <section class="dcard">
     <h3>The argument</h3>
-    <p class="p">Aunt Sue thinks a small, very conservative faction has taken over the Republican Party, and that most Democrats are moderate. Uncle Jim thinks ordinary Republicans in general want the party to be more conservative, and that Democrats are pushing their party far to the left. Between them they make four claims, two about each party.</p>
+    <p class="p">Aunt Sue thinks a small, very conservative faction has taken over the Republican Party, and that most Democrats are moderate. Uncle Jim thinks ordinary Republicans in general want the party to be more conservative, and that Democrats are pushing their party far to the left. Between them they make four claims, and two are about each party.</p>
     <div class="claim"><span class="who">Aunt Sue on Republicans (claim 1)</span><q>People who make up the Republican party have been overrun by some small faction of people who are super conservative and want to push leaders in Congress to be so much more conservative than “old fashioned real Republicans” used to be.</q></div>
-    <div class="claim"><span class="who">Uncle Jim on Republicans (claim 2)</span><q>Republicans in general want more conservative policies from leadership. It isn't some small group; the conservative voter today in general wants a far more conservative leadership in the party.</q></div>
+    <div class="claim"><span class="who">Uncle Jim on Republicans (claim 2)</span><q>Republicans in general want more conservative policies from leadership. It isn't some small group, but rather the conservative voter today in general wants a far more conservative leadership in the party.</q></div>
     <div class="claim"><span class="who">Uncle Jim on Democrats (claim 3)</span><q>Democrats in America today are so super liberal that they are pushing their leaders in Congress to adopt some communist far left policies.</q></div>
     <div class="claim"><span class="who">Aunt Sue on Democrats (claim 4)</span><q>The Democrats I know are actually pretty moderate, and if anything I think Democrats in general want moderate left policies from Democratic leaders in Congress and DC.</q></div>
     <p class="p"><b>What would settle it?</b> Sue and Jim agree that some Republicans want a more conservative party. They disagree about how many. So the key number is the share who want their party to move. A small share supports Sue, and a large share or a majority supports Jim. The mode and the median tell you where most party members are, and the skew tells you which way the distribution leans and whether the people who want change are a tail or the bulk.</p>
@@ -639,8 +641,8 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="dcard" id="r24" data-ds="Gallup_Reconstructed_2024_F26.sav NES_2024_Party_Placement_and_Ideology_F26.sav">
     <p class="kick" style="margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)">Round 2</p>
     <h3>Thanksgiving 2024, ten years later</h3>
-    <p class="p">A decade on, Sue and Jim are making the same four claims, word for word. A lot has changed in both parties since 2014, so check whether the 2014 answers still hold. You have two sources this time, and they measure different things.</p>
-    <p class="p"><b>Gallup, January 2025.</b><sup class="fn"><a href="#gallup-note" aria-label="Note on the Gallup data">†</a></sup> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, with one difference. “Stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
+    <p class="p">A decade on, Sue and Jim are making the same four claims word for word. A lot has changed in both parties since 2014, so check whether the 2014 answers still hold. You have two sources this time, and they measure different things.</p>
+    <p class="p"><b>Gallup, January 2025.</b><sup class="fn"><a href="#gallup-note" aria-label="Note on the Gallup data">†</a></sup> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, but it has one difference. “Stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
     <div class="two"><div><p class="codes-h">Gallup's own codes (q7 and q6)</p><dl class="codes"><dt>1</dt><dd>More conservative (q6: More liberal)</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More moderate</dd><dt class="miss">9</dt><dd class="miss">No opinion</dd></dl></div><div><p class="codes-h">Recoded to match RepPref and DemPref (the charts below)</p><dl class="codes"><dt>1</dt><dd>More moderate</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More conservative (or more liberal)</dd></dl></div></div>
     <p class="p">To recode it in SPSS, turn 1 into 3, keep 2 as 2, turn 3 into 1, and set 9 to System-missing.</p>
     <div class="two"><div id="r24A"></div><div id="r24B"></div></div>
@@ -785,7 +787,7 @@ function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-tit
 const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
  median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
- mode:(v,u)=>`The mode is ${v}${u||''}, the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
+ mode:(v,u)=>`The mode is ${v}${u||''}, which is the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
  sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
  var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
  skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
@@ -885,9 +887,9 @@ $('#vaAll').addEventListener('click',()=>{L.forEach((_,i)=>{if(!done.has(i))fill
 $('#vaClear').addEventListener('click',()=>{done.clear();cur=-1;$('#vaPile').innerHTML='';$$('#vaTbl input').forEach(x=>{x.value='';x.className='';});$('#vaAvg').hidden=true;$('#vaFb').className='fbk';strip();});
 $('#vaCheck').addEventListener('click',()=>{const a=D.num($('#va1').value),b=D.num($('#va2').value),c=D.num($('#va3').value);
   if(!D.near(a,ss,ss*0.002))return D.fb($('#vaFb'),'no',a===0||D.near(a,0,1)?'The distances themselves add to 0, and that\'s why we square them. Add up the squared column.':'Add up the last column, the squared distances.');
-  if(!D.near(b,vr,vr*0.002))return D.fb($('#vaFb'),'no',D.near(b,ss/13,ss/13*0.002)?'Divide by n − 1 = 12, not by 13.':'Divide the sum by n − 1 = 12.');
+  if(!D.near(b,vr,vr*0.002))return D.fb($('#vaFb'),'no',D.near(b,ss/13,ss/13*0.002)?'Divide by n − 1 = 12 rather than by 13.':'Divide the sum by n − 1 = 12.');
   if(!D.near(c,sdv,0.06))return D.fb($('#vaFb'),'no','Take the square root of the variance.');
-  D.fb($('#vaFb'),'ok',`Sum of squares ${D.comma(ss)}, variance ${vr.toFixed(2)}, SD ${sdv.toFixed(2)}. The variance is in squared lunatics, which has no everyday meaning. Taking the square root puts the SD back in the variable's own units, so the typical county is about ${Math.round(sdv)} lunatics away from the mean of ${mu.toFixed(1)}. You can confirm this in SPSS with Analyze → Descriptive Statistics → Descriptives, choosing Variance and Std. deviation under Options.`);
+  D.fb($('#vaFb'),'ok',`The sum of squares is ${D.comma(ss)}, the variance is ${vr.toFixed(2)}, and the SD is ${sdv.toFixed(2)}. The variance is in squared lunatics, which has no everyday meaning. Taking the square root puts the SD back in the variable's own units, so the typical county is about ${Math.round(sdv)} lunatics away from the mean of ${mu.toFixed(1)}. You can confirm this in SPSS with Analyze → Descriptive Statistics → Descriptives, choosing Variance and Std. deviation under Options.`);
   $('#vaAvg').hidden=false;sqK();const s=sdv*K;$('#vaAvgPile').innerHTML=Array.from({length:12},()=>`<div class="sq avg" style="width:${s}px;height:${s}px"></div>`).join('')+`<span class="src" style="align-self:center">Each square has an area of ${D.comma(vr)}, which is the variance, and a side of ${sdv.toFixed(1)}, which is the SD.</span>`;});
 strip();
 
@@ -903,7 +905,7 @@ function nr(){const lo=Am-k*As,hi=Am+k*As;D.hist($('#nrChart'),{values:A,xmin:0,
   lines:[{x:Am,cls:'meanl',label:'Mean '+Am.toFixed(1)}],aria:'Titanic ages with shaded SD band'});
   const inside=A.filter(x=>x>=lo&&x<=hi).length,exp=erf(k/Math.SQRT2);
   $('#nrR').textContent=`${Math.max(0,lo).toFixed(1)} to ${hi.toFixed(1)}`;$('#nrIn').textContent=(inside/A.length*100).toFixed(1)+'%';$('#nrExp').textContent=(exp*100).toFixed(1)+'%';
-  D.fb($('#nrFb'),'info',k===1?`${(inside/A.length*100).toFixed(0)}% of passengers were between ${lo.toFixed(1)} and ${hi.toFixed(1)}, close to the 68% a normal curve predicts. Age is roughly normal, so the rule works well here.`:k===2?`${(inside/A.length*100).toFixed(0)}% were between ${Math.max(0,lo).toFixed(1)} and ${hi.toFixed(1)}. The normal curve predicts 95%. Outside the band are ${A.filter(x=>x<lo).length} infants below ${lo.toFixed(1)} and ${A.filter(x=>x>hi).length} older passengers above ${hi.toFixed(1)}. The extra cases on the right come from the short right tail (skewness .408).`:`${(inside/A.length*100).toFixed(1)}% inside, against ${(exp*100).toFixed(1)}% for a normal curve.`);}
+  D.fb($('#nrFb'),'info',k===1?`${(inside/A.length*100).toFixed(0)}% of passengers were between ${lo.toFixed(1)} and ${hi.toFixed(1)}, close to the 68% a normal curve predicts. Age is roughly normal, so the rule works well here.`:k===2?`${(inside/A.length*100).toFixed(0)}% were between ${Math.max(0,lo).toFixed(1)} and ${hi.toFixed(1)}. The normal curve predicts 95%. Outside the band are ${A.filter(x=>x<lo).length} infants below ${lo.toFixed(1)} and ${A.filter(x=>x>hi).length} older passengers above ${hi.toFixed(1)}. The extra cases on the right come from the short right tail (skewness .408).`:`${(inside/A.length*100).toFixed(1)}% of passengers fall inside, while a normal curve would put ${(exp*100).toFixed(1)}% there.`);}
 function erf(x){const t=1/(1+0.3275911*Math.abs(x));const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
 D.seg($('#nrSeg'),[['1','± 1 SD'],['2','± 2 SD'],['3','± 3 SD']],v=>{k=+v;nr();},'1');nr();
 
@@ -969,7 +971,7 @@ coded($('#r24D'),{codes:[1,2,3,4,5,6,7],counts:DATA.pw.n_dem.counts,labels:ANESL
 const R14={1:231,2:4,3:347},D14={1:332,2:12,3:246},GR=GRr,GD=GDr,NR=DATA.pw.n_rep.counts,ND=DATA.pw.n_dem.counts;
 const CL=[
  {who:'Aunt Sue on Republicans (claim 1)',what:'Republicans have been overrun by a small, super-conservative faction.',k14:['wrong'],k24:['partly'],
-  e14:`The claim doesn't hold. ${PCT(R14,['3'])} of Republicans wanted their leaders more conservative. That's a majority, and both the median and the mode are “more conservative,” so these voters are the bulk of the party, not a faction. The skew is negative (−.408), so the distribution leans toward “more conservative,” with the moderates as the smaller group.`,
+  e14:`The claim doesn't hold. ${PCT(R14,['3'])} of Republicans wanted their leaders more conservative. That's a majority, and both the median and the mode are “more conservative,” so these voters are the bulk of the party rather than a faction. The skew is negative (−.408), so the distribution leans toward “more conservative,” with the moderates as the smaller group.`,
   e24:`The claim partly holds. In Gallup only ${PCT(GR,['3'])} of Republicans want the party more conservative, so the push for more is now a minority, closer to Sue's “faction.” But the ANES shows the rank and file are conservative across the board, since ${PCT(NR,['6','7'])} place themselves at 6 or 7, the median is 6, and only ${PCT(NR,['1','2','3'])} are on the liberal side. Conservatives aren't a small faction, because they're most of the party. What's small is the group that wants the party to move further.`},
  {who:'Uncle Jim on Republicans (claim 2)',what:'Republicans in general want far more conservative leadership.',k14:['right'],k24:['wrong','partly'],
   e14:`The claim holds. ${PCT(R14,['3'])} wanted more conservative leaders against ${PCT(R14,['1'])} who wanted more moderate ones, and the median sits at “more conservative.”`,
@@ -985,7 +987,7 @@ const CL=[
 const MISS=DATA.pw.miss;
 D.drawers($('#vaOut'),{spssNote:'Analyze → Descriptive Statistics → Descriptives, NBR. Under Options, check Variance and Std. deviation.',
   spss:D.spTable('Descriptive Statistics',['','N','Mean','Std. Deviation','Variance'],[{cells:['NBR',String(vals.length),D.sp(mu,2),D.sp(sdv,3),D.sp(vr,3)]},{cells:['Valid N (listwise)',String(vals.length),'','','']}]),
-  stata:D.stSum('NBR','Lunatics Per County',vals),stataNote:'<code>summarize, detail</code> reports the variance and the SD. Stata divides by n − 1, like SPSS.'});
+  stata:D.stSum('NBR','Lunatics Per County',vals),stataNote:'<code>summarize, detail</code> reports the variance and the SD. Stata divides by n − 1, just as SPSS does.'});
 D.drawers($('#nrOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies, age, with Mean and Std. deviation under Statistics. Mean ± 1 SD and ± 2 SD give the bands above.',spss:D.spStats([{name:'age',vals:A,nTotal:1309}],['n','mean','sd','skew','kurt']),stata:D.stSum('age','Age of passenger',A)});
 const CONFL=['Very confident','Somewhat confident','Not too confident','Not at all confident'];
 function vfreq(cnt){return [1,2,3,4].map(k=>({label:`${k}. ${CONFL[k-1]}`,n:cnt[k]||0}));}

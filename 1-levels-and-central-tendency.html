@@ -417,11 +417,13 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 .tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
 .tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
 .tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
-.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:grid;gap:6px;min-width:0}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
 .pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .pcard h4{margin:0;font-size:16px}
 .pcard.ghost{opacity:.8}
 .pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
 .pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
 
 /* coding scales: one code per line, number first, left aligned */
@@ -576,7 +578,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="part"><p class="kick">Part 2</p><h2>SPSS reports all three anyway</h2>
     <p>SPSS will print a mean, a median and a mode for any numeric variable, including ones where the number means nothing. Deciding which of them to read is up to you.</p></section>
   <section class="dcard" id="sp" data-ds="titanic.sav">
-    <h3>Titanic passengers: which numbers are worth reading?</h3>
+    <h3>Which numbers are worth reading for the Titanic passengers?</h3>
     <div class="row"><span class="src">Variable</span><div id="spVar"></div></div>
     <div id="spCoding" class="p" style="display:grid;gap:6px"></div>
     <p class="src" style="margin:0">For each number SPSS reports, decide whether it is worth reading for this variable.</p><div id="spTbl" style="display:grid;gap:8px"></div>
@@ -602,7 +604,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>Put a weight on a beam at each county's value. The point where the beam balances is the mean. Slide the triangle until the beam is level.</p></section>
   <section class="dcard" id="bal" data-ds="LunaticData.sav">
     <h3>Lunatics per county, Massachusetts, 1854</h3>
-    <p class="p">Each blue weight is one of the 13 counties. The number on it is the county's count of lunatics (variable NBR, “Lunatics Per County”), and its line drops to that value on the beam, which is marked like a ruler. Weights at nearly the same value stack up. Drag on the chart or use the slider to move the triangle. <span class="src">“Lunatics” is the dataset's term, from the era.</span></p>
+    <p class="p">Each blue weight is one of the 13 counties. The number on it is the county's count of lunatics (variable NBR, “Lunatics Per County”), and its line drops to that value on the beam, which is marked like a ruler. Weights at nearly the same value stack up. Drag on the chart or use the slider to move the triangle. <span class="src">“Lunatics” is the dataset's term, which comes from the era.</span></p>
     <div id="balSvg"></div>
     <label class="src" for="balR">Balance point</label>
     <input type="range" id="balR" min="0" max="500" step="1" value="60">
@@ -619,7 +621,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <!-- 5 NOMINAL -->
   <section class="part"><p class="kick">Part 5</p><h2>Why the mean of a nominal variable means nothing</h2>
-    <p>The numbers SPSS stores for a nominal variable are only labels. You can put the categories in any order and number them any way you like, and nothing is lost, because every country keeps its religion and every religion keeps its count. A measure that changes when you rearrange the categories is reacting to the labels, not to the countries.</p></section>
+    <p>The numbers SPSS stores for a nominal variable are only labels. You can put the categories in any order and number them any way you like, and nothing is lost, because every country keeps its religion and every religion keeps its count. A measure that changes when you rearrange the categories is reacting to the labels rather than to the countries.</p></section>
   <section class="dcard" id="nm" data-ds="World.sav">
     <h3>Predominant religion in 191 countries (typerel)</h3>
     <div class="hbars" id="nmBars"></div>
@@ -685,7 +687,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   </section>
   <section class="dcard" id="cf" data-ds="World.sav">
     <h3>Confidence in institutions in 71 countries (confidence)</h3>
-    <p class="p">Here is an example from a cross-national dataset. It scores 71 countries on how much confidence their publics have in the country's institutions, on a scale from 0 (none) to 100 (complete). It's an interval variable, and the scores have decimals, for example 47.97 or 52.31.</p>
+    <p class="p">Here is an example from a cross-national dataset. It scores 71 countries on how much confidence their publics have in the country's institutions on a scale from 0 (none) to 100 (complete). It's an interval variable, and the scores have decimals, for example 47.97 or 52.31.</p>
     <p class="p">A bar chart gives every distinct value its own bar, and each bar's height is the number of cases with exactly that value. That works when a variable has a handful of categories, like religion or passenger class, because many cases share each value. On a 0–100 scale measured to two decimals, almost every country has a value of its own, so a bar chart just lines up 71 bars of the same height. A histogram groups the scores into ranges first, and then counts how many countries fall in each range.</p>
     <div class="row"><div id="cfSeg"></div></div>
     <div id="cfChart"></div>
@@ -826,7 +828,7 @@ function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-tit
 const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
  median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
- mode:(v,u)=>`The mode is ${v}${u||''}, the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
+ mode:(v,u)=>`The mode is ${v}${u||''}, which is the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
  sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
  var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
  skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
@@ -956,20 +958,20 @@ function spOut(){const v=SPV[spCur],a=v.vals,tot=1309;
   const cats=labs?Object.keys(labs).map(k=>({label:labs[k],n:cnt[k]||0})):null;
   const spss=stats+(cats?D.spFreq(v.lab.split(': ')[1],cats,tot-a.length?[{label:'System',n:tot-a.length}]:null):'');
   const stata=labs?D.stTab(spCur,spCur,cats)+'\n\n'+D.stSum(spCur,v.lab.split(': ')[1],a):D.stSum(spCur,v.lab.split(': ')[1],a);
-  D.drawers($('#spOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies. Under Statistics, check Mean, Median and Mode. Tap a value in the Statistics table for what it means.',spss,stata,stataNote:labs?'Stata\'s <code>tabulate</code> gives the frequency table and <code>summarize, detail</code> gives the mean and the median (the 50% percentile). Stata has no built-in mode for <code>summarize</code>; read it off the frequency table.':'<code>summarize, detail</code> gives the mean and the median (the 50% percentile). For the mode, use <code>tabulate</code> and find the largest Freq.'});}
+  D.drawers($('#spOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies. Under Statistics, check Mean, Median and Mode. Tap a value in the Statistics table for what it means.',spss,stata,stataNote:labs?'Stata\'s <code>tabulate</code> gives the frequency table and <code>summarize, detail</code> gives the mean and the median (the 50% percentile). Stata\'s <code>summarize</code> has no built-in mode, so read it off the frequency table.':'<code>summarize, detail</code> gives the mean and the median (the 50% percentile). For the mode, use <code>tabulate</code> and find the largest Freq.'});}
 $('#spTbl').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
 $('#spCheck').addEventListener('click',()=>{const v=SPV[spCur];const picks=[...document.querySelectorAll('#spTbl .seg')].map(s=>{const p=s.querySelector('[aria-pressed="true"]');return p?p.dataset.v:'';});
   if(picks.includes(''))return D.fb($('#spFb'),'info','Rate all three first.');
   const wrong=picks.map((p,i)=>v.key[i].includes(p)?null:['Mean','Median','Mode'][i]).filter(Boolean);
   if(!wrong.length)D.fb($('#spFb'),'ok',`${spCur} is ${v.level}. ${v.interp()}`);
-  else D.fb($('#spFb'),'no',`Look again at the ${wrong.join(' and ')}. ${spCur} is ${v.level}; check the table in Part 1.`);});
+  else D.fb($('#spFb'),'no',`Look again at the ${wrong.join(' and ')}. ${spCur} is ${v.level}, so check the table in Part 1.`);});
 spDraw();
 
 /* ---------- Part 3: median ---------- */
 const lun=DATA.lun.rows;
 const SETS={
  a9:{lab:'9 ages',intro:'The ages of nine people from the notes. Put them in order.',items:DATA.ages9.map(v=>({v,s:''}))},
- a8:{lab:'8 ages',intro:'The same ages without the 37-year-old. Now there are eight, so two values share the middle.',items:[17,17,23,35,48,57,62,78].map(v=>({v,s:''}))},
+ a8:{lab:'8 ages',intro:'These are the same ages without the 37-year-old. Now there are eight, so two values share the middle.',items:[17,17,23,35,48,57,62,78].map(v=>({v,s:''}))},
  cty:{lab:'13 counties',intro:'Lunatics per county in the 13 Massachusetts counties (NBR).',items:lun.map(r=>({v:r[1],s:r[0]}))},
  st:{lab:'50 states',intro:'The Democratic share of the 1984 presidential vote in each state. Fifty is too many to drag, so let SPSS-style sorting do it, then tap the two values in the middle.',items:DATA.dem84.map(r=>({v:r[1],s:r[0]}))}
 };
@@ -986,8 +988,8 @@ function mdCheck(){const tiles=[...$('#mdTiles').children],v=tiles.map(t=>+t.dat
   const mids=n%2?[(n-1)/2]:[n/2-1,n/2];
   tiles.forEach((t,i)=>{if(mids.includes(i))t.classList.add('mid');else t.classList.add(i<mids[0]?'lo':'hi');});
   const below=mids[0],m=n%2?v[mids[0]]:(v[mids[0]]+v[mids[1]])/2;
-  D.fb($('#mdFb'),'ok',n%2?`In order. The median is <b>${m}</b>${tiles[mids[0]].querySelector('small')?` (${tiles[mids[0]].querySelector('small').textContent})`:''}: ${below} values are below it and ${below} above.`
-    :`In order. With ${n} values, <b>${v[mids[0]]}</b> and <b>${v[mids[1]]}</b> share the middle (${below} values on each side). The median is halfway between them, (${v[mids[0]]} + ${v[mids[1]]}) ÷ 2 = <b>${m}</b>.`);}
+  D.fb($('#mdFb'),'ok',n%2?`The tiles are in order, and the median is <b>${m}</b>${tiles[mids[0]].querySelector('small')?` (${tiles[mids[0]].querySelector('small').textContent})`:''}. There are ${below} values below it and ${below} above.`
+    :`The tiles are in order. With ${n} values, <b>${v[mids[0]]}</b> and <b>${v[mids[1]]}</b> share the middle (${below} values on each side). The median is halfway between them, (${v[mids[0]]} + ${v[mids[1]]}) ÷ 2 = <b>${m}</b>.`);}
 D.sortable($('#mdTiles'),mdCheck);
 $('#mdSort').addEventListener('click',()=>{const box=$('#mdTiles');const tiles=[...box.children];const first=new Map(tiles.map(t=>[t,t.getBoundingClientRect()]));
   tiles.sort((a,b)=>+a.dataset.v-+b.dataset.v).forEach(t=>box.appendChild(t));
@@ -1072,12 +1074,12 @@ const OG={
  age:{ttl:'Titanic age groups (age5)',hue:'var(--s1)',desc:'age5 sorts Titanic passengers into five age groups coded 1 to 5. Here the gaps can be measured, because each group covers a known range of years. Tap a group on the bottom line to see how wide it is.',
    cols:['var(--q1,#8fb3e8)','var(--q2,#5f93db)','var(--q3,#2a78d6)','var(--q4,#1c5cab)','var(--q5,#123f78)'],
    ranges:[[0,5],[5,16],[16,30],[30,60],[60,80]],bottom:'Real ages in years',
-   notes:['Code 1, infant or young child, covers ages 0 to 5, about 5 years.','Code 2, youth, covers ages 5 to 16, which is 11 years.','Code 3, young adult, covers ages 16 to 30, which is 14 years.','Code 4, adult, covers ages 30 to 60, which is 30 years and more than twice as wide as code 3. Yet on the codes it is still one step from 3 to 4.','Code 5, elderly, covers everyone 60 and older.']},
+   notes:['Code 1 (infant or young child) covers ages 0 to 5, which is about 5 years.','Code 2, youth, covers ages 5 to 16, which is 11 years.','Code 3, young adult, covers ages 16 to 30, which is 14 years.','Code 4, adult, covers ages 30 to 60, which is 30 years and more than twice as wide as code 3. Yet on the codes it is still one step from 3 to 4.','Code 5, elderly, covers everyone 60 and older.']},
  agree:{ttl:'Agree or disagree',hue:'var(--s2)',desc:'Many surveys ask people whether they agree with a statement, coded 1 = Strongly agree to 5 = Strongly disagree. The codes are evenly spaced, but the answers may not be. There’s no ruler for this, so the bottom line shows where we think the gaps are larger or smaller. Tap a gap to see why.',
    cols:AGREEC,labels:['Strongly agree','Agree','Neither agree nor disagree','Disagree','Strongly disagree'],pos:[0,1,2.5,4,5],bottom:'Judged distance, not measured',
    gaps:[['smaller','Smaller than one step. Both answers agree with the statement, and only how strongly changes.'],
          ['larger','Larger than one step. This step leaves the agree side altogether. “Neither” also collects people who have no opinion on the question, so it isn’t a true halfway point.'],
-         ['larger','Larger than one step. Moving from no side to disagreeing changes which side someone is on, not just how strongly.'],
+         ['larger','Larger than one step. Moving from no side to disagreeing changes which side someone is on rather than just how strongly they feel.'],
          ['smaller','Smaller than one step. Both answers disagree, and only how strongly changes.']]},
  party:{ttl:'Party identification (ANES)',hue:'var(--dem,#5B9BD5)',desc:'The ANES 7-point party ID runs from 1 = Strong Democrat to 7 = Strong Republican. Studies of how people vote suggest some of these steps are much bigger than others. Tap a gap to see why.',
    cols:PARTYC,labels:['Strong Democrat','Not very strong Democrat','Independent-Democrat','Independent','Independent-Republican','Not very strong Republican','Strong Republican'],pos:[0,1.2,1.55,3.1,4.65,5,6.2],bottom:'Judged distance, not measured',
@@ -1118,24 +1120,24 @@ function ogDraw(key){const o=OG[key],host=$('#ogSvg');host.innerHTML='';const g=
     $('#ogKey').innerHTML='<dl class="codes">'+o.labels.map((t,i)=>`<dt style="color:${o.cols[i]==='var(--muted)'?'var(--ink-2)':'var(--ink)'}"><i class="sw" style="background:${o.cols[i]}"></i>${i+1}</dt><dd>${t}</dd>`).join('')+'</dl>';}
   for(let c=1;c<=n;c++){S('circle',{cx:X1(c),cy:40,r:12,style:`fill:${o.cols[c-1]};stroke:var(--surface);stroke-width:1.5`},svg);S('text',{x:X1(c),y:44.5,'text-anchor':'middle',style:NUM},svg,String(c));}}
 D.seg($('#ogSeg'),[['age','Titanic ages'],['agree','Agree or disagree'],['party','Party ID']],ogDraw,'age');ogDraw('age');
-D.seg($('#ogQ'),[['y','Yes'],['n','No']],v=>{if(v==='n')D.fb($('#ogFb'),'ok','The codes treat the step from youth (5–16) to young adult (16–30) as the same size as the step from young adult to adult (30–60), even though one covers 14 years and the other 30. So a mean of the codes is a rough guide to which group is typical, not an age. For ordinal variables, read the median and the mode, which here are both 3 (young adults).');
+D.seg($('#ogQ'),[['y','Yes'],['n','No']],v=>{if(v==='n')D.fb($('#ogFb'),'ok','The codes treat the step from youth (5–16) to young adult (16–30) as the same size as the step from young adult to adult (30–60), even though one covers 14 years and the other 30. So a mean of the codes is a rough guide to which group is typical rather than an actual age. For ordinal variables, read the median and the mode, which here are both 3 (young adults).');
   else D.fb($('#ogFb'),'no','Code 4 alone covers 30 years of age, while code 2 covers 11. The codes are evenly spaced, but the ages they stand for are not. So the mean of the codes can\'t be turned back into an age.');});
 
 /* ---------- Part 7: mode ---------- */
 const WF=DATA.welfare,WN=D.sum(WF.map(r=>r[2]));let cum=0;
 $('#moTbl').innerHTML=D.spFreq('PRE: SUMMARY: Federal Budget Spending: welfare programs',WF.map(r=>({label:`${r[0]}. ${r[1]}`,n:r[2],flag:r[0]<0})));
-D.drawers($('#moOut'),{stata:D.stTab('V201314x','welfare spending',WF.map(r=>({label:`${r[0]}. ${r[1]}`.slice(0,24),n:r[2]}))),stataNote:'The same table in Stata. Stata, too, counts −2 as a valid value until you tell it otherwise (for example, <code>replace V201314x = . if V201314x < 0</code>).'});
+D.drawers($('#moOut'),{stata:D.stTab('V201314x','welfare spending',WF.map(r=>({label:`${r[0]}. ${r[1]}`.slice(0,24),n:r[2]}))),stataNote:'Here is the same table in Stata. Stata, too, counts −2 as a valid value until you tell it otherwise (for example, <code>replace V201314x = . if V201314x < 0</code>).'});
 $('#moBars').addEventListener('click',()=>{$('#moChart').hidden=false;$('#moTap').hidden=false;
   D.hist($('#moChart'),{cats:WF.map(r=>({label:(r[0]<0?'−2 DK/RF':r[0]+'. '+r[1].replace('Increased','Incr.').replace('Decreased','Decr.')),n:r[2]})),h:250,catSmall:true,barTap:(i)=>{
-    if(WF[i][0]===3){D.fb($('#moFb'),'ok',`The mode is 3, “Kept the same,” chosen by ${D.comma(3522)} people, ${(3522/WN*100).toFixed(1)}% of the sample. That's the most common answer by a wide margin. The highlighted −2 row is a non-answer (don't know or refused). This table lists it under Valid, but it isn't an opinion, so it should be set as missing before you compute anything.`);$('#moQ').hidden=false;}
+    if(WF[i][0]===3){D.fb($('#moFb'),'ok',`The mode is 3, “Kept the same,” which ${D.comma(3522)} people chose (${(3522/WN*100).toFixed(1)}% of the sample). That's the most common answer by a wide margin. The highlighted −2 row is a non-answer (don't know or refused). This table lists it under Valid, but it isn't an opinion, so it should be set as missing before you compute anything.`);$('#moQ').hidden=false;}
     else D.fb($('#moFb'),'no',`That bar has ${D.comma(WF[i][2])} people. The mode is the tallest bar.`);},aria:'Bar chart of welfare spending answers'});});
-$('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;v==='3'?D.fb($('#moFb2'),'ok','Most people want to keep welfare spending the same. Note that the mode is a plurality, 42.5%, not a majority.'):D.fb($('#moFb2'),'no','Read the label of the tallest bar.');});
+$('#moQc').addEventListener('click',()=>{const v=$('#moSel').value;if(!v)return;v==='3'?D.fb($('#moFb2'),'ok','Most people want to keep welfare spending the same. Note that the mode, at 42.5%, is a plurality rather than a majority.'):D.fb($('#moFb2'),'no','Read the label of the tallest bar.');});
 (function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
 
 /* ---------- Part 8: range ---------- */
 const SO=DATA.nes.southern_therm;
 D.hist($('#raChart'),{counts:SO.counts,xmin:-2.5,xmax:102.5,binw:5,h:230,ticks:[0,10,20,30,40,50,60,70,80,90,100],xlab:'Feeling thermometer (0 = cold, 100 = warm)',
-  barTap:(i,b)=>{const vals=Object.entries(SO.counts).filter(([k])=>+k>=b.x0&&+k<b.x1);$('#raTap').textContent=vals.length?vals.map(([k,v])=>`${v} people rated Southerners ${k}`).join('; ')+'.':'No one in that range.';},aria:'Southerners thermometer'});
+  barTap:(i,b)=>{const vals=Object.entries(SO.counts).filter(([k])=>+k>=b.x0&&+k<b.x1);$('#raTap').textContent=vals.length?vals.map(([k,v])=>`${v} people rated Southerners ${k}`).join('; ')+'.':'No one rated Southerners in that range.';},aria:'Southerners thermometer'});
 $('#raCheck').addEventListener('click',()=>{const a=D.num($('#ra1').value),b=D.num($('#ra2').value),c=D.num($('#ra3').value),d=D.num($('#ra4').value);
   if(a!==0||b!==100)return D.fb($('#raFb'),'no','The range runs from the lowest rating anyone gave to the highest. Look at the bars at each end of the chart.');
   if(c!==SO.counts['0']||d!==SO.counts['100'])return D.fb($('#raFb'),'no','Tap the bars at 0 and at 100 to read their counts.');

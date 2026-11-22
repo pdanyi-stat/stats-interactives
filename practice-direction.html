@@ -536,7 +536,7 @@ const C=[
  walk:()=>[['IV','warmer toward Obama (higher numbers)'],['Sign','positive: warmer toward Clinton, about half a point per point'],['Sig.','.000, which means p < .001'],['So','the claim holds.']]},
 {t:'Lambda · '+SA,iv:['WhiteInterviewerDummy','Was the interviewer white?',[[0,'No'],[1,'Yes']]],dv:['ANCVoterDummy','Did the respondent vote for the ANC?',[[0,'No'],[1,'Yes']]],
  out:()=>'Lambda (ANCVoterDummy dependent) = .240',claim:'With a white interviewer, people were less likely to say they voted ANC.',A:['Less likely with a white interviewer','More likely with a white interviewer','Lambda can’t tell us the direction'],a:2,B:['Yes','No','Not from lambda alone'],b:2,
- walk:()=>[['Lambda','has no sign, since it only says how much knowing the IV improves your guess of the DV'],['Look at','the column percentages in the crosstab to see which way it runs'],['So','a moderate relationship, but the direction has to come from the table, not from lambda.']]}];
+ walk:()=>[['Lambda','has no sign, since it only says how much knowing the IV improves your guess of the DV'],['Look at','the column percentages in the crosstab to see which way it runs'],['So','a moderate relationship, but the direction has to come from the table rather than from lambda.']]}];
 let order=[],pos=0,f=false,A=null,B=null,done=0,right=0,checked=false;
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 const cod=(role,v,rows)=>`<div class="cod"><span class="role">${role}</span><span class="nm">${v[0]}</span><span class="lb">${v[1]}</span><dl class="codes">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl></div>`;
@@ -544,7 +544,7 @@ function show(){const c=C[order[pos]];$('tt').textContent=c.t;
   $('cods').innerHTML=cod('IV',c.iv,f&&c.ivF?c.ivF:c.iv[2])+cod('DV',c.dv,f&&c.dvF?c.dvF:c.dv[2]);$('out').innerHTML=c.out(f);$('cl').textContent='Claim: '+c.claim;
   $('qa').innerHTML=c.A.map((t,k)=>`<button data-k="${k}" aria-pressed="${A===k}">${t}</button>`).join('');$('qb').innerHTML=c.B.map((t,k)=>`<button data-k="${k}" aria-pressed="${B===k}">${t}</button>`).join('');
   const can=!!(c.dvF||c.ivF);$('flp').hidden=!can;$('flp').textContent=f?'Back to the original coding':'Flip the coding';
-  $('fn').hidden=!f;$('fn').textContent=f?'Same data, opposite coding. The sign flips, but the answer in plain words stays the same.':'';
+  $('fn').hidden=!f;$('fn').textContent=f?'This is the same data with the coding reversed. The sign flips, but the answer in plain words stays the same.':'';
   $('pg').textContent=`Card ${pos+1} of ${C.length}`;$('score').textContent=done?`${right} of ${done} right this round`:'';}
 function reset(){f=false;A=null;B=null;checked=false;$('fb').className='fbk';$('fb').innerHTML='';$('err').textContent='';}
 $('qa').onclick=e=>{const b=e.target.closest('button');if(!b)return;A=+b.dataset.k;$('err').textContent='';show();};

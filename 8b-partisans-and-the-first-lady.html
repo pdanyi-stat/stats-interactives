@@ -376,7 +376,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -715,7 +715,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <section class="fljumpbox" aria-label="Extended worked example"><p>Next: the same analysis holding gender constant. Women and men differ in their partisanship, so the Dummy variables module redoes every step of this page with a female dummy added, ending with both parties and gender in one model.</p><p><a class="fljump" href="10-dummy-variables.html#firstlady">★ Worked example, extended: the First Lady, controlling for gender →</a></p></section>
 
-  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -921,7 +921,7 @@ function makeInstance(root,d){
     if(d==='laura'){
       q('concl').innerHTML=`<h3 style="margin:0">What we can conclude</h3>
         <p><b>Both lines are statistically significant</b>, so feelings toward both parties are related to feelings about the First Lady. That is the first big takeaway, that partisan views shape how we rate First Ladies. We'd expect both, since people who love one party tend to dislike the other.</p>
-        <p><b>The slopes differ in size.</b> The Republican line is steeper (${f3(H.rep.b)} vs. ${f3(H.dem.b)}), and so is the gap between the average and the full partisan: ${H.rep.gap.toFixed(2)} points versus ${Math.abs(H.dem.gap).toFixed(2)}.</p>
+        <p><b>The slopes differ in size.</b> The Republican line is steeper (${f3(H.rep.b)} vs. ${f3(H.dem.b)}), and so is the gap between the average and the full partisan, which is ${H.rep.gap.toFixed(2)} points versus ${Math.abs(H.dem.gap).toFixed(2)}.</p>
         <p>One reading is that something about liking the Republican Party has a bigger impact on feelings about First Ladies. A more plausible reading is that <b>when the First Lady belongs to your party, how strong a partisan you are matters a great deal</b> for how you feel about her. When she belongs to the other party, strong partisanship lowers your opinion of her, but it matters less.</p>
         <p class="op">“Love is stronger than hate.”</p>
         <p style="font-size:14px">That is the early takeaway here, repackaged and sold in op-ed form. Aren't we nice as partisans! Treat this as a preliminary conclusion, since it rests on two bivariate regressions from a single election and a single First Lady.</p>`;
@@ -931,7 +931,7 @@ function makeInstance(root,d){
         <p><b>The steeper line is now the Democratic one</b> (${f3(H.dem.b)} vs. ${f3(H.rep.b)}), and so is the gap. Compared with average partisans, full Democratic partisans are predicted to rate her ${Math.abs(H.dem.gap).toFixed(2)} points higher, while full Republican partisans rate her ${Math.abs(H.rep.gap).toFixed(2)} points lower.</p>
         <p>That is the pattern “love is stronger than hate” predicts. With Laura Bush, the First Lady's own party was Republican and the Republican line was steeper. With Hillary Clinton, her own party is Democratic and the Democratic line is steeper. ${holds?'The result flips with the party of the First Lady, which makes “something special about Republicans” an unlikely explanation.':''}</p>
         <p class="op">“Love is stronger than hate” holds again.</p>
-        <p style="font-size:14px">One caution: in 2004 Hillary Clinton was a sitting U.S. senator and a far more openly partisan figure than Laura Bush, so this is a strong replication of the pattern but not a perfectly matched comparison.</p>`;
+        <p style="font-size:14px">One caution is that in 2004 Hillary Clinton was a sitting U.S. senator and a far more openly partisan figure than Laura Bush, so this is a strong replication of the pattern but not a perfectly matched comparison.</p>`;
     }
   }
   const inst={main,compare,root}; INST.push(inst); main(); compare(); return inst;

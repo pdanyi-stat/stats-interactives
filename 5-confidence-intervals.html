@@ -375,7 +375,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -669,7 +669,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <div class="wrap">
     <p class="kicker">Statistical methods · Module 5 of 10</p>
     <h1>Confidence intervals</h1>
-    <p class="dek">“95% confident” describes a method, not a single interval. Here we know the true county mean, so we can build hundreds of intervals and count how many actually capture it. Then we hold the final 2016 election polls to the same test.</p>
+    <p class="dek">“95% confident” describes a method rather than a single interval. Here we know the true county mean, so we can build hundreds of intervals and count how many actually capture it. Then we hold the final 2016 election polls to the same test.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
@@ -863,6 +863,14 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 
 
 
+
+
+
+
+
+
+
+
   <section class="controls" aria-label="Simulation controls">
     <div class="ctl">
       <label class="lab" for="pop">Population: 3,112 U.S. counties</label>
@@ -907,7 +915,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
       <p class="sub" id="ivSub"></p>
       <div class="key"><span><i class="sw hitl"></i>captured μ</span><span><i class="sw missl"></i>missed μ</span><span><i class="sw mu"></i>μ, the true mean</span></div>
       <div class="chart" id="ivChart"></div>
-      <figcaption>Each horizontal line is one sample's interval, newest at the top. Lines that run off the edge end in an arrow.</figcaption>
+      <figcaption>Each horizontal line is one sample's interval, and the newest sits at the top. Lines that run off the edge end in an arrow.</figcaption>
     </figure>
 
     <div class="col">
@@ -920,7 +928,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
           <b>Why total votes falls short of 95%</b>
           <p>Total votes is extremely skewed. The median county cast 12,549 votes, but the mean is 50,785, and only about 19% of counties are above the mean. A few very large counties pull the mean up, and the largest cast over 4.2 million votes.</p>
           <p>Most samples contain only typical, smaller counties. Their mean lands below μ, and their SD is small too, so the interval is narrow and sits entirely below μ. That's why nearly every miss here is a red line to the left of μ. The few samples that do catch a big county get a huge SD and a very wide interval.</p>
-          <p>So the trouble is the skew, not the size of the SD. The interval assumes the sample means pile up in a roughly normal shape, and with this much skew they don't until n is very large. Drawing more intervals doesn't fix it, because coverage belongs to the method at a given n. Larger samples help, but slowly. In 30,000 simulated 95% t intervals at each size, coverage was about 60% at n = 5, 67% at n = 10, 77% at n = 25, 83% at n = 50 and 87% at n = 100.</p>
+          <p>So the trouble is the skew rather than the size of the SD. The interval assumes the sample means pile up in a roughly normal shape, and with this much skew they don't until n is very large. Drawing more intervals doesn't fix it, because coverage belongs to the method at a given n. Larger samples help, but slowly. In 30,000 simulated 95% t intervals at each size, coverage was about 60% at n = 5, 67% at n = 10, 77% at n = 25, 83% at n = 50 and 87% at n = 100.</p>
         </div>
       </figure>
 
@@ -973,7 +981,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
       <p class="say" id="spSay" style="font-size:14px;color:var(--ink-2);margin:6px 0 0"></p>
     </section>
   </div>
-  <p style="margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;padding:10px 14px"><b style="color:var(--ink)">Confidence and errors.</b> A 95% interval goes with a test at α = .05. Choosing the confidence level is choosing how often you'll risk a Type I error, a false positive, when nothing is really going on. 95% is a convention, not a law. <a href="6-difference-in-means.html#errors" style="color:var(--s1-ink);font-weight:600">Type I and II errors →</a></p>
+  <p style="margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;padding:10px 14px"><b style="color:var(--ink)">Confidence and errors.</b> A 95% interval goes with a test at α = .05. Choosing the confidence level is choosing how often you'll risk a Type I error, a false positive, when nothing is really going on. 95% is a convention rather than a law. <a href="6-difference-in-means.html#errors" style="color:var(--s1-ink);font-weight:600">Type I and II errors →</a></p>
 
   <section class="part" aria-labelledby="p2h">
     <p class="kick">Real data</p>
@@ -995,7 +1003,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
       <p class="sub" id="pollSub"></p>
       <div class="key"><span><i class="sw hitl"></i>interval contains the result</span><span><i class="sw missl"></i>misses it</span><span><i class="sw mu"></i>actual margin</span></div>
       <div class="chart" id="pollChart"></div>
-      <figcaption>Newest polls at the top. Positive values favor Clinton, negative values favor Trump. Hover or tap a line for the pollster.</figcaption>
+      <figcaption>The newest polls are at the top. Positive values favor Clinton, negative values favor Trump. Hover or tap a line for the pollster.</figcaption>
     </figure>
     <div class="col">
       <section style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px">
@@ -1033,11 +1041,11 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
         <p>No. μ is a fixed number (33.27), so this particular interval either contains it or doesn't. The 95% is a property of the procedure, meaning that across many samples, 95% of intervals built this way capture μ.</p>
       </details>
       <details class="ring" id="whyt" style="scroll-margin-top:70px">
-        <summary>Why t and not z? (We use z in class; here's when t matters.)</summary>
+        <summary>Why t and not z? (We use z in class, but here's when t matters.)</summary>
         <p>SE = SD / √n uses the <b>sample's</b> SD, which is itself an estimate, so there's a little extra uncertainty. The t distribution has fatter tails to cover it, so its critical value is a bit bigger and the interval a bit wider. That matters most in small samples (n = 10: t = 2.26 vs. z = 1.96). Past about 30 the two are close (t = 2.05 at n = 30), and in the hundreds they're nearly identical (t = 1.98 at n = 100), which is why z works well for survey-sized data. Many researchers use t by default for that reason. Try the t/z switch at n = 5.</p>
       </details>
       <details>
-        <summary>A poll of 800 voters reports Clinton 47, Trump 44, margin of error ±3.5. Is the 3-point lead outside the margin of error?</summary>
+        <summary>A poll of 800 voters puts Clinton at 47 and Trump at 44, and it reports a margin of error of ±3.5. Is the 3-point lead outside the margin of error?</summary>
         <p>No. The ±3.5 applies to each candidate's share. The lead is a difference of two shares from the same sample, and its margin of error is roughly double, about ±6.6 points here. Reporters often get this wrong.</p>
       </details>
     </section>

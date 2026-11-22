@@ -517,7 +517,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -837,9 +837,9 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   <section class="intro" aria-label="About this page">
     <p class="lede">Every number on this page comes from a real regression on the site's data. Tap any number, column heading, variable name or the notes line to see what it means. Below each table you can switch to the Stata output for the same model and check that the numbers match.</p>
     <div class="layouts">
-      <div><h3>Export style</h3><p>Tables 1 and 3. One model, raw variable names, and a column for each statistic, the way statistics programs export it.</p></div>
-      <div><h3>Journal style</h3><p>Tables 2 and 4–8. Several models side by side, one per column, with each standard error in parentheses under its coefficient.</p></div>
-      <div><h3>Comparison style</h3><p>Tables 9 and 10. Group means side by side, with a test of whether they differ, the way papers report differences of means.</p></div>
+      <div><h3>Export style</h3><p>Tables 1 and 3 each show one model, with raw variable names and a column for each statistic, the way statistics programs export it.</p></div>
+      <div><h3>Journal style</h3><p>Tables 2 and 4–8 set several models side by side, one per column, with each standard error in parentheses under its coefficient.</p></div>
+      <div><h3>Comparison style</h3><p>Tables 9 and 10 set group means side by side and test whether they differ, the way papers report differences of means.</p></div>
     </div>
     <p class="lede small">The regression tables put stars on the coefficients and explain them in a notes line. They use * p &lt; .05, ** p &lt; .01, *** p &lt; .001. The comparison tables print the <i>p</i>-values themselves instead of stars, as APA style does.</p>
     <nav class="toc" aria-labelledby="tocH"><h2 id="tocH">Tables on this page</h2><ol>
@@ -862,7 +862,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="desk"><div class="paper" id="t1paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t1exp" aria-live="polite"><span class="hint">Tap any number, column heading, variable name or the notes line.</span></p>
-    <div class="sorow" id="t1row"><button class="tbtn" id="t1so" aria-expanded="false" aria-controls="t1pre">Show as Stata output</button><p class="say">The same model as Stata prints it.</p></div>
+    <div class="sorow" id="t1row"><button class="tbtn" id="t1so" aria-expanded="false" aria-controls="t1pre">Show as Stata output</button><p class="say">This is the same model as Stata prints it.</p></div>
     <pre class="stata" id="t1pre" hidden></pre>
     <div class="mcq" id="t1q"></div>
     </div>
@@ -870,7 +870,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <figure class="tfig" id="t2" aria-labelledby="t2h">
     <header class="thead"><p class="tkick">Table 2 · Worked example · Journal style · Four models</p><h2 id="t2h">Party feelings and the First Ladies</h2>
-      <p class="sub">The four bivariate regressions from the <a href="8b-partisans-and-the-first-lady.html">First Lady worked example</a> (2004 NES), side by side in the journal style. Each column is a separate regression.</p></header>
+      <p class="sub">These are the four bivariate regressions from the <a href="8b-partisans-and-the-first-lady.html">First Lady worked example</a> (2004 NES), set side by side in the journal style. Each column is a separate regression.</p></header>
     <div class="desk"><div class="paper" id="t2paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t2exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -886,7 +886,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <div class="desk"><div class="paper" id="t3paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t3exp" aria-live="polite"><span class="hint">Tap any number, column heading, variable name or the notes line.</span></p>
-    <div class="sorow" id="t3row"><button class="tbtn" id="t3so" aria-expanded="false" aria-controls="t3pre">Show as Stata output</button><p class="say">The same model as Stata prints it.</p></div>
+    <div class="sorow" id="t3row"><button class="tbtn" id="t3so" aria-expanded="false" aria-controls="t3pre">Show as Stata output</button><p class="say">This is the same model as Stata prints it.</p></div>
     <pre class="stata" id="t3pre" hidden></pre>
     <div class="mcq" id="t3q"></div>
     </div>
@@ -894,7 +894,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <figure class="tfig" id="t4" aria-labelledby="t4h">
     <header class="thead"><p class="tkick">Table 4 · Module 9 · Journal style · Three models</p><h2 id="t4h">Regional and economic predictors</h2>
-      <p class="sub">Three models on the <a href="9-multiple-regression.html">Module 9</a> state data. Models 1 and 2 show what happens to the South coefficient when metro share is held constant. Model 3 uses a different set of IVs.</p></header>
+      <p class="sub">These are three models on the <a href="9-multiple-regression.html">Module 9</a> state data. Models 1 and 2 show what happens to the South coefficient when metro share is held constant. Model 3 uses a different set of IVs.</p></header>
     <div class="desk"><div class="paper" id="t4paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t4exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -906,7 +906,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <figure class="tfig" id="t5" aria-labelledby="t5h">
     <header class="thead"><p class="tkick">Table 5 · Module 10 · Journal style · Four models</p><h2 id="t5h">The First Ladies, controlling for gender</h2>
-      <p class="sub">The gender-controlled models from <a href="10-dummy-variables.html#firstlady">Module 10</a>. They are Table 2's four models with a Female dummy added, so you can compare each party coefficient across the two tables.</p></header>
+      <p class="sub">These are the gender-controlled models from <a href="10-dummy-variables.html#firstlady">Module 10</a>. They are Table 2's four models with a Female dummy added, so you can compare each party coefficient across the two tables.</p></header>
     <div class="desk"><div class="paper" id="t5paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t5exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -930,7 +930,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <figure class="tfig" id="t7" aria-labelledby="t7h">
     <header class="thead"><p class="tkick">Table 7 · Module 10 · Journal style · Four models</p><h2 id="t7h">The South, with and without D.C.</h2>
-      <p class="sub">The South dummy models from <a href="10-dummy-variables.html">Module 10</a>, run on all 51 cases and again without D.C. (the module's “Include D.C.” switch). The group labels tell you which sample each pair of columns uses.</p></header>
+      <p class="sub">These are the South dummy models from <a href="10-dummy-variables.html">Module 10</a>, run on all 51 cases and again without D.C. (the module's “Include D.C.” switch). The group labels tell you which sample each pair of columns uses.</p></header>
     <div class="desk"><div class="paper" id="t7paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t7exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -942,11 +942,11 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <figure class="tfig" id="t8" aria-labelledby="t8h">
     <header class="thead"><p class="tkick">Table 8 · Titanic practice · Journal style · Six models</p><h2 id="t8h">Who survived the Titanic?</h2>
-      <p class="sub">Six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass (<code>gen middle_class = pclass==2</code> and <code>gen lower_class = pclass==3</code>), with first class as the reference. Stata command for the full model: <code>regress survived age female middle_class lower_class trav_alone the_freeriders the_one_percent</code></p></header>
+      <p class="sub">These are six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass (<code>gen middle_class = pclass==2</code> and <code>gen lower_class = pclass==3</code>), with first class as the reference. Stata command for the full model: <code>regress survived age female middle_class lower_class trav_alone the_freeriders the_one_percent</code></p></header>
     <div class="desk"><div class="paper wide" id="t8paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t8exp" aria-live="polite"><span class="hint">Tap any number, model number or the notes line.</span></p>
-    <div class="sorow" id="t8row"><button class="tbtn" id="t8so" aria-expanded="false" aria-controls="t8pre">Show as Stata output</button><p class="say">Model 6, the full model, as Stata prints it.</p></div>
+    <div class="sorow" id="t8row"><button class="tbtn" id="t8so" aria-expanded="false" aria-controls="t8pre">Show as Stata output</button><p class="say">This is Model 6, the full model, as Stata prints it.</p></div>
     <pre class="stata" id="t8pre" hidden></pre>
     <div class="mcq" id="t8q"></div>
     </div>
@@ -966,7 +966,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
 
   <figure class="tfig" id="t10" aria-labelledby="t10h">
     <header class="thead"><p class="tkick">Table 10 · Modules 6 and 9 · Comparison style · Six t tests</p><h2 id="t10h">How the South differs from the rest of the country</h2>
-      <p class="sub">Six state traits from the <a href="9-multiple-regression.html">Module 9</a> data, compared between the South and the rest of the country. Tables like this one often open a paper, because they describe the groups before any model is run. Each group gets its mean and median, and the last two columns test whether the means differ.</p></header>
+      <p class="sub">This table compares six state traits from the <a href="9-multiple-regression.html">Module 9</a> data between the South and the rest of the country. Tables like this one often open a paper, because they describe the groups before any model is run. Each group gets its mean and median, and the last two columns test whether the means differ.</p></header>
     <div class="desk"><div class="paper wide" id="t10paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t10exp" aria-live="polite"><span class="hint">Tap any number, column heading or the note.</span></p>
@@ -1085,7 +1085,7 @@ function explainA(spec,f,vars){
   const B=v=>f.b[J[v]],P=v=>f.p[J[v]],T=v=>f.t[J[v]],SE=v=>f.se[J[v]];
   const tcrit=f.tc.toFixed(2),k=vars.length;
   const E={
-    dv:`The name in the top-left corner is the DV: <i>${spec.dv}</i>, ${spec.dvWhat} Export-style tables print the raw variable names from the dataset, so you sometimes have to work out what a name means. Tap any variable name to see what it measures.`,
+    dv:`The name in the top-left corner is the DV, <i>${spec.dv}</i>, which measures ${spec.dvWhat} Export-style tables print the raw variable names from the dataset, so you sometimes have to work out what a name means. Tap any variable name to see what it measures.`,
     coefh:(k===1?'Coef. is the coefficient. With one IV it is the slope of the regression line from Module 8.':'Coef. is the coefficient, which is each IV\'s slope with the other IVs held constant.')+' The stars attached to it repeat what the p-value column says, using the cutoffs in the notes line at the bottom. Read the notes before you read the stars.',
     seh:'Std. Err. is the standard error of the coefficient, which tells you how much the coefficient would vary from one sample to the next. A coefficient that is large compared with its standard error is hard to get by chance.',
     th:`t = Coef. ÷ Std. Err. You can check any row with the numbers as printed (rounding can move the last digit). With ${f.df} degrees of freedom, a t beyond about ±${tcrit} is where p drops below .05.`,
@@ -1093,10 +1093,10 @@ function explainA(spec,f,vars){
     my:`Mean dependent var is the mean of <i>${spec.dv}</i> across the ${f.n} cases: ${f.my.toFixed(1)}${spec.yu}. Together with the SD next to it, it gives you a sense of scale for the coefficients.`,
     sy:`SD dependent var = ${d3(f.sy)}: ${spec.sdTxt}`,
     r2:`R² = ${d3(f.r2)}: ${k===1?'the IV removes':'together the '+k+' IVs remove'} ${Math.round(f.r2*100)}% of the squared error you make by guessing the mean for every case (Module 7). This table reports R² only. Adjusted R², which charges a penalty for each IV, is ${d3(f.adj)} (see the Stata output). Check which one a table reports.`,
-    n:`Number of obs = ${f.n}: the 50 states plus D.C. Always compare N with the size of the dataset. Here nothing is missing, so every case is used. When N is smaller than the dataset, cases were dropped, usually because some variable was missing for them.`,
+    n:`Number of obs = ${f.n}, which covers the 50 states plus D.C. Always compare N with the size of the dataset. Here nothing is missing, so every case is used. When N is smaller than the dataset, cases were dropped, usually because some variable was missing for them.`,
     f:k===1?`The F-test checks H₀ that the slope is 0. With one IV that is the same H₀ as the slope's t-test, and F = t²: (${d2(f.t[0])})² ≈ ${(f.t[0]**2).toFixed(1)}. F = ${d3(f.F)}, with 1 and ${f.df} degrees of freedom.`:`The F-test checks H₀ that all ${k} slopes are 0 at once. F = ${d3(f.F)}, with ${k} and ${f.df} degrees of freedom.`,
     pf:k===1?`Prob &gt; F = ${f.pF<0.0005?'0.000':f.pF.toFixed(3)}. With one IV it is the same as the slope's p, because F tests the same H₀. ${f.pF<0.0005?'It is rounded, not zero, so p &lt; .001. Reject H₀.':''}`:`Prob &gt; F = 0.000 is rounded, not zero, so p &lt; .001. Reject H₀ that all ${k} slopes are 0. Taken together, the IVs predict ${spec.yShort} better than the mean alone.`,
-    notes:'Read the notes before the stars. This table uses * p&lt;.05, ** p&lt;.01, *** p&lt;.001: one star means significant at .05, and three stars means p &lt; .001. Not every table uses these cutoffs. Some software and journals give a star at p &lt; .1, so the same star can mean different things in different tables. <a href="6-difference-in-means.html#errors">Why .05? Type I and II errors →</a>'
+    notes:'Read the notes before the stars. This table uses * p&lt;.05, ** p&lt;.01, *** p&lt;.001, so one star means significant at .05 and three stars means p &lt; .001. Not every table uses these cutoffs. Some software and journals give a star at p &lt; .1, so the same star can mean different things in different tables. <a href="6-difference-in-means.html#errors">Why .05? Type I and II errors →</a>'
   };
   vars.concat('_cons').forEach(v=>{
     E['v:'+v]=v==='_cons'?'Constant is the intercept, which Stata calls _cons.':`<i>${v}</i> is ${spec.what[v]}`;
@@ -1134,12 +1134,12 @@ function layoutB(paper,spec,fits){
   h+='<tr class="sep"><td class="rl">R<sup>2</sup></td>'+fits.map((f,j)=>c('r2:'+j,N(r3(f.r2))+S())).join('')+'</tr>';
   h+='<tr><td class="rl">Adjusted R<sup>2</sup></td>'+fits.map((f,j)=>c('ar:'+j,N(r3(f.adj))+S())).join('')+'</tr>';
   h+='<tr><td class="rl">N</td>'+fits.map((f,j)=>c('n:'+j,N(nfmt(f.n))+S())).join('')+'</tr>';
-  h+=`<tr class="dbl">${c('notes',`Notes: * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001. Standard errors in parentheses. ${spec.dataLine}`,'note',` colspan="${K+1}"`)}</tr></table>`;
+  h+=`<tr class="dbl">${c('notes',`Notes: * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001. Standard errors are in parentheses. ${spec.dataLine}`,'note',` colspan="${K+1}"`)}</tr></table>`;
   paper.innerHTML=h;
 }
 function explainB(spec,fits){
   const dd=spec.dec===3?d3z:d2,dp=spec.dec===3?3:2,E={},L={},Ns=fits.map(f=>f.n),nDiff=new Set(Ns).size>1;
-  E.notes=`Read the notes first. This table uses * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001: one star means significant at .05, and three stars means p &lt; .001. Some software and journals give a star at p &lt; .1 instead, so the same star can mean different things in different tables. The notes also say the numbers in parentheses are standard errors (some tables put t-values there instead) and name the data. ${spec.notesX||''}`;L.notes='Notes line';
+  E.notes=`Read the notes first. This table uses * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001, so one star means significant at .05 and three stars means p &lt; .001. Some software and journals give a star at p &lt; .1 instead, so the same star can mean different things in different tables. The notes also say the numbers in parentheses are standard errors (some tables put t-values there instead) and name the data. ${spec.notesX||''}`;L.notes='Notes line';
   (spec.groups||[]).forEach((g,i)=>{E['g:'+i]=spec.grpTxt[i];L['g:'+i]='Column group: '+g[0];});
   fits.forEach((f,j)=>{const m=f.m,W=modelWord(j);
     E['h:'+j]=spec.colTxt[j]+` N = ${nfmt(f.n)}.`;L['h:'+j]=W;
@@ -1155,7 +1155,7 @@ function explainB(spec,fits){
         const amt=m.pp?`${(Math.abs(b)*100).toFixed(1)} percentage points`:`${a2(b)} points`;
         x=vm.dummy?cap(`${hold}${vm.one} ${m.dumVerb} ${amt} ${b<0?m.less:m.more} than ${vm.zero}.`)
                   :cap(`${hold}each ${vm.unit} goes with ${m.pred} ${amt} ${b<0?'lower':'higher'}.`);
-        if(!s)x+=` No stars, so p is at least .05 (here ${pTxt(p)}). If H₀ were true, a coefficient this far from 0 would turn up ${pq(p)}. `+(p<0.1?'That is close to .05, but close does not count, and at α = .05 we fail to reject H₀. A table that gives a star at p &lt; .1 would print one here, which is why you read the notes first.':'Fail to reject H₀. That is not evidence of no effect, only not enough evidence of one.');
+        if(!s)x+=` No stars, so p is at least .05 (here ${pTxt(p)}). If H₀ were true, a coefficient this far from 0 would turn up ${pq(p)}. `+(p<0.1?'That is close to .05, but close does not count, and at α = .05 we fail to reject H₀. A table that gives a star at p &lt; .1 would print one here, which is why you read the notes first.':'Fail to reject H₀. That is not evidence of no effect, only a sign that there is not enough evidence of one.');
         else x+=` It has ${starWord(s)}, so p &lt; ${cut(s)}${s==='***'?(p<0.0005?' (Stata shows 0.000)':''):` (here ${pTxt(p)})`}. If H₀ were true, a coefficient this far from 0 would turn up ${pq(p)}. Reject H₀.`;
       }
       E['b:'+key]=x+((spec.extra||{})['b:'+key]?' '+spec.extra['b:'+key]:'');L['b:'+key]=`${W} · ${lab}`;
@@ -1230,7 +1230,7 @@ const nesVM={
   rep_therm:{label:'Republican Party thermometer',short:'the Republican rating',unit:'1-point warmer rating of the Republican Party'},
   female:{label:'Female',short:'gender',dummy:true,one:'women',zero:'men'}};
 nesVM.dem_therm.short='the Democratic rating';
-const NESDATA='2004 American National Election Study, where feeling thermometers run from 0 (cold) to 100 (warm).';
+const NESDATA='The data are from the 2004 American National Election Study, where feeling thermometers run from 0 (cold) to 100 (warm).';
 const pair=(a,b)=>`${a} → ${b}`;
 
 /* ======================= Table 1: Module 8 (Layout A) ======================= */
@@ -1241,7 +1241,7 @@ const pair=(a,b)=>`${a} → ${b}`;
   const R=explainA({dv:'trump_pct',dvWhat:'Trump\'s share of the 2016 presidential vote in each state (%).',yu:'%',yShort:'Trump\'s share',what:stateWhat,
     sdTxt:'',x:({B,P})=>({
       'b:metro_pct':`Each 1-point increase in metro share goes with a predicted Trump share ${a2(B('metro_pct'))} points ${B('metro_pct')<0?'lower':'higher'}. Units matter, so a state whose metro share is 10 points higher is predicted to give Trump about ${(Math.abs(B('metro_pct'))*10).toFixed(1)} points ${B('metro_pct')<0?'less':'more'}. ${sigA(P('metro_pct'))} Reject H₀.`,
-      'b:_cons':`The constant is the predicted Trump share for a state with no one living in a metro area: ${B('_cons').toFixed(1)}%. No state comes close. The lowest metro share is ${lo}% (${loName}), so the constant is a prediction far outside the data. Its stars only say it differs from 0.`,
+      'b:_cons':`The constant is the predicted Trump share for a state with no one living in a metro area, which is ${B('_cons').toFixed(1)}%. No state comes close. The lowest metro share is ${lo}% (${loName}), so the constant is a prediction far outside the data. Its stars only say it differs from 0.`,
       sy:`Trump's share has an SD of about ${f.sy.toFixed(1)} points across the 51 cases. A 10-point higher metro share goes with a share about ${(Math.abs(B('metro_pct'))*10).toFixed(1)} points ${B('metro_pct')<0?'lower':'higher'}, which is about ${(Math.abs(B('metro_pct'))*10/f.sy).toFixed(1)} SD.`
     })},f,vars);
   wireTable(id,R.E,R.labels);
@@ -1250,23 +1250,23 @@ const pair=(a,b)=>`${a} → ${b}`;
   quiz($('#t1q'),[
     {q:`<i>metro_pct</i> is ${d3(b)}. What is the predicted difference between two states whose metro shares differ by 10 points?`,a:1,o:[
       [`About ${Math.abs(b).toFixed(2)} points.`,'That is the difference for 1 point of metro share. Ten points is ten units.'],
-      [`About ${(Math.abs(b)*10).toFixed(1)} points, lower for the more metropolitan state.`,`10 × ${d3(b)} ≈ ${M}${(Math.abs(b)*10).toFixed(1)}. The DV is a percentage, so the change is in percentage points.`],
-      [`About ${(Math.abs(b)*10).toFixed(1)}% lower, as a percent of the state's Trump vote.`,`The DV is already a percentage, so the coefficient is in percentage points: ${(Math.abs(b)*10).toFixed(1)} points, not a ${(Math.abs(b)*10).toFixed(1)}% drop.`]]},
+      [`About ${(Math.abs(b)*10).toFixed(1)} points lower for the more metropolitan state.`,`10 × ${d3(b)} ≈ ${M}${(Math.abs(b)*10).toFixed(1)}. The DV is a percentage, so the change is in percentage points.`],
+      [`About ${(Math.abs(b)*10).toFixed(1)}% lower, as a percent of the state's Trump vote.`,`The DV is already a percentage, so the coefficient is in percentage points. It means ${(Math.abs(b)*10).toFixed(1)} points, not a ${(Math.abs(b)*10).toFixed(1)}% drop.`]]},
     {q:`The constant is ${d3(B('_cons'))}. Is that a sensible prediction?`,a:1,o:[
       [`Yes. The most rural states give Trump about ${B('_cons').toFixed(0)}%.`,`No state is near 0% metro. The lowest is ${lo}% (${loName}), so the constant describes a state that doesn't exist.`],
-      ['It is the prediction at 0% metro share, far outside the data.','The constant anchors the line. Here it is not a prediction for any real state.'],
+      ['It is the prediction at 0% metro share, which lies far outside the data.','The constant anchors the line. Here it is not a prediction for any real state.'],
       ['No, because it has three stars.','Stars only test whether the constant differs from 0. They say nothing about whether it is a sensible prediction.']]},
     {q:'The table shows p = 0 for <i>metro_pct</i>. How should you report it?',a:1,o:[
       ['p = 0.','A p-value is never exactly 0. A printed 0 has been rounded to three decimals.'],
       ['p &lt; .001.','If H₀ were true, a slope this far from 0 would turn up fewer than 1 time in 1,000.'],
       ['p = 0, so there is no chance that H₀ is true.','p is not the probability that H₀ is true. It is how often a slope this far from 0 would turn up if H₀ were true.']]},
     {q:`Prob &gt; F and the p-value for <i>metro_pct</i> are the same. Why?`,a:0,o:[
-      [`With one IV, F tests the same H₀ as the slope's t-test, and F = t².`,`Here (${d2(f.t[0])})² ≈ ${(f.t[0]**2).toFixed(1)}, the F in the table. With more IVs, F tests all slopes at once and the two p-values differ.`],
+      [`With one IV, F tests the same H₀ as the slope's t-test, and F = t².`,`Here (${d2(f.t[0])})² ≈ ${(f.t[0]**2).toFixed(1)}, which is the F in the table. With more IVs, F tests all slopes at once and the two p-values differ.`],
       ['It is a coincidence.','It always happens with one IV, because F and t test the same H₀.'],
       ['Both were rounded to 0.','They agree before rounding too. With one IV, F = t² and the two p-values are identical.']]},
     {q:`R² is ${d3(f.r2)}. Which reading is right?`,a:2,o:[
       [`${Math.round(f.r2*100)}% of states are predicted correctly.`,'R² is not a hit rate. It compares squared errors with and without the IV.'],
-      [`The slope is significant at the ${Math.round(f.r2*100)}% level.`,'R² measures fit, not significance. The slope\'s p tells you about significance.'],
+      [`The slope is significant at the ${Math.round(f.r2*100)}% level.`,'R² measures fit rather than significance. The slope\'s p tells you about significance.'],
       [`Knowing metro share cuts the squared error of our guesses by about ${Math.round(f.r2*100)}% compared with guessing the mean.`,'That is the PRE reading of R² from Module 7.']]}
   ]);
 })();
@@ -1279,10 +1279,10 @@ const pair=(a,b)=>`${a} → ${b}`;
   const spec={title:'Table 2. Party feelings and ratings of the First Ladies, 2004',dvline:'Dependent variable: Feeling thermometer rating of the First Lady (0–100)',
     groups:[['Laura Bush',2],['Hillary Clinton',2]],rows:[{v:'dem_therm',label:'Democratic Party thermometer'},{v:'rep_therm',label:'Republican Party thermometer'}],
     dataLine:NESDATA,vm:nesVM,unitWord:'respondents',
-    grpTxt:['Columns (1) and (2) share a DV: the rating of Laura Bush. The group label is the only place the table tells you which DV a column uses.','Columns (3) and (4) use a different DV: the rating of Hillary Clinton. Same respondents, same IVs as (1) and (2).'],
-    colTxt:['Model 1: Laura Bush\'s rating regressed on the Democratic Party thermometer alone.','Model 2: Laura Bush\'s rating regressed on the Republican Party thermometer alone.','Model 3: Hillary Clinton\'s rating regressed on the Democratic Party thermometer alone.','Model 4: Hillary Clinton\'s rating regressed on the Republican Party thermometer alone.'],
-    consTxt:['Ratings of 0 are in the data, so here the constant is a real prediction, since someone who rates the Democrats at 0 is predicted to rate Laura Bush near 90.','Someone who rates the Republicans at 0 is predicted to rate Laura Bush about '+K(1).toFixed(0)+'.','Someone who rates the Democrats at 0 is predicted to rate Hillary Clinton about '+K(2).toFixed(0)+', close to the bottom of the scale.','Someone who rates the Republicans at 0 is predicted to rate Hillary Clinton about '+K(3).toFixed(0)+'.'],
-    r2x:[`The Republican rating does much better for Laura Bush, with R² = ${F[1].r2.toFixed(3)} in Model 2.`,`Compare Model 1, where R² = ${F[0].r2.toFixed(3)} with the Democratic rating.`,`Hillary Clinton is the mirror image of Laura Bush, since for her the Democratic rating does better than the Republican one (${F[3].r2.toFixed(3)} in Model 4).`,`Compare Model 3, where R² = ${F[2].r2.toFixed(3)}.`],
+    grpTxt:['Columns (1) and (2) share a DV, which is the rating of Laura Bush. The group label is the only place the table tells you which DV a column uses.','Columns (3) and (4) use a different DV, the rating of Hillary Clinton, with the same respondents and the same IVs as (1) and (2).'],
+    colTxt:['Model 1 regresses Laura Bush\'s rating on the Democratic Party thermometer alone.','Model 2 regresses Laura Bush\'s rating on the Republican Party thermometer alone.','Model 3 regresses Hillary Clinton\'s rating on the Democratic Party thermometer alone.','Model 4 regresses Hillary Clinton\'s rating on the Republican Party thermometer alone.'],
+    consTxt:['Ratings of 0 are in the data, so here the constant is a real prediction, since someone who rates the Democrats at 0 is predicted to rate Laura Bush near 90.','Someone who rates the Republicans at 0 is predicted to rate Laura Bush about '+K(1).toFixed(0)+'.','Someone who rates the Democrats at 0 is predicted to rate Hillary Clinton about '+K(2).toFixed(0)+', which is close to the bottom of the scale.','Someone who rates the Republicans at 0 is predicted to rate Hillary Clinton about '+K(3).toFixed(0)+'.'],
+    r2x:[`The Republican rating does much better for Laura Bush, reaching R² = ${F[1].r2.toFixed(3)} in Model 2.`,`Compare Model 1, where R² = ${F[0].r2.toFixed(3)} with the Democratic rating.`,`Hillary Clinton is the mirror image of Laura Bush, since for her the Democratic rating does better than the Republican one (${F[3].r2.toFixed(3)} in Model 4).`,`Compare Model 3, where R² = ${F[2].r2.toFixed(3)}.`],
     extra:{'b:dem_therm:0':`Read across the row, and you'll see the same IV go with a lower rating of Laura Bush and a higher rating of Hillary Clinton (${d2(b(2,'dem_therm'))} in Model 3).`,
            'b:dem_therm:2':`Compare Model 1 (${d2(b(0,'dem_therm'))}). Each column is its own test against 0. A difference between two columns is not itself a test.`}};
   layoutB($('#t2paper'),spec,F);
@@ -1297,15 +1297,15 @@ const pair=(a,b)=>`${a} → ${b}`;
     {q:`Model 1 prints ${d2(b(0,'dem_therm'))} with (${d2(s0)}) under it. Dividing gives about ${neg(tr.toFixed(1))}, but Stata reports t = ${d2(t0)}. Why?`,a:1,o:[
       ['Stata made an error.','Stata works with the unrounded numbers. The table rounds them.'],
       ['The standard error was rounded to two decimals, and rounding a small number moves t a lot.',`The unrounded SE is ${s0.toFixed(4)}. Either way t is far beyond ±1.96.`],
-      ['The table uses a different model from Stata.','Same model, same respondents. Only the rounding differs.']]},
+      ['The table uses a different model from Stata.','It is the same model with the same respondents, and only the rounding differs.']]},
     {q:`Laura Bush's Republican coefficient is ${d2(b(1,'rep_therm'))} and Hillary Clinton's Democratic coefficient is ${d2(b(2,'dem_therm'))}. Does the table show that the second is significantly larger?`,a:2,o:[
-      ['Yes. Both have three stars, and the second is bigger.','Stars test each coefficient against 0, not against each other.'],
+      ['Yes. Both have three stars, and the second is bigger.','Stars test each coefficient against 0 rather than against each other.'],
       ['Yes. Their difference is bigger than either standard error.','Comparing a difference with the standard errors by eye is not a test.'],
       ['No. Each star tests one coefficient against 0. A difference between columns is not itself a test.','To test a difference between two coefficients you would need a test built for that comparison.']]},
     {q:`Model 3's constant is ${d2(K(2))}${stars(F[2].p[1])}. What does it say?`,a:0,o:[
       [`Someone who rates the Democrats at 0 is predicted to rate Hillary Clinton about ${K(2).toFixed(0)}.`,`Its stars say only that this prediction differs from 0 (${pTxt(F[2].p[1])}).`],
-      [`Hillary Clinton's average rating is ${d2(K(2))}.`,`Her average is much higher. The constant is the prediction at a Democratic rating of 0, the coldest possible.`],
-      [`${d2(K(2))}% of respondents dislike Hillary Clinton.`,'The DV is a 0–100 rating, not a percent of respondents.']]}
+      [`Hillary Clinton's average rating is ${d2(K(2))}.`,`Her average is much higher. The constant is the prediction at a Democratic rating of 0, which is the coldest possible.`],
+      [`${d2(K(2))}% of respondents dislike Hillary Clinton.`,'The DV is a 0–100 rating rather than a percent of respondents.']]}
   ]);
 })();
 
@@ -1318,9 +1318,9 @@ const pair=(a,b)=>`${a} → ${b}`;
     x:({B,P})=>{const amt=v=>a2(B(v)),dir=v=>B(v)<0?'lower':'higher',slope=v=>`Holding the other IVs constant, each ${unitOne[v]} goes with a predicted Trump share ${amt(v)} points ${dir(v)}.`;
       return {
       'b:white_pov':`${slope('white_pov')} ${sigA(P('white_pov'))} We fail to reject H₀. That is not evidence that white poverty has no effect. It means the evidence was not strong enough to rule out a slope of 0.`,
-      'b:hs_pct':`${slope('hs_pct')} ${sigA(P('hs_pct'))} We fail to reject H₀: if the true slope were 0, a slope this far from 0 would turn up ${pq(P('hs_pct'))}. Failing to reject is not the same as finding no effect.`,
+      'b:hs_pct':`${slope('hs_pct')} ${sigA(P('hs_pct'))} We fail to reject H₀, because if the true slope were 0, a slope this far from 0 would turn up ${pq(P('hs_pct'))}. Failing to reject is not the same as finding no effect.`,
       'b:metro_pct':`${slope('metro_pct')} ${sigA(P('metro_pct'))} That is close to .05, but close does not count, and at α = .05 we fail to reject H₀. A table that gives a star at p &lt; .1 would print one here, so read the notes before the stars.`,
-      'b:income_k':`${slope('income_k')} The unit is $1,000, so a small-looking number can be a large effect: $10,000 more goes with a predicted share about ${(Math.abs(B('income_k'))*10).toFixed(1)} points ${dir('income_k')}. ${sigA(P('income_k'))} ${P('income_k')<0.05?'Reject H₀.':'Fail to reject H₀.'}`,
+      'b:income_k':`${slope('income_k')} The unit is $1,000, so a small-looking number can be a large effect. An extra $10,000 goes with a predicted share about ${(Math.abs(B('income_k'))*10).toFixed(1)} points ${dir('income_k')}. ${sigA(P('income_k'))} ${P('income_k')<0.05?'Reject H₀.':'Fail to reject H₀.'}`,
       'b:gini':`${slope('gini')} It has ${starWord(stars(P('gini')))}, and its p prints as 0, which means p &lt; .001. Reject H₀.`,
       'b:_cons':`The constant is the predicted Trump share when every IV is 0: no white poverty, no high school graduates, no one living in a metro area, $0 median income and a Gini of 0. That gives ${B('_cons').toFixed(1)}%, which is impossible. The constant anchors the equation far outside the data. Its stars only say it differs from 0, which tells you nothing useful here.`,
       sy:`Trump's share has an SD of about ${f.sy.toFixed(1)} points across the 51 cases. Compare effects with it. Income's ${(Math.abs(B('income_k'))*10).toFixed(1)} points per $10,000 is about ${(Math.abs(B('income_k'))*10/f.sy).toFixed(1)} SD.`};}},f,vars);
@@ -1330,22 +1330,22 @@ const pair=(a,b)=>`${a} → ${b}`;
   const ten=(Math.abs(B('income_k'))*10).toFixed(1),one=Math.abs(B('income_k')).toFixed(1),hund=(Math.abs(B('income_k'))*100).toFixed(0);
   quiz($('#t3q'),[
     {q:`<i>income_k</i> has ${starWord(stars(P('income_k')))}. What do they tell you?`,a:0,o:[
-      [`p &lt; ${cut(stars(P('income_k')))}, so we reject H₀ at α = .05.`,`The notes say ${stars(P('income_k'))} means p &lt; ${cut(stars(P('income_k')))}. The p column gives the exact value: ${pS(P('income_k'))}.`],
-      ['The coefficient is about twice as large as a one-star coefficient.','Stars are about p, not about the size of the coefficient. A tiny coefficient with a tiny standard error can earn three stars.'],
+      [`p &lt; ${cut(stars(P('income_k')))}, so we reject H₀ at α = .05.`,`The notes say ${stars(P('income_k'))} means p &lt; ${cut(stars(P('income_k')))}. The p column gives the exact value, which is ${pS(P('income_k'))}.`],
+      ['The coefficient is about twice as large as a one-star coefficient.','Stars are about p rather than the size of the coefficient. A tiny coefficient with a tiny standard error can earn three stars.'],
       ['p is between .01 and .05.',`That would be one star in this table. Read the notes: ${stars(P('income_k'))} means p &lt; ${cut(stars(P('income_k')))}.`]]},
     {q:'The p-value for <i>gini</i> is printed as 0. What does that mean?',a:1,o:[
       ['The result cannot be due to chance.','A p-value is never exactly 0, and it is not the probability that the result is due to chance. A printed 0 has been rounded, so p &lt; .001.'],
-      ['p &lt; .001, because it was rounded to three decimals.','Like SPSS\'s .000. If H₀ were true, a slope this far from 0 would turn up fewer than 1 time in 1,000.'],
+      ['p &lt; .001, because it was rounded to three decimals.','It is like SPSS\'s .000. If H₀ were true, a slope this far from 0 would turn up fewer than 1 time in 1,000.'],
       ['The coefficient for gini is 0.',`The p-value tests H₀ that the coefficient is 0. The coefficient itself is ${d3(B('gini'))}.`]]},
     {q:`The constant is ${d3(B('_cons'))}. What should you make of it?`,a:1,o:[
       [`Some state is predicted to give Trump ${B('_cons').toFixed(1)}%.`,'No state has $0 income, no high school graduates and a Gini of 0. The constant is a prediction for a case far outside the data.'],
-      ['It is the prediction when every IV is 0, far outside the data.','The constant anchors the equation. Its stars only say it differs from 0.'],
+      ['It is the prediction when every IV is 0, which lies far outside the data.','The constant anchors the equation. Its stars only say it differs from 0.'],
       ['The model must be wrong, because the constant is impossible.','An impossible constant is common and harmless. It only anchors the line. Interpret the slopes and the fit instead.']]},
     {q:`<i>income_k</i> is ${d3(B('income_k'))}. Holding the other IVs constant, what is the predicted change for $10,000 more in median income?`,a:1,o:[
-      [`About ${one} points lower.`,'That is the change for $1,000, one unit of income_k.'],
+      [`About ${one} points lower.`,'That is the change for $1,000, which is one unit of income_k.'],
       [`About ${ten} points lower.`,`income_k is in $1,000s, so $10,000 is 10 units: 10 × ${d3(B('income_k'))} ≈ ${M}${ten}.`],
       [`About ${hund} points lower.`,'That would be $100,000. income_k is in $1,000s, so $10,000 is 10 units.']]},
-    {q:`<i>metro_pct</i> has no stars, but its p is ${pS(P('metro_pct'))}, close to .05. What do you conclude at α = .05?`,a:2,o:[
+    {q:`<i>metro_pct</i> has no stars, but its p is ${pS(P('metro_pct'))}, which is close to .05. What do you conclude at α = .05?`,a:2,o:[
       ['Reject H₀. It is close enough to .05.',`Close does not count. The cutoff is chosen before you look, and ${pS(P('metro_pct'))} is above .05.`],
       ['Accept H₀: metro share has no effect.','We never accept H₀, and failing to reject it is not evidence of no effect. The estimate is still a slope of '+d3(B('metro_pct'))+'.'],
       ['Fail to reject H₀.',`If the true slope were 0, a slope this far from 0 would turn up ${pq(P('metro_pct'))}. That is too often to rule out chance at α = .05.`]]}
@@ -1360,12 +1360,12 @@ const pair=(a,b)=>`${a} → ${b}`;
   const spec={title:'Table 4. Regional and economic predictors of the 2016 vote',dvline:'Dependent variable: Trump share of the presidential vote (%)',
     groups:[['Regional gap',2],['Economy',1]],
     rows:[{v:'south',label:'South'},{v:'metro_pct',label:'Metro share (%)'},{v:'income_k',label:'Median income ($1,000s)'},{v:'white_pov',label:'White poverty rate (%)'}],
-    dataLine:'50 states and D.C.; FiveThirtyEight state data.',unitWord:'cases',
+    dataLine:'The data are FiveThirtyEight\'s state data for the 50 states and D.C.',unitWord:'cases',
     vm:{south:{label:'South',short:'South',dummy:true,one:'Southern states',zero:'other states'},metro_pct:{label:'Metro share',short:'metro share',unit:'1-point increase in metro share'},
         income_k:{label:'Median income',short:'median income',unit:'$1,000 more in median income'},white_pov:{label:'White poverty rate',short:'white poverty',unit:'1-point increase in white poverty'}},
     grpTxt:['Columns (1) and (2) are grouped as the regional gap, with the South dummy alone and then with metro share added.','Column (3) is a different model whose IVs measure the economy.'],
-    colTxt:['Model 1 has one IV, a South dummy (1 = South, 0 = all other states). Each column is a separate regression on the same cases.',`Model 2 adds metro share. Compare across the row, and you'll see South change from ${d2(b(0,'south'))} to ${d2(b(1,'south'))} once metro share is held constant.`,'Model 3 is a different model with different IVs. Blank cells mean the variable is not in that model, not that its effect is 0.'],
-    consTxt:['With only a South dummy, that is the mean for non-Southern states.','No state is near 0% metro, so this is a mathematical anchor, not a sensible prediction.','That is $0 income and 0% white poverty, far outside the data.'],
+    colTxt:['Model 1 has one IV, a South dummy (1 = South, 0 = all other states). Each column is a separate regression on the same cases.',`Model 2 adds metro share. Compare across the row, and you'll see South change from ${d2(b(0,'south'))} to ${d2(b(1,'south'))} once metro share is held constant.`,'Model 3 is a different model with different IVs. Blank cells mean the variable is not in that model. They do not mean its effect is 0.'],
+    consTxt:['With only a South dummy, that is the mean for non-Southern states.','No state is near 0% metro, so this is a mathematical anchor rather than a sensible prediction.','That is $0 income and 0% white poverty, which lies far outside the data.'],
     r2x:['A single dummy rarely explains much.','R² jumps once metro share is added.',`Models 2 and 3 fit about equally well (${F[1].r2.toFixed(3)} and ${F[2].r2.toFixed(3)}) with different IVs.`],
     extra:{'b:south:1':`Compare Model 1 (${d2(b(0,'south'))}). Southern states are slightly more metropolitan, and metro share lowers Trump's share, so leaving it out hid part of the gap (Module 9).`,
            'b:white_pov:2':`Its bivariate slope is ${d2(wpBiv)}, and holding income constant shrinks it to ${d2(b(2,'white_pov'))} (Module 9).`,
@@ -1377,18 +1377,18 @@ const pair=(a,b)=>`${a} → ${b}`;
     {q:`South in Model 2 has no stars (p = ${pS(p(1,'south'))}). Does that show the South gap disappears once metro share is held constant?`,a:1,o:[
       ['Yes. No stars means no gap.','No stars means we fail to reject H₀ at .05. That is not evidence that the gap is 0.'],
       [`No. The estimated gap is ${d2(b(1,'south'))} points, but we can't rule out chance at α = .05.`,`You can check it yourself: t = ${d2(b(1,'south'))} ÷ ${d2(F[1].se[1])} ≈ ${d2(Number(b(1,'south').toFixed(2))/Number(F[1].se[1].toFixed(2)))}, just short of 2.01.`],
-      ['No. The coefficient grew, so it must be significant now.',`A bigger coefficient is not a test. Its p is ${pS(p(1,'south'))}, above .05.`]]},
+      ['No. The coefficient grew, so it must be significant now.',`A bigger coefficient is not a test. Its p is ${pS(p(1,'south'))}, which is above .05.`]]},
     {q:`Why does South change from ${d2(b(0,'south'))} in Model 1 to ${d2(b(1,'south'))} in Model 2?`,a:0,o:[
-      ['Model 2 holds metro share constant.','Same cases, one added control. Leaving metro share out hid part of the regional gap (Module 9).'],
+      ['Model 2 holds metro share constant.','Model 2 uses the same cases with one added control. Leaving metro share out hid part of the regional gap (Module 9).'],
       ['Model 2 uses different states.','N is 51 in both. The cases are the same.'],
-      ['It is random sampling error.','Both columns use the same 51 cases, so the change comes from the added control, not from a new sample.']]},
+      ['It is random sampling error.','Both columns use the same 51 cases, so the change comes from the added control rather than from a new sample.']]},
     {q:'White poverty has no stars in Model 3. What do you conclude?',a:1,o:[
       ['White poverty has no effect on the vote.','Failing to reject H₀ means the evidence wasn\'t strong enough, not that the effect is 0.'],
       ['We fail to reject H₀ for its slope.',`p = ${pS(p(2,'white_pov'))}. If the true slope were 0, a slope this far from 0 would turn up ${pq(p(2,'white_pov'))}.`],
       ['We accept H₀.','We never accept H₀. We either reject it or fail to reject it.']]},
     {q:'The South row is blank in Model 3. What does that mean?',a:2,o:[
       ['South\'s effect is 0 in Model 3.','A blank is not a 0. The variable simply was not entered.'],
-      ['South was dropped for missing data.','Missing data drops cases (rows of data), not variables, and N is still 51.'],
+      ['South was dropped for missing data.','Missing data drops cases (rows of data) rather than variables, and N is still 51.'],
       ['South is not in Model 3.','A blank cell means the variable isn\'t in that model.']]}
   ]);
 })();
@@ -1405,21 +1405,21 @@ const pair=(a,b)=>`${a} → ${b}`;
     rows:[{v:'dem_therm',label:'Democratic Party thermometer'},{v:'rep_therm',label:'Republican Party thermometer'},{v:'female',label:'Female'}],
     dataLine:NESDATA+' Female = 1 for women, 0 for men.',vm:nesVM,unitWord:'respondents',
     grpTxt:['Columns (1) and (2) predict the rating of Laura Bush.','Columns (3) and (4) predict the rating of Hillary Clinton.'],
-    colTxt:[0,1,2,3].map(j=>`Model ${j+1}: Table 2's Model ${j+1} with Female added.`),
+    colTxt:[0,1,2,3].map(j=>`Model ${j+1} is Table 2's Model ${j+1} with Female added.`),
     consTxt:['That is the predicted rating from a man (Female = 0) who rates the Democrats at 0.','That is the predicted rating from a man who rates the Republicans at 0.','That is the predicted rating of Hillary Clinton from a man who rates the Democrats at 0.','That is the predicted rating of Hillary Clinton from a man who rates the Republicans at 0.'],
     r2x:[0,1,2,3].map(j=>`In Table 2, without gender, it was ${T2[j].r2.toFixed(3)}.`),
     extra:{}};
   [0,1,2,3].forEach(j=>{spec.extra[`b:${party(j)}:${j}`]=`In Table 2's Model ${j+1}, without gender, it was ${d2(T2[j].b[0])}. Gender is only weakly tied to party ratings, so holding it constant changes the party coefficient little.`;});
   spec.extra['b:female:0']='The gender gap shows up even among people who feel the same about the Democrats.';
-  spec.x={'n:0':`N = ${nfmt(F[0].n)}, the same as Table 2's Model 1. No one is missing gender, so adding Female drops no one. The data have ${nfmt(F[0].N0)} respondents; ${nfmt(F[0].miss)} are missing the Laura Bush rating or the Democratic rating.`};
+  spec.x={'n:0':`N = ${nfmt(F[0].n)}, the same as Table 2's Model 1. No one is missing gender, so adding Female drops no one. The data have ${nfmt(F[0].N0)} respondents, and ${nfmt(F[0].miss)} are missing the Laura Bush rating or the Democratic rating.`};
   layoutB($('#t5paper'),spec,F);
   const R=explainB(spec,F),show=wireStata(id,j=>stataOut(models[j].dv,models[j].ivs,F[j]),4);
   wireTable(id,R.E,R.L,show);
   quiz($('#t5q'),[
     {q:`Female is ${d2(b(0,'female'))}${stars(p(0,'female'))} in Model 1. What does that mean?`,a:0,o:[
       [`Holding the Democratic rating constant, women rate Laura Bush about ${b(0,'female').toFixed(1)} points higher than men.`,'A dummy\'s coefficient is the gap between the group coded 1 and the group coded 0, with the other IVs held constant.'],
-      [`Women are ${d2(b(0,'female'))}% more likely to like Laura Bush.`,'The DV is a 0–100 rating, so the coefficient is in rating points, not a percent or a probability.'],
-      [`Women's average rating of Laura Bush is ${d2(b(0,'female'))}.`,'The coefficient is a difference between women and men, not an average.']]},
+      [`Women are ${d2(b(0,'female'))}% more likely to like Laura Bush.`,'The DV is a 0–100 rating, so the coefficient is in rating points rather than a percent or a probability.'],
+      [`Women's average rating of Laura Bush is ${d2(b(0,'female'))}.`,'The coefficient is a difference between women and men rather than an average.']]},
     {q:`Hillary Clinton's constant in Model 3 has no stars (${pTxt(F[2].p[F[2].k])}). What follows?`,a:1,o:[
       ['Model 3 is not significant.','The constant\'s test is only about the prediction when every IV is 0. Both slopes in Model 3 have stars.'],
       ['We fail to reject H₀ that a man who rates the Democrats at 0 is predicted to rate her at 0.',`The prediction is ${d2(K(2))}, close enough to 0 that chance could explain the gap.`],
@@ -1445,17 +1445,17 @@ const pair=(a,b)=>`${a} → ${b}`;
     rows:[{v:'dem_therm',label:'Democratic Party thermometer'},{v:'rep_therm',label:'Republican Party thermometer'},{v:'female',label:'Female'}],
     dataLine:NESDATA+' Female = 1 for women, 0 for men.',vm:nesVM,unitWord:'respondents',
     grpTxt:['Column (1) predicts the rating of Laura Bush.','Column (2) predicts the rating of Hillary Clinton.'],
-    colTxt:['Model 1: Laura Bush\'s rating on both party thermometers and gender at once.','Model 2: Hillary Clinton\'s rating on the same three IVs.'],
+    colTxt:['Model 1 regresses Laura Bush\'s rating on both party thermometers and gender at once.','Model 2 regresses Hillary Clinton\'s rating on the same three IVs.'],
     consTxt:['That is a man who rates both parties at 0, a rare combination, so treat it as an anchor rather than a prediction for a typical respondent.','That is a man who rates both parties at 0, a rare combination, so treat it as an anchor rather than a prediction for a typical respondent.'],
     r2x:[`With one party rating and gender (Table 5), R² was ${T5[0].r2.toFixed(3)} with the Democratic rating and ${T5[1].r2.toFixed(3)} with the Republican rating.`,`With one party rating and gender (Table 5), R² was ${T5[2].r2.toFixed(3)} with the Democratic rating and ${T5[3].r2.toFixed(3)} with the Republican rating.`],
     extra:{'b:dem_therm:0':`In Table 5's Model 1 it was ${d2(T5[0].b[0])}. Holding the Republican rating constant shrinks it, because people who like the Democrats tend to dislike the Republicans. Much of the Democratic coefficient was the Republican rating riding along (Module 9).`,
-           'b:rep_therm:1':`In Table 5's Model 4 it was ${d2(T5[3].b[0])}. Holding the Democratic rating constant shrinks it, the mirror image of Laura Bush.`,
+           'b:rep_therm:1':`In Table 5's Model 4 it was ${d2(T5[3].b[0])}. Holding the Democratic rating constant shrinks it, which mirrors what happens with Laura Bush.`,
            'b:rep_therm:0':'The Democratic and Republican thermometers use the same 0–100 scale, so you can compare their coefficients directly, and the Republican rating matters much more for Laura Bush.',
            'b:dem_therm:1':'Both thermometers use the same 0–100 scale, so you can compare the two coefficients directly, and the Democratic rating matters much more for Hillary Clinton.'},
     x:{}};
   layoutB($('#t6paper'),spec,F);
   const R=explainB(spec,F);
-  R.E['n:0']=`N = ${nfmt(F[0].n)}. That is smaller than any Laura Bush column in Table 5, because a respondent now needs both party ratings and the Laura Bush rating. The data have ${nfmt(F[0].N0)} respondents; ${nfmt(F[0].miss)} are missing at least one of them. Because N differs across columns, the models are not fit to exactly the same cases.`;
+  R.E['n:0']=`N = ${nfmt(F[0].n)}. That is smaller than any Laura Bush column in Table 5, because a respondent now needs both party ratings and the Laura Bush rating. The data have ${nfmt(F[0].N0)} respondents, and ${nfmt(F[0].miss)} are missing at least one of them. Because N differs across columns, the models are not fit to exactly the same cases.`;
   const show=wireStata(id,j=>stataOut(models[j].dv,models[j].ivs,F[j]),2);
   wireTable(id,R.E,R.L,show);
   quiz($('#t6q'),[
@@ -1473,7 +1473,7 @@ const pair=(a,b)=>`${a} → ${b}`;
       ['Yes, because both have three stars.','Stars only test each coefficient against 0. Comparability comes from the shared 0–100 scale.']]},
     {q:`Female is ${d2(b(1,'female'))}${stars(p(1,'female'))} for Hillary Clinton. How would you report its p-value?`,a:2,o:[
       [`p = ${cut(stars(p(1,'female')))}.`,`${cap(starWord(stars(p(1,'female'))))} means p &lt; ${cut(stars(p(1,'female')))}, not p = ${cut(stars(p(1,'female')))}. The exact p is in the Stata output.`],
-      ['p &lt; .05, since it has stars.',`True but incomplete. Each extra star means a lower cutoff: ${starWord(stars(p(1,'female')))} here means p &lt; ${cut(stars(p(1,'female')))}.`],
+      ['p &lt; .05, since it has stars.',`That is true but incomplete. Each extra star means a lower cutoff, and ${starWord(stars(p(1,'female')))} here means p &lt; ${cut(stars(p(1,'female')))}.`],
       [`p &lt; ${cut(stars(p(1,'female')))} from the stars, and the Stata output gives p = ${pS(p(1,'female'))}.`,`If H₀ were true, a gap this large would turn up ${pq(p(1,'female'))}.`]]}
   ]);
 })();
@@ -1488,11 +1488,11 @@ const pair=(a,b)=>`${a} → ${b}`;
   const spec={title:'Table 7. The South and the 2016 vote, with and without D.C.',dvline:'Dependent variable: Trump share of the presidential vote (%)',
     groups:[['All 50 states and D.C.',2],['Without D.C.',2]],
     rows:[{v:'south',label:'South'},{v:'metro_pct',label:'Metro share (%)'}],
-    dataLine:'FiveThirtyEight state data. South = 1 for the Census South, which includes D.C.',unitWord:'cases',
+    dataLine:'The data are FiveThirtyEight\'s state data. South = 1 for the Census South, which includes D.C.',unitWord:'cases',
     exclTxt:'D.C. is left out of this model on purpose, so N is 50.',
     vm:{south:{label:'South',short:'South',dummy:true,one:'Southern states',zero:'other states'},metro_pct:{label:'Metro share',short:'metro share',unit:'1-point increase in metro share'}},
-    grpTxt:['Columns (1) and (2) use all 51 cases. D.C. is coded as Southern.',`Columns (3) and (4) drop D.C., where Trump got ${dcY}%, by far the lowest share. The group label is the only sign that the sample changed, so always read it, and check N.`],
-    colTxt:['Model 1: the South dummy alone, all 51 cases.','Model 2: South with metro share held constant, all 51 cases.','Model 3: the South dummy alone, without D.C.','Model 4: South with metro share held constant, without D.C.'],
+    grpTxt:['Columns (1) and (2) use all 51 cases. D.C. is coded as Southern.',`Columns (3) and (4) drop D.C., where Trump got ${dcY}%, which was by far the lowest share. The group label is the only sign that the sample changed, so always read it, and check N.`],
+    colTxt:['Model 1 uses the South dummy alone on all 51 cases.','Model 2 holds metro share constant on all 51 cases.','Model 3 uses the South dummy alone without D.C.','Model 4 holds metro share constant without D.C.'],
     consTxt:['With only a South dummy, that is the mean for non-Southern states.','No state is near 0% metro, so this is a mathematical anchor.','With only a South dummy, that is the mean for non-Southern states. It equals Model 1\'s constant, because dropping D.C. removes only a Southern case.','No state is near 0% metro, so this is a mathematical anchor.'],
     r2x:['','',`Dropping one case raises R² from ${F[0].r2.toFixed(3)} to ${F[2].r2.toFixed(3)}. A single outlier can matter a lot with 51 cases.`,''],
     extra:{'b:south:2':`In Model 1, with D.C., it was ${d2(b(0,'south'))} with no stars. D.C. is coded as Southern and has by far the lowest Trump share, so it pulled the Southern mean down.`,
@@ -1504,7 +1504,7 @@ const pair=(a,b)=>`${a} → ${b}`;
     {q:`South has ${starWord(stars(p(2,'south')))} in Model 3. What does that tell you?`,a:0,o:[
       [`p &lt; ${cut(stars(p(2,'south')))}, so we reject H₀ at α = .05.`,`The notes say ${stars(p(2,'south'))} means p &lt; ${cut(stars(p(2,'south')))}. The Stata output gives p = ${pS(p(2,'south'))}.`],
       ['p &lt; .1, so it is not significant at .05.','Some tables use that cutoff for one star, but these notes say * means p &lt; .05. Read the notes before the stars.'],
-      ['The Southern gap is small.',`Stars are about p, not size. The gap is ${d2(b(2,'south'))} points, larger than in Model 1.`]]},
+      ['The Southern gap is small.',`Stars are about p rather than size. The gap is ${d2(b(2,'south'))} points, which is larger than in Model 1.`]]},
     {q:`Why does South go from ${d2(b(0,'south'))} in Model 1 to ${d2(b(2,'south'))}${stars(p(2,'south'))} in Model 3?`,a:0,o:[
       [`D.C. is coded as Southern and gave Trump only ${dcY}%, so it pulled the Southern mean down.`,'Dropping one extreme case changes the Southern mean and shrinks the spread inside the South.'],
       ['Dropping any case always makes results more significant.','Dropping a case can push a result either way. Here it is the particular case, D.C., that matters.'],
@@ -1551,7 +1551,7 @@ const pair=(a,b)=>`${a} → ${b}`;
       'Model 3 adds the two class dummies, with first class as the reference. It is the same model as Step 8 of the <a href="practice-titanic.html#s8">Titanic practice</a>, where you can switch which class is the reference.',
       'Model 4 adds traveling alone.','Model 5 adds the freeriders, the passengers who paid £0.',
       'Model 6 adds the top 1% of fares. It is the full model, and you can see it as Stata and SPSS output below the table.'],
-    consTxt:['Age 0 is a newborn, at the very edge of the data.','That is a newborn boy (age 0, Female = 0).','That is a newborn boy in first class.',
+    consTxt:['Age 0 is a newborn, which sits at the very edge of the data.','That is a newborn boy (age 0, Female = 0).','That is a newborn boy in first class.',
       'That is a newborn boy in first class, traveling with family.','That is a newborn boy in first class, traveling with family, whose fare was paid.',
       'That is a newborn boy in first class, traveling with family, whose fare was paid but was below the top 1%.'],
     r2x:['Age alone predicts almost none of the variation in survival.',`Gender does most of the work, since R² was ${F[0].r2.toFixed(3)} in Model 1.`,`Class adds more, raising R² from ${F[1].r2.toFixed(3)} in Model 2.`,flat(3),flat(4),flat(5)],
@@ -1563,7 +1563,7 @@ const pair=(a,b)=>`${a} → ${b}`;
   spec.extra['b:trav_alone:3']=`On their own, passengers traveling alone survived at ${pc(avg('survived',alone))} and those with family at ${pc(avg('survived',fam))}. That gap disappears here because ${pc(1-avg('female',alone))} of those traveling alone were men, and gender and class are already held constant.`;
   spec.extra['b:the_freeriders:4']=`Only ${fr.length} passengers rode for free${avg('female',fr)===0?', and every one of them was a man':''}. Once gender is held constant there is little left for this dummy to explain, and with so few cases its standard error is large.`;
   spec.extra['b:the_one_percent:5']=`Only ${top.length} passengers paid a top 1% fare, all of them in first class, so with class held constant this dummy compares them with the rest of first class. With so few cases its standard error is large.`;
-  const nTxt=j=>`N = ${nfmt(F[j].n)} for Model ${j+1}, one fewer than Models 1–4. One passenger's fare is missing, so we can't tell whether he rode for free, and <code>regress</code> drops him. Because N differs across columns, Models 5 and 6 are fit to one fewer case than the others.`;
+  const nTxt=j=>`N = ${nfmt(F[j].n)} for Model ${j+1}, which is one fewer than Models 1–4. One passenger's fare is missing, so we can't tell whether he rode for free, and <code>regress</code> drops him. Because N differs across columns, Models 5 and 6 are fit to one fewer case than the others.`;
   spec.x={'n:0':`N = ${nfmt(F[0].n)} for Model 1. The data have ${nfmt(F[0].N0)} passengers, and ${nfmt(F[0].miss)} of them have no recorded age, so <code>regress</code> drops them. Age is in every model, so every column leaves them out.`,'n:4':nTxt(4),'n:5':nTxt(5)};
   layoutB($('#t8paper'),spec,F);
   const R=explainB(spec,F);
@@ -1575,13 +1575,13 @@ const pair=(a,b)=>`${a} → ${b}`;
       ['Adding IVs always makes coefficients larger.','Adding IVs can shrink a coefficient, grow it or flip its sign. Age shrank from Model 1 to Model 2.'],
       ['Model 3 uses more passengers.',`N is ${nfmt(F[0].n)} in both models.`]]},
     {q:`Female is ${d3z(b(5,'female'))}${stars(p(5,'female'))} in Model 6. What does that mean?`,a:1,o:[
-      [`Women's survival rate was ${pc(b(5,'female'))}.`,'The coefficient is a gap between women and men, not a rate.'],
+      [`Women's survival rate was ${pc(b(5,'female'))}.`,'The coefficient is a gap between women and men rather than a rate.'],
       [`Holding the other IVs constant, women were about ${pp(b(5,'female'))} percentage points more likely to survive than men.`,'In a linear probability model a dummy\'s coefficient is a gap in the probability of surviving. Multiply by 100 to read it in percentage points.'],
-      [`Women were ${d3z(b(5,'female'))}% more likely to survive.`,`The coefficient is a probability, so ${d3z(b(5,'female'))} means ${pp(b(5,'female'))} percentage points, not ${d3z(b(5,'female'))}%.`]]},
+      [`Women were ${d3z(b(5,'female'))}% more likely to survive.`,`The coefficient is a probability, so ${d3z(b(5,'female'))} means ${pp(b(5,'female'))} percentage points rather than ${d3z(b(5,'female'))}%.`]]},
     {q:`Lower class is ${d3z(b(5,'lower_class'))}${stars(p(5,'lower_class'))} in Model 6. Lower-class passengers are compared with whom?`,a:2,o:[
       ['Middle-class passengers.','Middle class has its own dummy in the model, so it is not the comparison group.'],
       ['Everyone who was not in the lower class.','With two class dummies in the model, the comparison is the one class left out.'],
-      ['First-class passengers, with the other IVs held constant.','First class is the reference category, the one class without a dummy. The notes line says so.']]},
+      ['First-class passengers, holding the other IVs constant.','First class is the reference category, the one class without a dummy. The notes line says so.']]},
     {q:`Traveling alone has no stars in Model 4, but on its own the gap is ${pp(avg('survived',alone)-avg('survived',fam))} points. Which reading is right?`,a:0,o:[
       ['Most people traveling alone were men, so once gender and class are held constant, traveling alone adds little.',`${pc(1-avg('female',alone))} of the passengers traveling alone were men. The raw gap was mostly the gender gap.`],
       ['Traveling alone had no relationship with survival.','There is a large raw gap. It just doesn\'t survive the controls.'],
@@ -1611,7 +1611,7 @@ function ttestOut(cmd,a,b,ca,cb){
 /* Stata output for one row at a time: tap a row to switch */
 function wireRowStata(id,outFor,nameFor){
   const btn=$('#'+id+'so'),pre=$('#'+id+'pre'),say=$('#'+id+'say');
-  const show=i=>{pre.innerHTML=outFor(i);if(say)say.innerHTML=`Showing the test for <b>${nameFor(i)}</b>. Tap another row to switch.`;};
+  const show=i=>{pre.innerHTML=outFor(i);if(say)say.innerHTML=`This is the test for <b>${nameFor(i)}</b>. Tap another row to switch.`;};
   show(0);btn.addEventListener('click',()=>{const open=pre.hidden;pre.hidden=!open;btn.setAttribute('aria-expanded',String(open));btn.textContent=open?'Hide Stata output':'Show as Stata output';});
   return show;}
 
@@ -1647,7 +1647,7 @@ function wireRowStata(id,outFor,nameFor){
   E.dh='The difference is Group 1\'s rate minus Group 2\'s. A positive difference means Group 1 survived at a higher rate, and a negative one means it survived at a lower rate. Multiply by 100 to read it in percentage points.';L.dh='Difference';
   E.th='t is the difference divided by its standard error. It counts how many standard errors the difference sits from 0, the value H₀ expects. With groups this size, a t beyond about ±1.96 puts p below .05.';L.th='t';
   E.ph='p is the two-tailed p-value, which SPSS calls Sig. (2-tailed). It answers one question, which is how often a difference this large would turn up by random chance in a world where the two groups truly survived at the same rate. APA style reports it exactly, so this table has no stars. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';L.ph='p';
-  E.cih='The 95% confidence interval for the difference. If it does not include 0, we can rule out "no difference" at the .05 level, so the interval and p always agree.';L.cih='95% confidence interval';
+  E.cih='This column gives the 95% confidence interval for the difference. If it does not include 0, we can rule out "no difference" at the .05 level, so the interval and p always agree.';L.cih='95% confidence interval';
   E.notes='Read the note first. It says what the means are (survival rates), which way the difference is subtracted, and which test produced t and p. A published table that leaves these out makes you guess.';L.notes='Note';
   R.forEach((r,i)=>{const T=r.T,A=cap(r.a),B=r.b,sig=T.p<0.05,up=T.d>0,agrees=r.dir===0?sig:sig&&up;
     E['m1:'+i]=`${A} survived at ${pc(T.m1)}. That is the mean of survived for the ${nfmt(T.n1)} passengers in the group.`;L['m1:'+i]=`${r.lab} · Group 1`;
@@ -1656,7 +1656,7 @@ function wireRowStata(id,outFor,nameFor){
     E['t:'+i]=`t = ${d3z(T.d)} ÷ ${d3z(T.se)} ≈ ${neg(T.t.toFixed(2))}, with ${nfmt(T.df)} degrees of freedom (${nfmt(T.n1)} + ${nfmt(T.n2)} − 2). `+(Math.abs(T.t)>T.tc?`That is beyond ±${T.tc.toFixed(2)}, so p is below .05.`:`That is inside ±${T.tc.toFixed(2)}, so p is above .05.`);L['t:'+i]=`${r.lab} · t`;
     let p=T.p<0.001?'p is below .001. In a world with no difference, a gap this large would turn up fewer than 1 time in 1,000 by random chance, so we reject H₀.':`p = ${pS(T.p)}. In a world with no difference, a gap this large would turn up ${pq(T.p)} by random chance, so ${sig?'we reject H₀':'we fail to reject H₀'}.`;
     if(sig&&r.dir===1&&!up)p+=` But the difference runs the other way from the lab's hypothesis, since ${r.na} survived at a <i>lower</i> rate. Rejecting H₀ never confirms H₁ on its own, so always check the direction.`;
-    else if(!sig)p+=' That is not evidence the groups survived at the same rate, only not enough evidence of a difference.';
+    else if(!sig)p+=' That is not evidence the groups survived at the same rate, only a sign that there is not enough evidence of a difference.';
     E['p:'+i]=p;L['p:'+i]=`${r.lab} · p`;
     E['ci:'+i]=`We are 95% confident the true difference lies between ${d3z(T.lo)} and ${d3z(T.hi)}. `+(T.lo>0||T.hi<0?'The interval does not include 0, which matches p being below .05.':'The interval includes 0, so "no difference" is still plausible, which matches p being at least .05.');L['ci:'+i]=`${r.lab} · 95% CI`;
     r.agrees=agrees;});
@@ -1666,14 +1666,14 @@ function wireRowStata(id,outFor,nameFor){
   quiz($('#t9q'),[
     {q:`The lab's hypothesis says the lower class survived at a greater rate than the upper class. The table shows a difference of ${d3z(lc.T.d)} with p ${lc.T.p<0.001?'&lt; .001':'= '+pS(lc.T.p)}. Is the hypothesis supported?`,a:1,o:[
       ['Yes, because p is below .05.','A small p lets us reject H₀, but it says nothing about which way the difference runs.'],
-      [`No. We reject H₀, but the lower class survived at a rate ${pts(lc.T.d)} points <i>lower</i>, the opposite of H₁.`,'Always check the sign of the difference against the direction H₁ predicts.'],
+      [`No. We reject H₀, but the lower class survived at a rate ${pts(lc.T.d)} points <i>lower</i>, which is the opposite of H₁.`,'Always check the sign of the difference against the direction H₁ predicts.'],
       ['No, because the difference is negative, so it is not significant.','A negative difference can be just as significant as a positive one. The sign gives direction, and p gives significance.']]},
     {q:`Youths vs. adults has p = ${pS(yv.T.p)}, and its 95% CI runs from ${d3z(yv.T.lo)} to ${d3z(yv.T.hi)}. What do you conclude?`,a:0,o:[
       ['Fail to reject H₀. The interval includes 0, so no difference is still plausible.',`If there were no real difference, a gap this large would turn up ${pq(yv.T.p)}. That is too often to rule out chance.`],
       ['Accept H₀, because youths and adults survived at the same rate.','We never accept H₀. We only fail to reject it when the evidence isn\'t strong enough.'],
       ['Reject H₀, because youths survived at a higher rate.','The sample rates differ, but not by enough to rule out random chance.']]},
     {q:`Only ${fr.T.n1} passengers rode for free. Why is their interval so much wider than the women vs. men interval?`,a:2,o:[
-      ['Because freeriders survived at a lower rate.','The width of an interval comes from the standard error, not from which group is higher.'],
+      ['Because freeriders survived at a lower rate.','The width of an interval comes from the standard error rather than from which group is higher.'],
       ['Because the freerider test uses a different confidence level.','Every interval in the table is a 95% interval, as the column heading says.'],
       ['Because a small group gives a large standard error, and the interval is built from the standard error.','SE = SD ÷ √n, so a group of 17 makes for a much less precise estimate than groups in the hundreds (Module 5).']]},
     {q:'Why do the p column and the 95% CI column never disagree about significance?',a:1,o:[
@@ -1731,8 +1731,8 @@ function wireRowStata(id,outFor,nameFor){
       [`D.C. counts as Southern and gave Trump ${dcY}%, which pulls the Southern mean down and widens its spread.`,'One extreme case moves a mean much more than a median, and the t test compares means. Module 10 runs these models with and without D.C.'],
       ['The medians must be wrong.','Both columns are right. They answer different questions, and the median resists an extreme case.'],
       ['A p of .224 means the South voted the same as everyone else.','We never accept H₀. The data just aren\'t strong enough to rule out chance for the means.']]},
-    {q:`Median household income is ${f(inc.T.m1,1)} in the South and ${f(inc.T.m2,1)} elsewhere, with p = ${pS(inc.T.p)}. How do you read that?`,a:1,o:[
-      ['Southern households earn 8 percent less.','The variable is in thousands of dollars, so the gap is in dollars, not percent.'],
+    {q:`Median household income is ${f(inc.T.m1,1)} in the South and ${f(inc.T.m2,1)} elsewhere, and p = ${pS(inc.T.p)}. How do you read that?`,a:1,o:[
+      ['Southern households earn 8 percent less.','The variable is in thousands of dollars, so the gap is in dollars rather than percent.'],
       [`The Southern average is about $${(Math.abs(inc.T.d)*1000).toLocaleString('en-US',{maximumFractionDigits:0})} lower, and a gap that large would turn up ${pq(inc.T.p)} by chance, so we reject H₀.`,'Units matter. One unit is $1,000, so a difference of '+f(inc.T.d,1)+' is about $'+(Math.abs(inc.T.d)*1000).toLocaleString('en-US',{maximumFractionDigits:0})+'.'],
       ['We fail to reject H₀ because the difference is negative.','The sign gives the direction. Significance comes from p.']]},
     {q:'Which rows show no statistically significant difference at α = .05?',a:0,o:[

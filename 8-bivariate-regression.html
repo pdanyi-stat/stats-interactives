@@ -397,7 +397,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -811,7 +811,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <a class="wexgo" href="8b-partisans-and-the-first-lady.html">Open the worked example →</a>
   </section>
 
-  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a slope.</b> H₀ says the slope is 0, and p is how often a slope at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -867,7 +867,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>These values minimize the sum of squared residuals, SSE = Σ(yᵢ − ŷᵢ)².</p></div>
   <div class="fx"><h3>Predicted change (marginal effect)</h3>
     <math display="block"><mi>Δ</mi><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><mo>·</mo><mi>Δ</mi><mi>x</mi></math>
-    <p>For a straight line the change depends only on how far X moves, not where it starts. Rise = slope × run.</p></div>
+    <p>For a straight line the change depends only on how far X moves rather than where it starts. Rise = slope × run.</p></div>
   <div class="fx"><h3>Fit</h3>
     <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><mo>∑</mo><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><msqrt><mrow><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>∑</mo><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo>‾</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math><math display="block"><msup><mi>r</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mi>SSE</mi><mi>SST</mi></mfrac></math></div>
   <div class="fx"><h3>Standard error of the slope and the t test</h3>
@@ -1005,9 +1005,9 @@ function renderA(){
   $('#mineKey').hidden=!mine;
   const t=T();
   $('#aChips').innerHTML=`<span class="chip">n = <b>${f.n}</b></span><span class="chip">slope β₁ = <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">constant = <b class="k-cons">${sgn(f.b0)}</b></span><span class="chip">r = <b>${(f.r<0?'−':'')+Math.abs(f.r).toFixed(2)}</b></span><span class="chip">r² = <b>${f.r2.toFixed(3)}</b></span><span class="chip">SSE (least squares) = <b>${Math.round(f.sse).toLocaleString('en-US')}</b></span>`+
-    (mine? `<span class="chip ${sseMine<=f.sse*1.0005?'strong':''}">${sseMine<=f.sse*1.0005?`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, a tie with the least-squares line`:`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, ${(100*(sseMine/f.sse-1)).toFixed(1)}% more than the least-squares line's`}</span>`:'');
+    (mine? `<span class="chip ${sseMine<=f.sse*1.0005?'strong':''}">${sseMine<=f.sse*1.0005?`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, which ties the least-squares line`:`Your line's SSE is <b>${Math.round(sseMine).toLocaleString('en-US')}</b>, ${(100*(sseMine/f.sse-1)).toFixed(1)}% more than the least-squares line's`}</span>`:'');
   const changed=st.x.some((v,i)=>v!==D().x[i]||st.y[i]!==D().y[i]);
-  $('#aCap').textContent=(changed?'You have moved points; the equation, predictions and test below use your edited data. ':'')+`Least squares minimizes the total area of the squares, Σ(y − ŷ)². The line always passes through the mean point (x̄, ȳ).`;
+  $('#aCap').textContent=(changed?'You have moved points, so the equation, predictions and test below use your edited data. ':'')+`Least squares minimizes the total area of the squares, Σ(y − ŷ)². The line always passes through the mean point (x̄, ȳ).`;
 }
 
 /* ================= B: equation ================= */
@@ -1173,7 +1173,7 @@ function renderD(shufY,shufP){
     ? `<p class="trk-h"><b>${passes.toLocaleString('en-US')}</b> of your ${M.toLocaleString('en-US')} shuffled slopes passed p &lt; .05 (<b>${pct.toFixed(1)}%</b>).</p>
        <div class="trk-bar" role="img" aria-label="${pct.toFixed(1)} percent of shuffled slopes passed, compared with the 5 percent expected"><span class="trk-fill" style="width:${Math.min(100,pct*10)}%"></span><span class="trk-mark"></span></div>
        <div class="trk-scale"><span>0%</span><span>5% expected</span><span>10%</span></div>
-       <p class="trk-say">Shuffling breaks any real link between X and Y, so every one of these “significant” slopes is a false positive, a Type I error. With α = .05, about 5% of chance slopes should pass, and the more you shuffle, the closer your share gets to 5%. <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>`
+       <p class="trk-say">Shuffling breaks any real link between X and Y, so every one of these “significant” slopes is a false positive (a Type I error). With α = .05, about 5% of chance slopes should pass, and the more you shuffle, the closer your share gets to 5%. <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>`
     : `<p class="trk-h">Shuffle to start counting how many chance slopes would pass p &lt; .05.</p>`;
   $('#dCap').textContent=`The gray bars on the right stack the slopes from your shuffles. Flat lines land in the middle, and steep lines land out in the red tails. The black curve is the distribution theory predicts for those chance slopes, a t distribution with ${f.df} degrees of freedom scaled by the slope's standard error, so the bars should fill in toward its shape as you keep shuffling. The shaded wedge holds every line within the middle 95% of chance.`;
 }

@@ -551,7 +551,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="src" style="margin:0">Leaning the curve stretches one tail, and a long tail raises kurtosis too, so the kurtosis number creeps up a little as you lean even though the peak slider hasn't moved.</p>
   </section>
   <section class="dcard" id="ch" data-ds="NES2004.sav">
-    <h3>Check it on real data: feelings about Dick Cheney in 2004 (cheney_therm)</h3>
+    <h3>Check it on real data with feelings about Dick Cheney in 2004 (cheney_therm)</h3>
     <div id="chChart"></div>
     <div class="qline">Cheney's distribution is <div id="chQ"></div></div>
     <div class="fbk" id="chFb" aria-live="polite"></div>
@@ -611,7 +611,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   </section>
   <section class="dcard" id="ph" data-ds="LunaticData.sav">
     <h3>Percent of lunatics cared for at home, Massachusetts counties (PHOME)</h3>
-    <p class="p">Each county's percentage is on its marker and in the table. <span class="src">“Lunatics” is the dataset's term, from the era.</span></p>
+    <p class="p">Each county's percentage is on its marker and in the table. <span class="src">“Lunatics” is the dataset's term, which comes from the era.</span></p>
     <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the boxes below, or by running PHOME in SPSS with LunaticData.sav.</p>
     <div class="two"><div class="tblwrap"><table class="tbl" id="phTbl" style="max-width:300px"></table></div><div id="phChart" style="align-self:center"></div></div>
     <div class="qline">Mean <input id="ph1" inputmode="decimal"> %</div><div class="fbk" id="phF1" aria-live="polite"></div>
@@ -766,7 +766,7 @@ function spTable(title,head,rows,foot){let h=`<div class="sp-t"><p class="sp-tit
 const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
  median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
- mode:(v,u)=>`The mode is ${v}${u||''}, the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
+ mode:(v,u)=>`The mode is ${v}${u||''}, which is the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
  sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
  var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
  skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
@@ -874,11 +874,11 @@ const SKV={
  age:{lab:'Titanic: age',desc:'Age of passenger in years (age), 1,046 passengers with an age recorded.',vals:DATA.titanic.age,xmin:0,xmax:80,binw:5,xlab:'Age in years',ans:['none','right'],
    say:'The skewness is .408. The distribution isn\'t a perfect match for the normal curve, and there is a short tail toward the older passengers, but we wouldn\'t say it has a lot of skew.'},
  laura:{lab:'Laura Bush',desc:'Feeling thermometer for Laura Bush, 2004 ANES (laura_bush_therm). 0 = cold, 100 = warm.',vals:thermVals('laura_bush_therm'),xmin:-5,xmax:105,binw:10,xlab:'Feeling thermometer',ans:['left'],
-   say:`Skewness = ${D.sp(NES.laura_bush_therm.skew,3)}: negative skew. Most ratings are high and very few are low, since Laura Bush was quite popular and few people disliked her.`},
+   say:`Skewness = ${D.sp(NES.laura_bush_therm.skew,3)}, which means negative skew. Most ratings are high and very few are low, since Laura Bush was quite popular and few people disliked her.`},
  gdp:{lab:'GDP per capita',desc:'GDP per capita in 177 countries, in units of $10,000 (gdp_10_thou).',vals:DATA.world.gdp.map(r=>r[1]),xmin:0,xmax:5,binw:0.25,xlab:'GDP per capita ($10,000s)',ans:['right'],
-   say:`Skewness = ${D.sp(DATA.world.gdp_st.skew,3)}: strong positive skew. Most countries are stacked at the low end, and a few rich countries make a long tail to the right.`},
+   say:`Skewness = ${D.sp(DATA.world.gdp_st.skew,3)}, which means strong positive skew. Most countries are stacked at the low end, and a few rich countries make a long tail to the right.`},
  rich:{lab:'Rich people',desc:'Feeling thermometer for rich people, 2004 ANES (rich_therm).',vals:thermVals('rich_therm'),xmin:-5,xmax:105,binw:10,xlab:'Feeling thermometer',ans:['none','left'],
-   say:`Skewness = ${D.sp(NES.rich_therm.skew,3)}, slightly negative and close to 0. Ratings pile up around 50 to 70 with a mean of ${NES.rich_therm.mean.toFixed(1)}: Americans in 2004 felt mildly warm toward rich people, without many strong feelings either way.`},
+   say:`Skewness = ${D.sp(NES.rich_therm.skew,3)}, which is slightly negative and close to 0. Ratings pile up around 50 to 70 with a mean of ${NES.rich_therm.mean.toFixed(1)}. Americans in 2004 felt mildly warm toward rich people, without many strong feelings either way.`},
  pclass:{lab:'Titanic: pclass',desc:'Passenger class (pclass):<dl class="codes"><dt>1</dt><dd>First Class</dd><dt>2</dt><dd>Middle Class</dd><dt>3</dt><dd>Lower Class</dd></dl>',cats:[1,2,3].map(c=>({label:['','First (1)','Middle (2)','Lower (3)'][c],n:DATA.titanic.pclass[c]})),ans:['left'],
    say:'Skewness = −.599. Most passengers were in lower class (3), with fewer in middle and first class, so the tail points toward the low codes and the skew is negative. Check the coding before you interpret it, because here a low code means a higher class.'}
 };
@@ -923,7 +923,7 @@ function shDraw(){const r=shape(+$('#shA').value,+$('#shB').value);const host=$(
   S('text',{x:W/2,y:Hh-7,'text-anchor':'middle'},svg,'Dashed: the normal curve');
   $('#shS').textContent=D.fx(r.sk,2);$('#shK').textContent=D.fx(r.ku,2);
   const sl=Math.abs(r.sk)<0.1?'no skew':r.sk>0?'positive skew':'negative skew',kl=Math.abs(r.ku)<0.1?'normal peak':r.ku>0?'leptokurtic (peaked)':'platykurtic (flat)';$('#shL').textContent=sl+', '+kl;
-  $('#shMM').textContent=Math.abs(r.m-r.med)<0.01?'The mean and the median are at the same place, at the peak.':`The mean sits ${Math.abs(r.m-r.med)<0.1?'just':''} ${r.m>r.med?'to the right of':'to the left of'} the median, because the long tail pulls it there.`.replace('  ',' ');}
+  $('#shMM').textContent=Math.abs(r.m-r.med)<0.01?'The mean and the median both sit at the peak.':`The mean sits ${Math.abs(r.m-r.med)<0.1?'just':''} ${r.m>r.med?'to the right of':'to the left of'} the median, because the long tail pulls it there.`.replace('  ',' ');}
 ['#shA','#shB'].forEach(s=>$(s).addEventListener('input',shDraw));shDraw();
 (function(){const v=thermVals('cheney_therm');D.hist($('#chChart'),{values:v,xmin:-5,xmax:105,binw:10,h:220,normal:{m:D.mean(v),s:D.sd(v)},xlab:'Feeling thermometer for Dick Cheney',tickFmt:t=>t<0||t>100?'':t,aria:'Cheney thermometer'});})();
 (function(){const a=thermVals('cheney_therm');D.drawers($('#chOut'),{spssNote:'Read Kurtosis in the Statistics table. SPSS scores a normal curve as 0.',spss:D.spStats([{name:'cheney_therm',vals:a,nTotal:1212}],['n','mean','median','sd','skew','kurt']),stata:D.stSum('cheney_therm','Feeling Thermometer: Cheney',a)});})();
@@ -949,7 +949,7 @@ function sbRender(){const pct=sbPct(),host=$('#sbSk'),W=D.W(host),H=250,L=40,R=8
   $('#sbMy').innerHTML=`Your distribution: mean <b>${st.m.toFixed(2)}</b>${close(st.m,.5,.1)?' ✓':''}, skewness <b>${st.sk.toFixed(2)}</b>${close(st.sk,3.84,.5)?' ✓':''}, kurtosis <b>${st.ku.toFixed(2)}</b>${close(st.ku,20.04,4)?' ✓':''}. The real ones are .50, 3.84 and 20.04.`;}
 ['#sbM','#sbS','#sbF'].forEach(id=>$(id).addEventListener('input',sbRender));
 $('#sbShow').addEventListener('click',()=>{shown=true;sbRender();$('#sbQw').hidden=false;
-  D.fb($('#sbFb'),'info',`The dashed outlines are the real percentages: ${real[0].toFixed(0)}% of passengers had no siblings or spouses aboard and ${real[1].toFixed(0)}% had one. Everything from 2 to 8 together is ${(100-real[0]-real[1]).toFixed(0)}%. That is what a skewness of 3.8 looks like, with a fat end at 0 and a long, thin tail to the right. The kurtosis of 20 comes from that tall peak at 0 plus the handful of passengers far out at 5 and 8.`);
+  D.fb($('#sbFb'),'info',`The dashed outlines are the real percentages. In the real data, ${real[0].toFixed(0)}% of passengers had no siblings or spouses aboard and ${real[1].toFixed(0)}% had one. Everything from 2 to 8 together is ${(100-real[0]-real[1]).toFixed(0)}%. That is what a skewness of 3.8 looks like. It has a fat end at 0 and a long, thin tail to the right. The kurtosis of 20 comes from that tall peak at 0 plus the handful of passengers far out at 5 and 8.`);
   {const a=D.expand(SB),cats=Object.keys(SB).map(k=>({label:k,n:SB[k]}));D.drawers($('#sbOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies, sibsp, with Mean, Range, Skewness and Kurtosis under Statistics.',spss:D.spStats([{name:'sibsp',vals:a}],['n','mean','median','mode','skew','kurt','range','min','max'])+D.spFreq('How many siblings or spouses did the passenger have onboard',cats),stata:D.stTab('sibsp','sibsp',cats)+'\n\n'+D.stSum('sibsp','Siblings or spouses aboard',a)});}});
 $('#sbReset').addEventListener('click',()=>{$('#sbM').value=2;$('#sbS').value=1.5;$('#sbF').value=0;shown=false;$('#sbFb').className='fbk';$('#sbOut').innerHTML='';sbRender();});
 D.seg($('#sbQ'),[['a','Most passengers had none, and a few large families stretch the range'],['b','The data has errors'],['c','The mean is always lower than the range']],v=>{v==='a'?D.fb($('#sbFb2'),'ok','Over two thirds of passengers had 0, so the mean sits close to 0. The range runs to 8 only because of a few large families traveling together, and the 9 passengers with 8 siblings were all from a single family.'):D.fb($('#sbFb2'),'no','Look at where most of the passengers are in the real distribution.');},'');
@@ -1025,7 +1025,7 @@ function pgSlots(){$('#pgSlots').innerHTML=[0,1,2,3].map(i=>{const c=picks[i];re
   if(picks.length===4){const lines=picks.map(c=>{const p=PG.find(x=>x[0]===c),s=NES[c];
       if(p[2])return `<li><b>${p[1]}</b>: high ratings in 2004 (mean ${s.mean.toFixed(1)}), but a ghost can't attend an event.</li>`;
       const pol=s.kurt<-0.5;return `<li><b>${p[1]}</b>: mean ${s.mean.toFixed(1)}, ${s.skew<0?'negative':'positive'} skew. ${pol?`Kurtosis ${D.sp(s.kurt,3)} is flat: lots of people rate ${p[1].split(' ').pop()} very low as well as very high, so an appearance could cost as many fans as it wins.`:s.mean<50?'The average is below 50, so feelings were more cool than warm.':`Kurtosis ${D.sp(s.kurt,3)} is close to normal: ratings cluster around a fairly warm middle.`}</li>`;}).join('');
-    D.fb($('#pgFb'),'info',`<b>Your four.</b><ul style="margin:6px 0 0;padding-left:20px">${lines}</ul><p style="margin:8px 0 0">One strong answer among the living: Laura Bush (highest mean, negative skew, close-to-normal peak) and John Edwards (warm and not polarizing) first. Bill and Hillary Clinton have high means, but their flat distributions say they divide the public. There is no single right answer, and what matters is that you used the mean, skew and kurtosis together.</p>`);}
+    D.fb($('#pgFb'),'info',`<b>Your four.</b><ul style="margin:6px 0 0;padding-left:20px">${lines}</ul><p style="margin:8px 0 0">One strong answer among the living puts Laura Bush (highest mean, negative skew, close-to-normal peak) and John Edwards (warm and not polarizing) first. Bill and Hillary Clinton have high means, but their flat distributions say they divide the public. There is no single right answer, and what matters is that you used the mean, skew and kurtosis together.</p>`);}
   else $('#pgFb').className='fbk';}
 pgSlots();
 (function(){const vars=PG.map(([c])=>({name:c,vals:thermVals(c),nTotal:1212}));
@@ -1038,7 +1038,7 @@ pgSlots();
 const G=DATA.world.gdp.map(r=>r[1]),Gm=D.mean(G),Gmd=D.median(G);let gpick=null;
 function gdDraw(){const lines=[];if(gpick!=null){lines.push({x:gpick,cls:'',label:'Your pick'});lines.push({x:Gm,cls:'meanl',label:'Mean '+D.sp(Gm,4),dy:16});lines.push({x:Gmd,cls:'medl',label:'Median '+D.sp(Gmd,4),dy:32});}
   const r=D.hist($('#gdChart'),{values:G,xmin:0,xmax:5,binw:0.25,h:240,ticks:[0,1,2,3,4,5],tickFmt:t=>'$'+(t*10)+'k',xlab:'GDP per capita',lines,onX:v=>{gpick=v;gdDraw();
-    $('#gdLeg').hidden=false;$('#gdQs').hidden=false;D.fb($('#gdFb0'),'info',`You picked about ${D.sp(v,2)}, or $${D.comma(v*1e4)}. Compare your pick with the mean and median lines. ${G.filter(x=>x<Gm).length} of the 177 countries are below the mean.`);},aria:'GDP per capita histogram'});
+    $('#gdLeg').hidden=false;$('#gdQs').hidden=false;D.fb($('#gdFb0'),'info',`You picked about ${D.sp(v,2)}, which is $${D.comma(v*1e4)}. Compare your pick with the mean and median lines. ${G.filter(x=>x<Gm).length} of the 177 countries are below the mean.`);},aria:'GDP per capita histogram'});
   if(gpick!=null){const ln=r.svg.querySelectorAll('line');ln.forEach(l=>{if(!l.getAttribute('class'))l.setAttribute('style','stroke:var(--ink);stroke-width:2;stroke-dasharray:3 3');});}}
 gdDraw();
 /* item-by-item checks: each box turns green or red when you leave it; a choice turns green or red when tapped */
@@ -1060,7 +1060,7 @@ $('#phTbl').innerHTML=`<tr><th class="l">County</th><th>PHOME (%)</th></tr>`+PH.
     const g=S('g',{},svg);S('rect',{x:q.x-q.w/2,y,width:q.w,height:ch,rx:4,fill:'var(--s1)'},g);S('text',{x:q.x,y:y+13,'text-anchor':'middle',style:'fill:#fff;font:600 11px var(--font-mono)'},g,String(p.v));S('title',{},g,`${p.n}: ${p.v}%`);});})();
 D.drawers($('#gdOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies, gdp_10_thou, with Mean, Median and Skewness under Statistics. Values are in units of $10,000.',spss:D.spStats([{name:'gdp_10_thou',vals:G,nTotal:191,dec:4}],['n','mean','median','sd','skew','kurt']),stata:D.stSum('gdp_10_thou','GDP per capita in 10K US$',G)});
 D.drawers($('#phOut'),{spssNote:'Analyze → Descriptive Statistics → Frequencies, PHOME, with Mean, Median, Mode and Skewness under Statistics.',spss:D.spStats([{name:'PHOME',vals:PHv}],['n','mean','median','mode','skew','kurt']),stata:D.stSum('PHOME','Percent of Lunatics Cared for at Home',PHv),stataNote:D.STNOTE+' For the mode, run <code>tabulate PHOME</code>.'});
-boxCheck($('#ph1'),$('#phF1'),x=>D.near(x,D.mean(PHv),0.06)?[true,`The 13 percentages add to ${D.sum(PHv)}; ÷ 13 = ${D.mean(PHv).toFixed(2)}%.`]:[false,'Add up the 13 percentages in the table and divide by 13.']);
+boxCheck($('#ph1'),$('#phF1'),x=>D.near(x,D.mean(PHv),0.06)?[true,`The 13 percentages add to ${D.sum(PHv)}, and ${D.sum(PHv)} ÷ 13 = ${D.mean(PHv).toFixed(2)}%.`]:[false,'Add up the 13 percentages in the table and divide by 13.']);
 boxCheck($('#ph2'),$('#phF2'),x=>x===D.median(PHv)?[true,'In order, the seventh of the 13 values is 68% (Plymouth), with six counties below it and six above.']:[false,'Put the 13 values in order and take the seventh.']);
 boxCheck($('#ph3'),$('#phF3'),x=>x===47?[true,'47% is the only value that appears twice (Essex and Middlesex).']:[false,'Which percentage appears twice in the table?']);
 choiceCheck($('#phQ'),[['mean','The mean'],['median','The median'],['mode','The mode']],'median',{

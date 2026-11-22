@@ -451,7 +451,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -905,7 +905,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
   </figure>
   <figure id="f5b">
     <div class="fighead"><h2><span class="step">5b</span>Who was worst off?</h2></div>
-    <p class="sub">Survival rate for every group in the tests above, with 95% confidence intervals, lowest first. The dashed line is the whole ship (38.2%).</p>
+    <p class="sub">This chart shows the survival rate for every group in the tests above, with 95% confidence intervals, sorted from lowest to highest. The dashed line is the whole ship (38.2%).</p>
     <div class="chart" id="c5c"></div>
     <details style="margin-top:10px;border-top:1px solid var(--line);padding-top:9px">
       <summary>Who would you least like to be on the Titanic?</summary>
@@ -1027,7 +1027,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <section class="card" style="margin-top:12px"><h3>Output</h3><pre class="stata" id="oR8"></pre></section>
   </figure>
   <figure>
-    <div class="fighead"><h2><span class="step">8b</span>Sex, class and age together: parallel lines</h2></div>
+    <div class="fighead"><h2><span class="step">8b</span>Sex, class and age together make parallel lines</h2></div>
     <div class="ctlrow" style="margin-top:8px">
       <div class="ctl"><span class="lab" id="rl8b">Reference class</span><div class="seg" role="radiogroup" aria-labelledby="rl8b" id="ref8b"></div></div>
     </div>
@@ -1073,9 +1073,9 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <h2>Check yourself</h2>
       <details><summary>The mean of survived is .382. What does that number mean?</summary><p>38.2% of passengers survived. For a 0/1 variable, the mean is the share coded 1.</p></details>
       <details><summary>λ = .42 for sex and survival. Interpret it.</summary><p>Knowing a passenger's sex cuts our errors in guessing survival by 42% (from 500 errors to 288). On the lab scale, .40 and up is strong.</p></details>
-      <details><summary>Youths vs. adults: p = .405. What do you conclude?</summary><p>Fail to reject H₀. If there were no real difference, a gap this large or larger would show up about 41 times in 100. That isn't evidence the groups were the same, just not enough evidence of a difference.</p></details>
+      <details><summary>Youths vs. adults: p = .405. What do you conclude?</summary><p>Fail to reject H₀. If there were no real difference, a gap this large or larger would show up about 41 times in 100. That isn't evidence the groups were the same, only that there is not enough evidence of a difference.</p></details>
       <details><summary>Lower vs. upper class: Sig. = .000. Does that support “the lower class survived at a greater rate”?</summary><p>No. We reject H₀, but the gap runs the other way, since the lower class survived at 25.5% and the upper class at 61.9%. Always check the direction against H₁.</p></details>
-      <details><summary>The slope on female is .536. Where have you seen that number before?</summary><p>In Step 5: women's survival rate (.728) minus men's (.191). A regression on one dummy is the equal-variance t test, with the same t and p.</p></details>
+      <details><summary>The slope on female is .536. Where have you seen that number before?</summary><p>You saw it in Step 5, where it is women's survival rate (.728) minus men's (.191). A regression on one dummy is the equal-variance t test, and it gives the same t and p.</p></details>
       <details><summary>Age's slope is −.0019 (p = .07) alone but −.0077 (p &lt; .001) holding class constant. Why?</summary><p>Older passengers were concentrated in first class, which survived far more often. Leaving class out let age borrow first class's advantage, which hid age's own negative effect.</p></details>
       <details><summary>The model predicts <span id="girl8">over 100%</span> for a 2-year-old girl in first class. What's wrong?</summary><p>A straight line has no ceiling. That's a known limit of the linear probability model, and logit and probit keep predictions between 0 and 1.</p></details>
     </section>
@@ -1104,7 +1104,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p>SDₚ is the pooled SD of the two groups. H₀: the difference is 0.</p></div>
   <div class="fx"><h3>Linear probability model</h3>
     <math display="block"><mover><mi>P</mi><mo>^</mo></mover><mo>(</mo><mtext>survived</mtext><mo>)</mo><mo>=</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><msub><mi>X</mi><mn>2</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><mtext>constant</mtext></math>
-    <p>Ordinary least squares with a 0/1 DV. Each β is a change in the probability of surviving (× 100 for percentage points), holding the other IVs constant.</p></div>
+    <p>This is ordinary least squares with a 0/1 DV. Each β is a change in the probability of surviving (× 100 for percentage points), holding the other IVs constant.</p></div>
 </aside>
 
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
@@ -1268,10 +1268,10 @@ function renderDesc(){
   if(V.lev!=='nom')rows.push(['Skewness',sgnf(D.sk,3)],['Kurtosis',sgnf(D.ku,3)]);
   $('#kv1').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
   let s='';
-  if(V.lev==='nom'){s=`<b>For a nominal variable, use the mode.</b> The categories have no order. Because it's coded 0/1, the mean (${D.m.toFixed(3).replace(/^0/,'')}) equals the share coded 1, ${pc(D.m)} ${st.dv==='survived'?'survived':'were female'}.`;}
+  if(V.lev==='nom'){s=`<b>For a nominal variable, use the mode.</b> The categories have no order. Because it's coded 0/1, the mean (${D.m.toFixed(3).replace(/^0/,'')}) equals the share coded 1, which is ${pc(D.m)} ${st.dv==='survived'?'survived':'were female'}.`;}
   else if(V.lev==='ord'){s=`<b>For an ordinal variable, use the median (and the mode).</b> The categories are ordered, but the distance between codes isn't meaningful, so the mean of the codes isn't either. Skew here is computed on the codes, and it shows ${skewWord(D.sk)}${D.sk<0?', with the tail toward the low codes':D.sk>0?', with the tail toward the high codes':''}.`;}
   else{const gap=D.m-D.med, big=Math.abs(D.sk)>=1;
-    s=`<b>For an interval-ratio variable, the mean works, unless skew pulls it away from the middle.</b> This one shows ${skewWord(D.sk)}, and the mean (${fmtv(+D.m.toFixed(2))}) sits ${Math.abs(gap)<0.05*D.s?'right next to':gap>0?'above':'below'} the median (${fmtv(D.med)}). ${big?`The long ${D.sk>0?'right':'left'} tail drags the mean, so the median better describes a typical passenger.`:'The mean and median tell a similar story.'} Kurtosis ${sgnf(D.ku,2)}: ${Math.abs(D.ku)<0.5?'close to the normal curve (0)':D.ku>0?'leptokurtic, more peaked than normal':'platykurtic, flatter than normal'}.`;}
+    s=`<b>For an interval-ratio variable, the mean works, unless skew pulls it away from the middle.</b> This one shows ${skewWord(D.sk)}, and the mean (${fmtv(+D.m.toFixed(2))}) sits ${Math.abs(gap)<0.05*D.s?'right next to':gap>0?'above':'below'} the median (${fmtv(D.med)}). ${big?`The long ${D.sk>0?'right':'left'} tail drags the mean, so the median better describes a typical passenger.`:'The mean and median tell a similar story.'} Kurtosis is ${sgnf(D.ku,2)}, which is ${Math.abs(D.ku)<0.5?'close to the normal curve (0)':D.ku>0?'leptokurtic, or more peaked than normal':'platykurtic, or flatter than normal'}.`;}
   $('#say1').innerHTML=s;
 }
 selb('#dv1',Object.entries(DV1).map(([k,v])=>[k,v.lab]),st.dv,v=>{st.dv=v;renderDesc();});
@@ -1336,7 +1336,7 @@ function renderCI(){
   const rng=isS?`${pc(cur.lo)} and ${pc(cur.hi)}`:`${cur.lo.toFixed(1)} and ${cur.hi.toFixed(1)} years`;
   $('#say3').innerHTML=`<b>Read it this way.</b> We're ${st.lv3}% confident the true ${isS?'survival rate':'mean age'} for ${cur.lab.toLowerCase()} is between ${rng}. Strictly, the ${st.lv3}% belongs to the method, meaning that if you build intervals this way on many samples, about ${st.lv3}% of them capture the truth.`;
   const sm=all.slice().sort((a,b)=>a.n-b.n)[0], bg=all.slice().sort((a,b)=>b.n-a.n)[0];
-  $('#note3').innerHTML=`Smaller groups get wider intervals, as with ${sm.lab.toLowerCase()} (n = ${com(sm.n)}) ±${isS?pts(sm.me):sm.me.toFixed(2)} vs. ${bg.lab.toLowerCase()} (n = ${com(bg.n)}) ±${isS?pts(bg.me):bg.me.toFixed(2)}${isS?' points':' years'}. ${isS?'':'Age is unknown for some passengers, so n is smaller here. '}We use z, as in class; with n in the hundreds, t gives nearly the same interval.`;
+  $('#note3').innerHTML=`Smaller groups get wider intervals, as with ${sm.lab.toLowerCase()} (n = ${com(sm.n)}) ±${isS?pts(sm.me):sm.me.toFixed(2)} vs. ${bg.lab.toLowerCase()} (n = ${com(bg.n)}) ±${isS?pts(bg.me):bg.me.toFixed(2)}${isS?' points':' years'}. ${isS?'':'Age is unknown for some passengers, so n is smaller here. '}We use z, as in class, and with n in the hundreds t gives nearly the same interval.`;
 }
 seg('#v3',[['s','Survival rate'],['a','Mean age']],st.v3,v=>{st.v3=v;renderCI();});
 selb('#g3',G3.map(g=>[g[0],g[1]]),st.g3,v=>{st.g3=v;renderCI();});
@@ -1372,7 +1372,7 @@ function renderPRE(){
   let out='';
   if(V.lev==='nom'){
     $('#t4').textContent='Lambda (nominal IV)';
-    out=lamHTML+`<p class="say">Knowing ${V.lab.toLowerCase()} cuts guessing errors by <b>${pc(L,0)}</b>: <b>${lab(L,LS)}</b> on the lab scale.${L<0.1&&spread>0.1?` Survival rates differ by ${pts(spread,0)} points, yet λ is near 0: “died” stays the best guess in ${tab.filter(t=>t.d>=t.s).length===tab.length?'every column':'most columns'}, and λ only counts changes in the guess.`:''}</p>`+scaleTbl(LS,L);
+    out=lamHTML+`<p class="say">Knowing ${V.lab.toLowerCase()} cuts guessing errors by <b>${pc(L,0)}</b>, which is <b>${lab(L,LS)}</b> on the lab scale.${L<0.1&&spread>0.1?` Survival rates differ by ${pts(spread,0)} points, yet λ is near 0: “died” stays the best guess in ${tab.filter(t=>t.d>=t.s).length===tab.length?'every column':'most columns'}, and λ only counts changes in the guess.`:''}</p>`+scaleTbl(LS,L);
   } else {
     $('#t4').textContent='Gamma (ordinal IV)';
     const dirTxt=Math.abs(Gm)<0.25?`The sign is ${Gm<0?'negative':'positive'}, but γ is so close to 0 that there's no consistent pattern, and survival doesn't steadily rise or fall across the columns.`:`${V.dir}, survival ${Gm<0?'falls (negative)':'rises (positive)'}.`;
@@ -1445,11 +1445,11 @@ function renderTest(){
   $('#dec5').innerHTML=`<span class="verdict2 ${rej?'rej':'ftr'}">${rej?'Reject H₀':'Fail to reject H₀'}</span><span class="say">${rej?'Sig. is below .05, and the CI excludes 0.':'Sig. is .05 or above, and the CI includes 0.'}</span>`;
   $('#p5').innerHTML=`<b>Reading the p-value.</b> Sig. = ${sig(T.p)}${T.p<0.0005?' means p &lt; .001':''}. If H₀ were true and there were no real difference, a gap of ${pts(T.d)} points or larger, in either direction, would turn up <b>${pRead(T.p)}</b>.${T.p<0.001?' (Move the decimal three places: .001 → 1 in 1,000.)':T.p<0.01?' (Move the decimal three places to read it per 1,000.)':' (Move the decimal two places to read it per 100.)'}`;
   const hi1=T.d>0, g1=q.g1[0].toLowerCase(), g2=q.g2[0].toLowerCase();
-  let s=`<b>In real-world terms:</b> ${q.g1[0]} survived at ${pc(T.m1)}, ${g2} at ${pc(T.m2)}, a gap of ${pts(T.d)} points. `;
+  let s=`<b>In real-world terms</b>, ${q.g1[0].toLowerCase()} survived at ${pc(T.m1)} and ${g2} at ${pc(T.m2)}, which is a gap of ${pts(T.d)} points. `;
   if(!rej) s+=`That gap is small enough to be chance, so we fail to reject H₀. That isn't proof the groups survived equally, only that the evidence isn't strong enough to say they didn't.`;
-  else if(q.dir===0) s+=`The difference is statistically significant: ${hi1?g1:g2} survived at the higher rate.`;
+  else if(q.dir===0) s+=`The difference is statistically significant, and ${hi1?g1:g2} survived at the higher rate.`;
   else if(hi1) s+=`The difference is statistically significant and runs the way H₁ predicted.`;
-  else s+=`<span class="warn">We reject H₀, but the gap runs opposite to H₁,</span> since ${g1} survived at a <i>lower</i> rate, not a higher one. Rejecting H₀ never confirms H₁ on its own, so always check the direction.`;
+  else s+=`<span class="warn">We reject H₀, but the gap runs opposite to H₁,</span> since ${g1} survived at a <i>lower</i> rate rather than a higher one. Rejecting H₀ never confirms H₁ on its own, so always check the direction.`;
   if(Math.min(T.n1,T.n2)<40) s+=` Note the small group (n = ${Math.min(T.n1,T.n2)}), which is why its curve is so wide.`;
   $('#say5').innerHTML=s;
   // stata (lower code first)
@@ -1472,7 +1472,7 @@ function renderWorst(){
     txt(svg,Math.min(xs(g.hi),W-m.r)+6,y+4,pc(g.p,0),{class:'halo',style:'font:400 11.5px var(--font-body)',fill:css('--ink-2')});
     bindTip(c,()=>`<b>${g.l}</b> (n = ${com(g.n)})<br>survived ${pc(g.p)} · 95% CI ${pc(Math.max(0,g.lo))} to ${pc(Math.min(1,g.hi))}`);});
   const lm=ys(idx(i=>F[i]===0&&C[i]===3)), fw=ys(idx(i=>F[i]===1&&C[i]===1));
-  $('#worst5').innerHTML=`Going test by test, the worst off was a <b>man</b> in the <b>lower class</b>, <b>elderly</b> and <b>traveling alone</b>, who rode for free. Each of those groups survived well below the ship's 38.2%. But the groups overlap, since most lower-class passengers were men and most men traveled alone. Lower-class men survived at <b>${pc(mean(lm))}</b> (n = ${lm.length}); and first-class women at <b>${pc(mean(fw))}</b> (n = ${fw.length}). One-at-a-time tests can't say which trait mattered once the others are held constant. That's what regression is for, next.`;
+  $('#worst5').innerHTML=`Going test by test, the worst off was a <b>man</b> in the <b>lower class</b>, <b>elderly</b> and <b>traveling alone</b>, who rode for free. Each of those groups survived well below the ship's 38.2%. But the groups overlap, since most lower-class passengers were men and most men traveled alone. Lower-class men survived at <b>${pc(mean(lm))}</b> (n = ${lm.length}), while first-class women survived at <b>${pc(mean(fw))}</b> (n = ${fw.length}). One-at-a-time tests can't say which trait mattered once the others are held constant. That's what regression is for, next.`;
 }
 
 /* ============ 6 REGRESS ============ */
@@ -1499,7 +1499,7 @@ function renderReg6(){
     for(const [v,l] of [[0,'0 = male'],[1,'1 = female']]) txt(svg,xs(v),H-m.b+18,l,{'text-anchor':'middle',class:'mlab',fill:css('--ink-2')});
     txt(svg,4,12,'↑ survived (0 = no, 1 = yes)',{class:'axlab'}); txt(svg,W-m.r,H-4,'female (X) →',{class:'axlab','text-anchor':'end'});
   }
-  $('#say6a').innerHTML=`Plug in female = 0 and ŷ = <b>${c0.toFixed(3)}</b>, which is men's survival rate. Plug in female = 1 and you get ${c0.toFixed(3)} + ${b.toFixed(3)} = <b>${(c0+b).toFixed(3)}</b>, which is women's rate. The slope is the gap, so being female raised the predicted probability of surviving by <b>${pts(b)} percentage points</b>. That's the same ${pts(b)}-point difference, with the same t (${fA.t[0].toFixed(2)}), as the first t test in Step 5. Sig. = ${sig(fA.p[0])}: under H₀ (slope = 0), a slope this steep would turn up ${pRead(fA.p[0])}. Reject H₀.`;
+  $('#say6a').innerHTML=`Plug in female = 0 and ŷ = <b>${c0.toFixed(3)}</b>, which is men's survival rate. Plug in female = 1 and you get ${c0.toFixed(3)} + ${b.toFixed(3)} = <b>${(c0+b).toFixed(3)}</b>, which is women's rate. The slope is the gap, so being female raised the predicted probability of surviving by <b>${pts(b)} percentage points</b>. That's the same ${pts(b)}-point difference, with the same t (${fA.t[0].toFixed(2)}), as the first t test in Step 5. Sig. = ${sig(fA.p[0])}, so under H₀ (slope = 0) a slope this steep would turn up ${pRead(fA.p[0])}. Reject H₀.`;
   const L=anova(fA,'. regress survived female'); L.push(crow('female',fA,0,'b1',true),crow('_cons',fA,1,''),'-'.repeat(78)); $('#o6a').innerHTML=L.join('\n');
   renderReg6b();
 }
@@ -1553,7 +1553,7 @@ function renderCtl(){
   $('#chips7').innerHTML=`<span class="chip"><span>Mean age is <b>${age(1).toFixed(1)}</b> in first class, <b>${age(2).toFixed(1)}</b> in middle and <b>${age(3).toFixed(1)}</b> in lower</span></span><span class="chip"><span>Survival is <b>${pc(sv(1),0)}</b> in first class, <b>${pc(sv(2),0)}</b> in middle and <b>${pc(sv(3),0)}</b> in lower</span></span>`;
   const f=cur.f,b=f.b[0],a0=M[0].f.b[0];
   let s=`<b>This model:</b> age slope ${sgnf(b,4)}${cur.s||cur.c?' holding '+[cur.s?'sex':'',cur.c?'class':''].filter(Boolean).join(' and ')+' constant':''}, Sig. = ${sig(f.p[0])} → <b>${f.p[0]<0.05?'reject H₀':'fail to reject H₀'}</b>. Each extra year changes the predicted chance of surviving by ${sgnf(b*100,2)} points (${sgnf(b*1000,1)} per decade). R² = ${f.r2.toFixed(3)}. `;
-  s+=cur.c?`<br><br>Why the slope grew from ${sgnf(a0,4)}: older passengers were concentrated in first class, which survived far more often. Without class in the model, age borrowed first class's advantage, which masked age's own negative effect. Hold class constant and the effect of age shows.`
+  s+=cur.c?`<br><br>The slope grew from ${sgnf(a0,4)} because older passengers were concentrated in first class, which survived far more often. Without class in the model, age borrowed first class's advantage, which masked age's own negative effect. Hold class constant and the effect of age shows.`
     :`<br><br>Turn on <b>Control for class</b> and watch the slope. Older passengers were concentrated in first class, which survived far more often.`;
   $('#say7').innerHTML=s;
   const nm=fit7(st.cf7,st.cc7).names, L=anova(f,(st.cc7?'. generate first = (pclass == 1)\n. generate middle = (pclass == 2)\n':'')+'. regress survived '+nm.join(' '));
@@ -1598,7 +1598,7 @@ function lvPlace(){
   E.yl.textContent=ty>0.5?'↑ survival leftover (+ mean)':'↑ survived (0 = no, 1 = yes)'; E.xl.textContent=tx>0.5?'age leftover (+ mean) →':'age →';
 }
 function lvText(){ const M=LV.els?LV.els.M:lvModel(), ctl=M.names.length?M.names.join(' and '):null;
-  const T={data:`<b>1. Start with the data.</b> Each passenger sits at 0 (died) or 1 (survived) by age. The line is the bivariate fit, with a slope of <b>${sgnf(M.bR,4)}</b> per year.`,
+  const T={data:`<b>1. Start with the data.</b> Each passenger sits at 0 (died) or 1 (survived) by age. The line is the bivariate fit, and its slope is <b>${sgnf(M.bR,4)}</b> per year.`,
     yl:ctl?`<b>2. Survival leftovers.</b> Each passenger moves up or down by what ${ctl} already predict about surviving. What's left is the part of survival that ${ctl} can't explain. Women and first-class passengers, who were expected to survive, slide down, while men in lower class slide up.`:`<b>2. Survival leftovers.</b> No controls are ticked, so each leftover is just a distance from the average survival rate. Tick sex or class above and replay this step.`,
     xl:ctl?`<b>3. Age leftovers.</b> Each passenger slides sideways by what ${ctl} predict about their age. First-class passengers, who were older on average, slide left and lose that head start.`:`<b>3. Age leftovers.</b> With no controls, each age leftover is just a distance from the average age, so nothing changes shape.`,
     fit:`<b>4. The line through the leftovers.</b> Its slope is <b>${sgnf(M.bC,4)}</b>${ctl?`, exactly age's coefficient holding ${ctl} constant (the highlighted row below)`:', the same as the bivariate slope, because nothing is held constant'}.`};

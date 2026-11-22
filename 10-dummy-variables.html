@@ -391,7 +391,7 @@ function pSent(p,what,h0){
   const shown=SIG(p);
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
-  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only not enough evidence of one.';
+  s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
   return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
@@ -822,7 +822,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
     <p class="fn" style="margin:10px 0 0"><sup>1</sup> Center for American Women and Politics, “Gender Gaps in Vote Choice and Party Identification,” <a href="https://cawp.rutgers.edu/data-voters">cawp.rutgers.edu/data-voters</a>; Pew Research Center, “Changing Partisan Coalitions in a Politically Divided Nation,” April 9, 2024 (among registered voters, 52% of men identify with or lean toward the Republican Party, 46% toward the Democratic Party).</p>
   </section>
 
-  <p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error, a false positive. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="6-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="6-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section>
@@ -830,7 +830,7 @@ button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg
       <ol>
         <li>In Part 1, switch the reference group. The slope changes sign, the constant becomes the other group's mean, and t and p stay the same.</li>
         <li>Turn off <b>Include D.C.</b> The South's mean jumps and the South gap becomes significant. One outlier among 17 Southern cases matters.</li>
-        <li>In Part 2, use the <b>Flip the switch</b> box. Setting south to 0 zeroes out the South term; setting it to 1 adds the gap back.</li>
+        <li>In Part 2, use the <b>Flip the switch</b> box. Setting south to 0 zeroes out the South term, while setting it to 1 adds the gap back.</li>
         <li>Compare the South coefficient in Part 1 with Part 2. Adding metro share changes it, which is the same omitted-variable logic as in Module 9.</li>
         <li>In Part 3, tick <b>Try all four dummies</b>. Stata drops one, because the four dummies always add up to 1, which duplicates the constant.</li>
       </ol>
@@ -1191,7 +1191,7 @@ function renderFL(){
   const nav=`<div class="row" style="margin-top:10px;gap:8px">${FSTEPS.findIndex(z=>z[0]===v)>0?'<button id="flPrev">← Back</button>':''}${FSTEPS.findIndex(z=>z[0]===v)<FSTEPS.length-1?'<button class="primary" id="flNext">Next step →</button>':''}</div>`;
   if(v==='look') h=`<h4>1. Always look at your data</h4><p class="say" style="margin:0">We have the same ${N.toLocaleString('en-US')} respondents as the worked example, and now we also know each one's gender, which shows that ${pw}% are women. As before, thermometer answers bunch at round numbers, so one dot can hide dozens of people.</p>`;
   if(v==='bin') h=`<h4>2. Bin the dots</h4><p class="say" style="margin:0">Group nearby answers into bins and shade each bin by how many respondents fall in it, so darker means more people. Gender doesn't change the dots. It changes the line we fit through them, which is the next step.</p>`;
-  if(v==='lines') h=`<h4>3. Add the regression lines</h4><p class="say" style="margin:0">With a female dummy in the model, there are two lines with the same slope, one for women and one for men. Holding feelings toward the ${P.label} constant, women rate ${nm} <b>${Math.abs(b2).toFixed(2)} points ${b2>=0?'warmer':'cooler'}</b> than men (p ${pvs(f.p[1])}). If gender made no difference (H₀: β₂ = 0), a gap this large or larger would turn up ${prd(f.p[1])}, so we <b>${f.p[1]<0.05?'reject H₀':'fail to reject H₀'}</b>.</p><p class="say">The party slope barely moves: <b>${s3(F.b0)}</b> in the worked example, <b>${s3(b1)}</b> holding gender constant.</p>`;
+  if(v==='lines') h=`<h4>3. Add the regression lines</h4><p class="say" style="margin:0">With a female dummy in the model, there are two lines with the same slope, one for women and one for men. Holding feelings toward the ${P.label} constant, women rate ${nm} <b>${Math.abs(b2).toFixed(2)} points ${b2>=0?'warmer':'cooler'}</b> than men (p ${pvs(f.p[1])}). If gender made no difference (H₀: β₂ = 0), a gap this large or larger would turn up ${prd(f.p[1])}, so we <b>${f.p[1]<0.05?'reject H₀':'fail to reject H₀'}</b>.</p><p class="say">The party slope barely moves, going from <b>${s3(F.b0)}</b> in the worked example to <b>${s3(b1)}</b> holding gender constant.</p>`;
   if(v==='predict'){ const xv=pickX(), yv=pred(xv,fl.sex);
     h=`<h4>4. Predict a value</h4><div class="row" style="gap:8px 12px"><select id="flPick" aria-label="X value"><option value="mean">the average (${mx.toFixed(2)})</option><option value="max">the most extreme (100)</option><option value="min">the coldest (0)</option><option value="custom">a value I choose</option></select><div class="seg" role="radiogroup" aria-label="Gender" id="flSex"></div></div>
       <div class="row" ${fl.pick==='custom'?'':'hidden'} style="margin-top:6px"><input type="number" id="flCx" min="0" max="100" step="1" value="${fl.custom}" aria-label="X value"><input type="range" id="flCxr" min="0" max="100" step="1" value="${fl.custom}" aria-label="X value slider"></div>
