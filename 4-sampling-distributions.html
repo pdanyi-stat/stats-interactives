@@ -200,6 +200,12 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+.jbcall{margin-top:16px;padding:16px 18px;border:2px solid #B5862A;border-radius:12px;background:color-mix(in srgb,#B5862A 10%,var(--surface));color:var(--ink);font-size:16px;line-height:1.55;display:grid;gap:10px}
+.jbcall p{margin:0}.jbcall ul{margin:6px 0 0;padding-left:20px;display:grid;gap:6px}
+.jbck{font-size:13px!important;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8A6416}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .jbck{color:#E2B65A}}:root[data-theme="dark"] .jbck{color:#E2B65A}
+.jbback{display:grid;gap:8px;padding:10px 12px;border-radius:8px;background:var(--surface);border:1px solid color-mix(in srgb,#B5862A 45%,var(--line))}
+.jbback p{margin:0}
 </style>
 <!-- spss-start -->
 <style>
@@ -740,7 +746,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     </div>
     <div class="chart" id="jbPile" style="margin-top:12px"></div>
   </figure>
-  <p class="jbt">The small handfuls make a wide, flat pile, because a small handful has to land far from the bowl's mean before it counts as weird. The large handfuls make a narrow pile, and even a modest miss is surprising. Both piles take on the shape of the normal curve, and the large one does so more closely. The spread of each pile is its standard error. The next section does the same thing with a real population made up of 3,112 U.S. counties.</p>
+  <div class="jbcall" id="jbCall" aria-live="polite"></div>
 </section>
 <section class="part" style="margin-bottom:14px"><p class="kick">Part 2 · Real counties</p><h2>The same idea with 3,112 counties</h2></section>
 <script>
@@ -823,14 +829,14 @@ function makeQs(){const order=counts.map((c,i)=>[c,i]).sort((a,b)=>b[0]-a[0]),al
   $('jbQs').innerHTML=Qs.map((q,r)=>`<div class="jbq"><p>${r+1}. ${q.title}</p><div class="jbpair">${[0,1].map(c=>`<div class="jbcell"><span class="lab">Handful of <b>${c?nL:nS}</b></span>
     <input type="range" min="0" max="${STOPS.length-1}" step="1" value="4" id="jbq${r}${c}" aria-label="${q.txt[c]}: how often?"><div class="jbse"><span>shocked</span><span>not</span></div>
     <div class="jbread" id="jbr${r}${c}"></div><div class="jbres" id="jbx${r}${c}" hidden></div></div>`).join('')}</div></div>`).join('');
-  Qs.forEach((q,r)=>[0,1].forEach(c=>{const inp=$(`jbq${r}${c}`);readOut(r,c);inp.addEventListener('input',()=>{touched.add(`${r}${c}`);$('jbErr').textContent='';readOut(r,c);});}));
-  $('jbReveal').disabled=false;}
+  Qs.forEach((q,r)=>[0,1].forEach(c=>{const inp=$(`jbq${r}${c}`);readOut(r,c);inp.addEventListener('input',()=>{touched.add(`${r}${c}`);$('jbErr').textContent='';readOut(r,c);callback();});}));
+  $('jbReveal').disabled=false;callback();}
 function readOut(r,c){const s=STOPS[+$(`jbq${r}${c}`).value];$(`jbr${r}${c}`).innerHTML=`${s[1][0].toUpperCase()+s[1].slice(1)}<small>${touched.has(`${r}${c}`)?s[2]:'move the slider'}</small>`;}
 function reveal(){if(touched.size<6){$('jbErr').textContent=`Make all six guesses first (${touched.size} of 6 so far).`;return;}
   Qs.forEach((q,r)=>[0,1].forEach(c=>{const p=q.p[c],gp=STOPS[+$(`jbq${r}${c}`).value][0],diff=Math.log10(Math.max(gp,1e-13))-Math.log10(Math.max(p,1e-300));
     const v=Math.abs(diff)<0.6?'Close.':diff<0?'This is less rare than you guessed.':'This is rarer than you guessed.';
     const x=$(`jbx${r}${c}`);x.innerHTML=`<b>Real: ${oneIn(p)}</b><br>${pTxt(p)} · ${v}`+mini(gp,p);x.hidden=false;}));
-  revealed=true;$('jbReveal').disabled=true;}
+  revealed=true;$('jbReveal').disabled=true;callback();}
 function mini(gp,p){const W=170,L=8,Rr=W-8,lo=-13,hi=Math.log10(1/5),X=q=>L+(Math.min(Math.max(Math.log10(q),lo),hi)-lo)/(hi-lo)*(Rr-L),pb=X(1/292201338);
   return `<svg viewBox="0 0 ${W} 30" width="100%" style="display:block;margin-top:4px" aria-hidden="true"><line x1="${L}" x2="${Rr}" y1="14" y2="14" stroke="currentColor" stroke-opacity=".35" stroke-width="2"/>
   <line x1="${pb}" x2="${pb}" y1="8" y2="20" stroke="currentColor" stroke-opacity=".6"/><text x="${pb}" y="29" text-anchor="middle" font-size="9" fill="currentColor" fill-opacity=".75">Powerball</text>
@@ -871,7 +877,24 @@ function pileChart(drop){const host=$('jbPile'),W=Math.max(300,Math.min(1040,hos
     if(!list.length)el('text',{x:(X(1)+X(6))/2,y:(top+base)/2,'text-anchor':'middle','font-size':12.5,style:'fill:var(--muted)'},s).textContent='No handfuls yet';});
   const M=mu();el('line',{x1:X(M),x2:X(M),y1:m.t+22,y2:H-m.b+2,style:'stroke:var(--ink)','stroke-width':1.5,'stroke-dasharray':'4 3'},s);
   for(let v=1;v<=6;v++)el('text',{x:X(v),y:H-8,'text-anchor':'middle','font-size':12,style:'fill:var(--muted)'},s).textContent=v;
-  host.innerHTML='';host.appendChild(s);}
+  host.innerHTML='';host.appendChild(s);callback();}
+
+/* ---------- callback: piles vs. the step 2 guesses ---------- */
+function callback(){const box=$('jbCall');if(!box)return;
+  const sdOf=a=>{const m=a.reduce((x,y)=>x+y,0)/a.length;return Math.sqrt(a.reduce((x,v)=>x+(v-m)**2,0)/(a.length-1));},ps=piles[nS]||[],pl=piles[nL]||[],W=['none','one','two','all three'];
+  let h='<p class="jbck">What the two piles tell you</p>';
+  h+=`<p>The small handfuls make a wide, flat pile, because a handful of ${nS} has to land far from the bowl's mean of ${mu().toFixed(2)} before it counts as weird. The large handfuls make a narrow pile, so even a modest miss by a handful of ${nL} is surprising.`+(ps.length>1&&pl.length>1?` Right now the means of your small handfuls have an SD of ${sdOf(ps).toFixed(2)}, while the means of your large handfuls have an SD of only ${sdOf(pl).toFixed(2)}.`:'')+` The spread of each pile is its standard error. Both piles take on the shape of the normal curve, and the large one does so more closely.</p>`;
+  if(touched.size<6)h+=`<p class="jbback"><b>Now go back to step 2.</b> Slide how shocked you would be by each odd pull, for both handful sizes, and reveal the real chances. This box will then set your guesses next to what the piles show.</p>`;
+  else{
+    h+=`<div class="jbback"><p><b>Now look back at your guesses in step 2.</b></p><ul>`+Qs.map((q,r)=>{const gs=+$(`jbq${r}0`).value,gl=+$(`jbq${r}1`).value;
+      return `<li><b>${q.title}.</b> You guessed ${STOPS[gs][1]} for a handful of ${nS} and ${STOPS[gl][1]} for a handful of ${nL}.`+(revealed?` The real chances are ${oneIn(q.p[0])} and ${oneIn(q.p[1])}.`:'')+`</li>`;}).join('')+'</ul>';
+    const more=Qs.filter((q,r)=>+$(`jbq${r}1`).value<+$(`jbq${r}0`).value).length;
+    h+=more===3?`<p>In all three pulls you rated the large handful as more shocking than the small one, which is exactly what the piles show. A small handful's mean wanders widely, so the small pile is wide and flat, and a handful of ${nS} that looks odd still turns up fairly often. A large handful's mean stays close to the bowl's mean of ${mu().toFixed(2)}, so the large pile is tall and narrow, and a handful of ${nL} far from the bowl's usual mix almost never turns up. That is why the same odd pull earned more shock from you at the larger size.</p>`
+      :`<p>In ${W[3-more]} of the three pulls you rated the large handful as no more shocking than the small one. The real chances and the piles both show why the large handful deserves more shock. A small handful's mean wanders widely, so the small pile is wide and flat, and a handful of ${nS} that looks odd still turns up fairly often. A large handful's mean stays close to the bowl's mean of ${mu().toFixed(2)}, so the large pile is tall and narrow, and a handful of ${nL} far from the bowl's usual mix almost never turns up.</p>`;
+    if(!revealed)h+='<p>Press “Reveal the real chances” in step 2 to see how close your guesses were.</p>';
+    h+='</div>';}
+  h+=`<p>The same idea comes back in Module 5. With small samples an odd result shouldn't surprise you much, so the sampling distribution is wide and a confidence interval built from it is wide too. With large samples an odd result should shock you, so the sampling distribution is narrow and so is the interval. The next section does the same thing with a real population of 3,112 U.S. counties.</p>`;
+  box.innerHTML=h;}
 /* ---------- wiring ---------- */
 function seg(host,opts,cur,cb){host.innerHTML=opts.map(n=>`<button role="radio" aria-checked="${n===cur}" data-n="${n}">${n}</button>`).join('');
   host.onclick=e=>{const b=e.target.closest('button');if(!b)return;[...host.children].forEach(x=>x.setAttribute('aria-checked',x===b));cb(+b.dataset.n);};}
