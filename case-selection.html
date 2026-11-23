@@ -639,6 +639,41 @@ svg.bd{width:100%;max-width:520px;height:auto;display:block}
 .legend i{display:inline-block;width:22px;height:0;border-top:3px solid}
 .legend i.t{border-color:var(--s1-line)}.legend i.l{border-color:var(--live)}.legend i.s{border-color:var(--good)}.legend i.c{border-top:3px dashed var(--cut)}
 .bkey{margin:8px 0 0;padding:9px 11px;border-radius:8px;background:var(--page);border:1px dashed var(--axis);font-size:13.5px;line-height:1.5;color:var(--ink-2)}.bkey b{color:var(--ink)}
+.dyblk{display:grid;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.dyblk[hidden]{display:none}
+.dyblk h3{font-size:17px}
+.dtiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.dtile{display:grid;gap:4px;text-align:left;padding:12px;border-radius:10px;border:1.5px solid var(--axis);background:var(--surface);font:inherit;color:var(--ink)}
+.dtile b{font-size:15px}.dtile span{font-size:13.5px;color:var(--ink-2);line-height:1.4}
+.dtile.on{border:2.5px solid var(--s1-line);background:color-mix(in srgb,var(--s1-line) 12%,var(--surface))}
+.dyl{display:grid;gap:4px;font-size:14px;font-weight:600;color:var(--ink)}
+#diy input[type=text],#diy select{font:400 15px var(--font-body);padding:8px 10px;border:1px solid var(--axis);border-radius:8px;background:var(--surface);color:var(--ink);min-height:42px;width:100%;min-width:0}
+#diy select{width:auto;max-width:100%}
+.dysec{display:grid;gap:8px;margin-top:6px}
+.dyh{margin:0;font-size:15px;color:var(--ink)}.dyh span{font-weight:400;color:var(--muted);font-size:13.5px}
+.dyvar{display:grid;gap:7px;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--page)}
+.dyrow{display:flex;gap:6px;align-items:center}
+.dyx{flex:none;min-width:40px;min-height:40px;padding:0}
+.dyvals{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.vchip.ed{display:inline-flex;align-items:center;gap:4px;font-size:13.5px;padding:3px 4px 3px 9px}
+.vchip.ed button{border:0;background:none;padding:2px 6px;font-size:12px;color:var(--muted);min-height:28px}
+.dyadd{display:flex;gap:6px;flex:1 1 220px;min-width:0}
+.dyadd input{flex:1}
+.dyadd button{flex:none}
+.dymore{justify-self:start;font-size:13.5px}
+.dyrem{margin:0;font-size:13.5px;color:var(--ink-2);background:color-mix(in srgb,#B5862A 10%,var(--surface));border-left:4px solid #B5862A;padding:7px 10px;border-radius:6px}
+.dysent{margin:0;font-size:16px;line-height:2.1;color:var(--ink)}
+.dytabs{display:flex;flex-wrap:wrap;gap:6px}
+.dytab{font-size:13.5px}.dytab.add{border-style:dashed}
+.dycase{display:grid;gap:10px;padding:12px;border:1.5px solid var(--s1-line);border-radius:10px;background:var(--surface)}
+.dycv p{margin:0 0 4px;font-size:14px}.dycv .role{font:700 11px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+#dyK{display:grid;gap:12px}#dyK[hidden]{display:none}
+.dyhead p{margin:0 0 4px;font-size:14.5px;color:var(--ink-2)}.dyhead b{color:var(--ink)}
+.dyt{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}.dyt thead th{font-size:12.5px}
+.dyt th,.dyt td{border:1px solid var(--line);padding:6px 5px;text-align:center;overflow-wrap:break-word;hyphens:auto;vertical-align:middle}
+.dyt thead th{background:var(--code-bg);color:var(--ink)}
+.dyt tbody th{text-align:left;font-weight:600;color:var(--ink)}
+.dyt tbody th .role{display:block;font:700 10px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 </style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
@@ -687,7 +722,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
       <li><a href="exam-prep.html">Exam prep</a></li>
       <li aria-current="page"><a href="case-selection.html">Draft: Case selection</a></li>
     </ul>
-    <nav class="subnav" aria-label="Sections of this module"><div><p class="grp">Main sections</p><div class="tiles"><a href="#p1">Few cases, many variables</a><a href="#p2">Most similar systems<span class="sy">hypothesis testing</span></a><a href="#p3">Most different systems<span class="sy">theory building</span></a><a href="#p4">Controlling and tracing</a></div></div><div class="prac"><p class="grp">Practice</p><div class="tiles"><a href="#b2">MSS practice<span class="sy">13 cards</span></a><a href="#b3">MDS practice<span class="sy">6 cards</span></a><a href="#p5">Mixed practice<span class="sy">19 cards</span></a><a href="#p6">One case over time<span class="sy">coming later</span></a></div></div></nav>
+    <nav class="subnav" aria-label="Sections of this module"><div><p class="grp">Main sections</p><div class="tiles"><a href="#p1">Few cases, many variables</a><a href="#p2">Most similar systems<span class="sy">hypothesis testing</span></a><a href="#p3">Most different systems<span class="sy">theory building</span></a><a href="#p4">Controlling and tracing</a></div></div><div class="prac"><p class="grp">Practice</p><div class="tiles"><a href="#b2">MSS practice<span class="sy">13 cards</span></a><a href="#b3">MDS practice<span class="sy">6 cards</span></a><a href="#p5">Mixed practice<span class="sy">19 cards</span></a><a href="#p6">One case over time<span class="sy">coming later</span></a><a href="#own">Build your own<span class="sy">any design</span></a></div></div></nav>
   </div>
 </header>
 
@@ -806,6 +841,31 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <span class="tag">Coming later</span>
     <h2 style="margin:0;font-size:22px">Comparing one case over time</h2>
     <p>Within-case comparison treats one case at two points in time as if it were two cases, such as a country before and after it democratized, and then looks for what changed between the two periods. It works like an MSS design over time, with the added worry that earlier values of a variable can shape its later values. This section has not been written yet.</p>
+  </section>
+
+  <section class="part" id="own"><p class="kick">Part 6</p><h2>Build your own design</h2>
+    <p class="lede">This is where you build a design from scratch. You choose the design, the question, the variables and the cases, and you supply every value yourself, since the site does not check facts. What it does is show whether the logic of your design holds, with the same match strip and board you have used throughout this page. Nothing is saved, so copy your finished design down before you leave the page.</p></section>
+
+  <section class="dcard" id="diy">
+    <div class="dyblk"><h3>Step 1 · Choose a design</h3><div class="dtiles" id="dyT"></div></div>
+    <div class="dyblk dystep" hidden><h3>Step 2 · Your question and unit of analysis</h3>
+      <label class="dyl">Research question<input type="text" id="dyQ" placeholder="Does cold weather lower turnout?"></label>
+      <label class="dyl">Unit of analysis<input type="text" id="dyU" placeholder="the state"></label></div>
+    <div class="dyblk dystep" hidden><h3>Step 3 · Your variables</h3>
+      <p class="p">Name each variable and type its values, such as Yes and No, or Low, Medium and High. You will tap these values for each case in step 5, so a value spelled the same way always counts as the same value.</p>
+      <div id="dyV"></div></div>
+    <div class="dyblk dystep" hidden><h3 id="dyHh">Step 4</h3><div id="dyH"></div></div>
+    <div class="dyblk dystep" hidden><h3>Step 5 · Your cases</h3>
+      <div class="dytabs" id="dyCt"></div><div class="dycase" id="dyC"></div></div>
+    <div class="dyblk dystep" hidden><h3>Step 6 · Check the logic</h3>
+      <div id="dyW"></div>
+      <div id="dyK" hidden>
+        <div class="stripw"><p class="lab2">Match strip</p><div class="strip"></div></div>
+        <div class="boardw"><p class="lab2">Rival explanations</p><svg class="bd" id="dyBd" role="img" aria-label="Rival explanations board for your design"></svg><p class="ctr"></p><p class="bkey"></p></div>
+        <div class="cs-call" aria-live="polite"></div>
+      </div></div>
+    <div class="dyblk dystep" hidden><h3>Step 7 · Your design as a table</h3><div id="dyTab"></div></div>
+    <div class="btnrow"><button id="dyReset">Clear everything and start over</button></div>
   </section>
 
   <details class="srcd" id="refs">
@@ -1087,7 +1147,7 @@ function board(svg, items, outLab) {
       if (it.st === 'cut') s += `<text x="${x1 + 6}" y="${cy - 4}" class="cutlab halo">✂</text>`;
     }
     s += `<rect x="${bx}" y="${y}" width="${bw}" height="${rh - 6}" rx="7" class="bx ${it.st}"/>`;
-    s += `<text x="${bx + 9}" y="${y + 14}" class="bl ${it.st}">${esc(it.lab)}</text>`;
+    s += `<text x="${bx + 9}" y="${y + 14}" class="bl ${it.st}">${esc(it.lab.length > 25 ? it.lab.slice(0, 24) + '…' : it.lab)}</text>`;
     s += `<text x="${bx + 9}" y="${y + 28}" class="bs ${it.st}">${esc(it.sub || '')}</text>`;
   });
   s += `<rect x="${ox}" y="${oy}" width="${ow}" height="${oh}" rx="9" class="ob"/>`;
@@ -1100,6 +1160,107 @@ function counterText(names, verb) {
   if (!names.length) return 'No explanation is still standing.';
   if (names.length === 1) return `The only explanation still standing is ${names[0]}.`;
   return `The ${NUMW[names.length]} explanations still standing are ${listAnd(names)}.`;
+}
+
+/* ---------- shared renderers: match strip, board, readout ---------- */
+function diyDirection(s, p) {
+  const V = s.vars, e = s.expect, tl = lc(V[s.test].lab), ol = lc(V[s.out].lab);
+  const hit = p.filter(c => c.v[s.test] === e.tv);
+  let t = `You expected that when ${tl} is ${e.tv}, ${ol} would be ${e.ov}. `;
+  if (!hit.length) t += `None of your cases has ${e.tv} on ${tl}, so this set of cases cannot speak to the direction you expected.`;
+  else if (hit.every(c => c.v[s.out] === e.ov)) t += `${listAnd(hit.map(c => c.name))} ${hit.length > 1 ? 'have' : 'has'} ${e.tv} on ${tl} and ${e.ov} on ${ol}, so your cases line up with the direction you expected, and the comparison supports your hypothesis for these cases.`;
+  else t += `${listAnd(hit.map(c => c.name))} ${hit.length > 1 ? 'have' : 'has'} ${e.tv} on ${tl} but ${hit[0].v[s.out]} on ${ol}, so your cases run opposite to the direction you expected. That counts against your hypothesis for these cases, and it is a finding worth tracing in its own right.`;
+  return `<p>${esc(t)}</p><p>Now ask what evidence you would look for inside each case to show how ${esc(tl)} made the difference. That is the tracing half of a case study.</p>`;
+}
+function renderStrip(root, s, p, ev) {
+  const mds = s.design === 'MDS', V = s.vars;
+  const el = $('.strip', root); el.style.setProperty('--k', Math.max(p.length, 1));
+  if (!p.length) { el.innerHTML = '<p class="note">The strip fills in as you choose cases, with one row per variable and one column per case.</p>'; return; }
+  const order = mds ? [s.out].concat(s.ctl, s.tray) : s.ctl.concat([s.test, s.out]);
+  const role = k => k === s.test ? 'test variable' : k === s.out ? 'outcome' : (s.tray || []).includes(k) ? (s.diy ? 'further attribute' : 'tray') : mds ? 'should differ' : 'control';
+  let h = `<div class="srow names"><div class="cells">${p.map(c => `<span>${esc(c.name)}</span>`).join('')}</div></div>`;
+  if (mds && ev.open) h += s.diy ? `<p class="trayhd">Your cases share the outcome and differ on the rest, so your further attributes now count.</p>` : `<p class="trayhd">The tray is open. Tap a hidden attribute to turn it over.</p>`;
+  order.forEach(k => {
+    const r = ev.rows[k];
+    if ((s.tray || []).includes(k) && !ev.open) return;
+    if (r.st === 'hide') { h += `<button class="srow hidden" data-flip="${k}"><span class="hd"><span class="role">tray</span><b>${esc(V[k].lab)}</b><span class="st wait">tap to turn over</span></span><span class="cells">${p.map(() => '<span class="cell">?</span>').join('')}</span></button>`; return; }
+    h += `<div class="srow ${r.st}${k === s.test ? ' tv' : ''}"><div class="hd"><span class="role">${role(k)}</span><b>${esc(V[k].lab)}</b>${r.txt ? `<span class="st ${r.st}">${r.st === 'good' ? '✓ ' : r.st === 'bad' ? '✗ ' : ''}${esc(r.txt)}</span>` : ''}</div><div class="cells">` +
+      p.map((c, i) => `<span class="cell${r.odd && r.odd.includes(i) ? ' odd' : ''}">${esc(fmt(s, k, c.v[k]))}${c.d[k] ? `<small>${esc(c.d[k])}</small>` : ''}</span>`).join('') + `</div></div>`;
+  });
+  el.innerHTML = h;
+}
+function renderBoard(root, s, p, ev) {
+  const V = s.vars, mds = s.design === 'MDS';
+  const keys = mds ? s.ctl.concat(s.tray) : [s.test].concat(s.ctl);
+  const items = keys.map(k => {
+    const a = valsOf(s, p, k), tray = (s.tray || []).includes(k);
+    if (tray && (!ev.open || ev.rows[k].st === 'hide')) return {lab:V[k].short, sub:SUB.hide, st:'hide'};
+    if (p.length < 2) return {lab:V[k].short, sub:SUB.wait, st:'wait'};
+    const same = allSame(a);
+    if (mds) return same ? {lab:V[k].short, sub:SUB.shared, st:tray ? 'shared' : 'live'} : {lab:V[k].short, sub:SUB.differs, st:'cut'};
+    if (k === s.test) return same ? {lab:V[k].short, sub:SUB.same, st:'cut'} : {lab:V[k].short, sub:SUB.test, st:'test'};
+    return same ? {lab:V[k].short, sub:SUB.same, st:'cut'} : {lab:V[k].short, sub:SUB.vary, st:'live'};
+  });
+  board($('.bd', root), items, (V[s.out].short).replace(' ', '|'));
+  const live = keys.filter((k, j) => ['test','live','shared'].includes(items[j].st)).map(k => lc(V[k].lab));
+  $('.bkey', root).innerHTML = KEY[s.design];
+  $('.ctr', root).textContent = p.length < 2 ? 'Choose at least two cases to see which explanations the design cuts.' : counterText(live);
+}
+function renderReadout(root, s, p, ev) {
+  const V = s.vars, el = $('.cs-call', root), mds = s.design === 'MDS';
+  const nm = i => p[i].name, val = (i, k) => fmt(s, k, p[i].v[k]);
+  let h = '';
+  if (p.length < s.k) {
+    h = `<p>Choose ${NUMW[s.k - p.length]} more ${s.k - p.length === 1 ? 'case' : 'cases'} by tapping cards in the deck.${p.length >= 2 ? ' The strip and the board already show how the cases you have chosen compare.' : ''}</p>`;
+    el.className = 'cs-call wait'; el.innerHTML = h; return;
+  }
+  if (!mds) {
+    const probs = [];
+    s.ctl.forEach(k => { const r = ev.rows[k]; if (r.st !== 'bad') return;
+      const odd = r.odd.map(nm), rest = p.filter((_, i) => !r.odd.includes(i)).map(c => c.name);
+      probs.push(`${listAnd(odd)} ${odd.length > 1 ? 'differ' : 'differs'} from ${listAnd(rest)} on ${lc(V[k].lab)} (${listAnd(r.odd.map(i => val(i, k)))} rather than ${fmt(s, k, r.mode)}), so ${lc(V[k].lab)} could explain any difference in the outcome. Swap ${odd.length > 1 ? 'them' : odd[0]} for a case where it is ${fmt(s, k, r.mode)}${s.diy ? ', or reconsider whether that control belongs in your design' : ''}.`); });
+    if (ev.rows[s.test].st === 'bad') probs.push(`Every case you chose has the same value on ${lc(V[s.test].lab)} (${val(0, s.test)}), so the test variable cannot explain a difference. Swap one case for a case with a different value.`);
+    const ob = ev.rows[s.out];
+    if (ob.st === 'bad') {
+      ob.within.slice(0, 1).forEach(([i, j]) => probs.push(s.gap
+        ? `${nm(i)} and ${nm(j)} share the same value on the test variable, but they are ${Math.abs(p[i].v[s.out] - p[j].v[s.out]).toFixed(1)} points apart on ${lc(V[s.out].lab)}, more than the ${s.gap}-point line we set, so something besides the test variable is at work.`
+        : `${nm(i)} and ${nm(j)} share the same value on the test variable but differ on the outcome, so something besides the test variable is at work.`));
+      ob.across.slice(0, 1).forEach(([i, j]) => probs.push(s.gap
+        ? `${nm(i)} and ${nm(j)} differ on the test variable, but they are only ${Math.abs(p[i].v[s.out] - p[j].v[s.out]).toFixed(1)} points apart on ${lc(V[s.out].lab)}, under the ${s.gap}-point line. In MSS we look for cases where the outcome changes along with the test variable, and then trace how it happened.`
+        : `${nm(i)} and ${nm(j)} differ on the test variable but share the outcome (${val(i, s.out)}). In MSS we look for cases where the outcome changes along with the test variable, and then trace how it happened.`));
+    }
+    if (probs.length) { el.className = 'cs-call bad'; el.innerHTML = `<p class="kh">Not yet</p><ul>${probs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`; return; }
+    // valid
+    const g = {}; p.forEach(c => (g[c.v[s.test]] = g[c.v[s.test]] || []).push(c));
+    const ord = s.order || V[s.test].vals || [], oord = s.oorder || V[s.out].vals || [];
+    const lv = Object.keys(g).sort((a, b) => ord.indexOf(a) - ord.indexOf(b));
+    const score = c => s.gap ? c.v[s.out] : oord.indexOf(c.v[s.out]);
+    const avg = L => g[L].reduce((t, c) => t + score(c), 0) / g[L].length;
+    const dirv = Math.sign(avg(lv[lv.length - 1]) - avg(lv[0]));
+    const desc = lv.map(L => `${listAnd(g[L].map(c => c.name))} (${lc(V[s.test].lab)}: ${L}) ${g[L].length > 1 ? 'have' : 'has'} ${listAnd(s.gap ? g[L].map(c => fmt(s, s.out, c.v[s.out])) : [...new Set(g[L].map(c => c.v[s.out]))])}`).join(', while ');
+    const ctlTxt = listAnd(s.ctl.map(k => `${lc(V[k].lab)} (${val(0, k)})`));
+    el.className = 'cs-call good';
+    el.innerHTML = `<p class="kh">Your design holds</p>
+      <p>Every case you chose shares ${esc(ctlTxt)}, so the design cuts those arrows, and only the test variable is still standing. Within the cases, ${esc(desc)}.</p>
+      ${s.expect ? diyDirection(s, p) : `<p>The hypothesis was that ${esc(lc(s.hyp))} ${dirv === s.dir ? 'Your cases line up in that direction, so the comparison supports the hypothesis for these cases.' : 'Your cases line up in the opposite direction, so the comparison counts against the hypothesis for these cases, and that is a finding worth tracing in its own right.'} Tracing would then look inside each case for evidence of how ${esc(lc(V[s.test].lab))} made the difference.</p>`}
+      <p class="scope">These conclusions rest on a limited set of cases, so we cannot assume they apply to cases we have not studied. We would extend the analysis to other places or times, which the literature calls identifying scope conditions.</p>`;
+    return;
+  }
+  // MDS
+  const probs = [];
+  const ro = ev.rows[s.out];
+  if (ro.st === 'bad' && ro.odd.length === p.length) probs.push(`Your cases share an outcome, but it is ${val(0, s.out)} on ${lc(V[s.out].lab)}, and this card asks about cases where it is ${fmt(s, s.out, s.oval)}. Choose cases with that outcome.`);
+  else if (ro.st === 'bad') { const odd = ro.odd.map(nm); probs.push(`${listAnd(odd)} ${odd.length > 1 ? 'have' : 'has'} a different outcome from the rest (${listAnd(ro.odd.map(i => val(i, s.out)))} on ${lc(V[s.out].lab)}). In MDS every case must share the outcome, so swap ${odd.length > 1 ? 'them' : odd[0]} for a case where it is ${fmt(s, s.out, ro.mode)}.`); }
+  s.ctl.forEach(k => { if (ev.rows[k].st === 'bad') probs.push(`All of your cases share ${lc(V[k].lab)} (${val(0, k)}). In MDS a shared attribute competes as an explanation for the outcome, so choose cases that differ on it.`); });
+  if (probs.length) { el.className = 'cs-call bad'; el.innerHTML = `<p class="kh">Not yet</p><ul>${probs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`; return; }
+  if (!ev.done) { el.className = 'cs-call wait'; el.innerHTML = `<p>${esc(listAnd(p.map(c => c.name)))} share the outcome and differ on ${esc(listAnd(s.ctl.map(k => lc(V[k].lab))))}, so the cases are as different as this deck allows. Now turn over the attributes in the tray (in the match strip) and look for one that every case shares.</p>`; return; }
+  const f = ev.found;
+  let lead;
+  if (f.length === 1) lead = `<p class="kh">One attribute is shared</p><p>${esc(listAnd(p.map(c => c.name)))} differ on everything else ${s.diy ? 'you listed' : 'in the deck'}, but every one of them has ${esc(V[f[0]].lab.toLowerCase())} (${esc(val(0, f[0]))}). That shared attribute becomes a plausible explanation for the outcome they share.</p>`;
+  else if (f.length > 1) lead = `<p class="kh">${NUMW[f.length][0].toUpperCase() + NUMW[f.length].slice(1)} attributes are shared</p><p>Your cases share ${esc(listAnd(f.map(k => lc(V[k].lab) + ' (' + val(0, k) + ')')))}. Each is a plausible explanation, so we would trace evidence in each case, or add a case that shares the outcome but differs on one of them, to tell them apart.</p>`;
+  else lead = `<p class="kh">Nothing in the tray is shared</p><p>Your cases differ on every attribute in the tray, so this set of cases does not point to an explanation among them. We would look for other attributes the cases share, or try a different set of cases.</p>`;
+  el.className = 'cs-call good';
+  el.innerHTML = lead + (s.after ? `<p>${esc(s.after)}</p>` : '') + `<p class="scope">These conclusions rest on a limited set of cases, so we cannot assume they apply to cases we have not studied. We would extend the analysis to other places or times, which the literature calls identifying scope conditions.</p>`;
 }
 
 /* ---------- the builder (deck, slots, strip, board, readout) ---------- */
@@ -1161,100 +1322,11 @@ function Builder(root, scs, opt = {}) {
     const el = $('.slots', root); el.style.setProperty('--k', s.k);
     el.innerHTML = Array.from({length:s.k}, (_, j) => p[j] ? `<button class="slot on" data-j="${j}" aria-label="Remove ${esc(p[j].name)}"><span class="sn">${j + 1}</span>${esc(p[j].name)}</button>` : `<div class="slot">Slot ${j + 1}</div>`).join('');
   }
-  function strip(ev) {
-    const s = sc(), p = st.picks[s.id], mds = s.design === 'MDS', V = s.vars;
-    const el = $('.strip', root); el.style.setProperty('--k', Math.max(p.length, 1));
-    if (!p.length) { el.innerHTML = '<p class="note">The strip fills in as you choose cases, with one row per variable and one column per case.</p>'; return; }
-    const order = mds ? [s.out].concat(s.ctl, s.tray) : s.ctl.concat([s.test, s.out]);
-    const role = k => k === s.test ? 'test variable' : k === s.out ? 'outcome' : (s.tray || []).includes(k) ? 'tray' : mds ? 'should differ' : 'control';
-    let h = `<div class="srow names"><div class="cells">${p.map(c => `<span>${esc(c.name)}</span>`).join('')}</div></div>`;
-    if (mds && ev.open) h += `<p class="trayhd">The tray is open. Tap a hidden attribute to turn it over.</p>`;
-    order.forEach(k => {
-      const r = ev.rows[k];
-      if ((s.tray || []).includes(k) && !ev.open) return;
-      if (r.st === 'hide') { h += `<button class="srow hidden" data-flip="${k}"><span class="hd"><span class="role">tray</span><b>${esc(V[k].lab)}</b><span class="st wait">tap to turn over</span></span><span class="cells">${p.map(() => '<span class="cell">?</span>').join('')}</span></button>`; return; }
-      h += `<div class="srow ${r.st}${k === s.test ? ' tv' : ''}"><div class="hd"><span class="role">${role(k)}</span><b>${esc(V[k].lab)}</b>${r.txt ? `<span class="st ${r.st}">${r.st === 'good' ? '✓ ' : r.st === 'bad' ? '✗ ' : ''}${esc(r.txt)}</span>` : ''}</div><div class="cells">` +
-        p.map((c, i) => `<span class="cell${r.odd && r.odd.includes(i) ? ' odd' : ''}">${esc(fmt(s, k, c.v[k]))}${c.d[k] ? `<small>${esc(c.d[k])}</small>` : ''}</span>`).join('') + `</div></div>`;
-    });
-    el.innerHTML = h;
-  }
-  function brd(ev) {
-    const s = sc(), p = st.picks[s.id], V = s.vars, mds = s.design === 'MDS';
-    const keys = mds ? s.ctl.concat(s.tray) : [s.test].concat(s.ctl);
-    const items = keys.map(k => {
-      const a = valsOf(s, p, k), tray = (s.tray || []).includes(k);
-      if (tray && (!ev.open || ev.rows[k].st === 'hide')) return {lab:V[k].short, sub:SUB.hide, st:'hide'};
-      if (p.length < 2) return {lab:V[k].short, sub:SUB.wait, st:'wait'};
-      const same = allSame(a);
-      if (mds) return same ? {lab:V[k].short, sub:SUB.shared, st:tray ? 'shared' : 'live'} : {lab:V[k].short, sub:SUB.differs, st:'cut'};
-      if (k === s.test) return same ? {lab:V[k].short, sub:SUB.same, st:'cut'} : {lab:V[k].short, sub:SUB.test, st:'test'};
-      return same ? {lab:V[k].short, sub:SUB.same, st:'cut'} : {lab:V[k].short, sub:SUB.vary, st:'live'};
-    });
-    board($('.bd', root), items, (V[s.out].short).replace(' ', '|'));
-    const live = keys.filter((k, j) => ['test','live','shared'].includes(items[j].st)).map(k => lc(V[k].lab));
-    $('.bkey', root).innerHTML = KEY[s.design];
-    $('.ctr', root).textContent = p.length < 2 ? 'Choose at least two cases to see which explanations the design cuts.' : counterText(live);
-  }
-  function readout(ev) {
-    const s = sc(), p = st.picks[s.id], V = s.vars, el = $('.cs-call', root), mds = s.design === 'MDS';
-    const nm = i => p[i].name, val = (i, k) => fmt(s, k, p[i].v[k]);
-    let h = '';
-    if (p.length < s.k) {
-      h = `<p>Choose ${NUMW[s.k - p.length]} more ${s.k - p.length === 1 ? 'case' : 'cases'} by tapping cards in the deck.${p.length >= 2 ? ' The strip and the board already show how the cases you have chosen compare.' : ''}</p>`;
-      el.className = 'cs-call wait'; el.innerHTML = h; return;
-    }
-    if (!mds) {
-      const probs = [];
-      s.ctl.forEach(k => { const r = ev.rows[k]; if (r.st !== 'bad') return;
-        const odd = r.odd.map(nm), rest = p.filter((_, i) => !r.odd.includes(i)).map(c => c.name);
-        probs.push(`${listAnd(odd)} ${odd.length > 1 ? 'differ' : 'differs'} from ${listAnd(rest)} on ${lc(V[k].lab)} (${listAnd(r.odd.map(i => val(i, k)))} rather than ${fmt(s, k, r.mode)}), so ${lc(V[k].lab)} could explain any difference in the outcome. Swap ${odd.length > 1 ? 'them' : odd[0]} for a case where it is ${fmt(s, k, r.mode)}.`); });
-      if (ev.rows[s.test].st === 'bad') probs.push(`Every case you chose has the same value on ${lc(V[s.test].lab)} (${val(0, s.test)}), so the test variable cannot explain a difference. Swap one case for a case with a different value.`);
-      const ob = ev.rows[s.out];
-      if (ob.st === 'bad') {
-        ob.within.slice(0, 1).forEach(([i, j]) => probs.push(s.gap
-          ? `${nm(i)} and ${nm(j)} share the same value on the test variable, but they are ${Math.abs(p[i].v[s.out] - p[j].v[s.out]).toFixed(1)} points apart on ${lc(V[s.out].lab)}, more than the ${s.gap}-point line we set, so something besides the test variable is at work.`
-          : `${nm(i)} and ${nm(j)} share the same value on the test variable but differ on the outcome, so something besides the test variable is at work.`));
-        ob.across.slice(0, 1).forEach(([i, j]) => probs.push(s.gap
-          ? `${nm(i)} and ${nm(j)} differ on the test variable, but they are only ${Math.abs(p[i].v[s.out] - p[j].v[s.out]).toFixed(1)} points apart on ${lc(V[s.out].lab)}, under the ${s.gap}-point line. In MSS we look for cases where the outcome changes along with the test variable, and then trace how it happened.`
-          : `${nm(i)} and ${nm(j)} differ on the test variable but share the outcome (${val(i, s.out)}). In MSS we look for cases where the outcome changes along with the test variable, and then trace how it happened.`));
-      }
-      if (probs.length) { el.className = 'cs-call bad'; el.innerHTML = `<p class="kh">Not yet</p><ul>${probs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`; return; }
-      // valid
-      const g = {}; p.forEach(c => (g[c.v[s.test]] = g[c.v[s.test]] || []).push(c));
-      const lv = Object.keys(g).sort((a, b) => s.order.indexOf(a) - s.order.indexOf(b));
-      const score = c => s.gap ? c.v[s.out] : s.oorder.indexOf(c.v[s.out]);
-      const avg = L => g[L].reduce((t, c) => t + score(c), 0) / g[L].length;
-      const dirv = Math.sign(avg(lv[lv.length - 1]) - avg(lv[0]));
-      const desc = lv.map(L => `${listAnd(g[L].map(c => c.name))} (${lc(V[s.test].lab)}: ${L}) ${g[L].length > 1 ? 'have' : 'has'} ${listAnd(g[L].map(c => fmt(s, s.out, c.v[s.out])))}`).join(', while ');
-      const ctlTxt = listAnd(s.ctl.map(k => `${lc(V[k].lab)} (${val(0, k)})`));
-      el.className = 'cs-call good';
-      el.innerHTML = `<p class="kh">Your design holds</p>
-        <p>Every case you chose shares ${esc(ctlTxt)}, so the design cuts those arrows, and only the test variable is still standing. Within the cases, ${esc(desc)}.</p>
-        <p>The hypothesis was that ${esc(lc(s.hyp))} ${dirv === s.dir ? 'Your cases line up in that direction, so the comparison supports the hypothesis for these cases.' : 'Your cases line up in the opposite direction, so the comparison counts against the hypothesis for these cases, and that is a finding worth tracing in its own right.'} Tracing would then look inside each case for evidence of how ${esc(lc(V[s.test].lab))} made the difference.</p>
-        <p class="scope">These conclusions rest on a limited set of cases, so we cannot assume they apply to cases we have not studied. We would extend the analysis to other places or times, which the literature calls identifying scope conditions.</p>`;
-      return;
-    }
-    // MDS
-    const probs = [];
-    const ro = ev.rows[s.out];
-    if (ro.st === 'bad' && ro.odd.length === p.length) probs.push(`Your cases share an outcome, but it is ${val(0, s.out)} on ${lc(V[s.out].lab)}, and this card asks about cases where it is ${fmt(s, s.out, s.oval)}. Choose cases with that outcome.`);
-    else if (ro.st === 'bad') { const odd = ro.odd.map(nm); probs.push(`${listAnd(odd)} ${odd.length > 1 ? 'have' : 'has'} a different outcome from the rest (${listAnd(ro.odd.map(i => val(i, s.out)))} on ${lc(V[s.out].lab)}). In MDS every case must share the outcome, so swap ${odd.length > 1 ? 'them' : odd[0]} for a case where it is ${fmt(s, s.out, ro.mode)}.`); }
-    s.ctl.forEach(k => { if (ev.rows[k].st === 'bad') probs.push(`All of your cases share ${lc(V[k].lab)} (${val(0, k)}). In MDS a shared attribute competes as an explanation for the outcome, so choose cases that differ on it.`); });
-    if (probs.length) { el.className = 'cs-call bad'; el.innerHTML = `<p class="kh">Not yet</p><ul>${probs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`; return; }
-    if (!ev.done) { el.className = 'cs-call wait'; el.innerHTML = `<p>${esc(listAnd(p.map(c => c.name)))} share the outcome and differ on ${esc(listAnd(s.ctl.map(k => lc(V[k].lab))))}, so the cases are as different as this deck allows. Now turn over the attributes in the tray (in the match strip) and look for one that every case shares.</p>`; return; }
-    const f = ev.found;
-    let lead;
-    if (f.length === 1) lead = `<p class="kh">One attribute is shared</p><p>${esc(listAnd(p.map(c => c.name)))} differ on everything else in the deck, but every one of them has ${esc(V[f[0]].lab.toLowerCase())} (${esc(val(0, f[0]))}). That shared attribute becomes a plausible explanation for the outcome they share.</p>`;
-    else if (f.length > 1) lead = `<p class="kh">${NUMW[f.length][0].toUpperCase() + NUMW[f.length].slice(1)} attributes are shared</p><p>Your cases share ${esc(listAnd(f.map(k => lc(V[k].lab) + ' (' + val(0, k) + ')')))}. Each is a plausible explanation, so we would trace evidence in each case, or add a case that shares the outcome but differs on one of them, to tell them apart.</p>`;
-    else lead = `<p class="kh">Nothing in the tray is shared</p><p>Your cases differ on every attribute in the tray, so this set of cases does not point to an explanation among them. We would look for other attributes the cases share, or try a different set of cases.</p>`;
-    el.className = 'cs-call good';
-    el.innerHTML = lead + (s.after ? `<p>${esc(s.after)}</p>` : '') + `<p class="scope">These conclusions rest on a limited set of cases, so we cannot assume they apply to cases we have not studied. We would extend the analysis to other places or times, which the literature calls identifying scope conditions.</p>`;
-  }
   function update(all) {
     const s = sc(), p = st.picks[s.id];
     if (all) head();
     const ev = s.design === 'MDS' ? evalMDS(s, p, st.flips[s.id]) : evalMSS(s, p);
-    slots(); deck(); strip(ev); brd(ev); readout(ev);
+    slots(); deck(); renderStrip(root, s, p, ev); renderBoard(root, s, p, ev); renderReadout(root, s, p, ev);
   }
   root.addEventListener('click', e => {
     const s = sc(), p = st.picks[s.id], b = e.target.closest('button'); if (!b || !root.contains(b)) return;
@@ -1356,8 +1428,137 @@ function womenWorked() {
   board($('#wmBd'), items, 'Women|30%+');
 }
 
+/* ---------- Part 6: build your own design ---------- */
+function diyBuilder() {
+  const root = $('#diy');
+  const LAY = {
+    MSS:[['test','Test variable','the potential cause your hypothesis names',1,1],['ctl','Controls','variables you will hold the same in every case',1,8],['out','Outcome','what you expect the test variable to change',1,1]],
+    MDS:[['out','Outcome','the outcome your cases will share',1,1],['dif','Attributes that should differ','ways your cases should be as different as possible',1,8],['fur','Further attributes to search','attributes you will check for something shared once the cases are set',1,8]]
+  };
+  let n = 0; const nid = () => 'v' + (++n);
+  const D = {design:null, q:'', unit:'', vars:[], ex:{tv:'', ov:''}, oval:'', cases:[], cur:0};
+  const fresh = d => LAY[d].flatMap(([r]) => (r === 'ctl' || r === 'dif' ? [0, 1] : [0]).map(() => ({id:nid(), role:r, name:'', vals:[]})));
+  const named = () => D.vars.filter(v => v.name.trim());
+  const vname = v => v.name.trim() || 'an unnamed variable';
+  const roleOf = r => ({test:'test variable', ctl:'control', out:'outcome', dif:'should differ', fur:'further attribute'})[r];
+  const ordered = () => LAY[D.design].flatMap(([r]) => D.vars.filter(v => v.role === r));
+  const q = s => root.querySelector(s);
+
+  function tiles() {
+    q('#dyT').innerHTML = ['MSS','MDS'].map(d => `<button class="dtile${D.design === d ? ' on' : ''}" data-design="${d}"${D.design === d ? ' aria-current="true"' : ''}><b>${d === 'MSS' ? 'Most similar systems' : 'Most different systems'}</b><span>${d === 'MSS' ? 'Start from a hypothesis. The test variable comes first.' : 'Start from an outcome your cases share.'}</span></button>`).join('');
+    root.querySelectorAll('.dystep').forEach(e => e.hidden = !D.design);
+  }
+  function editor() {
+    if (!D.design) return;
+    q('#dyV').innerHTML = LAY[D.design].map(([r, lab, gloss, mn, mx]) => {
+      const vs = D.vars.filter(v => v.role === r);
+      const few = (r === 'ctl' || r === 'dif') && vs.length < 2;
+      return `<div class="dysec"><p class="dyh"><b>${lab}</b> <span>(${gloss})</span></p>` + vs.map(v => `
+        <div class="dyvar" data-v="${v.id}">
+          <div class="dyrow"><input type="text" class="dyname" data-v="${v.id}" value="${esc(v.name)}" placeholder="Name, such as ${r === 'test' ? 'cold November' : r === 'out' ? (D.design === 'MSS' ? 'turnout' : 'revolution') : 'region'}" aria-label="${lab} name">${vs.length > mn ? `<button class="dyx" data-delv="${v.id}" aria-label="Remove this variable">✕</button>` : ''}</div>
+          <div class="dyvals">${v.vals.map((x, i) => `<span class="vchip ed">${esc(x)}<button data-delval="${v.id}|${i}" aria-label="Remove value ${esc(x)}">✕</button></span>`).join('')}
+            <span class="dyadd"><input type="text" data-addv="${v.id}" placeholder="${v.vals.length ? 'Another value' : 'A value, such as Yes'}" aria-label="New value"><button data-addbtn="${v.id}">Add value</button></span></div>
+        </div>`).join('') +
+        (vs.length < mx ? `<button class="dymore" data-addvar="${r}">+ Add ${r === 'ctl' ? 'a control' : r === 'dif' ? 'an attribute that should differ' : 'a further attribute'}</button>` : '') +
+        (few ? `<p class="dyrem">${r === 'ctl' ? 'A reminder that we usually want at least two controls, since every rival we leave out of the design is one the design cannot cut.' : 'A reminder that MDS cases should differ in as many ways as we can determine, so list at least two attributes on which they differ.'}</p>` : '') + `</div>`;
+    }).join('');
+  }
+  function hyp() {
+    if (!D.design) return;
+    const el = q('#dyH');
+    if (D.design === 'MSS') {
+      const t = D.vars.find(v => v.role === 'test'), o = D.vars.find(v => v.role === 'out');
+      const sel = (v, k) => `<select data-ex="${k}" aria-label="Expected value"><option value="">choose a value</option>${v.vals.map(x => `<option${D.ex[k] === x ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>`;
+      q('#dyHh').textContent = 'Step 4 · Your expected direction';
+      el.innerHTML = t.vals.length && o.vals.length ? `<p class="dysent">I expect that when <b>${esc(vname(t))}</b> is ${sel(t, 'tv')}, <b>${esc(vname(o))}</b> will be ${sel(o, 'ov')}.</p>` : '<p class="note">Give the test variable and the outcome their values in step 3, and this sentence will fill in.</p>';
+    } else {
+      const o = D.vars.find(v => v.role === 'out');
+      q('#dyHh').textContent = 'Step 4 · The outcome your cases share';
+      el.innerHTML = o.vals.length ? `<p class="dysent">Every case I choose will have <b>${esc(vname(o))}</b> at <select data-oval="1" aria-label="Shared outcome"><option value="">choose a value</option>${o.vals.map(x => `<option${D.oval === x ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>.</p>` : '<p class="note">Give the outcome its values in step 3, and this sentence will fill in.</p>';
+    }
+  }
+  function cases() {
+    if (!D.design) return;
+    const tabs = D.cases.map((c, i) => `<button class="dytab${i === D.cur ? ' on' : ''}" data-tab="${i}" aria-pressed="${i === D.cur}">${esc(c.name.trim() || 'Case ' + (i + 1))}</button>`).join('') + (D.cases.length < 5 ? `<button class="dytab add" data-addcase="1">+ Add a case</button>` : '');
+    q('#dyCt').innerHTML = tabs;
+    const c = D.cases[D.cur], el = q('#dyC');
+    if (!c) { el.innerHTML = '<p class="note">Add your first case. You can have two to five, and case studies take a long time to carry out, so choose the number on purpose.</p>'; return; }
+    el.innerHTML = `<div class="dyrow"><input type="text" class="dycname" value="${esc(c.name)}" placeholder="Case name, such as Wisconsin" aria-label="Case name"><button class="dyx" data-delcase="${D.cur}" aria-label="Remove this case">✕</button></div>` +
+      ordered().map(v => `<div class="dycv"><p><span class="role">${roleOf(v.role)}</span> <b>${esc(vname(v))}</b></p><div class="chips">${v.vals.length ? v.vals.map(x => `<button data-setv="${v.id}" data-val="${esc(x)}" aria-pressed="${c.v[v.id] === x}">${esc(x)}</button>`).join('') : '<span class="note">No values yet.</span>'}</div></div>`).join('');
+  }
+  function check() {
+    const el = q('#dyK'), wait = q('#dyW');
+    const miss = [];
+    if (!D.design) { el.hidden = true; wait.innerHTML = ''; return; }
+    D.vars.forEach(v => { if (!v.name.trim()) miss.push(`name the ${roleOf(v.role)} that is still blank`); else if (v.vals.length < 2) miss.push(`give ${v.name.trim()} at least two values`); });
+    if (D.cases.length < 2) miss.push(`add ${D.cases.length ? 'one more case' : 'at least two cases'}`);
+    D.cases.forEach((c, i) => { const nm = c.name.trim() || 'Case ' + (i + 1); if (!c.name.trim()) miss.push(`name Case ${i + 1}`); const un = D.vars.filter(v => v.name.trim() && !c.v[v.id]).map(vname); if (un.length) miss.push(`choose ${nm}'s value on ${listAnd(un)}`); });
+    if (D.design === 'MSS' && (!D.ex.tv || !D.ex.ov)) miss.push('finish the sentence on your expected direction in step 4');
+    if (D.design === 'MDS' && !D.oval) miss.push('choose the outcome your cases share in step 4');
+    if (miss.length) { el.hidden = true; wait.innerHTML = `<div class="cs-call wait"><p>Before the site can check the logic, you still need to ${esc(listAnd([...new Set(miss)].slice(0, 6)))}.</p></div>`; table(false); return; }
+    wait.innerHTML = ''; el.hidden = false;
+    const vars = {}; D.vars.forEach(v => vars[v.id] = {lab:v.name.trim(), short:v.name.trim(), vals:v.vals});
+    const by = r => D.vars.filter(v => v.role === r).map(v => v.id);
+    const sc = D.design === 'MSS'
+      ? {diy:true, design:'MSS', vars, test:by('test')[0], ctl:by('ctl'), out:by('out')[0], k:D.cases.length, expect:D.ex}
+      : {diy:true, design:'MDS', vars, out:by('out')[0], ctl:by('dif'), tray:by('fur'), k:D.cases.length, oval:D.oval};
+    const p = D.cases.map((c, i) => ({id:'c' + i, name:c.name.trim(), v:Object.assign({}, c.v), d:{}}));
+    const ev = sc.design === 'MDS' ? evalMDS(sc, p, new Set(sc.tray)) : evalMSS(sc, p);
+    renderStrip(el, sc, p, ev); renderBoard(el, sc, p, ev); renderReadout(el, sc, p, ev);
+    table(true);
+  }
+  function table(show) {
+    const el = q('#dyTab');
+    if (!show) { el.innerHTML = '<p class="note">Your design appears here as a table once every step is filled in.</p>'; return; }
+    const V = ordered();
+    const head = D.design === 'MSS'
+      ? `<p><b>Design:</b> most similar systems (hypothesis testing)</p><p><b>Question:</b> ${esc(D.q.trim() || '(not written yet)')}</p><p><b>Unit of analysis:</b> ${esc(D.unit.trim() || '(not written yet)')}</p><p><b>Hypothesis:</b> When ${esc(vname(D.vars.find(v => v.role === 'test')))} is ${esc(D.ex.tv)}, ${esc(vname(D.vars.find(v => v.role === 'out')))} will be ${esc(D.ex.ov)}.</p>`
+      : `<p><b>Design:</b> most different systems (theory building)</p><p><b>Question:</b> ${esc(D.q.trim() || '(not written yet)')}</p><p><b>Unit of analysis:</b> ${esc(D.unit.trim() || '(not written yet)')}</p><p><b>Shared outcome:</b> ${esc(vname(D.vars.find(v => v.role === 'out')))} is ${esc(D.oval)} in every case.</p>`;
+    el.innerHTML = `<div class="dyhead">${head}</div><table class="dyt"><thead><tr><th>Variable</th>${D.cases.map(c => `<th>${esc(c.name.trim())}</th>`).join('')}</tr></thead><tbody>` +
+      V.map(v => `<tr><th><span class="role">${roleOf(v.role)}</span>${esc(v.name.trim())}</th>${D.cases.map(c => `<td>${esc(c.v[v.id] || '')}</td>`).join('')}</tr>`).join('') + `</tbody></table>`;
+  }
+  const deps = () => { hyp(); cases(); check(); };
+  function all() { tiles(); editor(); deps(); }
+  function addVal(id) {
+    const inp = root.querySelector(`[data-addv="${id}"]`), v = D.vars.find(x => x.id === id), x = inp.value.trim();
+    if (!x) return;
+    if (v.vals.some(y => y.toLowerCase() === x.toLowerCase())) { inp.value = ''; return; }
+    v.vals.push(x); editor(); deps();
+    const again = root.querySelector(`[data-addv="${id}"]`); if (again) again.focus();
+  }
+  root.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const d = b.dataset;
+    if (d.design) { if (D.design !== d.design) { D.design = d.design; D.vars = fresh(d.design); D.ex = {tv:'', ov:''}; D.oval = ''; D.cases.forEach(c => c.v = {}); } all(); }
+    else if (d.addvar) { D.vars.push({id:nid(), role:d.addvar, name:'', vals:[]}); editor(); deps(); }
+    else if (d.delv) { D.vars = D.vars.filter(v => v.id !== d.delv); D.cases.forEach(c => delete c.v[d.delv]); editor(); deps(); }
+    else if (d.addbtn) addVal(d.addbtn);
+    else if (d.delval) { const [id, i] = d.delval.split('|'), v = D.vars.find(x => x.id === id), x = v.vals[+i]; v.vals.splice(+i, 1); D.cases.forEach(c => { if (c.v[id] === x) delete c.v[id]; }); if (D.ex.tv === x || D.ex.ov === x) D.ex = {tv:D.ex.tv === x ? '' : D.ex.tv, ov:D.ex.ov === x ? '' : D.ex.ov}; if (D.oval === x) D.oval = ''; editor(); deps(); }
+    else if (d.addcase) { D.cases.push({name:'', v:{}}); D.cur = D.cases.length - 1; deps(); const f = q('.dycname'); if (f) f.focus(); }
+    else if (d.tab) { D.cur = +d.tab; cases(); }
+    else if (d.delcase !== undefined) { D.cases.splice(+d.delcase, 1); D.cur = Math.max(0, Math.min(D.cur, D.cases.length - 1)); deps(); }
+    else if (d.setv) { const c = D.cases[D.cur]; c.v[d.setv] = c.v[d.setv] === d.val ? undefined : d.val; if (!c.v[d.setv]) delete c.v[d.setv]; cases(); check(); }
+    else if (b.id === 'dyReset') { D.design = null; D.q = ''; D.unit = ''; D.vars = []; D.cases = []; D.cur = 0; q('#dyQ').value = ''; q('#dyU').value = ''; all(); }
+  });
+  root.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset.addv) { e.preventDefault(); addVal(e.target.dataset.addv); } });
+  root.addEventListener('input', e => {
+    const t = e.target;
+    if (t.id === 'dyQ') { D.q = t.value; table(!q('#dyK').hidden); }
+    else if (t.id === 'dyU') { D.unit = t.value; table(!q('#dyK').hidden); }
+    else if (t.classList.contains('dyname')) { D.vars.find(v => v.id === t.dataset.v).name = t.value; hyp(); check();
+      const c = D.cases[D.cur]; if (c) cases(); }
+    else if (t.classList.contains('dycname')) { D.cases[D.cur].name = t.value; const tb = root.querySelector(`.dytab[data-tab="${D.cur}"]`); if (tb) tb.textContent = t.value.trim() || 'Case ' + (D.cur + 1); check(); }
+  });
+  root.addEventListener('change', e => {
+    const t = e.target;
+    if (t.dataset.ex) { D.ex[t.dataset.ex] = t.value; check(); }
+    else if (t.dataset.oval) { D.oval = t.value; check(); }
+  });
+  all();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  partOne(); threeCase(); swissGerman(); womenWorked();
+  partOne(); threeCase(); swissGerman(); womenWorked(); diyBuilder();
   document.querySelectorAll('.bkey[data-k]').forEach(e => e.innerHTML = KEY[e.dataset.k]);
   const by = id => SCEN.find(s => s.id === id);
   const MSSD = ['cold','hate','med','sdr','gov','close','winlaw','prw','prt','lip','col','frac','suf'].map(by);
