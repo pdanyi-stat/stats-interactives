@@ -779,15 +779,16 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <section class="dcard" id="wm">
     <h3>A worked example on women in parliament</h3>
-    <p class="p">Why do some countries elect many women to parliament? We start from the outcome, so we look for countries where women held 30% or more of the lower-house seats in 2005, using the class World data (World.sav). Argentina, South Africa and Sweden all cleared that mark, and they differ in region, predominant religion, wealth and colonial history about as much as three countries can. Once the cases were chosen, we turned over three further attributes to see whether any of them is shared.</p>
+    <p class="p">Why do some countries elect many women to parliament? We start from the outcome, so we look for countries where women held 30% or more of the lower-house seats in 2005, using the class World data (World.sav). Argentina, South Africa and Sweden all cleared that mark, and they differ in region, predominant religion, wealth and colonial history about as much as three countries can. Once the cases were chosen, we turned over four further attributes to see whether any of them is shared. The gender quota row comes from International IDEA's Gender Quotas Database rather than the World data.</p>
     <div class="split">
       <div><p class="lab2">Match strip</p><div class="strip" id="wmT"></div></div>
       <div><p class="lab2">Rival explanations</p><svg class="bd" id="wmBd" role="img" aria-label="Rival explanations for many women in parliament"></svg>
-        <p class="ctr">The only explanation still standing is a PR system.</p>
+        <p class="ctr">The two explanations still standing are a PR system and gender quotas.</p>
         <p class="legend"><span><i class="s"></i>shared, so still standing</span><span><i class="c"></i>differs, so cut</span></p><p class="bkey" data-k="MDS"></p></div>
     </div>
-    <div class="cs-call"><p>In this design the colors flip, so every row that differs turns green. Region, religion, wealth and colonial ruler all differ across the three countries, so none of them can explain an outcome the three share, and their arrows are cut. The same goes for the timing of women's suffrage (1947, 1930 and 1921) and the regime type. All three countries elect their lower house by proportional representation, so PR is the one arrow left and becomes a plausible explanation for the many women in their parliaments.</p>
-      <p>A plausible explanation is where MDS stops and the next round of work begins. Tracing would look at how parties in each country drew up their candidate lists, and an MSS design would test whether PR makes the difference among countries that are otherwise alike. The practice deck below and the MSS deck in Part 2 each have a card on it.</p></div>
+    <div class="cs-call"><p>In this design the colors flip, so every row that differs turns green. Region, religion, wealth and colonial ruler all differ across the three countries, so none of them can explain an outcome the three share, and their arrows are cut. The same goes for the timing of women's suffrage and the regime type. Two arrows survive. All three countries elect their lower house by proportional representation, and all three also used gender quotas of some kind around 2005, Argentina by law since 1991 and South Africa's ANC and Sweden's major parties through voluntary party quotas.</p>
+      <p>The design cannot tell these two apart, and they often travel together, since a quota is easiest to apply to a party list. This is the main limit of MDS. An attribute we never check can never be cut, so if we had left quotas off the strip, PR would have looked like the only explanation still standing. Tracing would look at how parties in each country drew up their candidate lists, and an MSS design could compare PR countries with and without quotas.</p>
+      <p>The suffrage row also holds a small measurement lesson. The World data date South African women's suffrage to 1930, but that law covered white women only, and all South African women could vote only from 1994. The dates differ across the three countries either way, so the design does not change, but it is a reminder to check what a coded value actually measures.</p></div>
   </section>
 
   <section class="dcard" id="b3"></section>
@@ -874,6 +875,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
       <li>Ballotpedia. 2024. "Same-day voter registration, 2024." Based on NCSL, "Same-Day Voter Registration," September 10, 2024. <a href="https://ballotpedia.org/Same-day_voter_registration,_2024">ballotpedia.org</a></li>
       <li>Ballotpedia. "States with initiative or referendum." <a href="https://ballotpedia.org/States_with_initiative_or_referendum">ballotpedia.org</a></li>
       <li>Ballotpedia. 2024. "Gubernatorial elections, 2024." <a href="https://ballotpedia.org/Gubernatorial_elections,_2024">ballotpedia.org</a></li>
+      <li>International IDEA, Inter-Parliamentary Union and Stockholm University. Gender Quotas Database. <a href="https://www.idea.int/data-tools/data/gender-quotas-database">idea.int</a></li>
       <li>Janssen Danyi, Claudia, and Paul Janssen Danyi. 2024. "The Comparative Method of Most-Similar and Most-Different Systems for Crisis Communication Research." <i>Communication &amp; Methods</i> 6 (2): 62–81. <a href="https://doi.org/10.35951/v6i2.238">doi.org/10.35951/v6i2.238</a></li>
       <li>KFF. 2026. "Status of State Action on the Medicaid Expansion Decision." <a href="https://www.kff.org/affordable-care-act/state-indicator/state-activity-around-expanding-medicaid-under-the-affordable-care-act/">kff.org</a></li>
       <li>Lijphart, Arend. 1971. "Comparative Politics and the Comparative Method." <i>American Political Science Review</i> 65 (3): 682–93.</li>
@@ -885,6 +887,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
       <li>The Green Papers. "2024 Presidential Election by State." Certified popular vote by state. <a href="https://www.thegreenpapers.com/G24/President-Details.phtml">thegreenpapers.com</a></li>
       <li>U.S. Census Bureau. 2025. City and Town Population Totals, Vintage 2024 (incorporated places of 250,000 or more, July 1, 2024).</li>
       <li>U.S. Census Bureau. Census regions and divisions of the United States.</li>
+      <li>Walker, Cheryl. 1990. "The Women's Suffrage Movement: The Politics of Gender, Race and Class." In <i>Women and Gender in Southern Africa to 1945</i>, ed. Cheryl Walker. Cape Town: David Philip.</li>
       <li>World data (World.sav, class dataset). Region, predominant religion, GDP per capita, former colonial ruler, PR system, women in the lower house (2005), turnout in the 1990s, democracy, Freedom House rating, ethnic fractionalization, women's suffrage, regime type and the share of democracies in the region.</li>
     </ol>
   </details>
@@ -945,7 +948,11 @@ const WV = {
   demo5:  {lab:'Share of other democracies in the region', short:'Democratic nbrs.'}
 };
 WORLD.forEach(c => { c.w30 = c.women === null ? null : c.women >= 30 ? 'Yes' : 'No'; c.t80 = c.vt === null ? null : c.vt >= 80 ? 'Yes' : 'No'; });
-const worldCase = c => ({id:c.id, name:c.n, v:c, d:Object.fromEntries(Object.entries(WV).map(([k, x]) => [k, x.det ? x.det(c) : '']))});
+const worldCase = c => {
+  const o = {id:c.id, name:c.n, v:c, d:Object.fromEntries(Object.entries(WV).map(([k, x]) => [k, x.det ? x.det(c) : '']))};
+  if (c.n === 'South Africa') o.d.suf = 'in 1930, white women only (all women in 1994)';
+  return o;
+};
 const WPOOL = WORLD.map(worldCase);
 const wpool = (keys, f = () => true) => WPOOL.filter(c => keys.every(k => c.v[k] !== null && c.v[k] !== undefined) && f(c.v));
 const isDem = v => v.democ === 'Yes';
@@ -1062,7 +1069,7 @@ const SCEN = [
    q:'Why do some countries elect many women to parliament?',
    unit:'the country (countries in the World data with 2005 figures)', out:'w30', ctl:['region','rel','gdp3'], tray:['pr','suf','regime'],
    setup:WSET + ' Thirteen of the countries in this deck had women in 30% or more of their lower-house seats in 2005. Choose three of them that differ on region, predominant religion and GDP per capita. A PR electoral system, the timing of women\'s suffrage and the regime type stay hidden in the tray until you have chosen.',
-   after:'The worked example in Part 3 found the same pattern, and the MSS card on PR and women in parliament tests it.'},
+   after:'The worked example in Part 3 found PR shared as well, along with gender quotas, which this tray does not hold. An attribute that is not in the tray can never be cut, so it can hide behind whatever we did check.'},
   {id:'pdem', design:'MDS', oval:'Yes', title:'Democracy in poor countries', k:3, vars:WV, pool:wpool(['democ','region','rel','colony','frac','pr','demo5'], v => v.gdp3 === 'Low'),
    q:'What do poor countries that are democracies have in common?',
    unit:'the country (low-income countries in the World data)', out:'democ', ctl:['region','rel','colony'], tray:['frac','pr','demo5'],
@@ -1416,15 +1423,17 @@ function swissGerman() {
 
 /* ---------- Part 3: a worked MDS example from the World data ---------- */
 function womenWorked() {
-  const sc = {vars:WV, out:'w30', ctl:['region','rel','gdp3','colony'], tray:['pr','suf','regime'], k:3, design:'MDS'};
-  const P = ['Argentina','South Africa','Sweden'].map(n => WPOOL.find(c => c.name === n));
+  const V = Object.assign({}, WV, {quota:{lab:'Gender quota in use around 2005', short:'Gender quota'}});
+  const sc = {vars:V, out:'w30', ctl:['region','rel','gdp3','colony'], tray:['pr','quota','suf','regime'], k:3, design:'MDS'};
+  const Q = {'Argentina':'by law since 1991', 'South Africa':'ANC party quota', 'Sweden':'party quotas'};
+  const P = ['Argentina','South Africa','Sweden'].map(n => { const c = WPOOL.find(x => x.name === n); return {id:c.id, name:c.name, v:Object.assign({}, c.v, {quota:'Yes'}), d:Object.assign({}, c.d, {quota:Q[n]})}; });
   const el = $('#wmT'); el.style.setProperty('--k', 3);
   const row = (k, role) => { const same = allSame(P.map(c => c.v[k])), out = k === 'w30', tray = role === 'further attribute';
     const st = out ? 'good' : tray ? (same ? 'good' : 'cut') : (same ? 'bad' : 'good');
     const txt = out ? 'shared' : tray ? (same ? 'shared by every case' : 'differs') : (same ? 'shared' : 'differs');
-    return `<div class="srow ${st}"><div class="hd"><span class="role">${role}</span><b>${esc(WV[k].lab)}</b><span class="st ${st}">${st === 'good' ? '✓ ' : ''}${txt}</span></div><div class="cells">${P.map(c => `<span class="cell">${esc(fmt(sc, k, c.v[k]))}${c.d[k] ? `<small>${esc(c.d[k])}</small>` : ''}</span>`).join('')}</div></div>`; };
+    return `<div class="srow ${st}"><div class="hd"><span class="role">${role}</span><b>${esc(V[k].lab)}</b><span class="st ${st}">${st === 'good' ? '✓ ' : ''}${txt}</span></div><div class="cells">${P.map(c => `<span class="cell">${esc(fmt(sc, k, c.v[k]))}${c.d[k] ? `<small>${esc(c.d[k])}</small>` : ''}</span>`).join('')}</div></div>`; };
   el.innerHTML = `<div class="srow names"><div class="cells">${P.map(c => `<span>${esc(c.name)}</span>`).join('')}</div></div>` + row('w30', 'outcome') + sc.ctl.map(k => row(k, 'should differ')).join('') + `<p class="trayhd">Further attributes, turned over after the cases were chosen</p>` + sc.tray.map(k => row(k, 'further attribute')).join('');
-  const items = sc.ctl.concat(sc.tray).map(k => { const a = P.map(c => c.v[k]); return allSame(a) ? {lab:WV[k].short, sub:SUB.shared, st:'shared'} : {lab:WV[k].short, sub:SUB.differs, st:'cut'}; });
+  const items = sc.ctl.concat(sc.tray).map(k => { const a = P.map(c => c.v[k]); return allSame(a) ? {lab:V[k].short, sub:SUB.shared, st:'shared'} : {lab:V[k].short, sub:SUB.differs, st:'cut'}; });
   board($('#wmBd'), items, 'Women|30%+');
 }
 
