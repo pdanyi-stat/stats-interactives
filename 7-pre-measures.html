@@ -353,6 +353,9 @@ svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 .about{margin:0 0 8px;font-size:15px;line-height:1.6;color:var(--ink-2);max-width:80ch}
+.lamwhy{margin-top:4px;padding:12px 14px;border:2px solid var(--axis);border-left:6px solid var(--ink-2);border-radius:10px;background:var(--surface);display:grid;gap:8px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.lamwhy p{margin:0}.lamwhy b{color:var(--ink)}
+.glab small{font-weight:500;color:var(--muted)}
 </style>
 <!-- spss-start -->
 <style>
@@ -1116,7 +1119,7 @@ function preBars(box,o){
 
 /* ===================== START SIMPLE ===================== */
 const NES=JSON.parse(document.getElementById('nes').textContent); // [isWoman, isDem]
-const SS={people:[],step:1,preset:true};
+const SS={people:[],step:1,preset:true,draws:0,zeros:0};
 function presetPeople(){ const p=[]; const add=(w,d,n)=>{for(let i=0;i<n;i++)p.push({w,d});}; add(1,1,7);add(1,0,3);add(0,1,4);add(0,0,6); return p; }
 function drawPeople(){ const W=NES.filter(r=>r[0]===1), M=NES.filter(r=>r[0]===0); const pick=(arr,n)=>{const a=arr.slice();for(let i=0;i<n;i++){const j=i+Math.floor(Math.random()*(a.length-i));[a[i],a[j]]=[a[j],a[i]];}return a.slice(0,n);};
   return pick(W,10).concat(pick(M,10)).map(r=>({w:r[0],d:r[1]})); }
@@ -1141,14 +1144,14 @@ function layoutStage(){
     gl('w').style.opacity=0; gl('m').style.opacity=0; H=labH+rows*rowH;
   } else {
     const side=W>=2*(5*(t+g))+40; const cols=5, gw=cols*(t+g)+ (side?30:0);
-    const place=(list,ox,oy)=>{ const sorted=list.slice().sort((a,b)=>(b.d-a.d)||(a.k1-b.k1)); sorted.forEach((p,k)=>{const c=k%cols,r=Math.floor(k/cols);p.el.style.transform=`translate(${ox+c*(t+g)}px,${oy+labH+r*rowH}px)`;}); };
-    const wy=0, my=side?0:labH+2*rowH+16, wx=0, mx=side?gw:0;
+    const lh=54; const place=(list,ox,oy)=>{ const sorted=list.slice().sort((a,b)=>(b.d-a.d)||(a.k1-b.k1)); sorted.forEach((p,k)=>{const c=k%cols,r=Math.floor(k/cols);p.el.style.transform=`translate(${ox+c*(t+g)}px,${oy+lh+r*rowH}px)`;}); };
+    const wy=0, my=side?0:54+2*rowH+16, wx=0, mx=side?gw:0;
     place(wom,wx,wy); place(men,mx,my);
     SS.people.forEach(p=>{const m=p.w?mw:mm; const bad=p.d!==m.guess; p.el.classList.toggle('bad',bad); p.el.classList.toggle('ok',!bad); p.el.querySelector('.mk').textContent=bad?'✗':'✓';});
     gl('all').style.opacity=0;
-    gl('w').style.opacity=1; gl('w').style.transform=`translate(${wx}px,${wy}px)`; gl('w').innerHTML=`<b>Women</b> · ${mw.d} D, ${mw.r} R → ${chip(mw.guess)}`;
-    gl('m').style.opacity=1; gl('m').style.transform=`translate(${mx}px,${my}px)`; gl('m').innerHTML=`<b>Men</b> · ${mm.d} D, ${mm.r} R → ${chip(mm.guess)}`;
-    H=(side?0:my)+labH+2*rowH;
+    gl('w').style.opacity=1; gl('w').style.transform=`translate(${wx}px,${wy}px)`; gl('w').innerHTML=`<b>Women</b> · ${mw.d} D, ${mw.r} R<br>${chip(mw.guess)}${mw.tie?' <small>(a tie)</small>':''}`;
+    gl('m').style.opacity=1; gl('m').style.transform=`translate(${mx}px,${my}px)`; gl('m').innerHTML=`<b>Men</b> · ${mm.d} D, ${mm.r} R<br>${chip(mm.guess)}${mm.tie?' <small>(a tie)</small>':''}`;
+    H=(side?0:my)+54+2*rowH;
   }
   st.style.height=H+'px';
   // tally
@@ -1162,14 +1165,15 @@ function layoutStage(){
       <tr><th style="text-align:right">Republican</th><td class="${mw.guess?'':'modal'}">${mw.r}</td><td class="${mm.guess?'':'modal'}">${mm.r}</td><td class="${all.guess?'':'modal'}">${all.r}</td></tr></table>
       <div class="math">λ = (E₁ − E₂) / E₁<br>&nbsp;&nbsp;= (${E1} − ${E2}) / ${E1}<br>&nbsp;&nbsp;= ${E1-E2} / ${E1} = <b>${E1?lam.toFixed(2):'—'}</b></div>
       <p class="say" style="margin:0">${E1===0?'Everyone is in one party, so there are no errors to reduce.':E1===E2?`<b>λ = 0.</b> Knowing gender didn't change any guess${mw.guess===mm.guess?`: ${pname(mw.guess)} is the most common party for both women and men`:''}, so no errors were saved. Lambda only rewards X when it changes the guess.`:`Knowing a voter's gender cuts our errors in guessing their party by <b>${Math.round(100*lam)}%</b>, which means ${E1-E2} fewer wrong guesses out of ${E1}.`}</p>
-      <p class="say" style="margin:0;font-size:13.5px">With all ${NESALL.n} Democratic and Republican identifiers in the 2004 NES, E₁ = ${NESALL.E1}, E₂ = ${NESALL.E2}, and λ = ${fr(NESALL.lam)}, which is “none” on the lab scale, even though women lean Democratic a bit more than men. Lambda only counts changes in the modal guess. Small samples bounce around, so click <b>Draw a different 20</b> and watch.</p>`;
+      <div class="lamwhy"><p><b>Why λ is often 0 here.</b> In the full 2004 NES, ${pc1(NESALL.wd,NESALL.wn)} of women and ${pc1(NESALL.md,NESALL.mn)} of men who name a party call themselves Democrats. So the women's mode is Democrat and the men's is Republican, but only barely. With just ten women and ten men, a sample's women and men often end up with the same most common party, and then gender changes no guess and λ = 0. That happens in about two out of every three random draws of 20 from this survey.</p>`+(SS.draws?`<p>Your draws so far: λ = 0 in <b>${SS.zeros} of ${SS.draws}</b>.</p>`:'')+`<p>With all ${NESALL.n} Democratic and Republican identifiers, E₁ = ${NESALL.E1}, E₂ = ${NESALL.E2}, and λ = ${fr(NESALL.lam)}, which is “none” on the lab scale. Lambda only counts changes in the modal guess, so a modest gap between groups barely moves it. Click <b>Draw a different 20</b> a few times and keep count.</p></div>`;
   } else html+=`<p class="say" style="margin:0">${SS.step===1?'With no information about anyone, the best single guess is <b>the most common party (the mode)</b>. Every voter of the other party is a wrong guess.':'Split by gender and guess <b>each group\'s most common party (its mode)</b>. Count the wrong guesses again.'}</p>`;
   $('#stally').innerHTML=html;
   document.querySelectorAll('#ssteps button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.s===SS.step)));
 }
-const NESALL=(()=>{const n=NES.length;let wd=0,wr=0,md=0,mr=0;NES.forEach(([w,d])=>{if(w){d?wd++:wr++;}else{d?md++:mr++;}});const E1=Math.min(wd+md,wr+mr),E2=Math.min(wd,wr)+Math.min(md,mr);return {n,E1,E2,lam:(E1-E2)/E1};})();
+const NESALL=(()=>{const n=NES.length;let wd=0,wr=0,md=0,mr=0;NES.forEach(([w,d])=>{if(w){d?wd++:wr++;}else{d?md++:mr++;}});const E1=Math.min(wd+md,wr+mr),E2=Math.min(wd,wr)+Math.min(md,mr);return {n,E1,E2,lam:(E1-E2)/E1,wd,wn:wd+wr,md,mn:md+mr};})();
+const pc1=(a,b)=>Math.round(100*a/b)+'%';
 document.querySelectorAll('#ssteps button').forEach(b=>b.addEventListener('click',()=>{SS.step=+b.dataset.s;layoutStage();}));
-$('#sdraw').addEventListener('click',()=>{SS.preset=false;setPeople(drawPeople());buildStage();SS.step=1;requestAnimationFrame(()=>layoutStage());});
+$('#sdraw').addEventListener('click',()=>{SS.preset=false;const P=drawPeople();{const wD=P.filter(p=>p.w&&p.d).length,mD=P.filter(p=>!p.w&&p.d).length,D=wD+mD,e1=Math.min(D,20-D),e2=Math.min(wD,10-wD)+Math.min(mD,10-mD);SS.draws++;if(e1===e2)SS.zeros++;}setPeople(P);buildStage();SS.step=1;requestAnimationFrame(()=>layoutStage());});
 setPeople(presetPeople()); buildStage(); layoutStage();
 if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;layoutStage();}}).observe($('#stage'));}
 
