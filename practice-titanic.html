@@ -452,7 +452,7 @@ function pSent(p,what,h0){
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
   s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
-  return s+' Sig. is not the probability that H₀ is true. <a href="6-difference-in-means.html#pvalue">Reading p-values →</a>';
+  return s+' Sig. is not the probability that H₀ is true. <a href="8-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -486,7 +486,7 @@ function renderRegress(txt,line,meta){
   const names=ivs.length?ivs.map(c=>c.name):line.split(/\s+/).slice(2).filter(w=>!/[,(]/.test(w));
   const dv=R.dv,bin=/^survived$/.test(dv),E={};
   const pred=`a. Predictors: (Constant), ${names.slice().reverse().join(', ')}`;
-  E.r2=`<b>R Square = ${F(r2,3)}</b>: knowing ${list(names)} cuts the squared error of predicting ${dv} by ${r2<0.005?'less than 1%':'about '+Math.round(r2*100)+'%'} compared with guessing the mean of ${dv} every time (Module 7). It measures fit, not significance.`;
+  E.r2=`<b>R Square = ${F(r2,3)}</b>: knowing ${list(names)} cuts the squared error of predicting ${dv} by ${r2<0.005?'less than 1%':'about '+Math.round(r2*100)+'%'} compared with guessing the mean of ${dv} every time (Module 5). It measures fit, not significance.`;
   E.adj=`<b>Adjusted R Square = ${F(adj,3)}</b>. It charges a small penalty for each IV, so it rises only when an IV improves the fit by more than chance would. Use it to compare models with different numbers of IVs.`;
   E.F=`<b>F = ${F(Fv,3)}</b> tests H₀ that ${k===1?'the slope is 0':k===2?'both slopes are 0 at once':'all '+k+' slopes are 0 at once'}.${k===1?' With one IV it asks the same question as the slope\'s t-test, and F = t².':''} Read its Sig. next to it.`;
   E.pF=pSent(pF,'an R Square this large or larger',k===1?'the slope is 0':'every slope is 0 (the IVs together predict nothing)');
@@ -513,7 +513,7 @@ function renderRegress(txt,line,meta){
       E['b:'+j]=`<b>B = ${F(c.b,3)}</b>${Math.abs(c.b)<0.01?` (${fe(c.b)} unrounded)`:''}, the unstandardized coefficient (the slope). ${txt} Check its Sig. before you call it a real relationship.`;
       E['p:'+j]=pSent(p,'a slope this far from 0',`the slope for ${c.name} is 0${others.length?' (holding the other IVs constant)':''}`);
       E['t:'+j]=`<b>t = B ÷ Std. Error</b> = ${fe(c.b)} ÷ ${fe(c.se)} ≈ ${F(t,3)}. With ${dfr} df, a t beyond about ±${tc.toFixed(2)} gives Sig. below .05.`;
-      E['beta:'+j]=beta?`<b>Beta = ${F(beta[j],3)}</b>, the standardized coefficient: ${hold}a 1-SD increase in ${c.name} goes with a predicted ${dv} ${F(Math.abs(beta[j]),3)} SD ${up}. Every Beta is in SD units, so you can compare them across IVs measured in different units (Module 9).`:'';
+      E['beta:'+j]=beta?`<b>Beta = ${F(beta[j],3)}</b>, the standardized coefficient: ${hold}a 1-SD increase in ${c.name} goes with a predicted ${dv} ${F(Math.abs(beta[j]),3)} SD ${up}. Every Beta is in SD units, so you can compare them across IVs measured in different units (Module 10).`:'';
       rows.push([rh(c.name),X(F(c.b,3),'b:'+j),F(c.se,3),beta?X(F(beta[j],3),'beta:'+j):'',X(F(t,3),'t:'+j),X(SIG(p),'p:'+j)]);});
     h+=tbl('Coefficients'+sup('a'),[[{t:'Model',cs:2,rs:2},{t:'Unstandardized Coefficients',cs:2},{t:'Standardized Coefficients'},{t:'t',rs:2},{t:'Sig.',rs:2}],['B','Std. Error','Beta']],
       rows,[`a. Dependent Variable: ${dv}`]);
@@ -673,7 +673,7 @@ function renderTab(txt,line){
   if(wantL){const {out}=lambdas(m),fmt=(o,k)=>[X(F(o.v,3),'lv'+k),isFinite(o.ase)?F(o.ase,3):'.',isFinite(o.t)?F(o.t,3):'.',X(SIG(o.p),'lp'+k)];
     const dvL=(txt.match(/lambda \((\S+) given/)||[])[1]||rowVar,ivL=dvL===rowVar?colVar:rowVar,dvRow=dvL===rowVar?1:2;
     [0,1,2].forEach(k=>{const o=out[k];
-      E['lv'+k]=k===dvRow?`<b>Lambda = ${F(o.v,3)}</b>, with ${dvL} as the DV: knowing ${ivL} cuts errors in guessing ${dvL} by ${(o.v*100).toFixed(1)}% compared with always guessing its mode (Module 7). On the course scale (below .10 none, .10 very weak, .20 moderate, .30 moderately strong, .40 and up strong) that is <b>${lamWord(o.v)}</b>. Lambda is never negative, so it has no direction.`
+      E['lv'+k]=k===dvRow?`<b>Lambda = ${F(o.v,3)}</b>, with ${dvL} as the DV: knowing ${ivL} cuts errors in guessing ${dvL} by ${(o.v*100).toFixed(1)}% compared with always guessing its mode (Module 5). On the course scale (below .10 none, .10 very weak, .20 moderate, .30 moderately strong, .40 and up strong) that is <b>${lamWord(o.v)}</b>. Lambda is never negative, so it has no direction.`
         :k===0?`The symmetric lambda averages the two directions. You almost always want the row for your DV instead: <b>${dvL} Dependent</b>.`
         :`This row treats ${dvL===rowVar?colVar:rowVar} as the DV. Read the <b>${dvL} Dependent</b> row instead, the one for your DV.`;
       E['lp'+k]=pSent(o.p,'a lambda this large or larger','lambda is 0 in the population');});
@@ -770,27 +770,27 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 </style>
 </head>
 <body>
-<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Who survived the Titanic?</b></span><a href="practice-published-tables.html" aria-label="Next: Practice, what would it look like published?">Next →</a></nav>
+<nav class="topnav" aria-label="Site navigation"><a href="index.html">← All modules</a><span class="here"><span class="lab">Practice: </span><b>Who survived the Titanic?</b></span><a href="practice-published-tables.html" aria-label="Next: What would it look like published?">Next →</a></nav>
 <div class="rule"></div>
 <header class="mast">
   <div class="wrap">
     <p class="kicker">Research methods · Practice module</p>
     <h1>Who survived the Titanic?</h1>
-    <p class="dek">This page applies every technique from Modules 4–10 to one question, which is who survived the Titanic. You will work through the same survival questions as the labs, from describing the passengers to multiple regression with dummies. The notes here are short, and each step links back to its full module if you need a refresher.</p>
+    <p class="dek">This page applies every technique from Modules 3–1 to one question, which is who survived the Titanic. You will work through the same survival questions as the labs, from describing the passengers to multiple regression with dummies. The notes here are short, and each step links back to its full module if you need a refresher.</p>
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
-      <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
-      <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
-      <li><a href="3-dispersion.html">3 Dispersion</a></li>
-      <li><a href="4-sampling-distributions.html">4 Sampling distributions</a></li>
-      <li><a href="5-confidence-intervals.html">5 Confidence intervals</a></li>
-      <li><a href="6-difference-in-means.html">6 Difference in means</a></li>
-      <li><a href="7-pre-measures.html">7 PRE measures</a></li>
-      <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
-      <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
-      <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
-      <li><a href="11-problems-of-causation.html">11 Problems of causation</a></li>
+      <li><a href="1-problems-of-causation.html">1 Problems of causation</a></li>
+      <li><a href="2-levels-and-central-tendency.html">2 Levels and central tendency</a></li>
+      <li><a href="3-skew-and-kurtosis.html">3 Skew and kurtosis</a></li>
+      <li><a href="4-dispersion.html">4 Dispersion</a></li>
+      <li><a href="5-pre-measures.html">5 PRE measures</a></li>
+      <li><a href="6-sampling-distributions.html">6 Sampling distributions</a></li>
+      <li><a href="7-confidence-intervals.html">7 Confidence intervals</a></li>
+      <li><a href="8-difference-in-means.html">8 Difference in means</a></li>
+      <li><a href="9-bivariate-regression.html">9 Bivariate regression</a></li>
+      <li><a href="10-multiple-regression.html">10 Multiple regression</a></li>
+      <li><a href="11-dummy-variables.html">11 Dummy variables</a></li>
       <li><a href="practice-direction.html">Practice: Which way?</a></li>
       <li aria-current="page"><a href="practice-titanic.html">Practice: Titanic</a></li>
       <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
@@ -849,10 +849,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 2 SAMPLE ============ -->
   <section class="part" id="s2" aria-labelledby="h2">
-    <p class="kick">Step 2 · Module 4: sampling distributions</p>
+    <p class="kick">Step 2 · Module 6: sampling distributions</p>
     <h2 id="h2">Pretend the ship is the population, then sample from it</h2>
     <p class="lede">Treat all 1,309 passengers as the population, where the true survival rate is <b>38.2%</b>. Draw a random sample of passengers, record its survival rate, and then repeat. The sample rates pile up in a bell around the truth, and their spread is the standard error.</p>
-    <a class="refresh" href="4-sampling-distributions.html">Refresh: Module 4 →</a>
+    <a class="refresh" href="6-sampling-distributions.html">Refresh: Module 6 →</a>
   </section>
   <figure>
     <div class="ctlrow">
@@ -873,10 +873,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 3 ESTIMATE ============ -->
   <section class="part" id="s3" aria-labelledby="h3">
-    <p class="kick">Step 3 · Module 5: confidence intervals</p>
+    <p class="kick">Step 3 · Module 7: confidence intervals</p>
     <h2 id="h3">Build a confidence interval by hand</h2>
     <p class="lede">The interval is centered on the sample mean. We choose how confident to be, and that choice sets z. The SD and n set the standard error. Everything else is arithmetic.</p>
-    <a class="refresh" href="5-confidence-intervals.html">Refresh: Module 5 →</a>
+    <a class="refresh" href="7-confidence-intervals.html">Refresh: Module 7 →</a>
   </section>
   <figure>
     <div class="ctlrow">
@@ -896,10 +896,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 4 ASSOCIATE ============ -->
   <section class="part" id="s4" aria-labelledby="h4">
-    <p class="kick">Step 4 · Module 7: crosstabs, lambda and gamma</p>
+    <p class="kick">Step 4 · Module 5: crosstabs, lambda and gamma</p>
     <h2 id="h4">Does knowing X help you guess who survived?</h2>
     <p class="lede">Survival (the DV) runs down the rows and the IV runs across the columns, with column percentages. Lambda fits nominal IVs, and gamma fits ordered ones. The strength labels follow the scales from lab.</p>
-    <a class="refresh" href="7-pre-measures.html">Refresh: Module 7 →</a>
+    <a class="refresh" href="5-pre-measures.html">Refresh: Module 5 →</a>
   </section>
   <figure>
     <div class="ctlrow"><div class="ctl"><label class="lab" for="iv4">IV (columns)</label><select id="iv4"></select></div></div>
@@ -911,10 +911,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 5 TEST ============ -->
   <section class="part" id="s5" aria-labelledby="h5">
-    <p class="kick">Step 5 · Module 6: difference in means</p>
+    <p class="kick">Step 5 · Module 8: difference in means</p>
     <h2 id="h5">Testing the lab's questions</h2>
     <p class="lede">Each test assumes H₀ (no difference) and asks how often a gap this large or larger would show up if H₀ were true. We reject H₀ or fail to reject it, and we never accept anything. Because survived is 0/1, each mean is a survival rate.</p>
-    <a class="refresh" href="6-difference-in-means.html">Refresh: Module 6 →</a>
+    <a class="refresh" href="8-difference-in-means.html">Refresh: Module 8 →</a>
   </section>
   <figure id="f5">
     <div class="ctlrow"><div class="ctl" style="flex:1 1 320px"><label class="lab" for="q5">Question</label><select id="q5" style="width:100%"></select></div></div>
@@ -975,10 +975,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 6 REGRESS ============ -->
   <section class="part" id="s6" aria-labelledby="h6">
-    <p class="kick">Step 6 · Module 8: bivariate regression <span class="lpmflag">Linear probability model</span></p>
+    <p class="kick">Step 6 · Module 9: bivariate regression <span class="lpmflag">Linear probability model</span></p>
     <h2 id="h6">One IV at a time</h2>
     <p class="lede">We start with a dummy IV (female) and then a continuous one (age). The equation is the same either way, y = mx + b, or in stats notation f(x) = β₁X₁ + constant.</p>
-    <a class="refresh" href="8-bivariate-regression.html">Refresh: Module 8 →</a>
+    <a class="refresh" href="9-bivariate-regression.html">Refresh: Module 9 →</a>
   </section>
   <figure>
     <div class="fighead"><h2><span class="step">6a</span>survived on female</h2><button class="linkish" id="jump5">See the matching t test in Step 5 ↑</button></div>
@@ -1011,10 +1011,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 7 CONTROL ============ -->
   <section class="part" id="s7" aria-labelledby="h7">
-    <p class="kick">Step 7 · Module 9: multiple regression <span class="lpmflag">Linear probability model</span></p>
+    <p class="kick">Step 7 · Module 10: multiple regression <span class="lpmflag">Linear probability model</span></p>
     <h2 id="h7">Age, holding class constant</h2>
     <p class="lede">On its own, age barely predicts survival. Add controls and watch its slope change. All four models use the same 1,046 passengers whose age is known, so the comparison is fair.</p>
-    <a class="refresh" href="9-multiple-regression.html">Refresh: Module 9 →</a>
+    <a class="refresh" href="10-multiple-regression.html">Refresh: Module 10 →</a>
   </section>
   <figure>
     <div class="ctlrow"><div class="toggles"><label><input type="checkbox" id="cf7"> Control for sex (female)</label><label><input type="checkbox" id="cc7"> Control for class (first, middle dummies)</label></div></div>
@@ -1038,10 +1038,10 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- ============ 8 DUMMIES ============ -->
   <section class="part" id="s8" aria-labelledby="h8">
-    <p class="kick">Step 8 · Module 10: dummy variables <span class="lpmflag">Linear probability model</span></p>
+    <p class="kick">Step 8 · Module 11: dummy variables <span class="lpmflag">Linear probability model</span></p>
     <h2 id="h8">Class dummies, then sex, class and age together</h2>
     <p class="lede">Class has three categories, so it gets two dummies. The class left out is the reference, so the constant is its level and each coefficient is a gap from it. Then we add sex and age, and each dummy shifts a line up or down, which gives six parallel lines, one for each combination of sex and class.</p>
-    <a class="refresh" href="10-dummy-variables.html">Refresh: Module 10 →</a>
+    <a class="refresh" href="11-dummy-variables.html">Refresh: Module 11 →</a>
     <a class="refresh" href="practice-published-tables.html#t8">See these models built up in a published table →</a>
   </section>
   <figure>

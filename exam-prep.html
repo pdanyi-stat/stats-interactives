@@ -405,17 +405,17 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
     <ul class="modnav" aria-label="Modules in this series">
       <li class="home"><a href="index.html">← All modules</a></li>
       <li><a href="hypotheses-and-variables.html">Start here: Hypotheses</a></li>
-      <li><a href="1-levels-and-central-tendency.html">1 Levels and central tendency</a></li>
-      <li><a href="2-skew-and-kurtosis.html">2 Skew and kurtosis</a></li>
-      <li><a href="3-dispersion.html">3 Dispersion</a></li>
-      <li><a href="4-sampling-distributions.html">4 Sampling distributions</a></li>
-      <li><a href="5-confidence-intervals.html">5 Confidence intervals</a></li>
-      <li><a href="6-difference-in-means.html">6 Difference in means</a></li>
-      <li><a href="7-pre-measures.html">7 PRE measures</a></li>
-      <li><a href="8-bivariate-regression.html">8 Bivariate regression</a></li>
-      <li><a href="9-multiple-regression.html">9 Multiple regression</a></li>
-      <li><a href="10-dummy-variables.html">10 Dummy variables</a></li>
-      <li><a href="11-problems-of-causation.html">11 Problems of causation</a></li>
+      <li><a href="1-problems-of-causation.html">1 Problems of causation</a></li>
+      <li><a href="2-levels-and-central-tendency.html">2 Levels and central tendency</a></li>
+      <li><a href="3-skew-and-kurtosis.html">3 Skew and kurtosis</a></li>
+      <li><a href="4-dispersion.html">4 Dispersion</a></li>
+      <li><a href="5-pre-measures.html">5 PRE measures</a></li>
+      <li><a href="6-sampling-distributions.html">6 Sampling distributions</a></li>
+      <li><a href="7-confidence-intervals.html">7 Confidence intervals</a></li>
+      <li><a href="8-difference-in-means.html">8 Difference in means</a></li>
+      <li><a href="9-bivariate-regression.html">9 Bivariate regression</a></li>
+      <li><a href="10-multiple-regression.html">10 Multiple regression</a></li>
+      <li><a href="11-dummy-variables.html">11 Dummy variables</a></li>
       <li><a href="practice-direction.html">Practice: Which way?</a></li>
       <li><a href="practice-titanic.html">Practice: Titanic</a></li>
       <li><a href="practice-published-tables.html">Practice: Published tables</a></li>
@@ -508,9 +508,9 @@ const VCODES={
 const THERM=n=>['Feeling thermometer: '+n,[[0,'Very cold or unfavorable feeling'],[50,'No feeling at all'],[100,'Very warm or favorable feeling'],[998,'Skipped (missing)',1],[999,'Not asked (missing)',1]]];
 function ctab(names){return `<div class="ctabs">${names.map(nm=>{const c=VCODES[nm]||THERM(nm[1]);const name=VCODES[nm]?nm:nm[0];
   return `<div class="ctab"><div class="cn">${name}</div><div class="cl">${c[0]}</div><dl>${c[1].map(([k,l,m])=>`<dt class="${m?'ms':''}">${k}</dt><dd class="${m?'ms':''}">${l}</dd>`).join('')}</dl>${VCODES[nm]?'':'<div class="cl" style="font-style:normal;font-size:14px;margin-top:3px">Every value from 0 to 100 is possible.</div>'}</div>`;}).join('')}</div>`;}
-const REF={B:['1-levels-and-central-tendency.html','Levels of measurement and central tendency'],C:['1-levels-and-central-tendency.html#mo','Finding the mode'],D:['3-dispersion.html#va','Variance and the SD'],
-  E:['2-skew-and-kurtosis.html#sk','Which way does the tail point?'],F:['7-pre-measures.html#lambda','Lambda'],G:['7-pre-measures.html#gamma','Gamma'],H:['6-difference-in-means.html','Difference in means'],
-  I:['8-bivariate-regression.html','Bivariate regression'],J:['8-bivariate-regression.html','Bivariate regression'],K:['10-dummy-variables.html','Dummy variables'],L:['9-multiple-regression.html','Multiple regression']};
+const REF={B:['2-levels-and-central-tendency.html','Levels of measurement and central tendency'],C:['2-levels-and-central-tendency.html#mo','Finding the mode'],D:['4-dispersion.html#va','Variance and the SD'],
+  E:['3-skew-and-kurtosis.html#sk','Which way does the tail point?'],F:['5-pre-measures.html#lambda','Lambda'],G:['5-pre-measures.html#gamma','Gamma'],H:['8-difference-in-means.html','Difference in means'],
+  I:['9-bivariate-regression.html','Bivariate regression'],J:['9-bivariate-regression.html','Bivariate regression'],K:['11-dummy-variables.html','Dummy variables'],L:['10-multiple-regression.html','Multiple regression']};
 function steps(html){return `<details class="steps" open><summary>SPSS steps</summary><div>${html}</div></details>`;}
 /* add a question; o = {html, check:()=>[ok,msg], answer:()=>html, open:{model,check:[...]}, mc:[[text,ok,why],...]} */
 function q(o){
@@ -719,10 +719,10 @@ function build(c){
   const ages=Array.from({length:11},()=>18+Math.floor(r()*70));ages[Math.floor(r()*11)]=95+Math.floor(r()*10);
   const am=ages.reduce((a,b)=>a+b,0)/ages.length,so=ages.slice().sort((a,b)=>a-b),med=so[5];
   const bsum=ages.reduce((a,b)=>a+b,0),bL1=[S('n-1',bsum/10,'Check your count, since there are 11 values.'),S('n+1',bsum/12,'Check your count, since there are 11 values.'),S('median',med,'That is the median. For the mean, add them all up and divide by the number of cases (here 11).')];
-  h+=q({ref:['1-levels-and-central-tendency.html#bal','The mean as a balance point'],html:`Compute the mean value for the following data on age of respondents: Mean = ${blank('b1',6)}<br><span class="nlist">${ages.join(' ')}</span>`,tests:T1('b1',am,0.006,2,bL1),
+  h+=q({ref:['2-levels-and-central-tendency.html#bal','The mean as a balance point'],html:`Compute the mean value for the following data on age of respondents: Mean = ${blank('b1',6)}<br><span class="nlist">${ages.join(' ')}</span>`,tests:T1('b1',am,0.006,2,bL1),
     check:()=>judge(val('b1'),am,0.006,2,bL1,`${ages.join(' + ')} = ${bsum}, divided by 11 = ${am.toFixed(2)}.`)||[false,'Add them all up and divide by the number of cases (here 11).'],answer:()=>`${bsum} ÷ 11 = ${am.toFixed(2)}.`});
   const bL2=[S('unsorted',ages[5],'Put the values in order first, then find the middle one.'),S('mean',am,'That\'s the mean. The median is the middle value once they\'re in order.',0.006)];
-  h+=q({ref:['1-levels-and-central-tendency.html#md','Finding the median'],html:`Find the median for this ↑ data above: Median = ${blank('b2',5)}`,tests:T1('b2',med,0,2,bL2),
+  h+=q({ref:['2-levels-and-central-tendency.html#md','Finding the median'],html:`Find the median for this ↑ data above: Median = ${blank('b2',5)}`,tests:T1('b2',med,0,2,bL2),
     check:()=>judge(val('b2'),med,0,2,bL2,`In order: ${so.join(', ')}. The sixth value, ${med}, has five cases on each side.`)||[false,'Put them in order and find the value with an equal number of cases on each side.'],answer:()=>`In order: ${so.join(', ')}. The median is ${med}.`});
   const lvl=['nominal','ordinal'][Math.floor(r()*2)];
   // one note per option and level, written so it reads correctly whether the option is right or wrong
@@ -738,12 +738,12 @@ function build(c){
       ['Mode',false,'The mode works, but ordinal categories are in order, so the median works too.'],
       ['Mode and Median',true,'Ordinal categories are in order, so the median works, and the most common category works too. The mean isn\'t strictly appropriate, because the gaps between categories aren\'t equal.'],
       ['Mean and Median',false,'The median works, but the mean needs equal gaps between categories, which ordinal data don\'t have.']]};
-  h+=q({ref:['1-levels-and-central-tendency.html#lv','Levels of measurement'],html:`If you have ${lvl==='nominal'?'a nominal level variable (meaning categorical data)':'an ordinal level variable'}, what is the appropriate measure of central tendency?`,mc:LV[lvl]});
+  h+=q({ref:['2-levels-and-central-tendency.html#lv','Levels of measurement'],html:`If you have ${lvl==='nominal'?'a nominal level variable (meaning categorical data)':'an ordinal level variable'}, what is the appropriate measure of central tendency?`,mc:LV[lvl]});
   const inc=Array.from({length:9},()=>11+Math.floor(r()*85)),big=8000+Math.floor(r()*4000);inc[Math.floor(r()*9)]=big;
   const im=inc.reduce((a,b)=>a+b,0)/9,imed=inc.slice().sort((a,b)=>a-b)[4];
-  h+=q({ref:['2-skew-and-kurtosis.html#gd','Skew pulls the mean away from the median'],html:`Consider the next set of data, which shows people's reported income level in 1,000s of dollars. Based on these data, which measure of central tendency is <i>most appropriate</i> to use?<br><span class="nlist">${inc.join(' ')}</span>`,
+  h+=q({ref:['3-skew-and-kurtosis.html#gd','Skew pulls the mean away from the median'],html:`Consider the next set of data, which shows people's reported income level in 1,000s of dollars. Based on these data, which measure of central tendency is <i>most appropriate</i> to use?<br><span class="nlist">${inc.join(' ')}</span>`,
     mc:[['Mean',false,`With a large outlier (${big.toLocaleString('en-US')}), the mean gets dragged toward it, and here it is ${im.toFixed(1)}, which is far above almost every case.`],['Median',true,`With a large outlier, the mean gets dragged toward it. The median (${imed}) isn't, so it's the better measure of what's typical.`],['Mode',false,'With no repeated values, the mode is meaningless here.']]});
-  h+=q({ref:['2-skew-and-kurtosis.html#gd','Skew pulls the mean away from the median'],html:'For these income data, would you expect the mean to be:',mc:[['Higher than the median',true,`The outlier sits at the high end and pulls the mean up, giving a mean of ${im.toFixed(1)} and a median of ${imed}.`],['Lower than the median',false,'The outlier is a very high value, so it pulls the mean up rather than down.'],['The same as the median',false,'An outlier moves the mean but not the median.'],['The same as both the median and the mode',false,'An outlier moves the mean but not the median.']]});
+  h+=q({ref:['3-skew-and-kurtosis.html#gd','Skew pulls the mean away from the median'],html:'For these income data, would you expect the mean to be:',mc:[['Higher than the median',true,`The outlier sits at the high end and pulls the mean up, giving a mean of ${im.toFixed(1)} and a median of ${imed}.`],['Lower than the median',false,'The outlier is a very high value, so it pulls the mean up rather than down.'],['The same as the median',false,'An outlier moves the mean but not the median.'],['The same as both the median and the mode',false,'An outlier moves the mean but not the median.']]});
   h+=secEnd('B');
 
   /* C */
@@ -787,7 +787,7 @@ function build(c){
     sig:[...ciAlts.map(([id,a,b])=>[id,{...pre,[f1]:a.toFixed(4),[f2]:b.toFixed(4)}]),['margin',{...pre,[f1]:mg.toFixed(4),[f2]:mg.toFixed(4)}]]});
   const ciPre={d4:D.se.toFixed(4)},ciTests=ciT('d5','d6',ciPre);
   live(seL,seOk,0.0006,3).forEach(g=>ciTests.sig.push([g.id,{d4:g.v.toFixed(5),d5:D.lo.toFixed(3),d6:D.hi.toFixed(3)}]));
-  h+=q({ref:['5-confidence-intervals.html','Confidence intervals'],html:`Compute the 95% confidence interval for ${DV.what}. Recall this is done via SE = SD ÷ √n and Mean ± (z-score) × (SE). Recall the z-score for 95% is 1.96.<br>SE = ${blank('d4',6)}<br>The confidence interval is ${blank('d5',6)} to ${blank('d6',6)}`,tests:ciTests,
+  h+=q({ref:['7-confidence-intervals.html','Confidence intervals'],html:`Compute the 95% confidence interval for ${DV.what}. Recall this is done via SE = SD ÷ √n and Mean ± (z-score) × (SE). Recall the z-score for 95% is 1.96.<br>SE = ${blank('d4',6)}<br>The confidence interval is ${blank('d5',6)} to ${blank('d6',6)}`,tests:ciTests,
     check:()=>{const r=judge(val('d4'),seOk,0.0006,3,seL,'');
       if(!r||!r[0]){const x=num(val('d4')),lo=num(val('d5')),hi=num(val('d6')),t=0.006,fol=isFinite(x)&&[D.mean,D.mean_shown].some(m=>near(lo,m-1.96*x,t)&&near(hi,m+1.96*x,t));
         const base=r?r[1]:'SE = SD ÷ √N. Take the square root of the valid N first, then divide the SD by it.';
@@ -797,7 +797,7 @@ function build(c){
   const qCI=n,ciOff=()=>{const a=val('d5'),b=val('d6');if(!isFinite(num(a))||!isFinite(num(b)))return null;const r=ciJudge(a,b);return r&&r[0]?null:[num(a),num(b)];};
   const st=ciT('d8','d9',{d7:'95'});
   st.sig.push(['cf',{d5:(D.lo-0.05).toFixed(3),d6:(D.hi+0.05).toFixed(3),d7:'95',d8:(D.lo-0.05).toFixed(3),d9:(D.hi+0.05).toFixed(3)}]);
-  h+=q({ref:['5-confidence-intervals.html','Confidence intervals'],html:`(3 pts) Finish the following statement. I am ${select('d7',['90','95','99'])}% certain that the true mean value for ${DV.what} lies between ${blank('d8',6)} and ${blank('d9',6)}.`,tests:st,
+  h+=q({ref:['7-confidence-intervals.html','Confidence intervals'],html:`(3 pts) Finish the following statement. I am ${select('d7',['90','95','99'])}% certain that the true mean value for ${DV.what} lies between ${blank('d8',6)} and ${blank('d9',6)}.`,tests:st,
     check:()=>{if(val('d7')!=='95')return [false,'You built a 95% interval with z = 1.96, so the first blank is 95.'];
       const r=ciJudge(val('d8'),val('d9'),(lo,hi,t)=>{const c=ciOff();return c&&near(lo,c[0],t)&&near(hi,c[1],t)?[false,cfMsg('interval',qCI),'cf']:null;});
       return r?(r[0]?[true,`Strictly, the 95% describes the method, meaning about 95 of 100 intervals built this way would capture the true mean.`+(r[1].includes('lower bound first')?' Next time put the lower bound first.':'')]:r):[false,'Use the bounds of the 95% interval you computed above.'];},

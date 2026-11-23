@@ -7,22 +7,26 @@ Open index.html in any modern browser, or host the folder anywhere that serves s
 Files
   index.html                              hub page linking everything
   hypotheses-and-variables.html           start here: hypotheses and variables
-  1-levels-and-central-tendency.html
-  2-skew-and-kurtosis.html
-  3-dispersion.html
-  4-sampling-distributions.html
-  5-confidence-intervals.html
-  6-difference-in-means.html
-  7-pre-measures.html
-  8-bivariate-regression.html
-  8b-partisans-and-the-first-lady.html    worked example for Module 8
-  9-multiple-regression.html
-  10-dummy-variables.html
-  11-problems-of-causation.html           Module 11, problems of causation (mechanisms, seven pitfalls, 50 practice claims)
+  1-problems-of-causation.html            Module 1, problems of causation (mechanisms, seven pitfalls, 50 practice claims)
+  2-levels-and-central-tendency.html
+  3-skew-and-kurtosis.html
+  4-dispersion.html
+  5-pre-measures.html
+  6-sampling-distributions.html
+  7-confidence-intervals.html
+  8-difference-in-means.html
+  9-bivariate-regression.html
+  9b-partisans-and-the-first-lady.html    worked example for Module 9
+  10-multiple-regression.html
+  11-dummy-variables.html
   practice-direction.html                 practice: which way does it run?
   practice-titanic.html                   practice: who survived the Titanic?
   practice-published-tables.html          practice: what would it look like published?
   exam-prep.html                          practice final
+
+  The old file names (1-levels-and-central-tendency.html and so on) are
+  forwarding pages to the new names, so old links and bookmarks still work.
+  The order follows the course syllabus.
   data/                                   datasets students can download
   exam-data/                              sample files for each practice exam code
   STYLE.md                                writing rules for every word of copy
