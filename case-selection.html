@@ -638,6 +638,7 @@ svg.bd{width:100%;max-width:520px;height:auto;display:block}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:22px;height:0;border-top:3px solid}
 .legend i.t{border-color:var(--s1-line)}.legend i.l{border-color:var(--live)}.legend i.s{border-color:var(--good)}.legend i.c{border-top:3px dashed var(--cut)}
+.bkey{margin:8px 0 0;padding:9px 11px;border-radius:8px;background:var(--page);border:1px dashed var(--axis);font-size:13.5px;line-height:1.5;color:var(--ink-2)}.bkey b{color:var(--ink)}
 </style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
@@ -701,7 +702,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="split">
       <div><p class="lab2">The two states</p><div class="strip" id="twoT"></div></div>
       <div><p class="lab2">Rival explanations</p><svg class="bd" id="twoBd" role="img" aria-label="Rival explanations for the turnout gap"></svg>
-        <p class="legend"><span><i class="l"></i>live</span><span><i class="c"></i>cut</span></p></div>
+        <p class="legend"><span><i class="l"></i>live: varies, so it could explain</span><span><i class="c"></i>cut: same, so it cannot</span></p><p class="bkey" data-k="MSS"></p></div>
     </div>
     <div class="btnrow"><button id="twoDraw">Draw two other states</button></div>
     <div class="cs-call" id="twoCall" aria-live="polite"></div>
@@ -720,7 +721,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="split">
       <div><table class="tc" id="tcT"></table><div class="btnrow"><button id="tcReset">Reset the table</button></div></div>
       <div><p class="lab2">Rival explanations</p><svg class="bd" id="tcBd" role="img" aria-label="Rival explanations for Y"></svg><p class="ctr" id="tcCtr"></p>
-        <p class="legend"><span><i class="t"></i>test variable</span><span><i class="l"></i>live rival</span><span><i class="c"></i>cut</span></p></div>
+        <p class="legend"><span><i class="t"></i>test variable</span><span><i class="l"></i>live rival</span><span><i class="c"></i>cut</span></p><p class="bkey" data-k="MSS"></p></div>
     </div>
     <div class="cs-call" id="tcCall" aria-live="polite"></div>
   </section>
@@ -731,7 +732,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="split">
       <div><p class="lab2">Match strip</p><div class="strip" id="sgT"></div></div>
       <div><p class="lab2">Rival explanations</p><svg class="bd" id="sgBd" role="img" aria-label="Rival explanations for insider lobbying"></svg>
-        <p class="ctr">The only explanation still standing is direct democracy.</p></div>
+        <p class="ctr">The only explanation still standing is direct democracy.</p><p class="bkey" data-k="MSS"></p></div>
     </div>
     <div class="cs-call"><p>All four controls are green because the two countries share them, so their arrows are cut. Switzerland has robust direct-democracy opportunities and significantly intense insider lobbying, while Germany has fewer opportunities and moderate insider lobbying at best. Direct democracy is the only difference left in the design, which makes it the leading explanation for the difference in lobbying, and tracing would then look for evidence of how referendums push Swiss groups toward the inside track.</p></div>
   </section>
@@ -748,7 +749,7 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
       <div><p class="lab2">Match strip</p><div class="strip" id="wmT"></div></div>
       <div><p class="lab2">Rival explanations</p><svg class="bd" id="wmBd" role="img" aria-label="Rival explanations for many women in parliament"></svg>
         <p class="ctr">The only explanation still standing is a PR system.</p>
-        <p class="legend"><span><i class="s"></i>shared, so still standing</span><span><i class="c"></i>differs, so cut</span></p></div>
+        <p class="legend"><span><i class="s"></i>shared, so still standing</span><span><i class="c"></i>differs, so cut</span></p><p class="bkey" data-k="MDS"></p></div>
     </div>
     <div class="cs-call"><p>In this design the colors flip, so every row that differs turns green. Region, religion, wealth and colonial ruler all differ across the three countries, so none of them can explain an outcome the three share, and their arrows are cut. The same goes for the timing of women's suffrage (1947, 1930 and 1921) and the regime type. All three countries elect their lower house by proportional representation, so PR is the one arrow left and becomes a plausible explanation for the many women in their parliaments.</p>
       <p>A plausible explanation is where MDS stops and the next round of work begins. Tracing would look at how parties in each country drew up their candidate lists, and an MSS design would test whether PR makes the difference among countries that are otherwise alike. The practice deck below and the MSS deck in Part 2 each have a card on it.</p></div>
@@ -1068,6 +1069,11 @@ function evalMDS(sc, picks, flips) {
 }
 
 /* ---------- the rival-explanations board ---------- */
+const KEY = {
+  MSS:'<b>Each box on the board is a rival explanation for the outcome.</b> When a rival varies across your cases, it could explain a difference in outcomes, so its arrow stays live. When it is the same in every case, it cannot explain a difference, because something that does not vary cannot explain variation, so its arrow is cut.',
+  MDS:'<b>Each box on the board is a rival explanation for the outcome your cases share, and here the logic runs the other way.</b> When a rival is the same in every case, it could explain that shared outcome, so its arrow stays live. When it differs across the cases, it cannot explain an outcome they all share, so its arrow is cut.'
+};
+const SUB = {vary:'varies → can explain', same:'same in every case → cannot', test:'varies → the test variable', shared:'shared → can explain', differs:'differs → cannot explain', wait:'needs two cases', hide:'hidden in the tray'};
 const SVGNS = 'http://www.w3.org/2000/svg';
 function board(svg, items, outLab) {
   // items: {lab, sub, st:'test'|'live'|'cut'|'hide'|'wait'|'shared'}
@@ -1109,7 +1115,7 @@ function Builder(root, scs, opt = {}) {
     <div class="deck" role="group" aria-label="Case cards"></div>
     <p class="msg" aria-live="polite"></p>
     <div class="stripw"><p class="lab2">Match strip</p><div class="strip"></div></div>
-    <div class="boardw"><p class="lab2">Rival explanations</p><svg class="bd" id="${uid}Bd" role="img" aria-label="Rival explanations board"></svg><p class="ctr"></p></div>
+    <div class="boardw"><p class="lab2">Rival explanations</p><svg class="bd" id="${uid}Bd" role="img" aria-label="Rival explanations board"></svg><p class="ctr"></p><p class="bkey"></p></div>
     <div class="cs-call" aria-live="polite"></div>
     ${opt.nav ? `<div class="btnrow"><button class="pv">← Previous card</button><button class="nx">Next card →</button><button class="rs">Clear cases</button></div>` : `<div class="btnrow"><button class="rs">Clear cases</button></div>`}`;
   const deckEl = $('.deck', root);
@@ -1177,15 +1183,16 @@ function Builder(root, scs, opt = {}) {
     const keys = mds ? s.ctl.concat(s.tray) : [s.test].concat(s.ctl);
     const items = keys.map(k => {
       const a = valsOf(s, p, k), tray = (s.tray || []).includes(k);
-      if (tray && (!ev.open || ev.rows[k].st === 'hide')) return {lab:V[k].short, sub:'hidden in the tray', st:'hide'};
-      if (p.length < 2) return {lab:V[k].short, sub:'waiting for two cases', st:'wait'};
+      if (tray && (!ev.open || ev.rows[k].st === 'hide')) return {lab:V[k].short, sub:SUB.hide, st:'hide'};
+      if (p.length < 2) return {lab:V[k].short, sub:SUB.wait, st:'wait'};
       const same = allSame(a);
-      if (mds) return same ? {lab:V[k].short, sub:'shared: ' + fmt(s, k, a[0]), st:tray ? 'shared' : 'live'} : {lab:V[k].short, sub:'differs across cases', st:'cut'};
-      if (k === s.test) return same ? {lab:V[k].short, sub:'same in every case', st:'cut'} : {lab:V[k].short, sub:'varies (the test)', st:'test'};
-      return same ? {lab:V[k].short, sub:'same: ' + fmt(s, k, a[0]), st:'cut'} : {lab:V[k].short, sub:'varies across cases', st:'live'};
+      if (mds) return same ? {lab:V[k].short, sub:SUB.shared, st:tray ? 'shared' : 'live'} : {lab:V[k].short, sub:SUB.differs, st:'cut'};
+      if (k === s.test) return same ? {lab:V[k].short, sub:SUB.same, st:'cut'} : {lab:V[k].short, sub:SUB.test, st:'test'};
+      return same ? {lab:V[k].short, sub:SUB.same, st:'cut'} : {lab:V[k].short, sub:SUB.vary, st:'live'};
     });
     board($('.bd', root), items, (V[s.out].short).replace(' ', '|'));
     const live = keys.filter((k, j) => ['test','live','shared'].includes(items[j].st)).map(k => lc(V[k].lab));
+    $('.bkey', root).innerHTML = KEY[s.design];
     $('.ctr', root).textContent = p.length < 2 ? 'Choose at least two cases to see which explanations the design cuts.' : counterText(live);
   }
   function readout(ev) {
@@ -1278,7 +1285,7 @@ function partOne() {
     $('#twoT').innerHTML = `<div class="srow names"><div class="cells"><span>${esc(a.name)}</span><span>${esc(b.name)}</span></div></div>` +
       keys.concat(['turn']).map(k => { const same = a.v[k] === b.v[k], out = k === 'turn';
         return `<div class="srow ${out ? 'oc' : same ? 'flat' : 'live'}"><div class="hd"><span class="role">${out ? 'outcome' : 'rival'}</span><b>${esc(SV[k].lab)}</b>${out ? '' : `<span class="st ${same ? 'cut' : 'live'}">${same ? 'same' : 'differs'}</span>`}</div><div class="cells"><span class="cell">${esc(fmt({vars:SV}, k, a.v[k]))}${a.d[k] ? `<small>${esc(a.d[k])}</small>` : ''}</span><span class="cell">${esc(fmt({vars:SV}, k, b.v[k]))}${b.d[k] ? `<small>${esc(b.d[k])}</small>` : ''}</span></div></div>`; }).join('');
-    const items = keys.map(k => a.v[k] === b.v[k] ? {lab:SV[k].short, sub:'same: ' + a.v[k], st:'cut'} : {lab:SV[k].short, sub:'differs', st:'live'});
+    const items = keys.map(k => a.v[k] === b.v[k] ? {lab:SV[k].short, sub:SUB.same, st:'cut'} : {lab:SV[k].short, sub:SUB.vary, st:'live'});
     $('#twoT').style.setProperty('--k', 2);
     board($('#twoBd'), items, 'Turnout|2024');
     const live = keys.filter(k => a.v[k] !== b.v[k]);
@@ -1297,7 +1304,7 @@ function threeCase() {
     $('#tcT').innerHTML = `<thead><tr><th>Case</th><th>X1<small>control</small></th><th>X2<small>control</small></th><th>X3<small>test</small></th><th>Y<small>outcome</small></th></tr></thead><tbody>` +
       T.map((r, i) => `<tr><th>${names[i]}</th>${r.map((v, j) => `<td><button data-r="${i}" data-c="${j}" class="${j === 2 ? 'tv' : j === 3 ? 'oc' : ''}" aria-label="Case ${names[i]}, ${cols[j]} is ${v}. Tap to flip.">${v}</button></td>`).join('')}</tr>`).join('') + '</tbody>';
     const varies = j => !T.every(r => r[j] === T[0][j]);
-    const items = [2, 0, 1].map(j => ({lab:cols[j] + (j === 2 ? ' (test)' : ' (control)'), sub:varies(j) ? 'varies across cases' : 'same in every case', st:varies(j) ? (j === 2 ? 'test' : 'live') : 'cut'}));
+    const items = [2, 0, 1].map(j => ({lab:cols[j] + (j === 2 ? ' (treatment)' : ' (control)'), sub:varies(j) ? (j === 2 ? SUB.test : SUB.vary) : SUB.same, st:varies(j) ? (j === 2 ? 'test' : 'live') : 'cut'}));
     board($('#tcBd'), items, 'Y');
     const live = [0, 1, 2].filter(varies).map(j => cols[j]);
     $('#tcCtr').textContent = counterText(live);
@@ -1332,7 +1339,7 @@ function swissGerman() {
   const el = $('#sgT'); el.style.setProperty('--k', 2);
   el.innerHTML = `<div class="srow names"><div class="cells"><span>Switzerland</span><span>Germany</span></div></div>` + sc.ctl.concat(['dd','li']).map(k => { const r = ev.rows[k];
     return `<div class="srow ${r.st}${k === 'dd' ? ' tv' : ''}"><div class="hd"><span class="role">${k === 'dd' ? 'test variable' : k === 'li' ? 'outcome' : 'control'}</span><b>${V[k].lab}</b><span class="st ${r.st}">✓ ${r.txt}</span></div><div class="cells">${P.map(c => `<span class="cell">${esc(c.v[k])}${c.d[k] ? `<small>${esc(c.d[k])}</small>` : ''}</span>`).join('')}</div></div>`; }).join('');
-  board($('#sgBd'), [{lab:'Direct democracy', sub:'varies (the test)', st:'test'}].concat(sc.ctl.map(k => ({lab:V[k].short, sub:'same: ' + P[0].v[k], st:'cut'}))), 'Insider|lobbying');
+  board($('#sgBd'), [{lab:'Direct democracy', sub:SUB.test, st:'test'}].concat(sc.ctl.map(k => ({lab:V[k].short, sub:SUB.same, st:'cut'}))), 'Insider|lobbying');
 }
 
 /* ---------- Part 3: a worked MDS example from the World data ---------- */
@@ -1345,12 +1352,13 @@ function womenWorked() {
     const txt = out ? 'shared' : tray ? (same ? 'shared by every case' : 'differs') : (same ? 'shared' : 'differs');
     return `<div class="srow ${st}"><div class="hd"><span class="role">${role}</span><b>${esc(WV[k].lab)}</b><span class="st ${st}">${st === 'good' ? '✓ ' : ''}${txt}</span></div><div class="cells">${P.map(c => `<span class="cell">${esc(fmt(sc, k, c.v[k]))}${c.d[k] ? `<small>${esc(c.d[k])}</small>` : ''}</span>`).join('')}</div></div>`; };
   el.innerHTML = `<div class="srow names"><div class="cells">${P.map(c => `<span>${esc(c.name)}</span>`).join('')}</div></div>` + row('w30', 'outcome') + sc.ctl.map(k => row(k, 'should differ')).join('') + `<p class="trayhd">Further attributes, turned over after the cases were chosen</p>` + sc.tray.map(k => row(k, 'further attribute')).join('');
-  const items = sc.ctl.concat(sc.tray).map(k => { const a = P.map(c => c.v[k]); return allSame(a) ? {lab:WV[k].short, sub:'shared: ' + a[0], st:'shared'} : {lab:WV[k].short, sub:'differs across cases', st:'cut'}; });
+  const items = sc.ctl.concat(sc.tray).map(k => { const a = P.map(c => c.v[k]); return allSame(a) ? {lab:WV[k].short, sub:SUB.shared, st:'shared'} : {lab:WV[k].short, sub:SUB.differs, st:'cut'}; });
   board($('#wmBd'), items, 'Women|30%+');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   partOne(); threeCase(); swissGerman(); womenWorked();
+  document.querySelectorAll('.bkey[data-k]').forEach(e => e.innerHTML = KEY[e.dataset.k]);
   const by = id => SCEN.find(s => s.id === id);
   const MSSD = ['cold','hate','med','sdr','gov','close','winlaw','prw','prt','lip','col','frac','suf'].map(by);
   const MDSD = ['skocpol','w30','hi','lo','pdem','t80'].map(by);
