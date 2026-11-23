@@ -240,6 +240,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
+<style id="draftcss">.draftbadge{color:#B3261E}.draftcard{border:2px dashed #B3261E!important}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .draftbadge{color:#FF8A80}:root:not([data-theme="light"]) .draftcard{border-color:#E0675E!important}}:root[data-theme="dark"] .draftbadge{color:#FF8A80}:root[data-theme="dark"] .draftcard{border-color:#E0675E!important}</style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
 :root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
@@ -331,6 +332,14 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
       <p>Download a sample of a dataset, run the analyses in SPSS and enter your results. The page checks each answer and explains any mistakes. A new sample gives you a new set of answers to work out.</p>
       <a class="examgo" href="exam-prep.html">Open exam prep →</a>
     </section>
+
+    <section aria-labelledby="draftH" style="margin-top:26px">
+      <p class="gh" id="draftH">In development</p>
+      <div class="mods">
+        <a class="mod ex draftcard" href="case-selection.html"><span class="num">Comparative method</span><div><h2>Choosing cases to compare <span class="draftbadge" style="font:700 12.5px var(--font-mono);letter-spacing:.06em;white-space:nowrap">[DRAFT ONLY]</span></h2><p>Choose cases for most similar and most different systems designs, watch rival explanations drop away as you choose, and practice on a deck of research questions about US states and revolutions.</p><span class="data">Data: 2024 turnout and presidential vote by state, NOAA November temperatures, state election laws, Movement Advancement Project hate crimes laws; Skocpol's revolutions</span></div><span class="go">Open →</span></a>
+      </div>
+    </section>
+
 
   <footer class="src"><details class="srcd"><summary>Data sources for all modules</summary><p>County presidential returns compiled by Tony McGovern (tonmcg/US_County_Level_Election_Results_08-24); FiveThirtyEight's 2016 poll and state data; the British Election Panel Study and the 1988 Chilean plebiscite survey (carData); Florida 2000 county returns (carData); OpenIntro's midterm elections data; the 2004 American National Election Study; the Titanic passenger list (titanic3, Vanderbilt Biostatistics); the 2020 and 2024 American National Election Studies and the 2016 ANES Pilot Study; Pew Research Center's 2014 post-election survey; Gallup's January 2025 party-ideology results (respondent-level data imputed to match the published percentages); the 1995 South Africa election survey; the 1854 Massachusetts lunatics data; and a cross-national dataset of countries (World.sav, from the course files). Most of the datasets were accessed through the Rdatasets collection.</p></details></footer>
 </main>

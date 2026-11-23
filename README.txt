@@ -23,6 +23,7 @@ Files
   practice-titanic.html                   practice: who survived the Titanic?
   practice-published-tables.html          practice: what would it look like published?
   exam-prep.html                          practice final
+  case-selection.html                     DRAFT: choosing cases (MSS and MDS), parked at the end
 
   The old file names (1-levels-and-central-tendency.html and so on) are
   forwarding pages to the new names, so old links and bookmarks still work.
