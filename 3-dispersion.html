@@ -283,6 +283,7 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+.qwd{margin:2px 0;padding:8px 12px;border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1-line) 7%,var(--surface));border-radius:0 8px 8px 0;font-size:15.5px;line-height:1.5;color:var(--ink)}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -603,12 +604,17 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
 
   <!-- 4 PEW q36/q37 -->
   <section class="part"><p class="kick">Part 4</p><h2>Compare two variables on the same scale</h2>
-    <p>You can compare SDs directly only when two variables share a coding. Pew asked in 2014 how confident people were that their own vote was counted correctly (q36), and how confident they were that votes across the country were counted correctly (q37).</p></section>
+    <p>You can compare the SDs of two variables directly only when they are measured on the same scale, so that a one-point gap means the same thing on both. Here we take two questions from one survey that use the same answers and the same codes.</p></section>
   <section class="dcard" id="pw" data-ds="2014ElectionSurvey_F26.sav">
     <h3>Pew Research Center, 2014 post-election survey (2014ElectionSurvey_F26.sav)</h3>
+    <p class="p">Right after the 2014 midterm election, the Pew Research Center interviewed 1,353 American adults by telephone between November 6 and 9. People who said they had voted were asked about their own ballot:</p>
+    <p class="qwd"><b>q36.</b> How confident are you that your vote was accurately counted?</p>
+    <p class="p">Everyone was then asked about the election as a whole:</p>
+    <p class="qwd"><b>q37.</b> How confident are you that the votes across the country were accurately counted?</p>
     <p class="codes-h">q36 and q37 are coded the same way.</p>
     <dl class="codes"><dt>1</dt><dd>Very confident</dd><dt>2</dt><dd>Somewhat confident</dd><dt>3</dt><dd>Not too confident</dd><dt>4</dt><dd>Not at all confident</dd><dt class="miss">9</dt><dd class="miss">Don't know/Refused (set as missing)</dd></dl>
-    <p class="p">A <b>low</b> code means <b>more</b> confidence. q36 was asked only of people who voted.</p>
+    <p class="p">The scale runs from most confident (1) to least confident (4), so a <b>low</b> code means <b>more</b> confidence and a higher mean means less trust in the count. Because both questions share these codes, their means and SDs can be compared directly. q36 has 834 valid answers because only voters were asked, while q37 has 1,309.</p>
+    <p class="p">The question we want to answer is which belief varies more from person to person, confidence in your own vote or confidence in the national count.</p>
     <p class="p">In SPSS, go to Analyze → Descriptive Statistics → Frequencies, move q36 and q37 over, check Bar charts under Charts, and under Statistics check Mean, Std. deviation, Variance, Skewness and Kurtosis.</p>
     <div class="two"><div><div id="pw36"></div></div><div><div id="pw37"></div></div></div>
     <div class="legend"><span><i style="background:var(--s2)"></i>Mean</span><span><i style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);height:6px"></i>One SD on each side of the mean</span><span>Bars: percent of valid answers</span></div>
@@ -879,9 +885,9 @@ return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mea
 })();
 
 /* dataset download buttons */
-(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav'];
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav','ANES_2020_Issues_F26.sav'];
 const INSTR=[];
-const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote'};
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote','ANES_2020_Issues_F26.sav':'ANES 2020'};
 function run(){
   document.querySelectorAll('.dcard[data-ds]').forEach(card=>{if(card.querySelector('.dsbtns'))return;const h=card.querySelector(':scope > h3');
     const row=document.createElement('div');row.className='dshead';if(h){h.before(row);row.appendChild(h);}else card.prepend(row);
