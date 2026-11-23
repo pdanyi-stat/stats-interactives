@@ -268,6 +268,17 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+.dec th .cv{display:flex;align-items:center;gap:6px;margin-top:4px;font-weight:500;color:var(--muted);font-size:12px}
+.ln{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}.ln.o{border-color:var(--s2)}.ln.b{border-color:var(--s1-line)}
+.sq{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}.sq.o{background:var(--s2)}.sq.b{background:color-mix(in srgb,var(--s1-line) 55%,var(--surface));box-shadow:inset 0 0 0 1px var(--s1-line)}
+.dec td.t1{background:color-mix(in srgb,var(--s2) 20%,var(--surface))!important;box-shadow:inset 4px 0 0 var(--s2)}
+.dec td.t2{background:color-mix(in srgb,var(--s1-line) 20%,var(--surface))!important;box-shadow:inset 4px 0 0 var(--s1-line)}
+.dec td.ok{background:var(--surface)!important}
+.errstats > div.t1{border-left:5px solid var(--s2)}.errstats > div.t2{border-left:5px solid var(--s1-line)}.errstats > div.pw{border-left:5px solid var(--ink-2)}
+.ecall{margin-top:10px;padding:14px 16px;border:2px solid var(--axis);border-left:6px solid var(--ink-2);border-radius:10px;background:var(--surface);display:grid;gap:9px;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.ecall p{margin:0}.ecall b{color:var(--ink)}.ecall ul{margin:0;padding-left:20px;display:grid;gap:7px}
+.eck{font-size:12.5px!important;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink)!important}
+.enow{padding:8px 10px;border-radius:8px;background:var(--page);color:var(--ink)!important}
 </style>
 <!-- spss-start -->
 <style>
@@ -810,9 +821,9 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
     <div class="fighead"><h2 id="type-errors" style="scroll-margin-top:70px"><span class="step">E</span>Type I and Type II errors</h2></div>
     <p class="sub">A test ends in one of two decisions about H₀, and the world is in one of two states. Two of the four combinations are mistakes.</p>
     <div class="tblwrap"><table class="dec">
-      <tr><th></th><th>H₀ is true (no real difference)</th><th>H₀ is false (a real difference)</th></tr>
-      <tr><th>Reject H₀</th><td class="bad"><b>Type I error: a false positive</b><span>Like telling a man “You're pregnant!” We claim a difference that isn't there. Its rate is α.</span></td><td class="good"><b>Correct</b><span>We detect a real difference.</span></td></tr>
-      <tr><th>Fail to reject H₀</th><td class="good"><b>Correct</b><span>There is no difference, and we don't claim one.</span></td><td class="bad"><b>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β.</span></td></tr>
+      <tr><th></th><th class="c0">H₀ is true (no real difference)<span class="cv"><i class="ln o"></i>the orange curve</span></th><th class="c1">H₀ is false (a real difference)<span class="cv"><i class="ln b"></i>the blue curve</span></th></tr>
+      <tr><th>Reject H₀</th><td class="t1"><b><i class="sq o"></i>Type I error: a false positive</b><span>Like telling a man “You're pregnant!” We claim a difference that isn't there. Its rate is α, the orange tails of the chart.</span></td><td class="ok"><b>✓ Correct</b><span>We detect a real difference. Its rate is the power, 1 − β, the unshaded part of the blue curve beyond the dashed lines.</span></td></tr>
+      <tr><th>Fail to reject H₀</th><td class="ok"><b>✓ Correct</b><span>There is no difference, and we don't claim one. Its rate is 1 − α, the middle of the orange curve.</span></td><td class="t2"><b><i class="sq b"></i>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β, the shaded blue area between the dashed lines.</span></td></tr>
     </table></div>
     <div class="ctlrow" style="margin-top:14px">
       <div class="ctl"><span class="lab" id="eal">Significance level <span style="text-transform:none">α</span></span><div class="seg" role="radiogroup" aria-labelledby="eal" id="eA"></div></div>
@@ -825,8 +836,8 @@ svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-lin
         <div class="chart" id="eChart"></div>
       </div>
       <div>
-        <div class="errstats"><div><span class="k">Type I, <span style="text-transform:none">α</span></span><div class="v" id="eI"></div></div><div><span class="k">Type II, <span style="text-transform:none">β</span></span><div class="v" id="eII"></div></div><div><span class="k">Power, 1 − <span style="text-transform:none">β</span></span><div class="v" id="eP"></div></div></div>
-        <p class="say" id="eSay" style="margin:0"></p>
+        <div class="errstats"><div class="t1"><span class="k">Type I, <span style="text-transform:none">α</span></span><div class="v" id="eI"></div></div><div class="t2"><span class="k">Type II, <span style="text-transform:none">β</span></span><div class="v" id="eII"></div></div><div class="pw"><span class="k">Power, 1 − <span style="text-transform:none">β</span></span><div class="v" id="eP"></div></div></div>
+        <div class="ecall" id="eSay" aria-live="polite"></div>
       </div>
     </div>
     <details class="whynull">
@@ -1302,7 +1313,15 @@ $('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run
     const ax=mk('text',{x:W-m.r,y:H-4,'text-anchor':'end',class:'axlab'},svg);ax.textContent='difference in means, in SDs →';
     const pc=v=>v<0.001?'< 0.1%':(v*100).toFixed(v<0.1?1:0)+'%';
     document.getElementById('eI').textContent=pc(E.a); document.getElementById('eII').textContent=pc(beta); document.getElementById('eP').textContent=pc(power);
-    document.getElementById('eSay').innerHTML=`At α = ${String(E.a).replace(/^0/,'')} with ${E.n} per group, a true difference of ${d} SD goes undetected <b>${pc(beta)}</b> of the time. Make α stricter and the orange tails shrink, but the blue area grows, which means fewer false positives and more missed differences. Only more data (a bigger n) narrows both curves and shrinks both errors at once.`;
+    const A=String(E.a).replace(/^0/,'');
+    document.getElementById('eSay').innerHTML=`<p class="eck">How to read the chart</p>
+<p><i class="ln o"></i><b>The orange curve</b> shows the differences in means we would get from sample after sample if H₀ were true and the two groups really did not differ. The dashed lines cut off its outer ${pc(E.a)}, split between the two tails. A sample that lands out there gets H₀ rejected even though nothing is going on, so the orange tails are the Type I error rate, α = ${A}.</p>
+<p><i class="ln b"></i><b>The blue curve</b> shows the differences we would get if there really is a difference of ${d} SD between the groups. A sample that lands between the dashed lines fails to reject H₀, so the real difference slips by. That shaded blue area is the Type II error rate, β = ${pc(beta)}. The rest of the blue curve, beyond the dashed lines, is the power (${pc(power)}), which is the chance the test catches the difference.</p>
+<p class="enow">Right now, at α = ${A} with ${E.n} people per group, a real difference of ${d} SD goes undetected <b>${pc(beta)}</b> of the time.</p>
+<p><b>Try the three controls.</b></p>
+<ul><li><b>Make α stricter</b> (move toward .001). The dashed lines move outward, so the orange tails shrink, but more of the blue curve falls between the lines and β grows. Fewer false positives cost us more missed differences.</li>
+<li><b>Raise n per group.</b> Both curves get narrower, because larger samples give more precise means, so they overlap less. α stays where you set it, but β falls. More data is the only way to cut missed differences without accepting more false positives.</li>
+<li><b>Switch to a medium difference.</b> The blue curve moves farther from 0, so less of it sits between the dashed lines and β falls. Bigger real differences are easier to detect.</li></ul>`;
   }
   seg2('eA',[[0.10,'.10'],[0.05,'.05'],[0.01,'.01'],[0.001,'.001']],E.a,v=>{E.a=+v;draw();});
   seg2('eN',[[25,'25'],[50,'50'],[100,'100'],[250,'250']],E.n,v=>{E.n=+v;draw();});
