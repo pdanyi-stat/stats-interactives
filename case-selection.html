@@ -683,6 +683,58 @@ svg.bd{width:100%;max-width:520px;height:auto;display:block}
 #tc .tc td button{width:clamp(54px,15vw,78px);height:clamp(46px,12.5vw,64px);font-size:clamp(18px,5.4vw,27px)}
 #tc svg.bd{max-width:620px}
 
+
+/* Part 7: saving, files and printing */
+.dyrest{margin:0 0 6px;padding:8px 12px;border-radius:8px;background:var(--page);border:1px solid var(--line);font-size:14.5px;color:var(--ink-2)}
+.dyrest[hidden]{display:none}
+.dyconf{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;margin-left:8px;font-size:14.5px;color:var(--ink)}
+.dyconf[hidden]{display:none}
+p.dyconf{margin:6px 0 0}
+.dyname2{max-width:420px;margin-top:6px}
+.dybtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:start}
+.dyb{display:grid;gap:4px}.dyb button{width:100%;min-height:44px}
+.dyb small{font-size:12.5px;color:var(--ink-2);line-height:1.35}
+.dybtns button:disabled{opacity:.45;cursor:not-allowed}
+.dywhy{margin:4px 0 0;font-size:13px;color:var(--ink-2)}.dywhy[hidden]{display:none}
+.dymsg{margin:4px 0 0;font-size:14.5px;font-weight:600;color:var(--miss-ink,#b02a2a)}.dymsg[hidden]{display:none}
+@media (max-width:700px){.dybtns{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#dyPrintSheet{display:none}
+.bd .plab{display:none}
+@media print{
+  @page{size:letter;margin:0.5in}
+  html.dyprint,html.dyprint body{background:#fff!important}
+  html.dyprint body>*:not(#dyPrintSheet){display:none!important}
+  html.dyprint #dyPrintSheet{display:block!important}
+  #dyPrintSheet{color:#111;font:10.5pt/1.4 var(--font-body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #dyPrintSheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #dyPrintSheet .ph-top{margin:0 0 4pt;font:600 9pt var(--font-mono);letter-spacing:.04em;color:#444;border-bottom:1pt solid #999;padding-bottom:3pt}
+  #dyPrintSheet h1{font-size:16pt;margin:4pt 0 2pt}
+  #dyPrintSheet p{margin:2pt 0}
+  #dyPrintSheet .ph-logic{color:#333}
+  #dyPrintSheet .ph-vars{margin:4pt 0 6pt;padding-left:14pt;columns:2;column-gap:18pt}
+  #dyPrintSheet .ph-vars li{break-inside:avoid}
+  #dyPrintSheet .ph-vars .role{font:700 7.5pt var(--font-mono);text-transform:uppercase;letter-spacing:.04em;color:#555}
+  #dyPrintSheet .ph-vars .vals{color:#555}
+  #dyPrintSheet .ph-keep{break-inside:avoid;page-break-inside:avoid;display:grid;gap:6pt;margin:6pt 0}
+  #dyPrintSheet .lab2{margin:0 0 2pt}
+  #dyPrintSheet svg.bd{max-width:4.3in}
+  #dyPrintSheet .strip{gap:3pt}
+  #dyPrintSheet .srow{padding:2pt 6pt;gap:2pt;border-radius:5pt}
+  #dyPrintSheet .srow .hd{font-size:9pt}
+  #dyPrintSheet .srow .st{font-size:8pt;padding:0 6pt}
+  #dyPrintSheet .srow .cells{gap:3pt}
+  #dyPrintSheet .srow .cell{padding:1pt 3pt;font-size:9pt;min-height:0}
+  #dyPrintSheet .srow.names .cells span{font-size:9pt}
+  #dyPrintSheet .ph-why{font-size:9pt;color:#333;margin:0}
+  #dyPrintSheet .bd .plab{display:inline;font:700 8px var(--font-body);fill:#111;paint-order:stroke;stroke:#fff;stroke-width:3px}
+  #dyPrintSheet .bd .plab.cut{fill:#555}
+  #dyPrintSheet .bd .arr{stroke-opacity:1}
+  #dyPrintSheet .ph-verdict{font-weight:700}
+  #dyPrintSheet .ph-tab{break-inside:avoid}
+  #dyPrintSheet .ph-tab .note{display:none}
+  #dyPrintSheet .dyt{font-size:9pt}
+  #dyPrintSheet .ph-foot{margin-top:8pt;font:8pt var(--font-mono);color:#555;border-top:1pt solid #bbb;padding-top:3pt}
+}
 </style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
@@ -968,9 +1020,10 @@ main [id]{scroll-margin-top:72px}
   </section>
 
   <section class="part" id="own"><p class="kick">Part 7</p><h2>Build your own design</h2>
-    <p class="lede">This is where you build a design from scratch. You choose the design, the question, the variables and the cases, and you supply every value yourself, since the site does not check facts. What it does is show whether the logic of your design holds, with the same match strip and board you have used throughout this page. Nothing is saved, so copy your finished design down before you leave the page.</p></section>
+    <p class="lede">This is where you build a design from scratch. You choose the design, the question, the variables and the cases, and you supply every value yourself, since the site does not check facts. What it does is show whether the logic of your design holds, with the same match strip and board you have used throughout this page. Your design is saved in this browser on this device. To keep a copy, hand it in, or move it to another computer, use the buttons below.</p></section>
 
   <section class="dcard" id="diy">
+    <p class="dyrest" id="dyRest" hidden><span id="dyRestT"></span> <button type="button" class="linkish" id="dyRestOver">Start over</button><span class="dyconf" id="dyRestC" hidden></span></p>
     <div class="dyblk"><h3>Step 1 · Choose a design</h3><div class="dtiles" id="dyT"></div></div>
     <div class="dyblk dystep" hidden><h3>Step 2 · Your question and unit of analysis</h3>
       <label class="dyl">Research question<input type="text" id="dyQ" placeholder="Does cold weather lower turnout?"></label>
@@ -988,8 +1041,21 @@ main [id]{scroll-margin-top:72px}
         <div class="boardw"><p class="lab2">Rival explanations</p><svg class="bd" id="dyBd" role="img" aria-label="Rival explanations board for your design"></svg><p class="ctr"></p><p class="bkey"></p></div>
         <div class="cs-call" aria-live="polite"></div>
       </div></div>
-    <div class="dyblk dystep" hidden><h3>Step 7 · Your design as a table</h3><div id="dyTab"></div></div>
-    <div class="btnrow"><button id="dyReset">Clear everything and start over</button></div>
+    <div class="dyblk dystep" hidden><h3>Step 7 · Your design as a table</h3><div id="dyTab"></div>
+      <label class="dyl dyname2">Your name (optional, printed on the PDF)<input type="text" id="dyName" placeholder="Your name" autocomplete="name"></label></div>
+    <div class="dyblk dyacts">
+      <div class="dybtns">
+        <span class="dyb"><button type="button" id="dyPrint">Print or save as PDF</button><small>In the print window, choose “Save as PDF” as the printer.</small></span>
+        <span class="dyb"><button type="button" id="dyCsv">Download table (CSV)</button></span>
+        <span class="dyb"><button type="button" id="dySave">Save design file</button></span>
+        <span class="dyb"><button type="button" id="dyOpen">Open a saved design</button></span>
+      </div>
+      <input type="file" id="dyFile" accept=".json,application/json" hidden>
+      <p class="dywhy" id="dyWhy">Fill in every step above to print or download the table. You can save a design file at any point once you have chosen a design.</p>
+      <p class="dymsg" id="dyMsg" role="status" hidden></p>
+      <p class="dyconf" id="dyOpenC" hidden></p>
+    </div>
+    <div class="btnrow"><button id="dyReset">Clear everything and start over</button><span class="dyconf" id="dyResetC" hidden></span></div>
   </section>
 
   <details class="srcd" id="refs">
@@ -1591,13 +1657,167 @@ function diyBuilder() {
     MDS:[['out','Outcome','the outcome your cases will share',1,1],['dif','Attributes that should differ','ways your cases should be as different as possible',1,8],['fur','Further attributes to search','attributes you will check for something shared once the cases are set',1,8]]
   };
   let n = 0; const nid = () => 'v' + (++n);
-  const D = {design:null, q:'', unit:'', vars:[], ex:{tv:'', ov:''}, oval:'', cases:[], cur:0};
+  const D = {design:null, q:'', unit:'', vars:[], ex:{tv:'', ov:''}, oval:'', cases:[], cur:0, name:''};
   const fresh = d => LAY[d].flatMap(([r]) => (r === 'ctl' || r === 'dif' ? [0, 1] : [0]).map(() => ({id:nid(), role:r, name:'', vals:[]})));
   const named = () => D.vars.filter(v => v.name.trim());
   const vname = v => v.name.trim() || 'an unnamed variable';
   const roleOf = r => ({test:'test variable', ctl:'control', out:'outcome', dif:'should differ', fur:'further attribute'})[r];
   const ordered = () => LAY[D.design].flatMap(([r]) => D.vars.filter(v => v.role === r));
   const q = s => root.querySelector(s);
+
+  /* ---------- saving, files and printing (Part 7 only) ---------- */
+  const KEYS = 'caseDesign.v1';
+  const ROLEW = {test:'test variable', ctl:'control', out:'outcome', dif:'should differ', fur:'further attribute'};
+  const ROLEC = Object.fromEntries(Object.entries(ROLEW).map(([k, v]) => [v, k]));
+  const store = {
+    get() { try { return window.localStorage.getItem(KEYS); } catch (e) { return null; } },
+    set(v) { try { window.localStorage.setItem(KEYS, v); } catch (e) {} },
+    del() { try { window.localStorage.removeItem(KEYS); } catch (e) {} }
+  };
+  const hasWork = () => !!(D.design || D.q.trim() || D.unit.trim() || D.cases.length || D.name.trim());
+  function snapshot() {
+    const V = D.design ? ordered() : [];
+    return {format:'case-design', version:1, saved:new Date().toISOString(), name:D.name, design:D.design, question:D.q, unit:D.unit,
+      variables:V.map(v => ({name:v.name, role:ROLEW[v.role], values:v.vals.slice()})),
+      cases:D.cases.map(c => ({name:c.name, values:V.map(v => c.v[v.id] || '')})),
+      expect:D.design === 'MSS' ? {test:D.ex.tv, outcome:D.ex.ov} : null,
+      outcome:D.design === 'MDS' ? D.oval : null};
+  }
+  const str = (x, n = 300) => typeof x === 'string' ? x.slice(0, n) : '';
+  function parseDesign(o) {
+    // returns a clean state, or null when the object is not a saved case design
+    if (!o || typeof o !== 'object' || o.format !== 'case-design' || o.version !== 1) return null;
+    if (o.design !== 'MSS' && o.design !== 'MDS') return null;
+    if (!Array.isArray(o.variables) || !Array.isArray(o.cases) || o.variables.length > 30 || o.cases.length > 5) return null;
+    const allowed = LAY[o.design].map(([r]) => r);
+    const vars = [];
+    for (const v of o.variables) {
+      if (!v || typeof v !== 'object' || !Array.isArray(v.values)) return null;
+      const role = ROLEC[v.role] || (allowed.includes(v.role) ? v.role : null);
+      if (!role || !allowed.includes(role)) return null;
+      const vals = [...new Set(v.values.filter(x => typeof x === 'string').map(x => str(x, 120).trim()).filter(Boolean))].slice(0, 12);
+      vars.push({id:nid(), role, name:str(v.name, 120), vals});
+    }
+    for (const [r] of LAY[o.design]) if ((r === 'test' || r === 'out') && vars.filter(v => v.role === r).length !== 1) return null;
+    const cases = [];
+    for (const c of o.cases) {
+      if (!c || typeof c !== 'object') return null;
+      const cv = {};
+      vars.forEach((v, i) => {
+        const x = Array.isArray(c.values) ? c.values[i] : (c.values && typeof c.values === 'object' ? c.values[v.name] : '');
+        if (typeof x === 'string' && v.vals.includes(x.trim())) cv[v.id] = x.trim();
+      });
+      cases.push({name:str(c.name, 120), v:cv});
+    }
+    const ex = o.expect && typeof o.expect === 'object' ? {tv:str(o.expect.test, 120), ov:str(o.expect.outcome, 120)} : {tv:'', ov:''};
+    return {design:o.design, q:str(o.question), unit:str(o.unit), name:str(o.name, 120), vars, cases, ex:o.design === 'MSS' ? ex : {tv:'', ov:''}, oval:o.design === 'MDS' ? str(o.outcome, 120) : '', saved:str(o.saved, 40)};
+  }
+  function apply(st) {
+    Object.assign(D, {design:st.design, q:st.q, unit:st.unit, name:st.name, vars:st.vars, cases:st.cases, ex:st.ex, oval:st.oval, cur:0});
+    q('#dyQ').value = D.q; q('#dyU').value = D.unit; q('#dyName').value = D.name;
+    all();
+  }
+  let saveT = 0;
+  function persist() {
+    clearTimeout(saveT);
+    saveT = setTimeout(() => { if (hasWork()) store.set(JSON.stringify(snapshot())); else store.del(); }, 500);
+  }
+  const ready = () => !q('#dyK').hidden;
+  function actions() {
+    const ok = ready();
+    q('#dyPrint').disabled = !ok; q('#dyCsv').disabled = !ok; q('#dySave').disabled = !D.design;
+    q('#dyWhy').hidden = ok;
+  }
+  const slug = () => {
+    const w = D.q.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').split(/[\s-]+/).filter(Boolean).slice(0, 5).join('-');
+    const d = new Date(), day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return 'case-design-' + (w ? w + '-' : '') + day;
+  };
+  function download(name, text, type) {
+    const url = URL.createObjectURL(new Blob([text], {type}));
+    const a = document.createElement('a'); a.href = url; a.download = name; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  function csv() {
+    const V = ordered(), seen = {};
+    const head = V.map(v => { const b = v.name.trim() || 'variable'; seen[b] = (seen[b] || 0) + 1; return seen[b] > 1 ? b + '_' + seen[b] : b; });
+    const cell = x => { let t = String(x == null ? '' : x); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
+    const rows = [['Case'].concat(head)].concat(D.cases.map(c => [c.name.trim()].concat(V.map(v => c.v[v.id] || ''))));
+    return '﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n') + '\r\n';
+  }
+  const msg = (t, keep) => { const m = q('#dyMsg'); m.textContent = t || ''; m.hidden = !t; };
+  function confirmIn(host, text, yesLab, noLab, yes) {
+    // an inline confirmation in place of a dialog
+    host.hidden = false; host.innerHTML = '';
+    const p = document.createElement('span'); p.textContent = text + ' ';
+    const y = document.createElement('button'); y.type = 'button'; y.className = 'primary'; y.textContent = yesLab;
+    const n = document.createElement('button'); n.type = 'button'; n.textContent = noLab;
+    host.append(p, y, n);
+    y.addEventListener('click', e => { e.stopPropagation(); host.hidden = true; host.innerHTML = ''; yes(); });
+    n.addEventListener('click', e => { e.stopPropagation(); host.hidden = true; host.innerHTML = ''; });
+    y.focus();
+  }
+  function clearAll() {
+    Object.assign(D, {design:null, q:'', unit:'', vars:[], ex:{tv:'', ov:''}, oval:'', cases:[], cur:0, name:''});
+    q('#dyQ').value = ''; q('#dyU').value = ''; q('#dyName').value = '';
+    clearTimeout(saveT); store.del(); q('#dyRest').hidden = true; msg('');
+    all();
+  }
+  function printLabels(svg) {
+    // a word on each arrow, so live and cut still read on a grayscale printout
+    svg.querySelectorAll('.plab').forEach(t => t.remove());
+    const W = {test:'live', live:'live', shared:'live', cut:'cut'};
+    svg.querySelectorAll('path.arr').forEach(pth => {
+      const st = ['test','live','shared','cut'].find(c => pth.classList.contains(c)); if (!st) return;
+      let pt; try { pt = pth.getPointAtLength(pth.getTotalLength() * 0.55); } catch (e) { return; }
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', pt.x.toFixed(1)); t.setAttribute('y', (pt.y - 4).toFixed(1)); t.setAttribute('class', 'plab ' + st); t.setAttribute('text-anchor', 'middle');
+      t.textContent = W[st]; svg.appendChild(t);
+    });
+  }
+  function sheet() {
+    // the printable page, rebuilt from what is on screen
+    let el = document.getElementById('dyPrintSheet');
+    if (!el) { el = document.createElement('div'); el.id = 'dyPrintSheet'; document.body.appendChild(el); }
+    if (!ready()) { el.innerHTML = ''; return; }
+    const day = new Date().toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+    const mss = D.design === 'MSS', V = ordered();
+    const logic = mss ? 'The cases are alike on every control and differ on the test variable, so the controls are cut and the test variable is left to explain the difference in the outcome.'
+                      : 'The cases share the outcome and differ on as much as possible, so the differences are cut and an attribute every case shares becomes a plausible explanation.';
+    const strip = q('#dyK .stripw').cloneNode(true), bd = q('#dyK .boardw').cloneNode(true);
+    bd.querySelectorAll('.bkey,.ctr,.legend').forEach(x => x.remove());
+    const svg = bd.querySelector('svg'); svg.id = 'dyBdP'; svg.innerHTML = svg.innerHTML.replace(/ah-dyBd-/g, 'ah-dyBdP-');
+    const call = q('#dyK .cs-call'), kh = call.querySelector('.kh');
+    el.innerHTML = `<p class="ph-top">${esc(['Case design', D.name.trim(), day].filter(Boolean).join(' · '))}</p>
+      <h1>${mss ? 'Most similar systems' : 'Most different systems'}</h1><p class="ph-logic">${logic}</p>
+      <p><b>Research question.</b> ${esc(D.q.trim() || 'Not written yet.')}</p><p><b>Unit of analysis.</b> ${esc(D.unit.trim() || 'Not written yet.')}</p>
+      <ul class="ph-vars">${V.map(v => `<li><span class="role">${ROLEW[v.role]}</span> <b>${esc(v.name.trim())}</b> <span class="vals">(${esc(v.vals.join(', '))})</span></li>`).join('')}</ul>
+      <div class="ph-keep"></div><div class="ph-tab"></div><p class="ph-foot">${esc(location.origin + location.pathname)}</p>`;
+    const keep = el.querySelector('.ph-keep');
+    keep.append(strip, bd);
+    const v = document.createElement('p'); v.className = 'ph-verdict'; v.textContent = (kh ? kh.textContent + '. ' : '') + (q('#dyK .ctr').textContent || ''); keep.append(v);
+    const why = call.querySelector('li'); if (why) { const w = document.createElement('p'); w.className = 'ph-why'; w.textContent = why.textContent; keep.append(w); }
+    const tab = q('#dyTab').cloneNode(true); tab.removeAttribute('id');
+    const hd = tab.querySelector('.dyhead'); if (hd) [...hd.querySelectorAll('p')].slice(0, -1).forEach(x => x.remove());
+    el.querySelector('.ph-tab').append(tab);
+    printLabels(el.querySelector('#dyBdP'));
+  }
+  let themeWas = null;
+  let printing = false;
+  function startPrint() {
+    if (printing || !ready()) return;
+    printing = true; sheet();
+    const h = document.documentElement; themeWas = h.getAttribute('data-theme');
+    h.setAttribute('data-theme', 'light'); h.classList.add('dyprint');
+  }
+  function endPrint() {
+    if (!printing) return;
+    printing = false; const h = document.documentElement; h.classList.remove('dyprint');
+    if (themeWas === null) h.removeAttribute('data-theme'); else h.setAttribute('data-theme', themeWas);
+  }
+  window.addEventListener('beforeprint', startPrint);
+  window.addEventListener('afterprint', endPrint);
 
   function tiles() {
     q('#dyT').innerHTML = ['MSS','MDS'].map(d => `<button class="dtile${D.design === d ? ' on' : ''}" data-design="${d}"${D.design === d ? ' aria-current="true"' : ''}><b>${d === 'MSS' ? 'Most similar systems' : 'Most different systems'}</b><span>${d === 'MSS' ? 'Start from a hypothesis. The test variable comes first.' : 'Start from an outcome your cases share.'}</span></button>`).join('');
@@ -1664,16 +1884,17 @@ function diyBuilder() {
   }
   function table(show) {
     const el = q('#dyTab');
-    if (!show) { el.innerHTML = '<p class="note">Your design appears here as a table once every step is filled in.</p>'; return; }
+    if (!show) { el.innerHTML = '<p class="note">Your design appears here as a table once every step is filled in.</p>'; actions(); return; }
     const V = ordered();
     const head = D.design === 'MSS'
       ? `<p><b>Design:</b> most similar systems (hypothesis testing)</p><p><b>Question:</b> ${esc(D.q.trim() || '(not written yet)')}</p><p><b>Unit of analysis:</b> ${esc(D.unit.trim() || '(not written yet)')}</p><p><b>Hypothesis:</b> When ${esc(vname(D.vars.find(v => v.role === 'test')))} is ${esc(D.ex.tv)}, ${esc(vname(D.vars.find(v => v.role === 'out')))} will be ${esc(D.ex.ov)}.</p>`
       : `<p><b>Design:</b> most different systems (theory building)</p><p><b>Question:</b> ${esc(D.q.trim() || '(not written yet)')}</p><p><b>Unit of analysis:</b> ${esc(D.unit.trim() || '(not written yet)')}</p><p><b>Shared outcome:</b> ${esc(vname(D.vars.find(v => v.role === 'out')))} is ${esc(D.oval)} in every case.</p>`;
     el.innerHTML = `<div class="dyhead">${head}</div><table class="dyt"><thead><tr><th>Variable</th>${D.cases.map(c => `<th>${esc(c.name.trim())}</th>`).join('')}</tr></thead><tbody>` +
       V.map(v => `<tr><th><span class="role">${roleOf(v.role)}</span>${esc(v.name.trim())}</th>${D.cases.map(c => `<td>${esc(c.v[v.id] || '')}</td>`).join('')}</tr>`).join('') + `</tbody></table>`;
+    actions();
   }
   const deps = () => { hyp(); cases(); check(); };
-  function all() { tiles(); editor(); deps(); }
+  function all() { tiles(); editor(); deps(); actions(); }
   function addVal(id) {
     const inp = root.querySelector(`[data-addv="${id}"]`), v = D.vars.find(x => x.id === id), x = inp.value.trim();
     if (!x) return;
@@ -1693,9 +1914,16 @@ function diyBuilder() {
     else if (d.tab) { D.cur = +d.tab; cases(); }
     else if (d.delcase !== undefined) { D.cases.splice(+d.delcase, 1); D.cur = Math.max(0, Math.min(D.cur, D.cases.length - 1)); deps(); }
     else if (d.setv) { const c = D.cases[D.cur]; c.v[d.setv] = c.v[d.setv] === d.val ? undefined : d.val; if (!c.v[d.setv]) delete c.v[d.setv]; cases(); check(); }
-    else if (b.id === 'dyReset') { D.design = null; D.q = ''; D.unit = ''; D.vars = []; D.cases = []; D.cur = 0; q('#dyQ').value = ''; q('#dyU').value = ''; all(); }
+    else if (b.id === 'dyReset') { confirmIn(q('#dyResetC'), 'Clear your whole design?', 'Yes, clear it', 'Keep it', clearAll); return; }
+    else if (b.id === 'dyRestOver') { confirmIn(q('#dyRestC'), 'Clear your whole design?', 'Yes, clear it', 'Keep it', clearAll); return; }
+    else if (b.id === 'dyPrint') { startPrint(); window.print(); setTimeout(endPrint, 1000); return; }
+    else if (b.id === 'dyCsv') { if (ready()) download(slug() + '.csv', csv(), 'text/csv;charset=utf-8'); return; }
+    else if (b.id === 'dySave') { if (D.design) download(slug() + '.json', JSON.stringify(snapshot(), null, 2), 'application/json'); return; }
+    else if (b.id === 'dyOpen') { msg(''); q('#dyFile').click(); return; }
+    else return;
+    persist();
   });
-  root.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset.addv) { e.preventDefault(); addVal(e.target.dataset.addv); } });
+  root.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset.addv) { e.preventDefault(); addVal(e.target.dataset.addv); persist(); } });
   root.addEventListener('input', e => {
     const t = e.target;
     if (t.id === 'dyQ') { D.q = t.value; table(!q('#dyK').hidden); }
@@ -1703,13 +1931,44 @@ function diyBuilder() {
     else if (t.classList.contains('dyname')) { D.vars.find(v => v.id === t.dataset.v).name = t.value; hyp(); check();
       const c = D.cases[D.cur]; if (c) cases(); }
     else if (t.classList.contains('dycname')) { D.cases[D.cur].name = t.value; const tb = root.querySelector(`.dytab[data-tab="${D.cur}"]`); if (tb) tb.textContent = t.value.trim() || 'Case ' + (D.cur + 1); check(); }
+    else if (t.id === 'dyName') { D.name = t.value; }
+    else return;
+    persist();
   });
   root.addEventListener('change', e => {
     const t = e.target;
     if (t.dataset.ex) { D.ex[t.dataset.ex] = t.value; check(); }
     else if (t.dataset.oval) { D.oval = t.value; check(); }
+    else if (t.id === 'dyFile') {
+      const f = t.files && t.files[0]; t.value = '';
+      if (!f) return;
+      const bad = () => msg("That file isn't a saved case design.");
+      const rd = new FileReader();
+      rd.onerror = bad;
+      rd.onload = () => {
+        let st = null;
+        try { st = parseDesign(JSON.parse(String(rd.result))); } catch (err) { st = null; }
+        if (!st) { bad(); return; }
+        const go = () => { apply(st); q('#dyRest').hidden = true; msg(''); persist(); };
+        if (hasWork()) confirmIn(q('#dyOpenC'), 'Opening this file replaces the design on the page.', 'Replace it', 'Keep mine', go);
+        else go();
+      };
+      if (f.size > 2000000) { bad(); return; }
+      rd.readAsText(f);
+      return;
+    }
+    else return;
+    persist();
   });
-  all();
+  // restore an autosaved design from this browser
+  let st0 = null;
+  try { const raw = store.get(); if (raw) st0 = parseDesign(JSON.parse(raw)); } catch (e) { st0 = null; }
+  if (st0) {
+    apply(st0);
+    const when = new Date(st0.saved), ok = !isNaN(when);
+    q('#dyRestT').textContent = `Your design from ${ok ? when.toLocaleString(undefined, {month:'long', day:'numeric', hour:'numeric', minute:'2-digit'}) : 'an earlier visit'} was restored.`;
+    q('#dyRest').hidden = false;
+  } else all();
 }
 
 /* ---------- Part 6: designs from published research ---------- */
