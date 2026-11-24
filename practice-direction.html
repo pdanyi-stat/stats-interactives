@@ -579,9 +579,19 @@ main [id]{scroll-margin-top:72px}
  .board{margin:0 -16px 8px}.shelf2::-webkit-scrollbar{display:none}
  .gbooks .bk:not(.face){flex:0 0 58px}.bk .ti{font-size:calc(var(--fs) * .8)!important;margin-bottom:54px;max-height:calc(100% - 106px)}.bk .plate{font-size:9.5px;margin-top:32px}
  .face{flex:0 0 150px!important;padding:12px 11px}.face .ft{font-size:19px}
- .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
+ .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}
  .mtitle h1{font-size:40px}
 }
+
+.rv .mhd.sh .rt{display:inline-flex;align-items:center;gap:10px}
+.swipehint{display:none;padding:4px 11px;border-radius:999px;color:#5c3d00;background:#FBE3A6;border:1px solid #E8B64A;letter-spacing:.09em;animation:swipeglow 1.9s ease-in-out infinite}
+.mhd.sh.swipe .swipehint{display:inline-block}
+.mhd.sh.swipe.swiped .swipehint{animation:none}
+@keyframes swipeglow{0%{box-shadow:0 0 0 0 rgba(240,180,60,.65)}70%{box-shadow:0 0 0 10px rgba(240,180,60,0)}100%{box-shadow:0 0 0 0 rgba(240,180,60,0)}}
+@media (prefers-reduced-motion:reduce){.swipehint{animation:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .swipehint{color:#FBE3A6;background:#4a3508;border-color:#C9962E}}
+:root[data-theme="dark"] .swipehint{color:#FBE3A6;background:#4a3508;border-color:#C9962E}
+.shelf2.scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.shelf2.scroll::-webkit-scrollbar{display:none}
 
 /* the math in the lessons: larger and at full contrast so students rely on it */
 .calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
