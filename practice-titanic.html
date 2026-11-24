@@ -639,7 +639,7 @@ function parseTab(txt,line){
   const cols=L[hi].split('|')[1].trim().split(/\s+/);
   const rows=[],m=[];let total=null;
   for(let i=hi+2;i<L.length;i++){const s=L[i];if(/^-+\+/.test(s))continue;const p=s.split('|');if(p.length<3)break;
-    const lab=p[0].trim(),vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
+    const lab=p[0].trim();if(!lab)continue;const vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
   if(!rows.length)return null;
   return {rowVar,colVar,cols,rows,m};
 }
@@ -688,7 +688,7 @@ function renderTab(txt,line){
   body.push([rh(`% within ${colVar}`),...ct.map(()=> '100.0%'),'100.0%']);
   let h=tbl(`${rowVar} * ${colVar} Crosstabulation`,[[{t:'',cs:3,rs:2},{t:colVar,cs:cols.length},{t:'Total',rs:2}],cols],body);
   const wantG=/gamma/.test(line)||/gamma\s*=/.test(txt),wantL=/lambda/.test(txt);
-  let note=`SPSS prints the same counts as Stata's <code>tabulate</code>, plus the column percentages the labs ask for (put the IV in the columns and the DV in the rows).`;
+  let note=`SPSS prints the same counts as Stata's <code>tabulate</code>`+(/,\s*col/.test(line)?` and the same column percentages`:`, plus the column percentages the labs ask for`)+` (put the IV in the columns and the DV in the rows).`;
   if(wantL){const {out}=lambdas(m),fmt=(o,k)=>[X(F(o.v,3),'lv'+k),isFinite(o.ase)?F(o.ase,3):'.',isFinite(o.t)?F(o.t,3):'.',X(SIG(o.p),'lp'+k)];
     const dvL=(txt.match(/lambda \((\S+) given/)||[])[1]||rowVar,ivL=dvL===rowVar?colVar:rowVar,dvRow=dvL===rowVar?1:2;
     [0,1,2].forEach(k=>{const o=out[k];
