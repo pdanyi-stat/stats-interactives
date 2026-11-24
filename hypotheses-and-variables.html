@@ -641,6 +641,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -690,8 +693,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <div class="fbk" id="h3f"></div><div class="foot"><span id="h3n"></span><button id="h3x">Next →</button></div></div>
   </section>
 
-  <section class="dcard" id="refs">
-    <p class="kick" style="color:var(--muted)">Studies mentioned on this page</p>
+  <section class="dcard" id="refs"><details class="rvd srcdrawer"><summary>Studies mentioned on this page</summary><div class="in">
     <ul class="p" style="font-size:14.5px;display:grid;gap:4px">
       <li>Bueno de Mesquita, Bruce, Alastair Smith, Randolph M. Siverson, and James D. Morrow. 2003. <i>The Logic of Political Survival</i>. Cambridge, MA: MIT Press.</li>
       <li>Campbell, Angus, Philip E. Converse, Warren E. Miller, and Donald E. Stokes. 1960. <i>The American Voter</i>. New York: Wiley.</li>
@@ -701,7 +703,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <li>Levendusky, Matthew. 2009. <i>The Partisan Sort: How Liberals Became Democrats and Conservatives Became Republicans</i>. Chicago: University of Chicago Press.</li>
       <li>Wolfinger, Raymond E., and Steven J. Rosenstone. 1980. <i>Who Votes?</i> New Haven, CT: Yale University Press.</li>
     </ul>
-  </section>
+  </div></details></section>
 
   <nav class="pager" aria-label="Previous and next"><span></span><a class="home" href="index.html">All modules</a><a class="nx" href="1-problems-of-causation.html"><span class="k">Next · Module 1 →</span><span class="t">Problems of causation</span></a></nav>
 </main>

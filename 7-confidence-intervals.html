@@ -845,6 +845,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -1024,6 +1027,8 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 </script>
 
 <!-- jelly bean intervals: end -->
+
+
 
 
 
@@ -1449,12 +1454,12 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
     </section>
   </div>
 
-  <footer class="src">
+  <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">
     Data: 2020 and 2016 county-level presidential returns, compiled by Tony McGovern in
     <a href="https://github.com/tonmcg/US_County_Level_Election_Results_08-24">tonmcg/US_County_Level_Election_Results_08-24</a> (Alaska excluded; N = 3,112).
     2016 polls: FiveThirtyEight's poll collection as packaged in the <i>dslabs</i> R library (Irizarry), via <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>; state results from the same package. National result: Clinton 48.2%, Trump 46.1%.
     Poll intervals use raw (unadjusted) shares; polls without a sample size are omitted.
-  </footer>
+  </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="6-sampling-distributions.html"><span class="k">← Previous · Module 6</span><span class="t">Sampling distributions</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8-difference-in-means.html"><span class="k">Next · Module 8 →</span><span class="t">Difference in means</span></a></nav>
 </main>
 

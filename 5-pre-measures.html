@@ -930,6 +930,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -1194,13 +1197,13 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </section>
   </div>
 
-  <footer class="src">
+  <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">
     R-squared start-simple example: Laura Bush and Republican Party feeling thermometers, 2004 ANES, N = 1,144.
     Gamma start-simple example: party ID (3 categories, leaners counted with their party) and ideological self-placement (3 categories), 2024 ANES, N = 4,716.
     Lambda start-simple example: Democratic and Republican identifiers (leaners included) who usually think of themselves as a city person or a country person, 2024 ANES, N = 1,844.
     Data: American National Election Studies, ANES 2024 Time Series Study (release of May 19, 2026), <a href="https://electionstudies.org">electionstudies.org</a>, shown as unweighted counts; county presidential returns, 2016 and 2020, from <a href="https://github.com/tonmcg/US_County_Level_Election_Results_08-24">tonmcg/US_County_Level_Election_Results_08-24</a> (Alaska excluded).
     The 7-point ideology scale is collapsed into liberal (1–3), moderate (4) and conservative (5–7), and the presidential vote tables keep only Harris and Trump voters. Respondents missing either variable are dropped.
-  </footer>
+  </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="4-dispersion.html"><span class="k">← Previous · Module 4</span><span class="t">Measures of dispersion</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="6-sampling-distributions.html"><span class="k">Next · Module 6 →</span><span class="t">Sampling distributions</span></a></nav>
 </main>
 

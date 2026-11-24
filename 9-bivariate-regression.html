@@ -867,6 +867,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -1015,10 +1018,10 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </section>
   </div>
 
-  <footer class="src">
+  <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">
     Data: state figures from FiveThirtyEight's <i>hate_crimes</i> data (Trump's 2016 vote share, Census metro share, median household income, white poverty rate), via the <i>fivethirtyeight</i> R package; Florida 2000 county returns from the <i>carData</i> R package; midterm House seat changes for the president's party, 1899–2019, from OpenIntro's <i>midterms_house</i>. All via <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>.
     Shuffles are random permutations of Y across cases.
-  </footer>
+  </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="8-difference-in-means.html"><span class="k">← Previous · Module 8</span><span class="t">Difference in means</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="9b-partisans-and-the-first-lady.html"><span class="k">Next · Worked example →</span><span class="t">Partisans and the First Lady</span></a></nav>
 </main>
 

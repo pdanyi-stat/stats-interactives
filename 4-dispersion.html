@@ -675,6 +675,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -828,7 +831,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div id="vd24" style="display:grid;gap:10px"></div>
   </section>
 
-  <footer class="src">Data: Massachusetts lunatics, 1854 (LunaticData.sav); Titanic passenger list (titanic.sav); Pew Research Center 2014 post-election survey (2014ElectionSurvey_F26.sav); Gallup Reconstructed 2024 (Gallup_Reconstructed_2024_F26.sav)<sup>†</sup>; ANES 2024 (NES_2024_Party_Placement_and_Ideology_F26.sav). Statistics are unweighted, as SPSS computes them by default.<span id="gallup-note" class="fn-note"><sup>†</sup> Gallup does not release respondent-level data for this poll. This file is imputed individual-level data, built to reproduce the topline percentages Gallup published for its January 2025 poll in <a href="https://news.gallup.com/poll/656636/democrats-favor-party-moderation-past.aspx">“More Democrats Favor Party Moderation Than in Past”</a> (February 13, 2025). Treat it as an illustration of those toplines rather than as Gallup's own data.</span></footer>
+  <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">Data: Massachusetts lunatics, 1854 (LunaticData.sav); Titanic passenger list (titanic.sav); Pew Research Center 2014 post-election survey (2014ElectionSurvey_F26.sav); Gallup Reconstructed 2024 (Gallup_Reconstructed_2024_F26.sav)<sup>†</sup>; ANES 2024 (NES_2024_Party_Placement_and_Ideology_F26.sav). Statistics are unweighted, as SPSS computes them by default.<span id="gallup-note" class="fn-note"><sup>†</sup> Gallup does not release respondent-level data for this poll. This file is imputed individual-level data, built to reproduce the topline percentages Gallup published for its January 2025 poll in <a href="https://news.gallup.com/poll/656636/democrats-favor-party-moderation-past.aspx">“More Democrats Favor Party Moderation Than in Past”</a> (February 13, 2025). Treat it as an illustration of those toplines rather than as Gallup's own data.</span></div></details></footer>
   <nav class="pager" aria-label="Previous and next"><a href="3-skew-and-kurtosis.html"><span class="k">← Previous · Module 3</span><span class="t">Skew and kurtosis</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="5-pre-measures.html"><span class="k">Next · Module 5 →</span><span class="t">PRE measures: lambda, gamma, r²</span></a></nav>
 </main>
 

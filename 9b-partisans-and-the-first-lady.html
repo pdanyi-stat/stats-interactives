@@ -846,6 +846,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -921,10 +924,9 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
         <p>Here, yes, roughly, since both IVs are on the same 0–100 scale and the DV is the same. Note that steepness is the size of the effect, while how tightly the cases cluster around the line is r². In this case both point the same way, because the Republican slope is steeper and its r² is higher.</p>
       </details>
     </section>
-    <section id="sec-notes-on-the-data">
-      <h2>Notes on the data</h2>
+    <section id="sec-notes-on-the-data"><details class="rvd srcdrawer"><summary>Notes on the data</summary><div class="in">
       <p style="margin:0;font-size:14.5px;color:var(--ink-2)">American National Election Studies, 2004 (classroom extract, 1,212 respondents). Respondents who didn't recognize a figure, couldn't rate it, or refused are left out, so each regression uses about 1,145 people (about 1,170 for Hillary Clinton). Predicted values are computed by hand from the rounded coefficients shown, the way you would on the lab.</p>
-    </section>
+    </div></details></section>
   </div>
 <nav class="pager" aria-label="Previous and next"><a href="9-bivariate-regression.html"><span class="k">← Previous · Module 9</span><span class="t">Bivariate regression</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="10-multiple-regression.html"><span class="k">Next · Module 10 →</span><span class="t">Multiple regression</span></a></nav>
 </main>

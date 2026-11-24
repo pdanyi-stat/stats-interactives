@@ -921,6 +921,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -1246,9 +1249,9 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </section>
   </div>
 
-  <footer class="src">
+  <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">
     Data: the 1,309-passenger Titanic list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables age5, female, trav_alone, the_freeriders and the_one_percent computed for the course labs. Crew are not included. This list is nearly every passenger rather than a random sample; like the labs, the page treats it as a sample to practice inference. Step 3 draws passengers at random with replacement. Confidence intervals use z, as in class; with groups this large, t gives nearly identical intervals. Regression models in Steps 6–8 drop passengers with unknown age.
-  </footer>
+  </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="practice-direction.html"><span class="k">← Previous · Practice</span><span class="t">Which way does it run?</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="practice-published-tables.html"><span class="k">Next · Practice →</span><span class="t">What would it look like published?</span></a></nav>
 </main>
 

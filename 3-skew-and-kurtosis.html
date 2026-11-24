@@ -669,6 +669,9 @@ details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-h
 details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
@@ -801,7 +804,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div id="pgOut"></div>
   </section>
 
-  <footer class="src">Data: Titanic passenger list (titanic.sav); 2004 American National Election Study feeling thermometers (NES2004.sav); World dataset (World.sav); Massachusetts lunatics, 1854 (LunaticData.sav). Skewness and kurtosis are computed the way SPSS computes them.</footer>
+  <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">Data: Titanic passenger list (titanic.sav); 2004 American National Election Study feeling thermometers (NES2004.sav); World dataset (World.sav); Massachusetts lunatics, 1854 (LunaticData.sav). Skewness and kurtosis are computed the way SPSS computes them.</div></details></footer>
   <nav class="pager" aria-label="Previous and next"><a href="2-levels-and-central-tendency.html"><span class="k">← Previous · Module 2</span><span class="t">Levels of measurement and central tendency</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="4-dispersion.html"><span class="k">Next · Module 4 →</span><span class="t">Measures of dispersion</span></a></nav>
 </main>
 
