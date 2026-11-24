@@ -537,7 +537,7 @@ function pSent(p,what,h0){
   const pr=p<0.0005?p:Math.round(p*1000)/1000; // word the p that is printed
   let s=`Sig. = ${shown}${p<0.0005?', which is rounded: read it as p &lt; .001 (fewer than 1 in 1,000)':''}. H₀: ${h0}. If H₀ were true, ${what} would turn up ${pq(pr)}. `;
   s+=p<0.05?'That is below .05, so we <b>reject H₀</b>.':'That is not below .05, so we <b>fail to reject H₀</b>. That is not evidence of no effect, only a sign that there is not enough evidence of one.';
-  return s+' Sig. is not the probability that H₀ is true. <a href="3-difference-in-means.html#pvalue">Reading p-values →</a>';
+  return s+' Sig. is not the probability that H₀ is true. <a href="8-difference-in-means.html#pvalue">Reading p-values →</a>';
 }
 const fe=v=>Math.abs(v)<0.01&&v!==0?lead(v.toPrecision(3)):F(v,3); // more digits for tiny values in explanations
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -973,6 +973,28 @@ main [id]{scroll-margin-top:72px}
 .keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
 .chips .chip,.status .chip{font-size:14.5px!important}
 @media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
+
+/* drawers added in the November review: one look on every page */
+details.rvd{margin:14px 0 0;border:1px solid var(--line);border-left:4px solid var(--mc);border-radius:10px;background:var(--surface)}
+details.rvd>summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:16px;line-height:1.35;min-height:44px;display:flex;align-items:center;gap:10px;list-style:none;color:var(--ink)}
+details.rvd>summary::-webkit-details-marker{display:none}
+details.rvd>summary::before{content:"";flex:0 0 auto;border-left:7px solid var(--mci);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+details.rvd[open]>summary::before{transform:rotate(90deg)}
+details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:78ch}
+details.rvd .in p{margin:0}
+details.rvd .in b{color:var(--ink)}
+details.rvd .in a{color:var(--mci);font-weight:600}
+.jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
+.jumpto a{color:var(--mci);font-weight:600}
+/* a term that opens a note: pulses from white to amber so it reads as tappable */
+button.tapterm{font:inherit;font-weight:700;color:inherit;background:#fff;border:1px solid #E8B64A;border-radius:6px;padding:0 6px;margin:0 1px;cursor:pointer;animation:tapglow 2.4s ease-in-out infinite}
+button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
+@keyframes tapglow{0%,100%{background:#fff;box-shadow:0 0 0 0 rgba(232,182,74,0)}50%{background:#FBE3A6;box-shadow:0 0 10px 2px rgba(232,182,74,.75)}}
+@media (prefers-reduced-motion:reduce){button.tapterm{animation:none;background:#FBE3A6}}
+@media (prefers-color-scheme:dark){html:not([data-theme=light]) button.tapterm{color:#1d1a12}}
+html[data-theme=dark] button.tapterm{color:#1d1a12}
+.tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
+.tapnote a{color:var(--mci);font-weight:600}
 </style>
 </head>
 <body>
@@ -1004,7 +1026,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t1" aria-labelledby="t1h">
     <header class="thead"><p class="tkick">Table 1 · Module 9 · Export style · One model</p><h2 id="t1h">Metro share and the 2016 vote</h2>
-      <p class="sub">This is the opening model of <a href="9-bivariate-regression.html">Module 9</a>, which regresses Trump's 2016 vote share in the 50 states and D.C. on the share of the population living in metro areas. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>metro_pct</code> as the Independent(s).</p></header>
+      <p class="sub">This is the opening model of <a href="9-bivariate-regression.html">Module 9</a>, which regresses Trump's 2016 vote share in the 50 states and D.C. on the share of the population living in metro areas. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>metro_pct</code> as the Independent(s).</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="9-bivariate-regression.html">Module 9, Bivariate regression →</a></p></header>
     <div class="desk"><div class="paper" id="t1paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t1exp" aria-live="polite"><span class="hint">Tap any number, column heading, variable name or the notes line.</span></p>
@@ -1016,7 +1039,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t2" aria-labelledby="t2h">
     <header class="thead"><p class="tkick">Table 2 · Worked example · Journal style · Four models</p><h2 id="t2h">Party feelings and the First Ladies</h2>
-      <p class="sub">These are the four bivariate regressions from the <a href="9b-partisans-and-the-first-lady.html">First Lady worked example</a> (2004 NES), set side by side in the journal style. Each column is a separate regression.</p></header>
+      <p class="sub">These are the four bivariate regressions from the <a href="9b-partisans-and-the-first-lady.html">First Lady worked example</a> (2004 NES), set side by side in the journal style. Each column is a separate regression.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="9b-partisans-and-the-first-lady.html">the worked example, Partisans and the First Lady →</a></p></header>
     <div class="desk"><div class="paper" id="t2paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t2exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -1028,7 +1052,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t3" aria-labelledby="t3h">
     <header class="thead"><p class="tkick">Table 3 · Module 10 · Export style · One model</p><h2 id="t3h">Five state traits and the 2016 vote</h2>
-      <p class="sub">This <a href="10-multiple-regression.html">Module 10</a> model regresses Trump's 2016 vote share in the 50 states and D.C. on five state traits. Statistics programs can export a table like this one, which keeps the raw variable names. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>white_pov</code>, <code>hs_pct</code>, <code>metro_pct</code>, <code>income_k</code> and <code>gini</code> as the Independent(s).</p></header>
+      <p class="sub">This <a href="10-multiple-regression.html">Module 10</a> model regresses Trump's 2016 vote share in the 50 states and D.C. on five state traits. Statistics programs can export a table like this one, which keeps the raw variable names. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>white_pov</code>, <code>hs_pct</code>, <code>metro_pct</code>, <code>income_k</code> and <code>gini</code> as the Independent(s).</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="10-multiple-regression.html">Module 10, Multiple regression →</a></p></header>
     <div class="desk"><div class="paper" id="t3paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t3exp" aria-live="polite"><span class="hint">Tap any number, column heading, variable name or the notes line.</span></p>
@@ -1040,7 +1065,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t4" aria-labelledby="t4h">
     <header class="thead"><p class="tkick">Table 4 · Module 10 · Journal style · Three models</p><h2 id="t4h">Regional and economic predictors</h2>
-      <p class="sub">These are three models on the <a href="10-multiple-regression.html">Module 10</a> state data. Models 1 and 2 show what happens to the South coefficient when metro share is held constant. Model 3 uses a different set of IVs.</p></header>
+      <p class="sub">These are three models on the <a href="10-multiple-regression.html">Module 10</a> state data. Models 1 and 2 show what happens to the South coefficient when metro share is held constant. Model 3 uses a different set of IVs.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="10-multiple-regression.html">Module 10, Multiple regression →</a></p></header>
     <div class="desk"><div class="paper" id="t4paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t4exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -1052,7 +1078,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t5" aria-labelledby="t5h">
     <header class="thead"><p class="tkick">Table 5 · Module 11 · Journal style · Four models</p><h2 id="t5h">The First Ladies, controlling for gender</h2>
-      <p class="sub">These are the gender-controlled models from <a href="11-dummy-variables.html#firstlady">Module 11</a>. They are Table 2's four models with a Female dummy added, so you can compare each party coefficient across the two tables.</p></header>
+      <p class="sub">These are the gender-controlled models from <a href="11-dummy-variables.html#firstlady">Module 11</a>. They are Table 2's four models with a Female dummy added, so you can compare each party coefficient across the two tables.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="11-dummy-variables.html">Module 11, Dummy variables →</a></p></header>
     <div class="desk"><div class="paper" id="t5paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t5exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -1064,7 +1091,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t6" aria-labelledby="t6h">
     <header class="thead"><p class="tkick">Table 6 · Module 11 · Journal style · Two models</p><h2 id="t6h">Both parties and gender in one model</h2>
-      <p class="sub">This is the last step of the <a href="11-dummy-variables.html#firstlady">Module 11</a> replication, which regresses each First Lady's rating on both party thermometers and gender at once.</p></header>
+      <p class="sub">This is the last step of the <a href="11-dummy-variables.html#firstlady">Module 11</a> replication, which regresses each First Lady's rating on both party thermometers and gender at once.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="11-dummy-variables.html">Module 11, Dummy variables →</a></p></header>
     <div class="desk"><div class="paper" id="t6paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t6exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -1076,7 +1104,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t7" aria-labelledby="t7h">
     <header class="thead"><p class="tkick">Table 7 · Module 11 · Journal style · Four models</p><h2 id="t7h">The South, with and without D.C.</h2>
-      <p class="sub">These are the South dummy models from <a href="11-dummy-variables.html">Module 11</a>, run on all 51 cases and again without D.C. (the module's “Include D.C.” switch). The group labels tell you which sample each pair of columns uses.</p></header>
+      <p class="sub">These are the South dummy models from <a href="11-dummy-variables.html">Module 11</a>, run on all 51 cases and again without D.C. (the module's “Include D.C.” switch). The group labels tell you which sample each pair of columns uses.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="11-dummy-variables.html">Module 11, Dummy variables →</a></p></header>
     <div class="desk"><div class="paper" id="t7paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t7exp" aria-live="polite"><span class="hint">Tap any number, model number, group label or the notes line.</span></p>
@@ -1088,7 +1117,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t8" aria-labelledby="t8h">
     <header class="thead"><p class="tkick">Table 8 · Titanic practice · Journal style · Six models</p><h2 id="t8h">Who survived the Titanic?</h2>
-      <p class="sub">These are six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass, so that middle_class is 1 for second class and lower_class is 1 for third class, and first class is the reference. In SPSS, the full model is “Analyze” → “Regression” → “Linear,” with <code>survived</code> as the Dependent and <code>age</code>, <code>female</code>, <code>middle_class</code>, <code>lower_class</code>, <code>trav_alone</code>, <code>the_freeriders</code> and <code>the_one_percent</code> as the Independent(s).</p></header>
+      <p class="sub">These are six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass, so that middle_class is 1 for second class and lower_class is 1 for third class, and first class is the reference. In SPSS, the full model is “Analyze” → “Regression” → “Linear,” with <code>survived</code> as the Dependent and <code>age</code>, <code>female</code>, <code>middle_class</code>, <code>lower_class</code>, <code>trav_alone</code>, <code>the_freeriders</code> and <code>the_one_percent</code> as the Independent(s).</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="practice-titanic.html#lpm">the Titanic practice, starting with Regression on a 0/1 outcome →</a></p></header>
     <div class="desk"><div class="paper wide" id="t8paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t8exp" aria-live="polite"><span class="hint">Tap any number, model number or the notes line.</span></p>
@@ -1100,7 +1130,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t9" aria-labelledby="t9h">
     <header class="thead"><p class="tkick">Table 9 · Module 8 · Comparison style · Ten t tests</p><h2 id="t9h">Who survived the Titanic, group by group?</h2>
-      <p class="sub">Each row is one of the ten difference-of-means tests from the <a href="8-difference-in-means.html">Module 8</a> lab on the Titanic, laid out the way a journal reports a set of <i>t</i> tests. The two group means sit side by side, followed by their difference, <i>t</i>, <i>p</i> and the 95% confidence interval for the difference. The layout follows the APA sample table for <i>t</i> tests, which reports exact <i>p</i>-values instead of stars.</p></header>
+      <p class="sub">Each row is one of the ten difference-of-means tests from the <a href="8-difference-in-means.html">Module 8</a> lab on the Titanic, laid out the way a journal reports a set of <i>t</i> tests. The two group means sit side by side, followed by their difference, <i>t</i>, <i>p</i> and the 95% confidence interval for the difference. The layout follows the APA sample table for <i>t</i> tests, which reports exact <i>p</i>-values instead of stars.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="8-difference-in-means.html">Module 8, Difference in means →</a></p></header>
     <div class="desk"><div class="paper wide" id="t9paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t9exp" aria-live="polite"><span class="hint">Tap any number, column heading or the note.</span></p>
@@ -1112,7 +1143,8 @@ main [id]{scroll-margin-top:72px}
 
   <figure class="tfig" id="t10" aria-labelledby="t10h">
     <header class="thead"><p class="tkick">Table 10 · Modules 8 and 10 · Comparison style · Six t tests</p><h2 id="t10h">How the South differs from the rest of the country</h2>
-      <p class="sub">This table compares six state traits from the <a href="10-multiple-regression.html">Module 10</a> data between the South and the rest of the country. Tables like this one often open a paper, because they describe the groups before any model is run. Each group gets its mean and median, and the last two columns test whether the means differ.</p></header>
+      <p class="sub">This table compares six state traits from the <a href="10-multiple-regression.html">Module 10</a> data between the South and the rest of the country. Tables like this one often open a paper, because they describe the groups before any model is run. Each group gets its mean and median, and the last two columns test whether the means differ.</p>
+    <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="8-difference-in-means.html">Module 8, Difference in means</a> or <a href="10-multiple-regression.html">Module 10, Multiple regression →</a></p></header>
     <div class="desk"><div class="paper wide" id="t10paper"></div></div>
     <div class="tbody">
     <p class="explain" id="t10exp" aria-live="polite"><span class="hint">Tap any number, column heading or the note.</span></p>
@@ -2030,6 +2062,7 @@ function wireRowStata(id,outFor,nameFor){
   if (location.hash === '#present') window.addEventListener('load', () => setTimeout(() => enter(0), 300));
 })();
 </script>
-<script id="rvshelf">(()=>{const fit=()=>document.querySelectorAll('.shelf2').forEach(s=>{const h=s.previousElementSibling;s.classList.remove('scroll');const over=s.scrollWidth>s.clientWidth+4;s.classList.toggle('scroll',over);if(h&&h.classList.contains('mhd'))h.classList.toggle('swipe',over);if(!s._w){s._w=1;s.addEventListener('scroll',()=>{if(s.scrollLeft>24&&h)h.classList.add('swiped');},{passive:true});}});let t=0;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(fit,120);});if(document.readyState==='loading')addEventListener('DOMContentLoaded',fit);else fit();addEventListener('load',fit);})();</script>
+<script id="rvshelf">(()=>{const fit=()=>document.querySelectorAll('.shelf2').forEach(s=>{const h=s.previousElementSibling;s.classList.remove('scroll');const over=s.scrollWidth>s.clientWidth+4;s.classList.toggle('scroll',over);if(h&&h.classList.contains('mhd'))h.classList.toggle('swipe',over);if(!s._w){s._w=1;s.addEventListener('scroll',()=>{if(s.scrollLeft>24&&h)h.classList.add('swiped');},{passive:true});}});let t=0;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(fit,120);});if(document.readyState==='loading')addEventListener('DOMContentLoaded',fit);else fit();addEventListener('load',fit);})();document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button.tapterm');if(!b)return;var n=document.getElementById(b.getAttribute('aria-controls'));if(!n)return;n.hidden=!n.hidden;b.setAttribute('aria-expanded',String(!n.hidden));});
+</script>
 </body>
 </html>

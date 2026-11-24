@@ -512,6 +512,28 @@ main [id]{scroll-margin-top:72px}
 .keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
 .chips .chip,.status .chip{font-size:14.5px!important}
 @media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
+
+/* drawers added in the November review: one look on every page */
+details.rvd{margin:14px 0 0;border:1px solid var(--line);border-left:4px solid var(--mc);border-radius:10px;background:var(--surface)}
+details.rvd>summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:16px;line-height:1.35;min-height:44px;display:flex;align-items:center;gap:10px;list-style:none;color:var(--ink)}
+details.rvd>summary::-webkit-details-marker{display:none}
+details.rvd>summary::before{content:"";flex:0 0 auto;border-left:7px solid var(--mci);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+details.rvd[open]>summary::before{transform:rotate(90deg)}
+details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:78ch}
+details.rvd .in p{margin:0}
+details.rvd .in b{color:var(--ink)}
+details.rvd .in a{color:var(--mci);font-weight:600}
+.jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
+.jumpto a{color:var(--mci);font-weight:600}
+/* a term that opens a note: pulses from white to amber so it reads as tappable */
+button.tapterm{font:inherit;font-weight:700;color:inherit;background:#fff;border:1px solid #E8B64A;border-radius:6px;padding:0 6px;margin:0 1px;cursor:pointer;animation:tapglow 2.4s ease-in-out infinite}
+button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
+@keyframes tapglow{0%,100%{background:#fff;box-shadow:0 0 0 0 rgba(232,182,74,0)}50%{background:#FBE3A6;box-shadow:0 0 10px 2px rgba(232,182,74,.75)}}
+@media (prefers-reduced-motion:reduce){button.tapterm{animation:none;background:#FBE3A6}}
+@media (prefers-color-scheme:dark){html:not([data-theme=light]) button.tapterm{color:#1d1a12}}
+html[data-theme=dark] button.tapterm{color:#1d1a12}
+.tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
+.tapnote a{color:var(--mci);font-weight:600}
 </style>
 </head>
 <body>
