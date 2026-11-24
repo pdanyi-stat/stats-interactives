@@ -813,13 +813,16 @@ main [id]{scroll-margin-top:72px}
 }
 
 .rv .mhd.sh .rt{display:inline-flex;align-items:center;gap:10px}
-.swipehint{display:none;padding:4px 11px;border-radius:999px;color:#5c3d00;background:#FBE3A6;border:1px solid #E8B64A;letter-spacing:.09em;animation:swipeglow 1.9s ease-in-out infinite}
+.swipehint{display:none;letter-spacing:.09em}
 .mhd.sh.swipe .swipehint{display:inline-block}
 .mhd.sh.swipe.swiped .swipehint{animation:none}
-@keyframes swipeglow{0%{box-shadow:0 0 0 0 rgba(240,180,60,.65)}70%{box-shadow:0 0 0 10px rgba(240,180,60,0)}100%{box-shadow:0 0 0 0 rgba(240,180,60,0)}}
-@media (prefers-reduced-motion:reduce){.swipehint{animation:none}}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .swipehint{color:#FBE3A6;background:#4a3508;border-color:#C9962E}}
-:root[data-theme="dark"] .swipehint{color:#FBE3A6;background:#4a3508;border-color:#C9962E}
+/* one amber pulse for everything that asks to be tapped: the swipe hint, tappable terms and the Start here pill */
+.swipehint,.amberpill,button.tapterm{padding:4px 11px;border-radius:999px;color:#5c3d00;background:#FBE3A6;border:1px solid #E8B64A;animation:amberpulse 2s ease-in-out infinite}
+.amberpill{display:inline-block;font:600 14px/1.2 RvSans,Inter,system-ui,sans-serif;letter-spacing:.01em}
+@keyframes amberpulse{0%{box-shadow:0 0 0 0 rgba(232,182,74,.7)}70%{box-shadow:0 0 0 10px rgba(232,182,74,0)}100%{box-shadow:0 0 0 0 rgba(232,182,74,0)}}
+@media (prefers-reduced-motion:reduce){.swipehint,.amberpill,button.tapterm{animation:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.swipehint,.amberpill,button.tapterm){color:#FBE3A6;background:#4a3508;border-color:#C9962E}}
+:root[data-theme="dark"] :is(.swipehint,.amberpill,button.tapterm){color:#FBE3A6;background:#4a3508;border-color:#C9962E}
 .shelf2.scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.shelf2.scroll::-webkit-scrollbar{display:none}
 
 /* the math in the lessons: larger and at full contrast so students rely on it */
@@ -853,12 +856,8 @@ details.rvd .in a{color:var(--mci);font-weight:600}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
 /* a term that opens a note: pulses from white to amber so it reads as tappable */
-button.tapterm{font:inherit;font-weight:700;color:inherit;background:#fff;border:1px solid #E8B64A;border-radius:6px;padding:0 6px;margin:0 1px;cursor:pointer;animation:tapglow 2.4s ease-in-out infinite}
+button.tapterm{font:inherit;font-weight:700;padding:0 8px;margin:0 1px;cursor:pointer}
 button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
-@keyframes tapglow{0%,100%{background:#fff;box-shadow:0 0 0 0 rgba(232,182,74,0)}50%{background:#FBE3A6;box-shadow:0 0 10px 2px rgba(232,182,74,.75)}}
-@media (prefers-reduced-motion:reduce){button.tapterm{animation:none;background:#FBE3A6}}
-@media (prefers-color-scheme:dark){html:not([data-theme=light]) button.tapterm{color:#1d1a12}}
-html[data-theme=dark] button.tapterm{color:#1d1a12}
 .tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
 .tapnote a{color:var(--mci);font-weight:600}
 </style>
