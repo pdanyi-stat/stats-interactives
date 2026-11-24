@@ -801,6 +801,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -836,7 +854,7 @@ main [id]{scroll-margin-top:72px}
 </style>
 <section class="part" style="margin-bottom:14px"><p class="kick">Part 1 · Jelly beans</p><h2 id="cbH">Start with the jelly bean bowl</h2></section>
 <section class="cb" id="cb" aria-labelledby="cbH">
-  <p class="cbt">This is the bowl from <a href="6-sampling-distributions.html#jb">Module 6</a>, with 150 beans coded 1 to 6. Its true mean is 3.43, but pretend you can't see it. All you get is one handful. From that handful you build a 95% interval, which is the handful's mean ± 1.96 × SE, where SE is the handful's SD ÷ √n. Does the interval catch the bowl's mean?</p>
+  <p class="cbt">This is the bowl from <a href="6-sampling-distributions.html#jb">Module 6</a>, which holds 150 beans coded 1 to 6. Its true mean is 3.43, but pretend you can't see it. All you get is one handful. From that handful you build a 95% interval, which is the handful's mean ± 1.96 × SE, where SE is the handful's SD ÷ √n. Does the interval catch the bowl's mean?</p>
   <figure>
     <div class="fighead"><h2><span class="step">1</span>Choose your handful sizes</h2></div>
     <p class="sub">These are the beans in the bowl. Pick a small and a large handful size, and every interval below is built from handfuls of these two sizes.</p>
@@ -848,7 +866,7 @@ main [id]{scroll-margin-top:72px}
   </figure>
   <figure id="sec-grab-a-handful-of-each">
     <div class="fighead"><h2><span class="step">2</span>Grab a handful of each</h2></div>
-    <p class="sub">Press <b>Grab one of each</b>. Each handful gets its own 95% interval, the handful's mean ± 1.96 × SE. You can't see the bowl's mean yet, so the interval is your best range for where it sits. Notice which handful gives the wider interval.</p>
+    <p class="sub">Press <b>Grab one of each</b>. Each handful gets its own 95% interval, which is the handful's mean ± 1.96 × SE. You can't see the bowl's mean yet, so the interval is your best range for where it sits. Notice which handful gives the wider interval.</p>
     <div class="btns"><button class="primary" id="cbG1">Grab one of each</button><button id="cbCl">Clear</button></div>
     <div class="cbtr" aria-live="polite"><div class="cbty s" id="cbTs">Grab to see a small handful.</div><div class="cbty l" id="cbTl">Grab to see a large handful.</div></div>
   </figure>
@@ -913,6 +931,12 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 </script>
 
 <!-- jelly bean intervals: end -->
+
+
+
+
+
+
 
 
 

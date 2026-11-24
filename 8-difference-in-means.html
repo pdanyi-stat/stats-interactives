@@ -809,6 +809,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -861,7 +879,7 @@ main [id]{scroll-margin-top:72px}
 
   <figure id="sec-the-sampling-distribution-of">
     <div class="fighead"><h2><span class="step">B</span>The sampling distribution of the difference</h2></div>
-    <p class="sub">Every draw computes one difference, x̄₁ − x̄₂, and drops it onto the axis. The shaded band holds the middle <span class="lvl">95</span>% of all differences so far. The black line marks zero, the value the null hypothesis claims.</p>
+    <p class="sub">Every draw computes one difference, x̄₁ − x̄₂, and drops it onto the axis. The shaded band holds the middle <span class="lvl">95</span>% of all differences so far. The black line marks zero, which is the value the null hypothesis claims.</p>
     <div class="key"><span><i class="sw" style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge)"></i>differences from your samples</span><span><i class="sw band"></i><span>middle <b class="lvl" style="font-weight:inherit">95</b>%</span></span><span><i class="sw line"></i>normal curve from theory</span><span><i class="sw zero"></i>H₀: difference = 0</span><span><i class="sw" style="background:var(--s2);border-radius:50%"></i>this sample, with its CI</span></div>
     <div class="status" id="bStatus"></div>
     <div class="chart" id="bChart"></div>
@@ -906,8 +924,8 @@ main [id]{scroll-margin-top:72px}
     <p class="sub">A test ends in one of two decisions about H₀, and the world is in one of two states. Two of the four combinations are mistakes.</p>
     <div class="tblwrap"><table class="dec">
       <tr><th></th><th class="c0">H₀ is true (no real difference)<span class="cv"><i class="ln o"></i>the orange curve</span></th><th class="c1">H₀ is false (a real difference)<span class="cv"><i class="ln b"></i>the blue curve</span></th></tr>
-      <tr><th>Reject H₀</th><td class="t1"><b><i class="sq o"></i>Type I error: a false positive</b><span>Like telling a man “You're pregnant!” We claim a difference that isn't there. Its rate is α, the orange tails of the chart.</span></td><td class="ok"><b>✓ Correct</b><span>We detect a real difference. Its rate is the power, 1 − β, the unshaded part of the blue curve beyond the dashed lines.</span></td></tr>
-      <tr><th>Fail to reject H₀</th><td class="ok"><b>✓ Correct</b><span>There is no difference, and we don't claim one. Its rate is 1 − α, the middle of the orange curve.</span></td><td class="t2"><b><i class="sq b"></i>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β, the shaded blue area between the dashed lines.</span></td></tr>
+      <tr><th>Reject H₀</th><td class="t1"><b><i class="sq o"></i>Type I error: a false positive</b><span>Like telling a man “You're pregnant!” We claim a difference that isn't there. Its rate is α, which is the area in the orange tails of the chart.</span></td><td class="ok"><b>✓ Correct</b><span>We detect a real difference. Its rate is the power, 1 − β, which is the unshaded part of the blue curve beyond the dashed lines.</span></td></tr>
+      <tr><th>Fail to reject H₀</th><td class="ok"><b>✓ Correct</b><span>There is no difference, and we don't claim one. Its rate is 1 − α, which is the middle of the orange curve.</span></td><td class="t2"><b><i class="sq b"></i>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β, which is the shaded blue area between the dashed lines.</span></td></tr>
     </table></div>
     <div class="ctlrow" style="margin-top:14px">
       <div class="ctl"><span class="lab" id="eal">Significance level <span style="text-transform:none">α</span></span><div class="seg" role="radiogroup" aria-labelledby="eal" id="eA"></div></div>
@@ -937,7 +955,7 @@ main [id]{scroll-margin-top:72px}
         <h3>Humble science</h3>
         <p>We prefer science to be humble, and to build knowledge on an assessment of evidence rather than assumptions of knowledge. Starting from the assumption of no relationship helps us avoid the costly error of concluding there are effects or connections out in the world that don't actually exist, which is a Type I error (convicting an innocent null). That is why α is kept small.</p>
         <h3>Why we use .05</h3>
-        <p>Setting α = .05 means we accept being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on rather than a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The α buttons at the top of this panel show the price of that choice. Switch α from .05 to .01 and watch β (the Type II error rate) grow, because a stricter α makes Type II errors more likely unless we collect more data. Then raise n per group and watch β come back down.</p>
+        <p>Setting α = .05 means we tolerate being fooled by chance about 5 times in 100 when H₀ is true. That's a choice the research community settled on rather than a rule of nature. When a false positive would be costly, researchers demand a stricter bar (.01 or smaller). The α buttons at the top of this panel show the price of that choice. Switch α from .05 to .01 and watch β (the Type II error rate) grow, because a stricter α makes Type II errors more likely unless we collect more data. Then raise n per group and watch β come back down.</p>
       </div>
     </details>
   </figure>
@@ -1157,9 +1175,9 @@ function statusA(R){
   if(!R){$('#aStatus').innerHTML='';$('#aNote').innerHTML='';return;}
   $('#aStatus').innerHTML=`<span class="chip ${R.overlap?'':'strong'}">${L}% CIs ${R.overlap?'overlap':'do not overlap'}</span><span class="chip">difference ${f3(R.d)}, p = ${pfmt(R.p)}</span><span class="chip ${R.reject?'strong':''}">${R.reject?'Reject H₀':'Fail to reject H₀'} at α = ${String(st.alpha).replace(/^0/,'')}</span>`;
   let note='';
-  if(R.overlap && R.reject) note='<b>Overlap, yet significant.</b> The intervals overlap, but the test still rejects H₀. Overlap is a conservative rule of thumb, and the test of the difference in panels B and C is the real check.';
-  else if(!R.overlap) note='<b>No overlap.</b> When the two intervals do not overlap, the difference is always significant at this level.';
-  else note='<b>Overlap, not significant.</b> The data are consistent with no difference between the groups, though that is not proof the groups are equal.';
+  if(R.overlap && R.reject) note='<b>The intervals overlap, but the difference is significant.</b> The test still rejects H₀. Overlap is a conservative rule of thumb, and the test of the difference in panels B and C is the real check.';
+  else if(!R.overlap) note='<b>The intervals do not overlap.</b> When the two intervals do not overlap, the difference is always significant at this level.';
+  else note='<b>The intervals overlap, and the difference is not significant.</b> The data are consistent with no difference between the groups, though that is not proof the groups are equal.';
   $('#aNote').innerHTML=note;
 }
 

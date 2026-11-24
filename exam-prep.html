@@ -484,6 +484,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -743,9 +761,9 @@ const BANK=[
  // source: Regression class slides
  ["In the pizza example, crust is coded 1 = thin, 2 = classic, 3 = deep dish, and the line is y = −.650x + 29.610 (y = diameter in cm). What does the slope mean?", [["Each step up in crust predicts a pizza .65 cm smaller across", 1], ["Deep-dish pizzas are .65 cm across", 0, "The slope is a change per unit rather than a size."], ["Thin-crust pizzas are 29.61 cm across", 0, "29.61 is the intercept, the prediction when crust = 0, which no pizza has."], ["Crust has no effect on size", 0, "A slope of −.650 is not flat."]]],
  // source: Regression class slides
- ["In the class example, y = −.008x + 30.668 predicts the percent of women in a legislature from the year a country became independent. What does a country that became independent 60 years later look like?", [["About half a percentage point fewer women, since 60 × −.008 = −.48", 1], ["About 30.7 percentage points fewer women", 0, "30.668 is the intercept, not the effect of 60 years."], ["About 8 percentage points fewer women", 0, "The slope is −.008 per year, so 60 years gives −.48."], ["Exactly the same share of women", 0, "The slope isn't zero, so the prediction changes."]]],
+ ["In the class example, y = −.008x + 30.668 predicts the percent of women in a legislature from the year a country became independent. What does a country that became independent 60 years later look like?", [["About half a percentage point fewer women, since 60 × −.008 = −.48", 1], ["About 30.7 percentage points fewer women", 0, "30.668 is the intercept rather than the effect of 60 years."], ["About 8 percentage points fewer women", 0, "The slope is −.008 per year, so 60 years gives −.48."], ["Exactly the same share of women", 0, "The slope isn't zero, so the prediction changes."]]],
  // source: Regression with Controls and Dummies slides
- ["The coefficient on a dummy variable is read as:", [["The predicted change in the DV when the condition is present rather than absent", 1], ["The predicted DV for the group coded 0", 0, "That is the intercept, when every IV is 0."], ["The share of cases coded 1", 0, "That is the dummy's mean, not its coefficient."], ["The change in the DV per one percent of the dummy", 0, "A dummy has only two values, so we read it as presence versus absence."]]],
+ ["The coefficient on a dummy variable is read as:", [["The predicted change in the DV when the condition is present rather than absent", 1], ["The predicted DV for the group coded 0", 0, "That is the intercept, when every IV is 0."], ["The share of cases coded 1", 0, "That is the dummy's mean rather than its coefficient."], ["The change in the DV per one percent of the dummy", 0, "A dummy has only two values, so we read it as presence versus absence."]]],
  // source: Regression with Controls and Dummies slides
  ["In multiple regression, each slope is a partial slope. That means it shows:", [["The relationship between that IV and the DV, holding all the other IVs constant", 1], ["Only part of the data was used", 0, "Every case with no missing values is used."], ["The relationship with the DV, ignoring the other IVs", 0, "That would be the bivariate slope."], ["Half the effect of that IV", 0, "Partial means holding the others constant rather than half."]]],
  // source: Regression with Controls and Dummies slides
@@ -787,7 +805,7 @@ function build(c){
   const bsum=ages.reduce((a,b)=>a+b,0),bL1=[S('n-1',bsum/10,'Check your count, since there are 11 values.'),S('n+1',bsum/12,'Check your count, since there are 11 values.'),S('median',med,'That is the median. For the mean, add them all up and divide by the number of cases (here 11).')];
   h+=q({ref:['2-levels-and-central-tendency.html#bal','The mean as a balance point'],html:`Compute the mean value for the following data on age of respondents: Mean = ${blank('b1',6)}<br><span class="nlist">${ages.join(' ')}</span>`,tests:T1('b1',am,0.006,2,bL1),
     check:()=>judge(val('b1'),am,0.006,2,bL1,`${ages.join(' + ')} = ${bsum}, divided by 11 = ${am.toFixed(2)}.`)||[false,'Add them all up and divide by the number of cases (here 11).'],answer:()=>`${bsum} ÷ 11 = ${am.toFixed(2)}.`});
-  const bL2=[S('unsorted',ages[5],'Put the values in order first, then find the middle one.'),S('mean',am,'That\'s the mean. The median is the middle value once they\'re in order.',0.006)];
+  const bL2=[S('unsorted',ages[5],'Put the values in order first, and then find the middle one.'),S('mean',am,'That\'s the mean. The median is the middle value once they\'re in order.',0.006)];
   h+=q({ref:['2-levels-and-central-tendency.html#md','Finding the median'],html:`Find the median for this ↑ data above: Median = ${blank('b2',5)}`,tests:T1('b2',med,0,2,bL2),
     check:()=>judge(val('b2'),med,0,2,bL2,`In order: ${so.join(', ')}. The sixth value, ${med}, has five cases on each side.`)||[false,'Put them in order and find the value with an equal number of cases on each side.'],answer:()=>`In order: ${so.join(', ')}. The median is ${med}.`});
   const lvl=['nominal','ordinal'][Math.floor(r()*2)];
@@ -832,7 +850,7 @@ function build(c){
   const dL1=[S('sd_missing',D.sd_with_missing,dMiss('SD')),S('sd_missing',D.sd_all,dMiss('SD')),S('variance',D.var,'That\'s the variance. The SD is its square root, which SPSS reports as Std. Deviation.'),
     ...dOth.map(o=>S('sd_other',SA.D[o].sd,`That's the SD for ${o} (${SAV[o].label}). Check that you moved ${dv} into the box.`)),S('mean',D.mean,'That is the mean. Read the Std. Deviation row.',0.006)];
   h+=q({html:`Use SPSS and file 1 to find the standard deviation for the variable “${DV.label}” (${dv}).<br>a. The standard deviation for ${DV.what} is ${blank('d1',6)}`,tests:T1('d1',[D.sd,D.sd_shown],0.0006,2,dL1),
-    check:()=>judge(val('d1'),[D.sd,D.sd_shown],0.0006,2,dL1,`The SD is ${sp(D.sd,3)}.`)||[false,'Read the Std. Deviation row of the Statistics table for this variable, in your own file.'],answer:()=>`SD = ${sp(D.sd,3)}.`});
+    check:()=>judge(val('d1'),[D.sd,D.sd_shown],0.0006,2,dL1,`The SD is ${sp(D.sd,3)}.`)||[false,'Read the Std. Deviation row of the Statistics table for this variable in your own file.'],answer:()=>`SD = ${sp(D.sd,3)}.`});
   const dL3=[S('mean_missing',D.mean_with_missing,dMiss('mean')),S('mean_missing',D.mean_all,dMiss('mean'))],NV=String(D.n_valid);
   h+=q({html:`You will need two more numbers from the same table. Valid N = ${blank('d2',5)} &nbsp; Mean = ${blank('d3',5)}`,
     tests:{ok:T1('d3',D.mean,0.006,2,[],{d2:NV}).ok,sig:[['n_total',{d2:String(D.n_total),d3:D.mean.toFixed(3)}],...T1('d3',D.mean,0.006,2,dL3,{d2:NV}).sig]},
@@ -856,7 +874,7 @@ function build(c){
   h+=q({ref:['7-confidence-intervals.html','Confidence intervals'],html:`Compute the 95% confidence interval for ${DV.what}. Recall this is done via SE = SD ÷ √n and Mean ± (z-score) × (SE). Recall the z-score for 95% is 1.96.<br>SE = ${blank('d4',6)}<br>The confidence interval is ${blank('d5',6)} to ${blank('d6',6)}`,tests:ciTests,
     check:()=>{const r=judge(val('d4'),seOk,0.0006,3,seL,'');
       if(!r||!r[0]){const x=num(val('d4')),lo=num(val('d5')),hi=num(val('d6')),t=0.006,fol=isFinite(x)&&[D.mean,D.mean_shown].some(m=>near(lo,m-1.96*x,t)&&near(hi,m+1.96*x,t));
-        const base=r?r[1]:'SE = SD ÷ √N. Take the square root of the valid N first, then divide the SD by it.';
+        const base=r?r[1]:'SE = SD ÷ √N. Take the square root of the valid N first, and then divide the SD by it.';
         return [false,base+(fol?' Your interval does follow from the SE you entered, so only the SE needs fixing.':''),r?r[2]:'gen'];}
       return ciJudge(val('d5'),val('d6'))||[false,'Set the formula up twice, adding 1.96 × SE to the mean for the upper bound and subtracting it for the lower bound.'];},
     answer:()=>`SE = ${sp(D.sd,3)} ÷ √${D.n_valid} = ${sp(D.se,4)}. CI = ${sp(D.mean,3)} ± 1.96 × ${sp(D.se,4)} = ${sp(D.lo,3)} to ${sp(D.hi,3)}.`});
@@ -1009,7 +1027,7 @@ function build(c){
         if(near(x,c[0],tolFor(s1,0.006,2))&&near(k,b[0],tolFor(s2,0.0015,3)))return [false,'You have them swapped, since the slope multiplies the IV, and the constant stands alone.','swapped'];
         if(!okB&&near(x,R.beta[iv],tolFor(s1,0.0015,3)))return [false,'That\'s the standardized Beta. Use the unstandardized B.','beta'];
         if(!okB)return [false,'The slope (B for '+iv+') goes in front of the IV, sign included.'];return [false,'The constant is the B in the (Constant) row.'];},answer:()=>`${ST.dv} = ${fx(b[0],3)} × ${iv} + ${fx(c[0],3)}`});
-    const qF=n,ig='i'+t+'g',gMsg='Write the formula twice, once with 0 and once with 100, then subtract.';
+    const qF=n,ig='i'+t+'g',gMsg='Write the formula twice, once with 0 and once with 100, and then subtract.';
     const dL=[S('pred100',c[0]+100*b[0],'That\'s the prediction at 100 rather than the difference. '+gMsg),S('times1',b[0],'That\'s B × 1. Going from 0 to 100 is 100 units, so multiply B by 100. '+gMsg,0.0015,3),
       S('sign',-100*b[0],`Keep the sign, since the prediction at 100 is ${b[0]<0?'lower':'higher'} than the prediction at 0. `+gMsg)];
     const gT=T1(ig,100*b[0],0.16,2,dL);gT.sig.push(['cf',{[ie]:(b[0]+0.05).toFixed(3),[iff]:c[0].toFixed(2),[ig]:(100*(b[0]+0.05)).toFixed(2)}]);
@@ -1048,7 +1066,7 @@ function build(c){
   h+=steps(`Analyze → Regression → Linear. Put <b>${ST.dv}</b> in Dependent, and <b>${ST.iv2}</b> and <b>Male_Dummy</b> in Independent(s). Variable View → Values for Male_Dummy shows its coding.`);
   h+=q({html:`First, how is the dummy variable “Male_Dummy” coded?<br>a. 1 = ${select('k1',['Male','Not male'])}<br>b. 0 = ${select('k2',['Male','Not male'])}`,check:()=>val('k1')==='Male'&&val('k2')==='Not male'?[true,'By convention, 1 is the presence of the trait.']:[false,'By convention, 1 is the presence of the trait. Check Variable View → Values.'],answer:()=>'1 = Male, 0 = Not male'});
   h+=q({html:`Is Male_Dummy statistically significant? ${yn('k3')}`,check:()=>(val('k3')==='Yes')===(km[2]<0.05)?[true,`Sig. = ${sig(km[2])}.`]:[false,`Go to Male_Dummy's row and the Sig. column (${sig(km[2])}). Is it less than .05?`],answer:()=>`${km[2]<0.05?'Yes':'No'} (Sig. = ${sig(km[2])}).`});
-  h+=q({html:`Describe the regression line in terms of its formula:<br>${ST.dv} = ${blank('k4',5)} × ${ST.iv2} + ${blank('k5',5)} × Male_Dummy + ${blank('k6',5)}`,check:()=>near(num(val('k4')),kc[0],0.0015)&&near(num(val('k5')),km[0],0.0015)&&near(num(val('k6')),k0[0],0.006)?[true,`${ST.dv} = ${fx(kc[0],3)} × ${ST.iv2} + ${fx(km[0],3)} × Male_Dummy + ${fx(k0[0],3)}.`]:[false,'Write the formula out, then drop the values in. Each B goes in front of its own variable, and the constant stands alone.'],answer:()=>`${ST.dv} = ${fx(kc[0],3)} × ${ST.iv2} + ${fx(km[0],3)} × Male_Dummy + ${fx(k0[0],3)}`});
+  h+=q({html:`Describe the regression line in terms of its formula:<br>${ST.dv} = ${blank('k4',5)} × ${ST.iv2} + ${blank('k5',5)} × Male_Dummy + ${blank('k6',5)}`,check:()=>near(num(val('k4')),kc[0],0.0015)&&near(num(val('k5')),km[0],0.0015)&&near(num(val('k6')),k0[0],0.006)?[true,`${ST.dv} = ${fx(kc[0],3)} × ${ST.iv2} + ${fx(km[0],3)} × Male_Dummy + ${fx(k0[0],3)}.`]:[false,'Write the formula out, and then drop the values in. Each B goes in front of its own variable, and the constant stands alone.'],answer:()=>`${ST.dv} = ${fx(kc[0],3)} × ${ST.iv2} + ${fx(km[0],3)} × Male_Dummy + ${fx(k0[0],3)}`});
   const kTiny=km[2]<0.0005,kL=[S('no_move',km[2],'Move the decimal two places, so .030 is 3 times out of 100.',0.0006,3),S('three',km[2]*1000,'Move the decimal two places, not three, so .030 is 3 times out of 100.',0.51),
     S('other_iv',kc[2]*100,`That's the Sig. for ${ST.iv2}. Use Male_Dummy's row.`,0.51)];
   const k7T=T1('k7',km[2]*100,0.51,2,kTiny?[]:kL);if(kTiny)k7T.ok=[{k7:'0'},{k7:'.05'}];
@@ -1064,14 +1082,14 @@ function build(c){
   const pn=k0[0]+kc[0]*100,pm=pn+km[0],qKF=n-2;   /* the formula question */
   const kForm=male=>{const a=val('k4'),b=val('k5'),c=val('k6'),x=num(a),y=num(b),z=num(c);if(![x,y,z].every(isFinite))return null;
     const ok=near(x,kc[0],tolFor(a,0.0015,3))&&near(y,km[0],tolFor(b,0.0015,3))&&near(z,k0[0],tolFor(c,0.006,2));return ok?null:z+x*100+y*male;};
-  const dumMsg='A dummy is only 0 or 1. Multiply its B by 1 for men and 0 for everyone else.',conMsg='Start with the constant, then add each B times its value.';
+  const dumMsg='A dummy is only 0 or 1. Multiply its B by 1 for men and 0 for everyone else.',conMsg='Start with the constant, and then add each B times its value.';
   const kL10=[S('coding',pm,'Not male is coded 0 on Male_Dummy, so its B drops out (× 0).'),S('no_const',pn-k0[0],conMsg)];
   const kL11=[S('dummy100',k0[0]+kc[0]*100+km[0]*100,dumMsg),S('coding',pn,'Men are coded 1 on Male_Dummy, so add its B once (× 1).'),S('no_const',pm-k0[0],conMsg)];
   const kCF=(f,male)=>{const w=[kc[0]+0.1,km[0]+3,k0[0]+5];return ['cf',{k4:w[0].toFixed(3),k5:w[1].toFixed(3),k6:w[2].toFixed(3),[f]:(w[2]+w[0]*100+w[1]*male).toFixed(2)}];};
   const t10=T1('k10',pn,0.2,2,kL10);t10.sig.push(kCF('k10',0));const t11=T1('k11',pm,0.2,2,kL11);t11.sig.push(kCF('k11',1));
   h+=q({html:`Compute the predicted value (or opinion of ${ST.dvN}) for someone who is <i>not</i> male <i>and</i> has the strongest feelings possible for ${ST.iv2N} (100).<br>Predicted opinion of ${ST.dvN} of those who are not male and love ${ST.iv2N}: ${blank('k10',6)}`,tests:t10,
     check:()=>{const r=judge(val('k10'),pn,0.2,2,kL10,`${fx(k0[0],3)} + ${fx(kc[0],3)} × 100 + ${fx(km[0],3)} × 0 = ${pn.toFixed(2)}.`);if(r)return r;const y=kForm(0);
-      if(y!=null&&near(num(val('k10')),y,0.2))return [false,cfMsg('formula',qKF,'Your prediction'),'cf'];return [false,'Write the formula out, then drop the values in: 100 for the thermometer and 0 for Male_Dummy.'];},answer:()=>`${fx(k0[0],3)} + ${fx(kc[0],3)} × 100 + ${fx(km[0],3)} × 0 = ${pn.toFixed(2)}`});
+      if(y!=null&&near(num(val('k10')),y,0.2))return [false,cfMsg('formula',qKF,'Your prediction'),'cf'];return [false,'Write the formula out, and then drop the values in: 100 for the thermometer and 0 for Male_Dummy.'];},answer:()=>`${fx(k0[0],3)} + ${fx(kc[0],3)} × 100 + ${fx(km[0],3)} × 0 = ${pn.toFixed(2)}`});
   h+=q({html:`Compute the predicted value (or opinion of ${ST.dvN}) for someone who is male and loves ${ST.iv2N} (therm = 100).<br>Predicted opinion of ${ST.dvN} of those who are male and love ${ST.iv2N}: ${blank('k11',6)}`,tests:t11,
     check:()=>{const r=judge(val('k11'),pm,0.2,2,kL11,`${fx(k0[0],3)} + ${fx(kc[0],3)} × 100 + ${fx(km[0],3)} × 1 = ${pm.toFixed(2)}.`);if(r)return r;const y=kForm(1);
       if(y!=null&&near(num(val('k11')),y,0.2))return [false,cfMsg('formula',qKF,'Your prediction'),'cf'];return [false,'Drop in 100 for the thermometer and 1 for Male_Dummy.'];},answer:()=>`${fx(k0[0],3)} + ${fx(kc[0],3)} × 100 + ${fx(km[0],3)} × 1 = ${pm.toFixed(2)}`});
@@ -1093,9 +1111,9 @@ function build(c){
       return [false,'The other IV is held constant, the thermometer is the one that changes, and the DV is what responds. The amount is B, and its sign gives the direction.'];},
     answer:()=>`Holding FP_Voter constant, for every one unit change in ${liv} there is an associated ${sp(Math.abs(lc[0]),3)} unit ${lc[0]>0?'increase':'decrease'} in ${ST.dv}.`});
   const lp=l0[0]+lc[0]*100+lf[0],bI=AN.I[ST.party==='GOP'?1:0],bv=bI.const[0]+bI[liv][0]*100,bMsg='Those are the numbers from the earlier regression. Use this model\'s coefficients, since they changed when FP_Voter was added.';
-  const lL=[S('bivariate',bv,bMsg),S('bivariate',bv+lf[0],bMsg),S('dummy100',l0[0]+lc[0]*100+lf[0]*100,'A dummy is only 0 or 1. Multiply its B by 1 for a foreign-policy voter.'),S('no_const',lp-l0[0],'Start with the constant, then add each B times its value.')];
+  const lL=[S('bivariate',bv,bMsg),S('bivariate',bv+lf[0],bMsg),S('dummy100',l0[0]+lc[0]*100+lf[0]*100,'A dummy is only 0 or 1. Multiply its B by 1 for a foreign-policy voter.'),S('no_const',lp-l0[0],'Start with the constant, and then add each B times its value.')];
   h+=q({html:`Compute the predicted opinion of ${ST.dvN} for a foreign-policy voter who completely loves ${livN} (a 100 on the thermometer). ${blank('l6',6)}`,tests:T1('l6',lp,0.2,2,lL),
-    check:()=>judge(val('l6'),lp,0.2,2,lL,`${fx(l0[0],3)} + ${fx(lc[0],3)} × 100 + ${fx(lf[0],3)} × 1 = ${lp.toFixed(2)}.`)||[false,'Write the formula out, then drop the values in: 100 for the thermometer and 1 for FP_Voter.'],answer:()=>`${fx(l0[0],3)} + ${fx(lc[0],3)} × 100 + ${fx(lf[0],3)} × 1 = ${lp.toFixed(2)}`});
+    check:()=>judge(val('l6'),lp,0.2,2,lL,`${fx(l0[0],3)} + ${fx(lc[0],3)} × 100 + ${fx(lf[0],3)} × 1 = ${lp.toFixed(2)}.`)||[false,'Write the formula out, and then drop the values in: 100 for the thermometer and 1 for FP_Voter.'],answer:()=>`${fx(l0[0],3)} + ${fx(lc[0],3)} × 100 + ${fx(lf[0],3)} × 1 = ${lp.toFixed(2)}`});
   h+=q({html:'Interpret the y-intercept or “constant” for this multiple regression. What does it mean about the real world?',mc:shuffle([[`Someone who is not a foreign-policy voter and rates ${livN} at 0 is predicted to rate ${ST.dvN} at ${fx(l0[0],1)}, which is ${scaleWord(l0[0])} on the 0–100 scale.`,true,'The constant is the prediction when every IV is 0, so it describes this one person, someone who isn\'t a foreign-policy voter and gives the other candidate a 0.'],[`The average rating of ${ST.dvN} among ${ST.voters} is ${fx(l0[0],1)}.`,false,'The constant is a prediction for one particular person (both IVs at 0) rather than the average.'],[`A foreign-policy voter who loves ${livN} is predicted to rate ${ST.dvN} at ${fx(l0[0],1)}.`,false,'That person has FP_Voter = 1 and a thermometer of 100. The constant is for 0 on both.'],['The constant has no meaning and is never interpreted.',false,'Here 0 is a real value for both IVs, so the constant describes a real kind of voter.']],r)});
   h+=q({html:`Is the ${livN} thermometer statistically significant? ${yn('l7')}`,check:()=>(val('l7')==='Yes')===(lc[2]<0.05)?[true,`Sig. = ${sig(lc[2])}.`]:[false,`Sig. = ${sig(lc[2])}. Is it less than .05?`],answer:()=>lc[2]<0.05?'Yes':'No'});
   h+=q({html:`Is the ${livN} thermometer substantively significant?`,open:{model:()=>`Across the full 0–100 scale, the ${livN} thermometer moves the predicted ${ST.dvN} rating ${Math.abs(100*lc[0]).toFixed(1)} points (100 × ${fx(lc[0],3)}). That's a ${subst(100*lc[0])} effect.${lc[2]<0.05?'':' It isn\'t statistically significant, though.'}`,check:['Did you use the full range of the IV (100 × B)?','Did you judge the size against the 0–100 scale?']}});

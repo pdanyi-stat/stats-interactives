@@ -482,25 +482,6 @@ h3 + details.stata-wrap{margin-top:4px}
 .byhand{margin:0;padding:9px 13px;border-radius:8px;font-size:15px;line-height:1.5;background:color-mix(in srgb,var(--s1) 8%,var(--surface));border-left:4px solid var(--s1-line);color:var(--ink-2)}
 .byhand b{color:var(--ink)}
 </style>
-<style id="toggle-sel">
-button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
-:root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
-</style>
-<style id="sec-lines">
-:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
-:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
-main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
-main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
-main section.part:first-child{margin-top:8px!important}
-main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
-.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
-.pager a.nx .k{color:var(--nxk)}
-.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
-@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
-@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
-</style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
 :root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
@@ -627,6 +608,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -678,7 +677,7 @@ main [id]{scroll-margin-top:72px}
 
   <!-- 3 SIBSP -->
   <section class="part" id="sec-sketch-a-distribution-from-i"><p class="kick">Part 3</p><h2>Sketch a distribution from its statistics</h2>
-    <p>Here are only the statistics for sibsp, the number of siblings or spouses each Titanic passenger had on board. Drag the bars up or down to sketch what you think the distribution looks like, then compare it with the real one.</p></section>
+    <p>Here are only the statistics for sibsp, the number of siblings or spouses each Titanic passenger had on board. Drag the bars up or down to sketch what you think the distribution looks like, and then compare it with the real one.</p></section>
   <section class="dcard" id="sb">
     <div class="stat"><div><span>N</span><b>1,309</b></div><div><span>Range</span><b>0 to 8</b></div><div class="mean"><span>Mean</span><b>.50</b></div><div><span>Skewness</span><b>3.844</b></div><div><span>Kurtosis</span><b>20.043</b></div></div>
     <p class="p" style="margin:0">Use the sliders to shape the distribution you expect. The bars always add up to 100%. Try to get your mean, skewness and kurtosis close to the real ones before you look.</p>
@@ -730,7 +729,7 @@ main [id]{scroll-margin-top:72px}
   <section class="dcard" id="ph" data-ds="LunaticData.sav">
     <h3>Percent of lunatics cared for at home, Massachusetts counties (PHOME)</h3>
     <p class="p">Each county's percentage is on its marker and in the table. <span class="src">“Lunatics” is the dataset's term, which comes from the era.</span></p>
-    <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the boxes below, or by running PHOME in SPSS with LunaticData.sav.</p>
+    <p class="byhand"><b>Work it out by hand first.</b> Pen and paper or a calculator will do. Then check your answers with the boxes below, or by running PHOME in SPSS with LunaticData.sav.</p>
     <div class="two"><div class="tblwrap"><table class="tbl" id="phTbl" style="max-width:300px"></table></div><div id="phChart" style="align-self:center"></div></div>
     <div class="qline">Mean <input id="ph1" inputmode="decimal"> %</div><div class="fbk" id="phF1" aria-live="polite"></div>
     <div class="qline">Median <input id="ph2" inputmode="decimal"> %</div><div class="fbk" id="phF2" aria-live="polite"></div>
@@ -887,11 +886,11 @@ const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
  median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
  mode:(v,u)=>`The mode is ${v}${u||''}, which is the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
- sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
+ sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean measured in the variable's own units.`,
  var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
  skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
  kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'It is above 0, so the distribution is more peaked than normal (leptokurtic).':'It is below 0, so the distribution is flatter than normal (platykurtic).'}`,
- range:(v)=>`The range is ${v}, the maximum minus the minimum.`,
+ range:(v)=>`The range is ${v}, which is the maximum minus the minimum.`,
  nmiss:(v)=>`${v} cases are missing on this variable (no answer, or a code such as Don't know that is set as missing). They are left out of every statistic above.`
 };
 /* vars: [{name, vals, nTotal}] */
@@ -998,7 +997,7 @@ const SKV={
  gdp:{lab:'GDP per capita',desc:'GDP per capita in 177 countries, in units of $10,000 (gdp_10_thou).',vals:DATA.world.gdp.map(r=>r[1]),xmin:0,xmax:5,binw:0.25,xlab:'GDP per capita ($10,000s)',ans:['right'],
    say:`Skewness = ${D.sp(DATA.world.gdp_st.skew,3)}, which means strong positive skew. Most countries are stacked at the low end, and a few rich countries make a long tail to the right.`},
  rich:{lab:'Rich people',desc:'Feeling thermometer for rich people, 2004 ANES (rich_therm).',vals:thermVals('rich_therm'),xmin:-5,xmax:105,binw:10,xlab:'Feeling thermometer',ans:['none','left'],
-   say:`Skewness = ${D.sp(NES.rich_therm.skew,3)}, which is slightly negative and close to 0. Ratings pile up around 50 to 70 with a mean of ${NES.rich_therm.mean.toFixed(1)}. Americans in 2004 felt mildly warm toward rich people, without many strong feelings either way.`},
+   say:`Skewness = ${D.sp(NES.rich_therm.skew,3)}, which is slightly negative and close to 0. Ratings pile up around 50 to 70 with a mean of ${NES.rich_therm.mean.toFixed(1)}. Americans in 2004 felt mildly warm toward rich people, and few felt strongly either way.`},
  pclass:{lab:'Titanic: pclass',desc:'Passenger class (pclass):<dl class="codes"><dt>1</dt><dd>First Class</dd><dt>2</dt><dd>Middle Class</dd><dt>3</dt><dd>Lower Class</dd></dl>',cats:[1,2,3].map(c=>({label:['','First (1)','Middle (2)','Lower (3)'][c],n:DATA.titanic.pclass[c]})),ans:['left'],
    say:'Skewness = −.599. Most passengers were in lower class (3), with fewer in middle and first class, so the tail points toward the low codes and the skew is negative. Check the coding before you interpret it, because here a low code means a higher class.'}
 };

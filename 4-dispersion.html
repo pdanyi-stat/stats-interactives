@@ -488,25 +488,6 @@ sup.fn a{text-decoration:none;color:var(--s1-ink);font-weight:700;padding:0 2px}
 .fn-note{display:block;margin-top:8px}
 #gallup-note{scroll-margin-top:80px}
 </style>
-<style id="toggle-sel">
-button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
-:root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
-</style>
-<style id="sec-lines">
-:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
-:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
-main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
-main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
-main section.part:first-child{margin-top:8px!important}
-main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
-.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
-.pager a.nx .k{color:var(--nxk)}
-.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
-@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
-@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
-</style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
 :root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
@@ -633,6 +614,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -643,11 +642,11 @@ main [id]{scroll-margin-top:72px}
 
   <!-- 1 VARIANCE -->
   <section class="part" id="sec-variance-is-the-average-squa"><p class="kick">Part 1</p><h2>Variance is the average squared distance from the mean</h2>
-    <p>For each observation, find its distance from the mean and square it. Squaring keeps the distances below the mean from canceling out the ones above it. Add the squares, then divide by n − 1.</p></section>
+    <p>For each observation, find its distance from the mean and square it. Squaring keeps the distances below the mean from canceling out the ones above it. Add the squares, and then divide by n − 1.</p></section>
   <section class="dcard" id="va" data-ds="LunaticData.sav">
     <h3>Lunatics per county, Massachusetts, 1854 (NBR)</h3>
-    <p class="p"><span style="font-family:var(--font-mono)">s² = Σ(X − x̄)² ÷ (n − 1)</span>. The mean is <b>180.85</b> and n = 13.</p>
-    <p class="byhand"><b>Work it out by hand first.</b> Use pen and paper or a calculator, the old-fashioned way. Then check your answers with the buttons below, or by running NBR in SPSS with LunaticData.sav.</p>
+    <p class="p"><span class="keyfx">s² = Σ(X − x̄)² ÷ (n − 1)</span>. The mean is <b>180.85</b> and n = 13.</p>
+    <p class="byhand"><b>Work it out by hand first.</b> Pen and paper or a calculator will do. Then check your answers with the buttons below, or by running NBR in SPSS with LunaticData.sav.</p>
     <div id="vaStrip"></div>
     <div class="row"><button class="dbtn pri" id="vaNext">Fill the next row for me</button><button class="dbtn" id="vaAll">Fill them all</button><button class="dbtn" id="vaClear">Clear</button></div>
     <div class="tblwrap"><table class="tbl" id="vaTbl" style="max-width:640px"></table></div>
@@ -732,7 +731,7 @@ main [id]{scroll-margin-top:72px}
     <div class="row"><button class="dbtn pri" id="rcCheck">Check</button><button class="dbtn" id="rcReset">Start over</button></div>
     <div class="fbk" id="rcFb" aria-live="polite"></div>
     <div id="rcOut" hidden style="display:grid;gap:10px">
-      <p class="p">Here are both recoded variables, using your new codes.</p>
+      <p class="p">Here are both variables recoded with your new codes.</p>
       <div class="two"><div id="rcRep"></div><div id="rcDem"></div></div>
       <div id="rcOut2"></div>
     </div>
@@ -779,7 +778,7 @@ main [id]{scroll-margin-top:72px}
     <div id="vd24" style="display:grid;gap:10px"></div>
   </section>
 
-  <footer class="src">Data: Massachusetts lunatics, 1854 (LunaticData.sav); Titanic passenger list (titanic.sav); Pew Research Center 2014 post-election survey (2014ElectionSurvey_F26.sav); Gallup Reconstructed 2024 (Gallup_Reconstructed_2024_F26.sav)<sup>†</sup>; ANES 2024 (NES_2024_Party_Placement_and_Ideology_F26.sav). Statistics are unweighted, as SPSS computes them by default.<span id="gallup-note" class="fn-note"><sup>†</sup> Gallup does not release respondent-level data for this poll. This file is imputed individual-level data, built to reproduce the topline percentages Gallup published for its January 2025 poll in <a href="https://news.gallup.com/poll/656636/democrats-favor-party-moderation-past.aspx">“More Democrats Favor Party Moderation Than in Past”</a> (February 13, 2025). Treat it as an illustration of those toplines, not as Gallup's own data.</span></footer>
+  <footer class="src">Data: Massachusetts lunatics, 1854 (LunaticData.sav); Titanic passenger list (titanic.sav); Pew Research Center 2014 post-election survey (2014ElectionSurvey_F26.sav); Gallup Reconstructed 2024 (Gallup_Reconstructed_2024_F26.sav)<sup>†</sup>; ANES 2024 (NES_2024_Party_Placement_and_Ideology_F26.sav). Statistics are unweighted, as SPSS computes them by default.<span id="gallup-note" class="fn-note"><sup>†</sup> Gallup does not release respondent-level data for this poll. This file is imputed individual-level data, built to reproduce the topline percentages Gallup published for its January 2025 poll in <a href="https://news.gallup.com/poll/656636/democrats-favor-party-moderation-past.aspx">“More Democrats Favor Party Moderation Than in Past”</a> (February 13, 2025). Treat it as an illustration of those toplines rather than as Gallup's own data.</span></footer>
   <nav class="pager" aria-label="Previous and next"><a href="3-skew-and-kurtosis.html"><span class="k">← Previous · Module 3</span><span class="t">Skew and kurtosis</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="5-pre-measures.html"><span class="k">Next · Module 5 →</span><span class="t">PRE measures: lambda, gamma, r²</span></a></nav>
 </main>
 
@@ -914,11 +913,11 @@ const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
  median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
  mode:(v,u)=>`The mode is ${v}${u||''}, which is the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
- sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
+ sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean measured in the variable's own units.`,
  var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
  skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
  kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'It is above 0, so the distribution is more peaked than normal (leptokurtic).':'It is below 0, so the distribution is flatter than normal (platykurtic).'}`,
- range:(v)=>`The range is ${v}, the maximum minus the minimum.`,
+ range:(v)=>`The range is ${v}, which is the maximum minus the minimum.`,
  nmiss:(v)=>`${v} cases are missing on this variable (no answer, or a code such as Don't know that is set as missing). They are left out of every statistic above.`
 };
 /* vars: [{name, vals, nTotal}] */
@@ -1012,7 +1011,7 @@ $('#vaNext').addEventListener('click',()=>{const i=L.findIndex((_,k)=>!done.has(
 $('#vaAll').addEventListener('click',()=>{L.forEach((_,i)=>{if(!done.has(i))fill(i);});});
 $('#vaClear').addEventListener('click',()=>{done.clear();cur=-1;$('#vaPile').innerHTML='';$$('#vaTbl input').forEach(x=>{x.value='';x.className='';});$('#vaAvg').hidden=true;$('#vaFb').className='fbk';strip();});
 $('#vaCheck').addEventListener('click',()=>{const a=D.num($('#va1').value),b=D.num($('#va2').value),c=D.num($('#va3').value);
-  if(!D.near(a,ss,ss*0.002))return D.fb($('#vaFb'),'no',a===0||D.near(a,0,1)?'The distances themselves add to 0, and that\'s why we square them. Add up the squared column.':'Add up the last column, the squared distances.');
+  if(!D.near(a,ss,ss*0.002))return D.fb($('#vaFb'),'no',a===0||D.near(a,0,1)?'The distances themselves add to 0, and that\'s why we square them. Add up the squared column.':'Add up the last column, which holds the squared distances.');
   if(!D.near(b,vr,vr*0.002))return D.fb($('#vaFb'),'no',D.near(b,ss/13,ss/13*0.002)?'Divide by n − 1 = 12 rather than by 13.':'Divide the sum by n − 1 = 12.');
   if(!D.near(c,sdv,0.06))return D.fb($('#vaFb'),'no','Take the square root of the variance.');
   D.fb($('#vaFb'),'ok',`The sum of squares is ${D.comma(ss)}, the variance is ${vr.toFixed(2)}, and the SD is ${sdv.toFixed(2)}. The variance is in squared lunatics, which has no everyday meaning. Taking the square root puts the SD back in the variable's own units, so the typical county is about ${Math.round(sdv)} lunatics away from the mean of ${mu.toFixed(1)}. You can confirm this in SPSS with Analyze → Descriptive Statistics → Descriptives, choosing Variance and Std. deviation under Options.`);
@@ -1107,7 +1106,7 @@ const CL=[
   e24:`It still doesn't hold. Gallup's mode for Democrats is “more moderate” (${PCT(GD,['1'])}), against ${PCT(GD,['3'])} who want more liberal. The ANES doesn't show a “super liberal” party either, since only ${PCT(ND,['1'])} of Democrats call themselves extremely liberal, the median is 3 (slightly liberal), and ${PCT(ND,['4'])} say moderate.`},
  {who:'Aunt Sue on Democrats (claim 4)',what:'Democrats are pretty moderate and want moderate-left policies.',k14:['right'],k24:['right'],
   e14:`The claim holds. A majority (${PCT(D14,['1'])}) wanted their leaders to be more moderate.`,
-  e24:`It still holds. Gallup's mode is “more moderate” (${PCT(GD,['1'])}), and in the ANES Democrats center on slightly liberal (median 3), with a long thin tail toward the conservative end (skewness ${D.sp(DATA.pw.n_dem.skew,3)}). That is a moderate-left party.`}];
+  e24:`It still holds. Gallup's mode is “more moderate” (${PCT(GD,['1'])}), and in the ANES Democrats center on slightly liberal (median 3), and their distribution has a long thin tail toward the conservative end (skewness ${D.sp(DATA.pw.n_dem.skew,3)}). That is a moderate-left party.`}];
 
 /* ---------- SPSS / Stata drawers ---------- */
 const MISS=DATA.pw.miss;

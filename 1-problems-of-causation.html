@@ -654,6 +654,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -679,7 +697,7 @@ main [id]{scroll-margin-top:72px}
       <li>We must eliminate rival explanations for what produces the correlation.</li>
       <li>We need a mechanism, a plausible and preferably observed story that connects the cause to the outcome.</li>
     </ol>
-    <p class="p">Pick a claim, then tap each requirement to see whether the claim meets it.</p>
+    <p class="p">Pick a claim, and then tap each requirement to see whether the claim meets it.</p>
     <div class="chips" id="rqPick"></div>
     <p class="claim" id="rqClaim"></p>
     <div class="dgwrap"><svg class="dg" id="rqDg" role="img"></svg></div>
@@ -852,7 +870,7 @@ main [id]{scroll-margin-top:72px}
   </section>
   <section class="dcard" id="rm">
     <h3>More reversions to look at</h3>
-    <p class="p">The same shape turns up wherever we step in at an extreme moment. Each picture below shows a usual level as a dashed line and marks the moment someone stepped in, so press Play on each one and watch what happens afterward. The numbers are simulated or hypothetical, drawn to show the pattern.</p>
+    <p class="p">The same shape turns up wherever we step in at an extreme moment. Each picture below shows a usual level as a dashed line and marks the moment someone stepped in, so press Play on each one and watch what happens afterward. The numbers are simulated or hypothetical, and we drew them to show the pattern.</p>
     <div class="exs">
       <div class="ex"><div class="exh"><h4>The seeking-help problem</h4><button class="rp primary" data-x="1" aria-label="Play the seeking-help example">▶ Play</button></div><div class="kk"><span><i class="ln" style="background:var(--s1-line)"></i>took a remedy</span><span><i class="ln" style="background:var(--axis)"></i>took nothing</span></div><div id="ex1"></div><p class="say2" id="ex1s">People take a remedy on the day their cold feels worst, and colds get better from there on their own. The gray line is a cold with no remedy at all, and it follows the same path, so the remedy gets credit it didn't earn. Homeopathic medicine draws much of its reputation from this pattern.</p></div>
       <div class="ex"><div class="exh"><h4>The policing problem</h4><button class="rp primary" data-x="2" aria-label="Play the policing example">▶ Play</button></div><div id="ex2"></div><p class="say2" id="ex2s"></p></div>
@@ -1022,7 +1040,7 @@ function spDraw(){if(!SP)return;const el=$('spChart'),F=frame(el,230),[i,j,r]=SP
   const pth=(a,c)=>`<polyline fill="none" points="${a.map((v,t)=>xs(t)+','+ys(v)).join(' ')}" style="stroke:${c}" stroke-width="2.6"/>`+a.map((v,t)=>`<circle cx="${xs(t)}" cy="${ys(v)}" r="3" style="fill:${c};stroke:var(--surface)" stroke-width="1.5"/>`).join('');
   s+=pth(z(SP.S[i]),'var(--s1-line)')+pth(z(SP.S[j]),'var(--s2)');el.innerHTML=F.svg(s);
   const A=REC[i],B=REC[j];$('spA').textContent=A;$('spB').textContent=B;
-  $('spHead').innerHTML=`The reporter's story says that ${lc(A)} and ${lc(B).replace(/^the /,'')} in this state have moved together for 20 years, with <b>r = ${f2(r)}</b>.`;
+  $('spHead').innerHTML=`The reporter's story says that ${lc(A)} and ${lc(B).replace(/^the /,'')} in this state have moved together for 20 years, and the correlation between them is <b>r = ${f2(r)}</b>.`;
   const st=$('spStrip'),G=frame(st,96),gl=16,gr=16,gx=v=>gl+(v+1)/2*(G.w-gl-gr);let q='';
   [-1,-.5,0,.5,1].forEach(v=>q+=`<line x1="${gx(v)}" x2="${gx(v)}" y1="6" y2="${G.h-22}" style="stroke:var(--grid)"/><text x="${gx(v)}" y="${G.h-6}" text-anchor="${v===-1?'start':v===1?'end':'middle'}" font-size="11" style="fill:var(--muted)">r = ${v===0?'0':(v<0?'−':'')+String(Math.abs(v)).replace(/^0/,'')}</text>`);
   SP.all.forEach((v,k)=>q+=`<circle cx="${gx(v)}" cy="${10+SP.jit[k]*(G.h-40)}" r="2.2" style="fill:var(--ink-2)" opacity=".35"/>`);
@@ -1082,7 +1100,7 @@ function wlDraw(){const el=$('wlChart'),F=frame(el,280),pl=34,pr=12,pt=26,pb=36,
   const all=rOf(WL),rb=[0,1,2].map(b=>rOf(WL.filter(p=>p.b===b)));
   $('wlSay').innerHTML=!split?`Across ${WL.length} countries <b>r = ${f2(all)}</b> (with GDP on the log scale), so wealthier countries do tend to be freer. Now split the countries by how effective their governments are.`:
     `Within the least effective third <b>r = ${f2(rb[0])}</b>, within the middle third <b>r = ${f2(rb[1])}</b>, and within the most effective third <b>r = ${f2(rb[2])}</b>. Each third sits higher and further to the right than the one before, so government effectiveness tracks both wealth and freedom. Once we compare countries with similar governments, most of the link between wealth and liberty fades, and holding effectiveness constant statistically (a partial correlation) drops r from ${f2(all)} to ${f2(partial)}.`;
-  $('wlSay2').innerHTML=split?`So the pattern is not spurious, since it isn't a fluke and there are real stories behind it. It looks mostly like an omitted variable, with effective government as a strong candidate for Z. One caution carries into Part 5, which is that effectiveness could also sit <i>between</i> wealth and liberty, with wealth paying for an effective state that then protects rights. The numbers alone can't tell those two arrows apart, so the story has to.`:'';}
+  $('wlSay2').innerHTML=split?`So the pattern is not spurious, since it isn't a fluke and there are real stories behind it. It looks mostly like an omitted variable, and effective government is a strong candidate for Z. One caution carries into Part 5, which is that effectiveness could also sit <i>between</i> wealth and liberty, with wealth paying for an effective state that then protects rights. The numbers alone can't tell those two arrows apart, so the story has to.`:'';}
 D_seg($('wlSeg'),[['all','All countries together'],['split','Split by government effectiveness']],v=>{wlMode=v;wlDraw();},'all');
 diagram($('wlDg'),'omit',{z:'Effective government',x:'GDP per capita',y:'Civil liberties',note:'much of the link comes from this shared cause'});
 wlDraw();
@@ -1220,7 +1238,7 @@ function gfDraw(){const el=$('gfChart'),F=frame(el,320),pl=36,pr=14,pt=26,pb=42,
     s+=`<circle class="gfp" data-i="${p.i}" cx="${cx}" cy="${cy}" r="${p.i===gfPick?7.5:5.5}" style="fill:${c};stroke:${p.i===gfPick?'var(--ink)':'var(--surface)'};cursor:pointer" stroke-width="${p.i===gfPick?2.5:1.5}"><title>First round ${p.r1}, second round ${p.r2}</title></circle>`;});
   el.innerHTML=F.svg(s);if(!done)return;
   const B=P.filter(p=>p.g==='best'),W=P.filter(p=>p.g==='worst'),m=(A,k)=>mean(A.map(p=>p[k])).toFixed(1);
-  $('gfSay').innerHTML=`The 10 best first rounds averaged <b>${m(B,'r1')}</b>, and the same golfers averaged <b>${m(B,'r2')}</b> the next day. The 10 worst first rounds averaged <b>${m(W,'r1')}</b>, and those golfers averaged <b>${m(W,'r2')}</b> the next day. Both groups moved toward the middle, so the least-squares line is flatter than the 45-degree line (its slope is ${sl.toFixed(2)}, not 1).`+(gfOwn?` The diamonds mark each highlighted golfer's usual score. The second rounds land near the diamonds, so each golfer falls back toward <b>her own</b> usual level, not toward the average of the whole field.`:` Show the usual scores to see where each one was headed.`);}
+  $('gfSay').innerHTML=`The 10 best first rounds averaged <b>${m(B,'r1')}</b>, and the same golfers averaged <b>${m(B,'r2')}</b> the next day. The 10 worst first rounds averaged <b>${m(W,'r1')}</b>, and those golfers averaged <b>${m(W,'r2')}</b> the next day. Both groups moved toward the middle, so the least-squares line is flatter than the 45-degree line (its slope is ${sl.toFixed(2)}, not 1).`+(gfOwn?` The diamonds mark each highlighted golfer's usual score. The second rounds land near the diamonds, so each golfer falls back toward <b>her own</b> usual level rather than toward the average of the whole field.`:` Show the usual scores to see where each one was headed.`);}
 function gfFollow(){const p=GF.P[gfPick],r=rng(GF.seed*7+p.i),v=[p.r1,p.r2];for(let k=2;k<8;k++)v.push(Math.round(p.sk+gaussR(r)*2.5));
   const lo=Math.min(63,...v)-1,hi=Math.max(84,...v)+1;
   tsChart($('gfTs'),{yl:'Score',n:8,lo,hi,ticks:[66,70,74,78,82].filter(t=>t>lo&&t<hi),xl:v.map((_,i)=>'R'+(i+1)),xt:'Round',series:[{v,c:p.g==='best'?'var(--s1-line)':'var(--s2)',big:[0],bc:p.g==='best'?'var(--s1-line)':'var(--s2)'}],mean:{v:p.sk,t:`her usual score (${p.sk.toFixed(1)})`},h:190});

@@ -527,25 +527,6 @@ h3 + details.stata-wrap{margin-top:4px}
 .spk{min-width:120px;font-size:15px}.spk b{font:600 16px var(--font-mono)}
 .hist-means{font:13.5px var(--font-mono);color:var(--ink-2)}
 </style>
-<style id="toggle-sel">
-button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
-:root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
-</style>
-<style id="sec-lines">
-:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
-:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
-main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
-main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
-main section.part:first-child{margin-top:8px!important}
-main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
-.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
-.pager a.nx .k{color:var(--nxk)}
-.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
-@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
-@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
-</style>
 <style id="polish">
 /* polish: shared section bands, data bars and axis titles */
 :root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
@@ -672,6 +653,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -820,7 +819,7 @@ main [id]{scroll-margin-top:72px}
 
   <!-- 7b MEDIAN IN A FREQUENCY TABLE -->
   <section class="part" id="sec-find-the-median-in-a-frequen"><p class="kick">Part 8</p><h2>Find the median in a frequency table</h2>
-    <p>The median is the answer given by the middle person once everyone is lined up in order, here from “Increased a lot” to “Decreased a lot.” With thousands of people we don't line them up by hand. Instead we read the Cumulative Percent column, which adds up the Valid Percent as you go down the rows. The median is the first row where the cumulative percent reaches 50%, because that row holds the middle person.</p></section>
+    <p>The median is the answer given by the middle person once everyone is lined up in order, which here runs from “Increased a lot” to “Decreased a lot.” With thousands of people we don't line them up by hand. Instead we read the Cumulative Percent column, which adds up the Valid Percent as you go down the rows. The median is the first row where the cumulative percent reaches 50%, because that row holds the middle person.</p></section>
   <section class="dcard" id="fm" data-ds="ANES_2020_Issues_F26.sav">
     <h3>Find the median in the Cumulative Percent column, 2020 ANES</h3>
     <p class="p">This is the welfare spending table from Part 7. The median is the first row where Cumulative Percent reaches 50, so the table opens on that column, shaded. Tap any number or label to see what it means.</p>
@@ -990,11 +989,11 @@ const EXP={
  mean:(v,u)=>`The mean is ${v}${u||''}, which is the arithmetic average of the valid cases.`,
  median:(v,u)=>`The median is ${v}${u||''}, so half the valid cases are at or below it and half are at or above it.`,
  mode:(v,u)=>`The mode is ${v}${u||''}, which is the most common value. If several values tie, SPSS shows the smallest one and adds a footnote.`,
- sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean, in the variable's own units.`,
+ sd:(v)=>`The standard deviation is ${v}, which is the typical distance of a case from the mean measured in the variable's own units.`,
  var:(v)=>`The variance is ${v}, which is the average squared distance from the mean (dividing by n − 1). Its square root is the SD.`,
  skew:(v)=>`Skewness ${v}. ${Math.abs(num(v))<0.1?'That is close to 0, so the distribution is roughly symmetric.':num(v)>0?'It is above 0, so the tail points toward the high values (positive skew).':'It is below 0, so the tail points toward the low values (negative skew).'} Check the coding before you say what that means.`,
  kurt:(v)=>`Kurtosis ${v}. SPSS reports kurtosis so that a normal curve scores 0. ${num(v)>0?'It is above 0, so the distribution is more peaked than normal (leptokurtic).':'It is below 0, so the distribution is flatter than normal (platykurtic).'}`,
- range:(v)=>`The range is ${v}, the maximum minus the minimum.`,
+ range:(v)=>`The range is ${v}, which is the maximum minus the minimum.`,
  nmiss:(v)=>`${v} cases are missing on this variable (no answer, or a code such as Don't know that is set as missing). They are left out of every statistic above.`
 };
 /* vars: [{name, vals, nTotal}] */
@@ -1134,7 +1133,7 @@ const SETS={
  a9:{lab:'9 ages',intro:'The ages of nine people from the notes. Put them in order.',items:DATA.ages9.map(v=>({v,s:''}))},
  a8:{lab:'8 ages',intro:'These are the same ages without the 37-year-old. Now there are eight, so two values share the middle.',items:[17,17,23,35,48,57,62,78].map(v=>({v,s:''}))},
  cty:{lab:'13 counties',intro:'Lunatics per county in the 13 Massachusetts counties (NBR).',items:lun.map(r=>({v:r[1],s:r[0]}))},
- st:{lab:'50 states',intro:'The Democratic share of the 1984 presidential vote in each state. Fifty is too many to drag, so let SPSS-style sorting do it, then tap the two values in the middle.',items:DATA.dem84.map(r=>({v:r[1],s:r[0]}))}
+ st:{lab:'50 states',intro:'The Democratic share of the 1984 presidential vote in each state. Fifty is too many to drag, so let SPSS-style sorting do it, and then tap the two values in the middle.',items:DATA.dem84.map(r=>({v:r[1],s:r[0]}))}
 };
 let mdKey='a9',mdPicked=new Set();
 D.seg($('#mdSet'),Object.keys(SETS).map(k=>[k,SETS[k].lab]),k=>{mdKey=k;mdLoad();},'a9');
@@ -1236,7 +1235,7 @@ const OG={
    cols:['var(--q1,#8fb3e8)','var(--q2,#5f93db)','var(--q3,#2a78d6)','var(--q4,#1c5cab)','var(--q5,#123f78)'],
    ranges:[[0,5],[5,16],[16,30],[30,60],[60,80]],bottom:'Real ages in years',
    notes:['Code 1 (infant or young child) covers ages 0 to 5, which is about 5 years.','Code 2, youth, covers ages 5 to 16, which is 11 years.','Code 3, young adult, covers ages 16 to 30, which is 14 years.','Code 4, adult, covers ages 30 to 60, which is 30 years and more than twice as wide as code 3. Yet on the codes it is still one step from 3 to 4.','Code 5, elderly, covers everyone 60 and older.']},
- agree:{ttl:'Agree or disagree',hue:'var(--s2)',desc:'Many surveys ask people whether they agree with a statement, coded 1 = Strongly agree to 5 = Strongly disagree. The codes are evenly spaced, but the answers may not be. There’s no ruler for this, so the bottom line shows where we think the gaps are larger or smaller. Tap a gap to see why.',
+ agree:{ttl:'Agree or disagree',hue:'var(--s2)',desc:'Many surveys ask people whether they agree with a statement and code the answers from 1 = Strongly agree to 5 = Strongly disagree. The codes are evenly spaced, but the answers may not be. There’s no ruler for this, so the bottom line shows where we think the gaps are larger or smaller. Tap a gap to see why.',
    cols:AGREEC,labels:['Strongly agree','Agree','Neither agree nor disagree','Disagree','Strongly disagree'],pos:[0,1,2.5,4,5],bottom:'Judged distance, not measured',
    gaps:[['smaller','Smaller than one step. Both answers agree with the statement, and only how strongly changes.'],
          ['larger','Larger than one step. This step leaves the agree side altogether. “Neither” also collects people who have no opinion on the question, so it isn’t a true halfway point.'],
@@ -1336,7 +1335,7 @@ function judge(p){const it=ISS[p.i],P=POS[it.k],me=P.find(q=>q[0]===p.p),side=pc
   if(other>=25&&side>=40)t+=' Opinion here is split, with large groups at both ends, so it would make a divisive opening message.';
   return {g,t:name+t};}
 $('#btCheck').addEventListener('click',()=>{const r=picks.map(judge),n2=r.filter(x=>x.g===2).length;
-  const lead=['None of your picks rests on a clear majority with few voters on the other side.','Only one of your picks rests on a clear majority with few voters on the other side.','Two of your picks rest on clear majorities, and the third is weaker.','All three of your picks rest on clear majorities, with few voters on the other side.'][n2];
+  const lead=['None of your picks rests on a clear majority with few voters on the other side.','Only one of your picks rests on a clear majority with few voters on the other side.','Two of your picks rest on clear majorities, and the third is weaker.','All three of your picks rest on clear majorities, and few voters are on the other side.'][n2];
   D.fb($('#btFb'),'info',lead+'<ol class="btlist">'+r.map(x=>'<li>'+x.t+'</li>').join('')+'</ol>There is no single right answer, because a real campaign also weighs its own party and base. What the bar charts let you do is see where a clear majority sits on one side and few people sit on the other.');});
 upd();
 })();
@@ -1356,7 +1355,7 @@ upd();
         `The cumulative percent had already passed 50 in an earlier row, so the middle person isn't in this row.`;
       rows.push({flag:non,cells:[i===0?{v:'Valid',rh:true,span:cats.length+1}:null,
         {v:name,rh:true,tap:non?'Codes below 0 are non-answers. This file still counts −2 as Valid, so it sits at the top of the running total. Set it as missing before you read the median, since a non-answer isn\'t a point on the scale.':`${D.comma(n)} people chose “${r[1]}.”`},
-        {v:D.comma(n),tap:`Frequency is the number of people who gave this answer, here ${D.comma(n)}.`},
+        {v:D.comma(n),tap:`Frequency is the number of people who gave this answer, which here is ${D.comma(n)}.`},
         {v:(n/T*100).toFixed(1),tap:`Percent is ${D.comma(n)} out of all ${D.comma(T)} cases in the file, missing ones included, which gives ${(n/T*100).toFixed(1)}%.`},
         {v:vp.toFixed(1),tap:`Valid Percent is ${D.comma(n)} out of the ${D.comma(V)} valid cases, which gives ${vp.toFixed(1)}%. The cumulative percent adds these up.`},
         {v:cum.toFixed(1),tap:tCum}].filter(x=>x!==null)});});
@@ -1405,7 +1404,7 @@ function cfDraw(m){const host=$('#cfChart');
   else{const bins=Array(10).fill(0);CF.forEach(v=>bins[Math.min(9,Math.floor(v/10))]++);const top=bins.indexOf(Math.max(...bins));
     D.hist(host,{ylab:'↑ Countries',values:CF,xmin:0,xmax:100,binw:10,h:250,xlab:'Confidence score, in ranges of 10',aria:'Histogram of confidence',hlBins:new Set(bins.map((_,i)=>i))});
     const tb=host.querySelector(`rect.bar[data-i="${top}"]`);if(tb)tb.classList.add('top');
-    $('#cfCap').innerHTML=`Once the scores are grouped into ranges of 10, the shape appears. The most common range is ${top*10} to ${top*10+10} (${bins[top]} countries, in orange), with fewer countries toward either end. The y-axis is the number of countries in each range.`;}}
+    $('#cfCap').innerHTML=`Once the scores are grouped into ranges of 10, the shape appears. The most common range is ${top*10} to ${top*10+10} (${bins[top]} countries, in orange), and fewer countries fall toward either end. The y-axis is the number of countries in each range.`;}}
 D.seg($('#cfSeg'),[['bar','Bar chart'],['hist','Histogram']],cfDraw,'bar');cfDraw('bar');
 D.seg($('#cfQ'),[['a','Every country has its own value'],['b','There are too few countries'],['c','The variable is nominal']],v=>{v==='a'?D.fb($('#cfFb'),'ok','With a 0–100 scale measured to decimals, no two countries share a value, so every bar has a frequency of 1 and the chart shows nothing. A histogram groups values into bins, which is why it suits interval variables. Bar charts suit nominal and ordinal variables, which have few categories.'):D.fb($('#cfFb'),'no','Switch to the bar chart and look at the heights. How many countries share each value?');});
 })();

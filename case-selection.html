@@ -810,6 +810,24 @@ main [id]{scroll-margin-top:72px}
  .gbox{flex:none}.rv .mhd.sh>span:first-child{display:none}.rv .mhd.sh .cnt::after{content:" · swipe →"}
  .mtitle h1{font-size:40px}
 }
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -869,7 +887,7 @@ main [id]{scroll-margin-top:72px}
 
   <section class="dcard" id="wm">
     <h3>A worked example on women in parliament</h3>
-    <p class="p">Why do some countries elect many women to parliament? We start from the outcome, so we look for countries where women held 30% or more of the lower-house seats in 2005, using the class World data (World.sav). Argentina, South Africa and Sweden all cleared that mark, and they differ in region, predominant religion, wealth and colonial history about as much as three countries can. Once the cases were chosen, we turned over four further attributes to see whether any of them is shared. The gender quota row comes from International IDEA's Gender Quotas Database rather than the World data.</p>
+    <p class="p">Why do some countries elect many women to parliament? We start from the outcome, so we look for countries where women held 30% or more of the lower-house seats in 2005, and we use the class World data (World.sav). Argentina, South Africa and Sweden all cleared that mark, and they differ in region, predominant religion, wealth and colonial history about as much as three countries can. Once the cases were chosen, we turned over four further attributes to see whether any of them is shared. The gender quota row comes from International IDEA's Gender Quotas Database rather than the World data.</p>
     <div class="split">
       <div><p class="lab2">Match strip</p><div class="strip" id="wmT"></div></div>
       <div><p class="lab2">Rival explanations</p><svg class="bd" id="wmBd" role="img" aria-label="Rival explanations for many women in parliament"></svg>
@@ -917,7 +935,7 @@ main [id]{scroll-margin-top:72px}
           <text x="270" y="140" font-size="11.5" fill="var(--badink)" text-anchor="middle">a gap</text>
           <text x="170" y="30" font-size="11.5" fill="var(--ink-2)" text-anchor="middle">histories, documents, interviews</text>
         </svg>
-        <p class="p">Inside each case, we gather evidence on how the outcome came about, one step of the story at a time. We try to close the gaps between steps and to back each step with more than one source.</p>
+        <p class="p">Inside each case, we gather evidence on how the outcome came about by following the story one step at a time. We try to close the gaps between steps and to back each step with more than one source.</p>
       </div>
     </div>
     <p class="p">Controlling by design is the qualitative twin of holding a variable constant in <a href="10-multiple-regression.html">multiple regression</a>, where we add the variable to the equation rather than choosing cases that share it. The arrows on the boards are the same X, Y and Z diagrams that appear in <a href="1-problems-of-causation.html">Problems of causation</a>, and process tracing will get a page of its own later.</p>
@@ -1102,12 +1120,12 @@ const SCEN = [
   {id:'sdr', design:'MSS', title:'Same-day registration and turnout', k:3, vars:SV, pool:CONTIG,
    q:'Does same-day voter registration raise turnout in presidential elections?',
    unit:'the state (the 48 contiguous states)', test:'sdrv', ctl:['cold','close','reg'], out:'turn', gap:5,
-   setup:'The test variable is whether a state let people register and vote on the same day in 2024, from Ballotpedia\'s list based on NCSL. North Carolina offers it during early voting only and Rhode Island for the presidential race only, and we count both as yes. North Dakota has no voter registration at all, so it gets its own value. The outcome is 2024 turnout, and cold Novembers, close races and region are the controls, coded as on the cold weather card. Turnout rates at least 5 points apart count as different.',
+   setup:'The test variable is whether a state let people register and vote on the same day in 2024, which we take from Ballotpedia\'s list based on NCSL. North Carolina offers it during early voting only and Rhode Island for the presidential race only, and we count both as yes. North Dakota has no voter registration at all, so it gets its own value. The outcome is 2024 turnout, and cold Novembers, close races and region are the controls, which are coded as on the cold weather card. Turnout rates at least 5 points apart count as different.',
    hyp:'Removing the registration deadline should bring more people to the polls.', order:['No','Yes'], dir:1},
   {id:'gov', design:'MSS', title:'A governor race on the ballot', k:2, vars:SV, pool:STPOOL,
    q:'What is the impact on state-level turnout of holding a gubernatorial election at the same time?',
    unit:'the state (all 50)', test:'gov', ctl:['close','sdrv','reg'], out:'turn', gap:5,
-   setup:'Eleven states elected a governor in November 2024, from Delaware to West Virginia. Every state also had House races on the ballot, so 2024 turnout (ballots counted as a share of eligible voters) stands in for congressional turnout. A close presidential race, same-day registration and region are the controls, and turnout rates at least 5 points apart count as different.',
+   setup:'Eleven states, from Delaware to West Virginia, elected a governor in November 2024. Every state also had House races on the ballot, so 2024 turnout (ballots counted as a share of eligible voters) stands in for congressional turnout. A close presidential race, same-day registration and region are the controls, and turnout rates at least 5 points apart count as different.',
    hyp:'A second big race on the ballot should draw more voters.', order:['No','Yes'], dir:1},
   {id:'close', design:'MSS', title:'Close races and turnout', k:3, vars:SV, pool:CONTIG,
    q:'Do close presidential races raise turnout?',
@@ -1139,12 +1157,12 @@ const SCEN = [
   {id:'lo', design:'MDS', oval:'Under 60%', title:'Very low turnout', k:3, vars:SV, pool:CONTIG,
    q:'Why did some states have very low turnout in 2024?',
    unit:'the state (the 48 contiguous states)', out:'t60', ctl:['reg','sdrv','big'], tray:['close','win','gov'],
-   setup:'Ten of the contiguous states had 2024 turnout under 60%, from Oklahoma at 53.3% to New Mexico at 59.6%. Choose three of them that differ on region, same-day registration and the number of cities of 250,000 or more. A close race, who won the state and a governor race on the ballot stay hidden in the tray until you have chosen.',
+   setup:'Ten of the contiguous states had 2024 turnout under 60%, and they range from Oklahoma at 53.3% to New Mexico at 59.6%. Choose three of them that differ on region, same-day registration and the number of cities of 250,000 or more. A close race, who won the state and a governor race on the ballot stay hidden in the tray until you have chosen.',
    after:'Notice that every low-turnout state is also warm in November, which is why a cold November could not serve here as a variable that differs. A variable that never varies among the cases we can choose cannot be ruled out by this design, and an honest write-up would say so.'},
   {id:'med', design:'MSS', title:'Citizen initiatives and Medicaid expansion', k:3, vars:SV, pool:STPOOL,
    q:'Does the citizen initiative help explain which states expanded Medicaid?',
    unit:'the state (all 50)', test:'init', ctl:['vote','reg'], out:'med',
-   setup:'The test variable is whether citizens can put a law or constitutional amendment on the statewide ballot by petition, from Ballotpedia. We count Illinois as no because its initiative covers only the structure of the legislature, and Mississippi as no because its process cannot be used since a 2021 court ruling. Maryland and New Mexico allow only the veto referendum, so they count as no as well. The outcome is whether the state has adopted the Medicaid expansion under the Affordable Care Act, as tracked by KFF in 2026, and seven states adopted it through a ballot initiative. The 2024 presidential vote (in four bands) and region are the controls.',
+   setup:'The test variable, which we take from Ballotpedia, is whether citizens can put a law or constitutional amendment on the statewide ballot by petition. We count Illinois as no because its initiative covers only the structure of the legislature, and Mississippi as no because its process cannot be used since a 2021 court ruling. Maryland and New Mexico allow only the veto referendum, so they count as no as well. The outcome is whether the state has adopted the Medicaid expansion under the Affordable Care Act, as tracked by KFF in 2026, and seven states adopted it through a ballot initiative. The 2024 presidential vote (in four bands) and region are the controls.',
    hyp:'Where voters can go around the legislature, expansion should be more likely even in states that lean Republican.', order:['No','Yes'], oorder:['No','Yes'], dir:1},
   {id:'winlaw', design:'MSS', title:'Partisanship and hate crimes laws', k:2, vars:SV, pool:STPOOL.filter(c => c.v.law),
    q:'Are states that vote Democratic more likely to have hate crimes laws that cover sexual orientation and gender identity?',
@@ -1485,7 +1503,7 @@ function partOne() {
     board($('#twoBd'), items, 'Turnout|2024');
     const live = keys.filter(k => a.v[k] !== b.v[k]);
     const gap = Math.abs(a.v.turn - b.v.turn).toFixed(1);
-    $('#twoCall').innerHTML = `<p>${esc(a.name)} turned out at ${a.v.turn.toFixed(1)}% and ${esc(b.name)} at ${b.v.turn.toFixed(1)}%, a gap of ${gap} points. The two states differ on ${NUMW[live.length]} of the six rival explanations${live.length ? ` (${esc(listAnd(live.map(k => lc(SV[k].lab))))})` : ''}, so ${live.length === 1 ? 'one arrow stays' : NUMW[live.length] + ' arrows stay'} live, and ${live.length > 1 ? 'nothing in this comparison tells us which of those differences mattered' : live.length === 1 ? 'that one difference is the only candidate in this deck, although the states surely differ in ways the deck does not show' : 'none of these six can explain the gap, which tells us the gap comes from something the deck does not show'}.</p>`;
+    $('#twoCall').innerHTML = `<p>${esc(a.name)} turned out at ${a.v.turn.toFixed(1)}% and ${esc(b.name)} at ${b.v.turn.toFixed(1)}%, so the gap is ${gap} points. The two states differ on ${NUMW[live.length]} of the six rival explanations${live.length ? ` (${esc(listAnd(live.map(k => lc(SV[k].lab))))})` : ''}, so ${live.length === 1 ? 'one arrow stays' : NUMW[live.length] + ' arrows stay'} live, and ${live.length > 1 ? 'nothing in this comparison tells us which of those differences mattered' : live.length === 1 ? 'that one difference is the only candidate in this deck, although the states surely differ in ways the deck does not show' : 'none of these six can explain the gap, which tells us the gap comes from something the deck does not show'}.</p>`;
   }
   $('#twoDraw').addEventListener('click', draw);
   pair = [CONTIG.find(c => c.id === 'WI'), CONTIG.find(c => c.id === 'AL')]; render();
@@ -1709,7 +1727,7 @@ const PUB = [
      {lab:'Regional forces for and against unification', v:['Similar','Similar'], d:['uneven regional economies','uneven regional economies']},
      {lab:'A powerful region seeking dominance', v:['Yes','Yes'], d:['Prussia','Piedmont']},
      {lab:'Military power of the unifying state', v:['Strong','Relatively weak'],
-      note:'Military power is still standing, so the design alone cannot cut it. Ziblatt sets it aside because it points the wrong way. The standard theory expects federations to come from bargains in which the center is not strong enough to overawe the regions, so it predicts a unitary Germany and a federal Italy, the opposite of what happened.'},
+      note:'Military power is still standing, so the design alone cannot cut it. Ziblatt sets it aside because it points the wrong way. The standard theory expects federations to come from bargains in which the center is not strong enough to overawe the regions, so it predicts a unitary Germany and a federal Italy, which is the opposite of what happened.'},
      {lab:'Governing capacity of the states being absorbed', v:['High','Low']},
      {lab:'Form of the new state', out:true, v:['Federal','Unitary']}],
    answer:4,
@@ -1718,7 +1736,7 @@ const PUB = [
   {id:'miguel', cite:'Miguel 2004', design:'MSS', title:'Nation building in Kenya and Tanzania',
    q:'Do nation-building policies change whether ethnically diverse communities can cooperate on local public goods?',
    unit:'the rural district',
-   setup:'Edward Miguel (2004) compared two rural districts on either side of the Kenya–Tanzania border, Busia in Kenya and Meatu in Tanzania, using the colonial-era border as a natural experiment. After independence Tanzania pursued serious nation-building policies in national language, the school curriculum and local institutions, and Kenya did not.',
+   setup:'Edward Miguel (2004) compared two rural districts on either side of the Kenya–Tanzania border, Busia in Kenya and Meatu in Tanzania, and he used the colonial-era border as a natural experiment. After independence Tanzania pursued serious nation-building policies in national language, the school curriculum and local institutions, and Kenya did not.',
    cases:['Busia, Kenya','Meatu, Tanzania'],
    rows:[
      {lab:'Location', v:['Near Lake Victoria','Near Lake Victoria'], d:['about 500 km apart','on opposite shores']},
@@ -1813,7 +1831,7 @@ function pubDeck() {
       const s = guess === null ? '' : r.out ? 'oc' : state(c, r) === 'live' ? 'live' : 'flat';
       const tag = guess === null || r.out ? '' : `<span class="st ${state(c, r) === 'live' ? 'live' : 'cut'}">${state(c, r) === 'live' ? (mds ? 'shared' : 'differs') : (mds ? 'differs' : 'same')}</span>`;
       return `<div class="srow ${s}${guess === j ? ' picked' : ''}"><div class="hd"><span class="role">${r.out ? 'outcome' : 'rival'}</span><b>${esc(r.lab)}</b>${tag}</div><div class="cells">${r.v.map((x, k) => `<span class="cell">${esc(x)}${r.d && r.d[k] ? `<small>${esc(r.d[k])}</small>` : ''}</span>`).join('')}</div></div>`; }).join('');
-    $('.pubq', root).textContent = mds ? 'Read the strip, then tap the rival you think this design leaves standing as the explanation, the one every case shares.' : 'Read the strip, then tap the rival you think this design leaves standing as the explanation, the one that differs while the rest are held the same.';
+    $('.pubq', root).textContent = mds ? 'Read the strip, and then tap the rival you think this design leaves standing as the explanation, which is the one every case shares.' : 'Read the strip, and then tap the rival you think this design leaves standing as the explanation, which is the one that differs while the rest are held the same.';
     $('.pubc', root).innerHTML = rivals.map(j => `<button data-g="${j}" aria-pressed="${guess === j}">${esc(c.rows[j].lab)}</button>`).join('');
     const outLab = c.rows.find(r => r.out).lab;
     const items = rivals.map(j => { const r = c.rows[j]; if (guess === null) return {lab:r.lab, sub:'tap your choice above', st:'hide'};
