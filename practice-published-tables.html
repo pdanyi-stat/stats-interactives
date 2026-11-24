@@ -1002,11 +1002,11 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 
 <main class="wrap">
   <section class="intro" aria-label="About this page">
-    <p class="lede">Every number on this page comes from a real regression on the site's data. Tap any number, column heading, variable name or the notes line to see what it means. Below each table you can open the SPSS output for the same model (and the Stata output, if you use Stata) and check that the numbers match.</p>
+    <p class="lede">Every number on this page comes from <span id="techList">real regressions and t tests</span> on the site's data. Tap any number, column heading, variable name or the notes line to see what it means. Below each table you can open the SPSS output for the same analysis (and the Stata output, if you use Stata) and check that the numbers match.</p>
     <div class="layouts">
-      <div><h3>Export style</h3><p>Tables 1 and 3 each show one model the way statistics programs export it, so they use raw variable names and give each statistic its own column.</p></div>
-      <div><h3>Journal style</h3><p>Tables 2 and 4–8 set several models side by side, in columns, and each standard error sits in parentheses under its coefficient.</p></div>
-      <div><h3>Comparison style</h3><p>Tables 9 and 10 set group means side by side and test whether they differ, which is the way papers report differences of means.</p></div>
+      <div data-style="Export style"><h3>Export style</h3><p>In <span class="tlist">Tables 1 and 3</span>, each model appears the way statistics programs export it, with raw variable names and each statistic in its own column.</p></div>
+      <div data-style="Journal style"><h3>Journal style</h3><p>In <span class="tlist">Tables 2 and 4–8</span>, several models sit side by side in columns, and each standard error sits in parentheses under its coefficient.</p></div>
+      <div data-style="Comparison style"><h3>Comparison style</h3><p>In <span class="tlist">Tables 9 and 10</span>, group means sit side by side with a test of whether they differ, which is the way papers report differences of means.</p></div>
     </div>
     <p class="lede small">The regression tables put stars on the coefficients and explain them in a notes line. They use * p &lt; .05, ** p &lt; .01, *** p &lt; .001. The comparison tables print the <i>p</i>-values themselves instead of stars, as APA style does.</p>
     <nav class="toc" aria-labelledby="tocH"><h2 id="tocH">Tables on this page</h2><ol>
@@ -1023,7 +1023,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </ol></nav>
   </section>
 
-  <figure class="tfig" id="t1" aria-labelledby="t1h">
+  <figure class="tfig" id="t1" data-tech="regression" aria-labelledby="t1h">
     <header class="thead"><p class="tkick">Table 1 · Module 9 · Export style · One model</p><h2 id="t1h">Metro share and the 2016 vote</h2>
       <p class="sub">This is the opening model of <a href="9-bivariate-regression.html">Module 9</a>, which regresses Trump's 2016 vote share in the 50 states and D.C. on the share of the population living in metro areas. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>metro_pct</code> as the Independent(s).</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="9-bivariate-regression.html">Module 9, Bivariate regression →</a></p></header>
@@ -1036,7 +1036,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t2" aria-labelledby="t2h">
+  <figure class="tfig" id="t2" data-tech="regression" aria-labelledby="t2h">
     <header class="thead"><p class="tkick">Table 2 · Worked example · Journal style · Four models</p><h2 id="t2h">Party feelings and the First Ladies</h2>
       <p class="sub">These are the four bivariate regressions from the <a href="9b-partisans-and-the-first-lady.html">First Lady worked example</a> (2004 NES), set side by side in the journal style. Each column is a separate regression.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="9b-partisans-and-the-first-lady.html">the worked example, Partisans and the First Lady →</a></p></header>
@@ -1049,7 +1049,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t3" aria-labelledby="t3h">
+  <figure class="tfig" id="t3" data-tech="regression" aria-labelledby="t3h">
     <header class="thead"><p class="tkick">Table 3 · Module 10 · Export style · One model</p><h2 id="t3h">Five state traits and the 2016 vote</h2>
       <p class="sub">This <a href="10-multiple-regression.html">Module 10</a> model regresses Trump's 2016 vote share in the 50 states and D.C. on five state traits. Statistics programs can export a table like this one, which keeps the raw variable names. In SPSS: “Analyze” → “Regression” → “Linear,” with <code>trump_pct</code> as the Dependent and <code>white_pov</code>, <code>hs_pct</code>, <code>metro_pct</code>, <code>income_k</code> and <code>gini</code> as the Independent(s).</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="10-multiple-regression.html">Module 10, Multiple regression →</a></p></header>
@@ -1062,7 +1062,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t4" aria-labelledby="t4h">
+  <figure class="tfig" id="t4" data-tech="regression" aria-labelledby="t4h">
     <header class="thead"><p class="tkick">Table 4 · Module 10 · Journal style · Three models</p><h2 id="t4h">Regional and economic predictors</h2>
       <p class="sub">These are three models on the <a href="10-multiple-regression.html">Module 10</a> state data. Models 1 and 2 show what happens to the South coefficient when metro share is held constant. Model 3 uses a different set of IVs.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="10-multiple-regression.html">Module 10, Multiple regression →</a></p></header>
@@ -1075,7 +1075,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t5" aria-labelledby="t5h">
+  <figure class="tfig" id="t5" data-tech="regression" aria-labelledby="t5h">
     <header class="thead"><p class="tkick">Table 5 · Module 11 · Journal style · Four models</p><h2 id="t5h">The First Ladies, controlling for gender</h2>
       <p class="sub">These are the gender-controlled models from <a href="11-dummy-variables.html#firstlady">Module 11</a>. They are Table 2's four models with a Female dummy added, so you can compare each party coefficient across the two tables.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="11-dummy-variables.html">Module 11, Dummy variables →</a></p></header>
@@ -1088,7 +1088,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t6" aria-labelledby="t6h">
+  <figure class="tfig" id="t6" data-tech="regression" aria-labelledby="t6h">
     <header class="thead"><p class="tkick">Table 6 · Module 11 · Journal style · Two models</p><h2 id="t6h">Both parties and gender in one model</h2>
       <p class="sub">This is the last step of the <a href="11-dummy-variables.html#firstlady">Module 11</a> replication, which regresses each First Lady's rating on both party thermometers and gender at once.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="11-dummy-variables.html">Module 11, Dummy variables →</a></p></header>
@@ -1101,7 +1101,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t7" aria-labelledby="t7h">
+  <figure class="tfig" id="t7" data-tech="regression" aria-labelledby="t7h">
     <header class="thead"><p class="tkick">Table 7 · Module 11 · Journal style · Four models</p><h2 id="t7h">The South, with and without D.C.</h2>
       <p class="sub">These are the South dummy models from <a href="11-dummy-variables.html">Module 11</a>, run on all 51 cases and again without D.C. (the module's “Include D.C.” switch). The group labels tell you which sample each pair of columns uses.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="11-dummy-variables.html">Module 11, Dummy variables →</a></p></header>
@@ -1114,7 +1114,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t8" aria-labelledby="t8h">
+  <figure class="tfig" id="t8" data-tech="regression" aria-labelledby="t8h">
     <header class="thead"><p class="tkick">Table 8 · Titanic practice · Journal style · Six models</p><h2 id="t8h">Who survived the Titanic?</h2>
       <p class="sub">These are six models of survival on the data from the <a href="practice-titanic.html">Titanic practice</a>. Model 1 has age alone, and each column to the right adds the next variable from the labs, so you can watch the coefficients change as the controls come in. Survived is coded 1 = yes and 0 = no, which makes each model a linear probability model. The two class dummies are made from pclass, so that middle_class is 1 for second class and lower_class is 1 for third class, and first class is the reference. In SPSS, the full model is “Analyze” → “Regression” → “Linear,” with <code>survived</code> as the Dependent and <code>age</code>, <code>female</code>, <code>middle_class</code>, <code>lower_class</code>, <code>trav_alone</code>, <code>the_freeriders</code> and <code>the_one_percent</code> as the Independent(s).</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="practice-titanic.html#lpm">the Titanic practice, starting with Regression on a 0/1 outcome →</a></p></header>
@@ -1127,7 +1127,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t9" aria-labelledby="t9h">
+  <figure class="tfig" id="t9" data-tech="t test" aria-labelledby="t9h">
     <header class="thead"><p class="tkick">Table 9 · Module 8 · Comparison style · Ten t tests</p><h2 id="t9h">Who survived the Titanic, group by group?</h2>
       <p class="sub">Each row is one of the ten difference-of-means tests from the <a href="8-difference-in-means.html">Module 8</a> lab on the Titanic, laid out the way a journal reports a set of <i>t</i> tests. The two group means sit side by side, followed by their difference, <i>t</i>, <i>p</i> and the 95% confidence interval for the difference. The layout follows the APA sample table for <i>t</i> tests, which reports exact <i>p</i>-values instead of stars.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="8-difference-in-means.html">Module 8, Difference in means →</a></p></header>
@@ -1140,7 +1140,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </div>
   </figure>
 
-  <figure class="tfig" id="t10" aria-labelledby="t10h">
+  <figure class="tfig" id="t10" data-tech="t test" aria-labelledby="t10h">
     <header class="thead"><p class="tkick">Table 10 · Modules 8 and 10 · Comparison style · Six t tests</p><h2 id="t10h">How the South differs from the rest of the country</h2>
       <p class="sub">This table compares six state traits from the <a href="10-multiple-regression.html">Module 10</a> data between the South and the rest of the country. Tables like this one often open a paper, because they describe the groups before any model is run. Each group gets its mean and median, and the last two columns test whether the means differ.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="8-difference-in-means.html">Module 8, Difference in means</a> or <a href="10-multiple-regression.html">Module 10, Multiple regression →</a></p></header>
@@ -1918,6 +1918,30 @@ function wireRowStata(id,outFor,nameFor){
   ]);
 })();
 
+})();
+</script>
+<script id="tablelists">
+/* The intro describes whatever tables the page holds. A new table only needs its figure (class tfig, with data-tech) and a kicker that names its style. */
+(function(){
+  const figs=[...document.querySelectorAll('figure.tfig')];
+  const PL={'regression':'regressions','t test':'t tests','crosstab':'crosstabs','correlation':'correlations'};
+  const techOf=f=>f.dataset.tech||(/t tests?/i.test(f.querySelector('.tkick')?.textContent||'')?'t test':'regression');
+  const techs=[];figs.forEach(f=>{const t=techOf(f);if(!techs.includes(t))techs.push(t);});
+  const names=techs.map(t=>PL[t]||t+'s');
+  const join=a=>a.length<2?a.join(''):a.length===2?a.join(' and '):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  const tl=document.getElementById('techList'); if(tl&&names.length) tl.textContent='real '+join(names);
+  const numOf=f=>+(f.id.replace(/\D/g,''));
+  const ranges=ns=>{const out=[];let a=ns[0],b=ns[0];for(let i=1;i<=ns.length;i++){if(ns[i]===b+1){b=ns[i];continue;}out.push(a===b?String(a):(b===a+1?a+' and '+b:a+'–'+b));a=b=ns[i];}return out;};
+  /* the list of tables is rebuilt from the tables themselves */
+  const ol=document.querySelector('nav.toc ol');
+  if(ol){ol.innerHTML=figs.map(f=>{const k=(f.querySelector('.tkick')?.textContent||'').split('·').map(x=>x.trim());const h=f.querySelector('h2')?.textContent||'';
+    return `<li><a href="#${f.id}"><span class="n">${numOf(f)}</span><span class="tt"><b>${h}</b><small>${k[1]||''}${k[3]?' · '+k[3].charAt(0).toLowerCase()+k[3].slice(1):''}</small></span></a></li>`;}).join('');}
+  document.querySelectorAll('.layouts [data-style]').forEach(d=>{
+    const ns=figs.filter(f=>(f.querySelector('.tkick')?.textContent||'').includes(d.dataset.style)).map(numOf).sort((x,y)=>x-y);
+    if(!ns.length){d.hidden=true;return;}
+    const parts=ranges(ns).flatMap(r=>r.includes(' and ')?r.split(' and '):[r]);
+    const span=d.querySelector('.tlist'); if(span) span.textContent=(ns.length===1?'Table ':'Tables ')+join(parts);
+  });
 })();
 </script>
 <script id="presentjs">/* Presentation mode: the same page, one projector-sized slide at a time.
