@@ -1007,7 +1007,7 @@ function XT(host,cfgs,opt){
   const COL=['var(--s1)','var(--muted)'];
   host.innerHTML='';
   let cards=null;
-  if(cfgs.length>1){cards=h('div',{class:'cards',role:'group','aria-label':'Question'});cfgs.forEach((c,i)=>{const b=h('button',{type:'button','aria-pressed':i===0?'true':'false'});SET(b,c.k+'-card');b.onclick=()=>{ci=i;sel=null;ghost=false;load();};cards.appendChild(b);});host.appendChild(cards);}
+  if(cfgs.length>1){cards=h('div',{class:'cards',role:'group','aria-label':'Question'});cfgs.forEach((c,i)=>{const b=h('button',{type:'button','aria-pressed':i===0?'true':'false'});SET(b,c.k+'-card');b.onclick=()=>{ci=i;step=0;sel=null;ghost=false;load();};cards.appendChild(b);});host.appendChild(cards);}
   const ctrl=h('div',{class:'ctrl'}),bk=h('button',{type:'button'}),nx=h('button',{type:'button',class:'primary'}),gb=h('button',{type:'button','aria-pressed':'false'});SET(bk,'btn-back');SET(gb,'btn-ghost');
   gb.hidden=true;const chips=h('div',{class:'chips','aria-hidden':'true'});
   [1,2,3,4,5].forEach(k=>{const sp=h('span',{});SET(sp,'step'+k+'-name',null,k+' ');chips.appendChild(sp);});
