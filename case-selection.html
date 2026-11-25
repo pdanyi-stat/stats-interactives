@@ -2141,13 +2141,17 @@ function pubDeck() {
     <div class="cs-call" aria-live="polite"></div>
     <div class="btnrow"><button class="pv">← Previous study</button><button class="nx">Next study →</button><button class="rs">Choose again</button></div>`;
   const state = (c, r) => { const same = r.v.every(x => x === r.v[0]); return c.design === 'MSS' ? (same ? 'cut' : 'live') : (same ? 'live' : 'cut'); };
+  const ORD = {};  // each study's rivals in a fresh random order per page load, kept while the student moves back and forth
+  function order(c, i) { if (!ORD[i]) { const a = c.rows.map((r, j) => j).filter(j => !c.rows[j].out);
+      for (let k = a.length - 1; k > 0; k--) { const m = Math.floor(Math.random() * (k + 1)); [a[k], a[m]] = [a[m], a[k]]; }
+      ORD[i] = a; } return ORD[i]; }
   function render() {
-    const c = PUB[i], mds = c.design === 'MDS', rivals = c.rows.map((r, j) => j).filter(j => !c.rows[j].out);
+    const c = PUB[i], mds = c.design === 'MDS', rivals = order(c, i);
     $('.cn', root).textContent = `Study ${i + 1} of ${PUB.length}`;
     $('.dots', root).innerHTML = PUB.map((x, j) => `<i class="${j === i ? 'on' : ''} ${x.design.toLowerCase()}"></i>`).join('');
     $('.pubh', root).innerHTML = `<p class="dz ${mds ? 'mds' : 'mss'}">${mds ? 'Most different systems' : 'Most similar systems'} · ${esc(c.cite)}</p><h3>${esc(c.title)}</h3><p class="rq">${esc(c.q)}</p><p class="p">${esc(c.setup)}</p><p class="p">The unit of analysis is ${esc(c.unit)}. The values in the strip are the authors' own descriptions of their cases.</p>`;
     const st = $('.strip', root); st.style.setProperty('--k', c.cases.length);
-    st.innerHTML = `<div class="srow names"><div class="cells">${c.cases.map(n => `<span>${esc(n)}</span>`).join('')}</div></div>` + c.rows.map((r, j) => {
+    st.innerHTML = `<div class="srow names"><div class="cells">${c.cases.map(n => `<span>${esc(n)}</span>`).join('')}</div></div>` + rivals.concat(c.rows.map((r, j) => j).filter(j => c.rows[j].out)).map(j => { const r = c.rows[j];
       const s = guess === null ? '' : r.out ? 'oc' : state(c, r) === 'live' ? 'live' : 'flat';
       const tag = guess === null || r.out ? '' : `<span class="st ${state(c, r) === 'live' ? 'live' : 'cut'}">${state(c, r) === 'live' ? (mds ? 'shared' : 'differs') : (mds ? 'differs' : 'same')}</span>`;
       return `<div class="srow ${s}${guess === j ? ' picked' : ''}"><div class="hd"><span class="role">${r.out ? 'outcome' : 'rival'}</span><b>${esc(r.lab)}</b>${tag}</div><div class="cells">${r.v.map((x, k) => `<span class="cell">${esc(x)}${r.d && r.d[k] ? `<small>${esc(r.d[k])}</small>` : ''}</span>`).join('')}</div></div>`; }).join('');
