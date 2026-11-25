@@ -789,8 +789,8 @@ header.mast.rv .wrap{display:block;padding-top:2px;padding-bottom:22px}
 .rv .mhd.sh{margin-top:4px}
 .mpic{display:flex;flex-direction:column;align-items:center;margin:6px 0 30px}
 .mset{display:flex;align-items:flex-end;justify-content:center;gap:14px;width:100%;max-width:600px}
-.tbl{width:min(100%,600px);height:24px;position:relative;border-radius:3px 3px 14px 14px/3px 3px 12px 12px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px,rgba(255,255,255,.04) 9px 11px,transparent 11px 23px),linear-gradient(180deg,#d9ab76 0,#c08a55 3px,#8d5a30 4px,#9c6638 6px,#7e4c26 55%,#5a3418 82%,#3f2410 100%);box-shadow:0 10px 14px -6px var(--rvshadow),inset 0 1px 0 rgba(255,236,200,.55)}
-.tbl::after{content:"";position:absolute;left:10px;right:10px;bottom:3px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(1.5px)}
+.mpic .mtbl{width:min(100%,600px);height:24px;position:relative;border-radius:3px 3px 14px 14px/3px 3px 12px 12px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px,rgba(255,255,255,.04) 9px 11px,transparent 11px 23px),linear-gradient(180deg,#d9ab76 0,#c08a55 3px,#8d5a30 4px,#9c6638 6px,#7e4c26 55%,#5a3418 82%,#3f2410 100%);box-shadow:0 10px 14px -6px var(--rvshadow),inset 0 1px 0 rgba(255,236,200,.55)}
+.mpic .mtbl::after{content:"";position:absolute;left:10px;right:10px;bottom:3px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(1.5px)}
 .cup{flex:0 0 112px;width:112px;height:auto;margin-bottom:0;filter:drop-shadow(0 12px 10px var(--rvshadow));overflow:visible}
 .cup .steam path{stroke:var(--ink-2);stroke-width:2.2;opacity:.4;animation:cupsteam 5.5s ease-in-out infinite}
 .cup .steam path:nth-child(2){animation-delay:-2.4s}
@@ -1676,115 +1676,6 @@ popInfo(); addSamples(149,false); addSamples(1,false);
 })();
 </script>
 <script id="rvshelf">(()=>{const fit=()=>document.querySelectorAll('.shelf2').forEach(s=>{const h=s.previousElementSibling;s.classList.remove('scroll');const over=s.scrollWidth>s.clientWidth+4;s.classList.toggle('scroll',over);if(h&&h.classList.contains('mhd'))h.classList.toggle('swipe',over);if(!s._w){s._w=1;s.addEventListener('scroll',()=>{if(s.scrollLeft>24&&h)h.classList.add('swiped');},{passive:true});}});let t=0;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(fit,120);});if(document.readyState==='loading')addEventListener('DOMContentLoaded',fit);else fit();addEventListener('load',fit);})();document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button.tapterm');if(!b)return;var n=document.getElementById(b.getAttribute('aria-controls'));if(!n)return;n.hidden=!n.hidden;b.setAttribute('aria-expanded',String(!n.hidden));});
-</script>
-<script>/* Tap smoothing. When a student taps a button, checkbox, dropdown or card and a chart is redrawn,
-   this glides the new drawing from where the old one was. Sliders, resizing and theme changes are left instant,
-   and anything that already animates itself is left alone. */
-(function(){
-  'use strict';
-  if(window.__TW) return; window.__TW=1;
-  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const DUR=480, CAP=2600, NUM=/[−-]?\d[\d,]*(?:\.\d+)?/g;
-  let armedUntil=0;
-  const arm=e=>{const t=e.target; if(!(t instanceof Element)) return;
-    if(t.closest('input[type=range],nav,.pager,.topnav,.modnav,.tip,[data-notween]')) return;
-    if(e.type==='keydown' && e.key!=='Enter' && e.key!==' ') return;
-    armedUntil=performance.now()+650;};
-  ['click','change','keydown'].forEach(ev=>document.addEventListener(ev,arm,true));
-  /* canvas charts cannot be matched element by element, so a tap that redraws one cross-fades from the old picture */
-  const tiny=c=>{const t=document.createElement('canvas');t.width=t.height=72;const x=t.getContext("2d");x.drawImage(c,0,0,72,72);return x.getImageData(0,0,72,72).data;};
-  const canvasSnap=e=>{const t=e.target; if(!(t instanceof Element)||t.closest('input[type=range],nav,.pager,.topnav,.modnav,[data-notween]'))return;
-    if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;
-    const cs=[...document.querySelectorAll('main canvas')].filter(c=>{const r=c.getBoundingClientRect();return r.width>40&&r.bottom>0&&r.top<innerHeight;});
-    const snaps=cs.map(c=>{try{const o=document.createElement('canvas');o.width=c.width;o.height=c.height;o.getContext('2d').drawImage(c,0,0);return {c,p:c.parentElement,o,before:tiny(c)};}catch(_){return null;}}).filter(Boolean);
-    if(!snaps.length)return;
-    // lay the old picture over each canvas right away; once the page has redrawn, fade it out (or drop it if nothing changed)
-    for(const s of snaps){const r=s.c.getBoundingClientRect();s.o.style.cssText=`position:absolute;left:${r.left+scrollX}px;top:${r.top+scrollY}px;width:${r.width}px;height:${r.height}px;pointer-events:none;z-index:5;transition:opacity .42s ease-out;opacity:1`;document.body.appendChild(s.o);}
-    setTimeout(()=>{for(const s of snaps){if(!s.c.isConnected){const nc=s.p&&s.p.querySelector('canvas');if(nc)s.c=nc;}
-      let same=true;try{const a=tiny(s.c);for(let i=0;i<a.length;i+=4){if(Math.abs(a[i]-s.before[i])+Math.abs(a[i+1]-s.before[i+1])+Math.abs(a[i+2]-s.before[i+2])>3){same=false;break;}}}catch(_){same=false;}
-      if(same){s.o.remove();continue;} s.o.style.opacity='0'; setTimeout(()=>s.o.remove(),520);}},110);};
-  ['click','change'].forEach(ev=>document.addEventListener(ev,canvasSnap,true));
-  const ease=u=>1-Math.pow(1-u,3);
-  const ATTRS=['x','y','width','height','cx','cy','r','rx','ry','x1','y1','x2','y2','opacity','fill-opacity','stroke-opacity','stroke-width'];
-  const toNum=s=>{const v=parseFloat(String(s).replace(/−/g,'-').replace(/,/g,''));return v;};
-  const skel=s=>String(s).replace(NUM,'#');
-  const nums=s=>String(s).match(NUM)||[];
-  function fmt(v,tpl){ // format v like the template number string
-    const neg=v<0, minus=tpl.includes('−')?'−':'-'; const a=Math.abs(v);
-    const dec=(tpl.split('.')[1]||'').length; let s=a.toFixed(dec);
-    if(tpl.includes(',')){const [i,d]=s.split('.');s=i.replace(/\B(?=(\d{3})+(?!\d))/g,',')+(d?'.'+d:'');}
-    return (neg&&a>=Math.pow(10,-dec)/2?minus:'')+s;}
-  const running=new Map(), lastRender=new WeakMap();
-  function key(el){return el.tagName+'.'+(el.getAttribute('class')||'');}
-  function flat(roots){const out=[];for(const r of roots){out.push(r);if(r.querySelectorAll)out.push(...r.querySelectorAll('*'));}return out;}
-  function group(list){const m=new Map();for(const e of list){const k=key(e);if(!m.has(k))m.set(k,[]);m.get(k).push(e);}return m;}
-  function skip(el){return !!(el.closest && el.closest('.tip,[data-notween],.flap'));}
-  function process(target,removed,added){
-    const now=performance.now();
-    const prev=lastRender.get(target); lastRender.set(target,now);
-    const run=running.get(target); if(run){run.cancel();running.delete(target);}
-    if(prev && now-prev<120) return;                 // the page is animating this itself
-    const oldE=flat(removed).filter(e=>e instanceof Element), newE=flat(added).filter(e=>e instanceof Element&&!skip(e));
-    if(!newE.length || newE.length>CAP) return;
-    const og=group(oldE), ng=group(newE), jobs=[];
-    for(const [k,arr] of ng){ const olds=og.get(k)||[];
-      arr.forEach((n,i)=>{ const o=olds[i]; const isSvg=n instanceof SVGElement;
-        if(o){
-          if(isSvg){
-            for(const a of ATTRS){ if(!n.hasAttribute(a)||!o.hasAttribute(a))continue; const f=toNum(o.getAttribute(a)),t=toNum(n.getAttribute(a)); if(isFinite(f)&&isFinite(t)&&f!==t&&!/[a-z%]/i.test(n.getAttribute(a))) jobs.push({el:n,a,f,t}); }
-            for(const a of ['d','points','transform']){ if(!n.hasAttribute(a)||!o.hasAttribute(a))continue; const ov=o.getAttribute(a),nv=n.getAttribute(a); if(ov===nv)continue;
-              if(skel(ov)===skel(nv)){const F=nums(ov).map(toNum),T=nums(nv).map(toNum),S=nv.split(NUM);jobs.push({el:n,a,str:true,F,T,S,tpl:nums(nv)});} }
-          } else {
-            for(const p of ['width','height','left','top']){ const ov=o.style&&o.style[p], nv=n.style&&n.style[p]; if(!ov||!nv||ov===nv)continue; const u=nv.replace(/[-\d.]/g,''); if(ov.replace(/[-\d.]/g,'')!==u)continue; jobs.push({el:n,css:p,f:parseFloat(ov),t:parseFloat(nv),u}); }
-          }
-          if(n.childNodes.length===1&&n.firstChild.nodeType===3&&o.childNodes.length===1&&o.firstChild.nodeType===3){
-            const ot=o.textContent,nt=n.textContent; if(ot!==nt&&nt.length<40&&skel(ot)===skel(nt)&&nums(nt).length){const F=nums(ot).map(toNum),T=nums(nt).map(toNum),S=nt.split(NUM);jobs.push({el:n.firstChild,txt:true,F,T,S,tpl:nums(nt)});}
-          }
-        } else if(isSvg && n.tagName!=='svg' && n.tagName!=='g' && !n.closest('defs,clipPath')) {
-          if(n.tagName==='rect'&&n.hasAttribute('height')&&n.hasAttribute('y')){const y=toNum(n.getAttribute('y')),h=toNum(n.getAttribute('height')),w=toNum(n.getAttribute('width')),sv=n.ownerSVGElement,vb=sv&&sv.viewBox&&sv.viewBox.baseVal,SH=(vb&&vb.height)||(sv&&sv.clientHeight)||1e9,SW=(vb&&vb.width)||(sv&&sv.clientWidth)||1e9;if(isFinite(y)&&isFinite(h)&&h>0&&h<.9*SH&&w<.5*SW&&n.getAttribute('fill')!=='none'){jobs.push({el:n,a:'y',f:y+h,t:y},{el:n,a:'height',f:0,t:h});return;}}
-          jobs.push({el:n,fade:true});
-        }
-      });
-    }
-    if(!jobs.length){ // same shapes, different content (an arrow turned round, cells re-labelled): a short cross-fade
-      const a=removed.map(n=>n.outerHTML||'').join(''), b=added.map(n=>n.outerHTML||'').join('');
-      if(removed.length&&a!==b&&target.animate) target.animate([{opacity:.25},{opacity:1}],{duration:300,easing:'ease-out'});
-      return; }
-    const apply=u=>{const e=ease(u);for(const j of jobs){
-      if(j.fade){j.el.style.opacity=u>=1?'':String(e);continue;}
-      if(j.css){j.el.style[j.css]=(j.f+(j.t-j.f)*e)+j.u;continue;}
-      if(j.str||j.txt){let s=j.S[0];for(let i=0;i<j.T.length;i++){const v=j.F[i]+(j.T[i]-j.F[i])*e;s+=(u>=1?j.tpl[i]:fmt(v,j.tpl[i]))+j.S[i+1];}
-        if(j.txt)j.el.nodeValue=s;else j.el.setAttribute(j.a,s);continue;}
-      j.el.setAttribute(j.a,String(j.f+(j.t-j.f)*e));}};
-    apply(0);
-    const t0=performance.now();let raf=0,done=false;
-    const step=now=>{const u=Math.min(1,(now-t0)/DUR);apply(u);if(u<1)raf=requestAnimationFrame(step);else{done=true;running.delete(target);}};
-    raf=requestAnimationFrame(step);
-    running.set(target,{cancel(){if(!done){cancelAnimationFrame(raf);apply(1);}}});
-  }
-  const mo=new MutationObserver(recs=>{
-    if(performance.now()>armedUntil) return;
-    const by=new Map();
-    for(const r of recs){ if(r.type!=='childList')continue; const t=r.target; if(!(t instanceof Element)||skip(t))continue;
-      if(!by.has(t))by.set(t,{rm:[],ad:[]}); const g=by.get(t);
-      r.removedNodes.forEach(n=>{if(n.nodeType===1)g.rm.push(n);}); r.addedNodes.forEach(n=>{if(n.nodeType===1)g.ad.push(n);}); }
-    // a number swapped in place as text (a table cell, a count) counts to its new value; switched output text fades in
-    for(const r of recs){ if(r.type!=='childList')continue; const t=r.target; if(!(t instanceof Element)||skip(t)||t.closest('input[type=range]'))continue;
-      if(t.tagName==='PRE'&&r.addedNodes.length){ if(t.animate&&!t.__twf){t.__twf=1;t.animate([{opacity:.2},{opacity:1}],{duration:280,easing:'ease-out'}).onfinish=()=>{t.__twf=0;};} continue; }
-      const at=[...r.addedNodes].filter(n=>n.nodeType===3), rt=[...r.removedNodes].filter(n=>n.nodeType===3);
-      if(at.length===1&&rt.length===1&&t.childNodes.length===1){ const ot=rt[0].nodeValue,nt=at[0].nodeValue;
-        if(ot!==nt&&nt.length<24&&skel(ot)===skel(nt)&&nums(nt).length){ const F=nums(ot).map(toNum),T=nums(nt).map(toNum),S=nt.split(NUM),tpl=nums(nt),node=at[0],t0=performance.now();
-          const st=now=>{const u=Math.min(1,(now-t0)/DUR),e=ease(u);let x=S[0];for(let i=0;i<T.length;i++)x+=(u>=1?tpl[i]:fmt(F[i]+(T[i]-F[i])*e,tpl[i]))+S[i+1];node.nodeValue=x;if(u<1)requestAnimationFrame(st);};
-          requestAnimationFrame(st); node.nodeValue=ot; } } }
-    for(const [t,g] of by){ const ad=g.ad.filter(n=>n.isConnected); if(!ad.length)continue;
-      // only drawings, tables and number readouts: an SVG somewhere in the change, or a table, or bar-like divs
-      const touches=ad.some(n=>n instanceof SVGElement||n.tagName==='svg'||n.querySelector&&n.querySelector('svg,td,[style*="width"],[style*="height"]')||n.tagName==='TR'||n.tagName==='TD');
-      if(!touches)continue;
-      try{process(t,g.rm,ad);}catch(e){} }
-  });
-  const start=()=>mo.observe(document.querySelector('main')||document.body,{subtree:true,childList:true});
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
-})();
 </script>
 </body>
 </html>
