@@ -206,6 +206,33 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .jbck{color:#E2B65A}}:root[data-theme="dark"] .jbck{color:#E2B65A}
 .jbback{display:grid;gap:8px;padding:10px 12px;border-radius:8px;background:var(--surface);border:1px solid color-mix(in srgb,#B5862A 45%,var(--line))}
 .jbback p{margin:0}
+
+/* panel D: spread by sample size */
+:root{--nc1:#8dbbec;--nc2:#5a9ee3;--nc3:#2f80d6;--nc4:#1f62b3;--nc5:#154a8a;--nc6:#0c335f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nc1:#3a6aa8;--nc2:#4a82c8;--nc3:#5f9be0;--nc4:#7fb4ec;--nc5:#a3cbf5;--nc6:#cfe3fb}}
+:root[data-theme="dark"]{--nc1:#3a6aa8;--nc2:#4a82c8;--nc3:#5f9be0;--nc4:#7fb4ec;--nc5:#a3cbf5;--nc6:#cfe3fb}
+.vcards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:2px 0 12px}
+@media (max-width:860px){.vcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.vcard{display:block;text-align:left;padding:9px 11px;border-radius:8px;line-height:1.35;background:var(--page);border:1px solid var(--axis);color:var(--ink)}
+.vcard b{display:block;font-weight:600;font-size:14px}
+.vcard span{display:block;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums;margin-top:2px}
+.vcard[aria-checked="true"] span{color:inherit;opacity:.88}
+.dctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:0 0 6px}
+.nchips{display:flex;flex-wrap:wrap;gap:6px}
+.nchip{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;font-variant-numeric:tabular-nums;border-radius:999px}
+.nchip i{width:12px;height:12px;border-radius:50%;border:2px solid var(--c);background:transparent;box-sizing:border-box}
+.nchip[aria-pressed="true"]{background:var(--page);color:var(--ink);border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
+.nchip[aria-pressed="true"] i{background:var(--c)}
+.nchip[aria-pressed="false"]{color:var(--muted)}
+.dtable{display:grid;gap:0;margin:8px 0 0;font-size:14px;font-variant-numeric:tabular-nums}
+.drow{display:grid;grid-template-columns:minmax(76px,.7fr) minmax(0,1.3fr) minmax(0,1.3fr);gap:4px 12px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--line)}
+.drow:last-child{border-bottom:0}
+.drow.dh{font-size:12px;color:var(--muted);font-weight:600}
+.drow .nn{display:flex;align-items:center;gap:7px;font-weight:600}
+.drow .nn i{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none}
+.drow .bar{display:block;height:8px;border-radius:4px;background:var(--c);min-width:2px}
+@media (max-width:520px){.drow{grid-template-columns:minmax(70px,.8fr) minmax(0,1.2fr)}.drow .rel{grid-column:1 / -1}.drow.dh .rel{display:none}.nchip{padding:6px 9px}}
+.callout{margin:12px 0 2px;padding:10px 12px;border-left:4px solid var(--nc3);background:var(--page);border-radius:0 6px 6px 0;font-size:15px;color:var(--ink);max-width:75ch}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -1229,6 +1256,19 @@ fill();popChart();makeQs();pileChart(false);
       <div class="chart" id="sdChart"></div>
       <div class="outside" id="outside"></div>
     </figure>
+
+    <figure class="wide" id="spreadFig">
+      <div class="fighead"><h2><span class="step">D</span>How sample size changes the spread</h2></div>
+      <p class="sub">Each curve is the normal curve with mean μ and SD σ/√n for the variable you pick. Every curve shares one horizontal scale, the same one used in panel A, so we can compare their widths directly.</p>
+      <div class="vcards" id="dCards" role="radiogroup" aria-label="Variable"></div>
+      <div class="dctl">
+        <div class="nchips" id="dChips" role="group" aria-label="Sample sizes to show"></div>
+        <div class="btns"><button class="primary" id="dNext"></button><button id="dAll">Show all</button><button id="dReset">Start over</button></div>
+      </div>
+      <div class="chart" id="dChart"></div>
+      <div class="dtable" id="dTable"></div>
+      <p class="callout" id="dNote" aria-live="polite"></p>
+    </figure>
   </div>
 
   <div class="out">
@@ -1659,13 +1699,83 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape' && document.body.cl
 document.addEventListener('pointerdown',e=>{ if(!(e.target instanceof SVGElement)) hideTip(); });
 
 /* resize + theme */
-let raf=0; const rerender=()=>{ cancelAnimationFrame(raf); raf=requestAnimationFrame(render); };
+let raf=0; const rerender=()=>{ cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>{ render(); renderD(); }); };
 if('ResizeObserver' in window){ let lastW=0; new ResizeObserver(en=>{ const w=en[0].contentRect.width; if(Math.abs(w-lastW)>2){ lastW=w; rerender(); } }).observe($('main')); }
 else addEventListener('resize',rerender);
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',rerender);
 new MutationObserver(rerender).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
+
+/* ---------- D: the spread shrinks as n grows ---------- */
+const DS={pop:'dem', on:new Set([2])};
+const DKEYS=['dem','swing','votes','won'];
+const seTxt=(p,v)=> p.key==='votes' ? Math.round(v).toLocaleString('en-US')+' votes' : p.key==='won' ? v.toFixed(3) : v.toFixed(1)+' points';
+const dCol=n=>css('--nc'+(NS.indexOf(n)+1));
+(function buildD(){
+  const cards=$('#dCards'), chips=$('#dChips');
+  for(const k of DKEYS){ const p=POPS[k]; const b=document.createElement('button'); b.type='button'; b.className='vcard'; b.setAttribute('role','radio'); b.dataset.k=k;
+    b.innerHTML=`<b>${p.title}</b><span>μ = ${p.mean(p.mu)}, σ = ${p.fsd(p.sigma)}</span>`;
+    b.addEventListener('click',()=>{ DS.pop=k; renderD(); }); cards.appendChild(b); }
+  for(const n of NS){ const b=document.createElement('button'); b.type='button'; b.className='nchip dsbtn'; b.dataset.n=n; b.style.setProperty('--c',`var(--nc${NS.indexOf(n)+1})`);
+    b.innerHTML=`<i></i>n = ${n}`;
+    b.addEventListener('click',()=>{ if(DS.on.has(n)) DS.on.delete(n); else DS.on.add(n); renderD(); }); chips.appendChild(b); }
+  $('#dNext').addEventListener('click',()=>{ const n=NS.find(x=>!DS.on.has(x)); if(n){ DS.on.add(n); renderD(); } });
+  $('#dAll').addEventListener('click',()=>{ NS.forEach(n=>DS.on.add(n)); renderD(); });
+  $('#dReset').addEventListener('click',()=>{ DS.on=new Set([2]); renderD(); });
+})();
+function renderD(){
+  const p=POPS[DS.pop], on=NS.filter(n=>DS.on.has(n));
+  document.querySelectorAll('#dCards .vcard').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.k===DS.pop)));
+  document.querySelectorAll('#dChips .nchip').forEach(b=>b.setAttribute('aria-pressed',String(DS.on.has(+b.dataset.n))));
+  const nx=NS.find(x=>!DS.on.has(x)); const nb=$('#dNext'); nb.disabled=!nx; nb.textContent=nx?`Add n = ${nx}`:'All sample sizes shown';
+  nb.style.opacity=nx?'':'.55';
+  // chart
+  const box=$('#dChart'); box.innerHTML='';
+  const W=Math.max(280,box.clientWidth), H=W<520?250:300, m={l:14,r:14,t:26,b:30};
+  const xs=v=>m.l+(v-p.lo)/(p.hi-p.lo)*(W-m.l-m.r);
+  const pk=n=>1/((p.sigma/Math.sqrt(n))*Math.sqrt(2*Math.PI));
+  const ytop=pk(NS[NS.length-1])*1.12, ys=v=>H-m.b-(v/ytop)*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`Normal curves for the sample mean of ${p.title} at the sample sizes shown, all centered on the population mean`},box);
+  const tg=el('g',{class:'tick'},svg);
+  for(const t of ticks(p.lo,p.hi,6)){ el('line',{x1:xs(t),x2:xs(t),y1:m.t,y2:H-m.b,stroke:css('--grid'),'stroke-width':1},tg); const tx=el('text',{x:xs(t),y:H-m.b+16,'text-anchor':'middle'},tg); tx.textContent=p.tick(t); }
+  el('line',{x1:m.l,x2:W-m.r,y1:ys(0),y2:ys(0),stroke:css('--axis'),'stroke-width':1},svg);
+  const mx=xs(p.mu);
+  el('line',{x1:mx,x2:mx,y1:m.t-4,y2:ys(0),stroke:css('--ink'),'stroke-width':1.5},svg);
+  const ml=el('text',{x:mx+(mx>W-110?-6:6),y:m.t-9,class:'mlab','text-anchor':mx>W-110?'end':'start',fill:css('--ink')},svg); ml.textContent='μ = '+p.mean(p.mu);
+  for(const n of on){
+    const se=p.sigma/Math.sqrt(n), col=dCol(n); let d='', first=null, last=null;
+    for(let i=0;i<=600;i++){ const x=p.lo+(p.hi-p.lo)*i/600; const y=pk(n)*Math.exp(-0.5*((x-p.mu)/se)**2); const px=xs(x).toFixed(1), py=ys(y).toFixed(1); d+=(i?'L':'M')+px+','+py; if(i===0)first=px; last=px; }
+    el('path',{d:d+`L${last},${ys(0)}L${first},${ys(0)}Z`,fill:col,'fill-opacity':.16,stroke:'none','pointer-events':'none'},svg);
+    el('path',{d,fill:'none',stroke:col,'stroke-width':2.4,'stroke-linejoin':'round','pointer-events':'none'},svg);
+    const hit=el('path',{d,fill:'none',stroke:'transparent','stroke-width':16},svg);
+    const tipHtml=`<b>n = ${n}</b><br>standard error ${seTxt(p,se)}`;
+    hit.addEventListener('pointerenter',e=>showTip(tipHtml,e)); hit.addEventListener('pointermove',e=>showTip(tipHtml,e)); hit.addEventListener('pointerdown',e=>showTip(tipHtml,e)); hit.addEventListener('pointerleave',hideTip);
+  }
+  // direct labels: biggest n first, each pushed outward along its own curve until it clears the labels already placed
+  const placed=[], LW=44, LH=14;
+  for(const n of on.slice().reverse()){
+    const se=p.sigma/Math.sqrt(n); let k=1.15, bx, by;
+    for(;k<4.5;k+=.25){ const lx=Math.min(p.mu+k*se,p.hi), ly=pk(n)*Math.exp(-0.5*k*k); bx=xs(lx)+4; by=ys(ly)-3;
+      if(bx+LW>W-m.r) break;
+      if(!placed.some(q=>bx<q.x+LW&&q.x<bx+LW&&by-LH<q.y&&q.y-LH<by)) break; }
+    placed.push({x:bx,y:by});
+    const t=el('text',{x:bx,y:by,class:'axlab','pointer-events':'none'},svg); t.textContent='n = '+n;
+  }
+  // table
+  const tb=$('#dTable'); tb.innerHTML='<div class="drow dh"><span>Sample size</span><span>Standard error (σ/√n)</span><span class="rel">Share of the n = 2 spread</span></div>';
+  for(const n of on){ const se=p.sigma/Math.sqrt(n), rel=Math.sqrt(2/n); const r=document.createElement('div'); r.className='drow'; r.style.setProperty('--c',`var(--nc${NS.indexOf(n)+1})`);
+    r.innerHTML=`<span class="nn"><i></i>n = ${n}</span><span>${seTxt(p,se)}</span><span class="rel"><span class="bar" style="width:${(rel*100).toFixed(0)}%"></span>${Math.round(rel*100)}%</span>`; tb.appendChild(r); }
+  // callout
+  const skew = p.key==='votes' ? ' Because Total votes cast is so strongly skewed, the normal curve is only a rough guide at the smallest sample sizes, and its left side even reaches below zero. Panel C shows what the real sample means do.' : p.key==='won' ? ' A proportion built from 1s and 0s is not bell-shaped at small n either, so the curves are an approximation there.' : '';
+  let txt;
+  if(on.length<2){ txt='Start with n = 2 and add the next sample size with the button above. Each new curve is drawn on the same horizontal scale, so the change in width is the change in the expected spread of x̄.'; }
+  else { const a=on[0], b=on[on.length-1], sa=p.sigma/Math.sqrt(a), sb=p.sigma/Math.sqrt(b);
+    txt=`Sample size has a large effect on the expected spread of x̄. For the variable you picked, the standard error is ${seTxt(p,sa)} at n = ${a} and ${seTxt(p,sb)} at n = ${b}. That is a drop by a factor of ${(sa/sb).toFixed(1)}, which equals √(${b}/${a}). Every curve is centered on the same μ, so a larger sample does not change where the sample means land on average, but it does make a sample mean far from μ much less likely.`+skew; }
+  $('#dNote').textContent=txt;
+}
+
 /* start in a working state */
+renderD();
 draw(199); draw(1);
 })();
 </script>
