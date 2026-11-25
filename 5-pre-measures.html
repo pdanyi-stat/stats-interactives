@@ -356,6 +356,8 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 .lamwhy{margin-top:4px}
 .lamwhy p{margin:0}.lamwhy b{color:var(--ink)}
 .glab small{font-weight:500;color:var(--muted)}
+.nearbtns{display:none;margin:10px 0 4px}
+@media (max-width:860px){.nearbtns{display:flex}}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -864,13 +866,16 @@ header.mast.rv .wrap{display:block;padding-top:2px;padding-bottom:22px}
 .mtitle h1 em{font:italic 400 1.07em/1 RvSerif,Georgia,serif;letter-spacing:-.02em}
 .mtitle .dek{font:400 19.5px/1.5 RvSerif,Georgia,serif;color:var(--ink-2);margin:0;max-width:none}
 .rv .mhd.sh{margin-top:4px}
-.mpic{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:6px 0 30px}
+.mpic{display:flex;flex-direction:column;align-items:center;margin:6px 0 30px}
+.mset{display:flex;align-items:flex-end;justify-content:center;gap:14px;width:100%;max-width:600px}
+.tbl{width:min(100%,600px);height:24px;position:relative;border-radius:3px 3px 14px 14px/3px 3px 12px 12px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px,rgba(255,255,255,.04) 9px 11px,transparent 11px 23px),linear-gradient(180deg,#d9ab76 0,#c08a55 3px,#8d5a30 4px,#9c6638 6px,#7e4c26 55%,#5a3418 82%,#3f2410 100%);box-shadow:0 10px 14px -6px var(--rvshadow),inset 0 1px 0 rgba(255,236,200,.55)}
+.tbl::after{content:"";position:absolute;left:10px;right:10px;bottom:3px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(1.5px)}
 .cup{flex:0 0 112px;width:112px;height:auto;margin-bottom:0;filter:drop-shadow(0 12px 10px var(--rvshadow));overflow:visible}
 .cup .steam path{stroke:var(--ink-2);stroke-width:2.2;opacity:.4;animation:cupsteam 5.5s ease-in-out infinite}
 .cup .steam path:nth-child(2){animation-delay:-2.4s}
 @keyframes cupsteam{0%,100%{opacity:.12;transform:translateY(3px)}50%{opacity:.5;transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.cup .steam path{animation:none;opacity:.35}}
-@media (max-width:520px){.mpic{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
+@media (max-width:520px){.mset{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
 .hstack{min-width:0;width:min(100%,420px);display:flex;flex-direction:column;filter:drop-shadow(0 14px 12px var(--rvshadow))}
 .hb{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--c);color:var(--k);border-radius:3px;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2);overflow:hidden;margin-top:-1px}
 .hb.gild{background:var(--gold)}
@@ -1079,6 +1084,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <p class="sub">Darker cells hold more respondents. The most recent pair you drew is marked <b style="color:var(--s2-ink)">A</b> and <b>B</b>.</p>
       <div class="xt-wrap"><table class="xt" id="gtab"></table></div>
       <p class="xnote" id="gnote"></p>
+      <div class="btns nearbtns"><button class="primary" data-g="1">Draw a pair</button><button data-g="100">+100</button><button data-g="1000">+1,000</button></div>
       <div class="pair" id="pair"></div>
     </figure>
     <div class="col">
@@ -1451,17 +1457,21 @@ function grender(){
   Object.values(cell).forEach(list=>list.forEach((p,k)=>{p.px=cx(p.x)+(k-(list.length-1)/2)*38;p.py=cy(p.y);}));
   const s=GS.step, c=gcount(), neg=c.nd>c.ns;
   // pair lines
+  const grows=[];
   if(s>=2){ const lg=el('g',{},svg);
     GS.pairs.forEach((p,i)=>{ const tie=!(p.kind==='con'||p.kind==='dis'); let col=css('--ink-2'),dash='',op=.75,w=2;
       if(tie){col=css('--muted');dash='4 4';op=.45;w=1.5;}
       else if(s>=4){const right=neg?p.kind==='dis':p.kind==='con'; col=right?css('--s1'):css('--miss'); w=2.5; op=.9;}
       if(GS.hl!=null){ if(GS.hl===i){w+=2;op=1;} else op*=.25; }
-      el('line',{class:'pline',x1:p.a.px,y1:p.a.py,x2:p.b.px,y2:p.b.py,stroke:col,'stroke-width':w,'stroke-dasharray':dash,opacity:op},lg);
+      const ln=el('line',{class:'pline',x1:p.a.px,y1:p.a.py,x2:p.b.px,y2:p.b.py,stroke:col,'stroke-width':w,'stroke-dasharray':dash,opacity:op},lg); if(GS.grow) grows.push([ln,p.a.px,p.a.py,p.b.px,p.b.py]);
       if(!tie&&s>=3){ const mx=(p.a.px+p.b.px)/2,my=(p.a.py+p.b.py)/2; const right=neg?p.kind==='dis':p.kind==='con';
         const fl=s===3&&GS.flip?GS.flip[i]:null; const mk= s===3?(fl===null?'?':(fl?'✓':'✗')):(right?'✓':'✗'); const fill= s===3?(fl===null?css('--surface'):(fl?css('--s1'):css('--miss'))):(right?css('--s1'):css('--miss'));
         if(GS.hl==null||GS.hl===i){ el('circle',{cx:mx,cy:my,r:9,fill,stroke:s===3&&fl===null?css('--ink-2'):css('--surface'),'stroke-width':1.5},lg); const t=el('text',{x:mx,y:my+4,'text-anchor':'middle',style:'font:700 11px var(--font-body)',fill:s===3&&fl===null?css('--ink'):'#fff'},lg); t.textContent=mk; } } });
   }
   GS.people.forEach(p=>{ el('circle',{cx:p.px,cy:p.py,r:15,fill:css('--surface'),stroke:css('--ink'),'stroke-width':2},svg); const t=el('text',{x:p.px,y:p.py+5,'text-anchor':'middle',style:'font:700 14px var(--font-body)',fill:css('--ink')},svg); t.textContent=p.id; });
+  if(grows.length){ GS.grow=false; const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!RM){ grows.forEach(([l,x1,y1])=>{l.setAttribute('x2',x1);l.setAttribute('y2',y1);}); const t0=performance.now(),D=750;
+      const f=now=>{const u=Math.min(1,(now-t0)/D),e=1-Math.pow(1-u,3); grows.forEach(([l,x1,y1,x2,y2])=>{l.setAttribute('x2',x1+(x2-x1)*e);l.setAttribute('y2',y1+(y2-y1)*e);}); if(u<1)requestAnimationFrame(f);}; requestAnimationFrame(f);} }
   // pair chips
   const pl=$('#plist'); pl.innerHTML='';
   if(s>=2) GS.pairs.forEach((p,i)=>{ const tie=!(p.kind==='con'||p.kind==='dis'); const right=neg?p.kind==='dis':p.kind==='con';
@@ -1491,7 +1501,7 @@ function grender(){
 const PIALL=(()=>{const n=PI.length;const ct={};PI.forEach(([x,y])=>{const k=x+','+y;ct[k]=(ct[k]||0)+1;});let ns=0,nd=0;const keys=Object.keys(ct).map(k=>k.split(',').map(Number));
   for(const [x1,y1] of keys)for(const [x2,y2] of keys){const a=ct[x1+','+y1],b=ct[x2+','+y2];if(x2>x1&&y2>y1)ns+=a*b;if(x2>x1&&y2<y1)nd+=a*b;}
   const all=n*(n-1)/2;return {n,g:(ns-nd)/(ns+nd),tiePct:Math.round(100*(all-ns-nd)/all)};})();
-document.querySelectorAll('#gsteps button').forEach(b=>b.addEventListener('click',()=>{GS.step=+b.dataset.s;GS.hl=null;grender();}));
+document.querySelectorAll('#gsteps button').forEach(b=>b.addEventListener('click',()=>{const was=GS.step;GS.step=+b.dataset.s;GS.hl=null;GS.grow=GS.step>=2&&was<2;grender();}));
 $('#gdraw').addEventListener('click',()=>{gdrawRandom();GS.flip=null;GS.fr=null;GS.step=1;GS.hl=null;grender();});
 gpreset(); setTimeout(grender,0); // draw after the shared SVG helpers below are defined
 if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;grender();}}).observe($('#gstage'));}
@@ -1619,7 +1629,7 @@ $('#gwPrev').addEventListener('click',()=>{GW.k--;gwRender();});
 $('#gwEnd').addEventListener('click',()=>{GW.k=gwCells().length+1;gwRender();});
 $('#gwReset').addEventListener('click',()=>{GW.k=0;gwRender();});
 gsel.addEventListener('change',()=>gload(+gsel.value));
-$('#g1').addEventListener('click',()=>gdraw(1)); $('#g100').addEventListener('click',()=>gdraw(100)); $('#g1000').addEventListener('click',()=>gdraw(1000));
+$('#g1').addEventListener('click',()=>gdraw(1)); document.querySelectorAll('.nearbtns button').forEach(b=>b.addEventListener('click',()=>gdraw(+b.dataset.g))); $('#g100').addEventListener('click',()=>gdraw(100)); $('#g1000').addEventListener('click',()=>gdraw(1000));
 $('#gclr').addEventListener('click',()=>{G.c=G.d=G.t=0;G.last=null;gupdate();});
 $('#gedit').addEventListener('click',()=>{G.edit=!G.edit;$('#gedit').setAttribute('aria-pressed',String(G.edit));$('#gedit').textContent=G.edit?'Done editing':'Edit the counts';gbuild();});
 $('#greset').addEventListener('click',()=>gload(G.i));
