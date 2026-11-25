@@ -53,7 +53,7 @@ The model is his own course documents in Drive: *Describing Attributes of Data N
 
 Every teaching module ends with a "What we learned" list. Practice pages, application pages and exam prep do not get one.
 
-1. **Keep it light.** Four to six bullets, never more than seven.
+1. **Keep it light.** Three to six bullets, never more than seven.
 2. **Main concepts and main conclusions only.** A bullet states an idea a student should carry into the next module, or a conclusion the module's data showed.
 3. **Order by importance.** The core conceptual idea comes first, and supporting cautions come last.
 4. **Leave out mechanics.** No software steps, menu paths, output columns, data cleaning (such as setting missing codes), button names or descriptions of the page's activities.
