@@ -274,6 +274,7 @@ svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 
+.flap{transition:opacity .25s ease}.ftiles{transition:opacity .5s ease}
 </style>
 <style>
 section.part{border-top:1px solid var(--line);padding-top:18px;margin-top:30px}
@@ -813,13 +814,16 @@ header.mast.rv .wrap{display:block;padding-top:2px;padding-bottom:22px}
 .mtitle h1 em{font:italic 400 1.07em/1 RvSerif,Georgia,serif;letter-spacing:-.02em}
 .mtitle .dek{font:400 19.5px/1.5 RvSerif,Georgia,serif;color:var(--ink-2);margin:0;max-width:none}
 .rv .mhd.sh{margin-top:4px}
-.mpic{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:6px 0 30px}
+.mpic{display:flex;flex-direction:column;align-items:center;margin:6px 0 30px}
+.mset{display:flex;align-items:flex-end;justify-content:center;gap:14px;width:100%;max-width:600px}
+.tbl{width:min(100%,600px);height:24px;position:relative;border-radius:3px 3px 14px 14px/3px 3px 12px 12px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px,rgba(255,255,255,.04) 9px 11px,transparent 11px 23px),linear-gradient(180deg,#d9ab76 0,#c08a55 3px,#8d5a30 4px,#9c6638 6px,#7e4c26 55%,#5a3418 82%,#3f2410 100%);box-shadow:0 10px 14px -6px var(--rvshadow),inset 0 1px 0 rgba(255,236,200,.55)}
+.tbl::after{content:"";position:absolute;left:10px;right:10px;bottom:3px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(1.5px)}
 .cup{flex:0 0 112px;width:112px;height:auto;margin-bottom:0;filter:drop-shadow(0 12px 10px var(--rvshadow));overflow:visible}
 .cup .steam path{stroke:var(--ink-2);stroke-width:2.2;opacity:.4;animation:cupsteam 5.5s ease-in-out infinite}
 .cup .steam path:nth-child(2){animation-delay:-2.4s}
 @keyframes cupsteam{0%,100%{opacity:.12;transform:translateY(3px)}50%{opacity:.5;transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.cup .steam path{animation:none;opacity:.35}}
-@media (max-width:520px){.mpic{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
+@media (max-width:520px){.mset{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
 .hstack{min-width:0;width:min(100%,420px);display:flex;flex-direction:column;filter:drop-shadow(0 14px 12px var(--rvshadow))}
 .hb{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--c);color:var(--k);border-radius:3px;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2);overflow:hidden;margin-top:-1px}
 .hb.gild{background:var(--gold)}
@@ -1047,7 +1051,23 @@ function XT(host,cfgs,opt){
     pre.innerHTML=o.join('\n');
   }
   function txt(x,y,t,o){o=o||{};const e=mk('text',{x,y,'text-anchor':o.a||'middle','font-size':o.s||13,fill:o.f||'var(--ink-2)','font-weight':o.w||400},gTxt);if(o.fam)e.setAttribute('font-family',o.fam);if(o.rot)e.setAttribute('transform',`rotate(-90 ${x} ${y})`);e.textContent=t;return e;}
+  /* split-flap numbers: tiles fade in showing zeros, then each digit flips forward until it lands on its value */
+  let lastStep=-1,flapT=[];const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function flapTxt(x,y,str,o,delay){
+    const s=o.s,cw=s*0.6,g=mk('g',{class:'flap'},gTxt),tiles=mk('g',{class:'ftiles'},g),n=str.length;let left=0;
+    [...str].forEach((ch,i)=>{const cx=x-(n-i-0.5)*cw,dig=/\d/.test(ch);
+      if(dig){mk('rect',{x:cx-cw/2-0.8,y:y-s*0.84,width:cw+1.6,height:s*1.04,rx:2,fill:'var(--code-bg)',stroke:'var(--axis)','stroke-width':.8},tiles);
+        mk('line',{x1:cx-cw/2-0.8,x2:cx+cw/2+0.8,y1:y-s*0.32,y2:y-s*0.32,stroke:'var(--axis)','stroke-width':.6},tiles);}
+      const e=mk('text',{x:cx,y,'text-anchor':'middle','font-size':s,fill:o.f,'font-weight':o.w,'font-family':o.fam},g);
+      e.style.transformBox='fill-box';e.style.transformOrigin='center';e.textContent=dig?'0':ch;
+      if(!dig)return;const tgt=+ch;let cur=0,ticks=0;const min=5+i*2+Math.floor(Math.random()*5);left++;
+      const tick=()=>{ticks++;cur=(cur+1)%10;e.textContent=cur;if(e.animate)e.animate([{transform:'scaleY(1)'},{transform:'scaleY(.12)',offset:.45},{transform:'scaleY(1)'}],{duration:70});
+        if(ticks>=min&&cur===tgt){if(--left===0)flapT.push(setTimeout(()=>{tiles.style.opacity=0;},450));return;}
+        flapT.push(setTimeout(tick,58));};
+      if(tgt===0&&min<=0){left--;}else flapT.push(setTimeout(tick,delay+260));});
+    g.style.opacity=0;requestAnimationFrame(()=>{g.style.opacity=1;});return g;}
   function draw(){
+    flapT.forEach(clearTimeout);flapT=[];const anim=!RM&&step!==lastStep;lastStep=step;
     gTxt.innerHTML='';gHit.innerHTML='';gFrame.innerHTML='';gHead.innerHTML='';
     const head=(y,tid,name,col,nid)=>{const e=mk('text',{x:4,y,'font-size':13,fill:'var(--ink)'},gHead);const a=mk('tspan',{'font-weight':700,fill:col},e);SET(a,tid,null,'','  ');const b=mk('tspan',{},e);if(nid)SET(b,nid);else b.textContent=name;};
     if(step>=1)head(15,'head-iv',cfg.ivName,'var(--accent-ink)');
@@ -1064,8 +1084,10 @@ function XT(host,cfgs,opt){
       txt(12,110,cfg.rowShort[0],{s:12.5,rot:1,f:'var(--s1)',w:700});txt(12,259,cfg.rowShort[1],{s:12.5,rot:1,f:'var(--ink-2)',w:700});
       if(step>=3){mk('line',{x1:20,x2:352,y1:180,y2:180,stroke:'var(--axis)'},gFrame);mk('line',{x1:186,x2:186,y1:40,y2:334,stroke:'var(--axis)'},gFrame);
         [0,1].forEach(c=>[0,1].forEach(r=>{const xr=CX[c]+CW-4,ytop=r===0?58:308;
-          txt(xr,ytop,nf(T(r,c)),{a:'end',s:step===3?17:12.5,f:step===3?'var(--ink)':'var(--muted)',w:step===3?700:400,fam:'var(--font-mono)'});
-          if(step===4){txt(xr,ytop+(r===0?21:21),pc(T(r,c)/ct(c)),{a:'end',s:19,f:'var(--ink)',w:700,fam:'var(--font-mono)'});
+          const dl=(c*2+r)*130;
+          if(step===3&&anim)flapTxt(xr,ytop,nf(T(r,c)),{s:17,f:'var(--ink)',w:700,fam:'var(--font-mono)'},dl);
+          else txt(xr,ytop,nf(T(r,c)),{a:'end',s:step===3?17:12.5,f:step===3?'var(--ink)':'var(--muted)',w:step===3?700:400,fam:'var(--font-mono)'});
+          if(step===4){if(anim)flapTxt(xr,ytop+21,pc(T(r,c)/ct(c)),{s:19,f:'var(--ink)',w:700,fam:'var(--font-mono)'},dl);else txt(xr,ytop+21,pc(T(r,c)/ct(c)),{a:'end',s:19,f:'var(--ink)',w:700,fam:'var(--font-mono)'});
             if(ghost){const e=txt(CX[c]+8,r===0?58:308,'',{a:'start',s:12,f:'var(--accent-ink)',fam:'var(--font-mono)'});SET(e,'no-link-cell',{pct:pc(rt(r)/N())});}}
         }));}
       [0,1].forEach(c=>[0,1].forEach(r=>{const hit=mk('rect',{x:CX[c],y:RY[r][0],width:CW,height:RY[r][1]-RY[r][0],fill:'transparent',style:'cursor:pointer',tabindex:0,role:'button','aria-label':`${cfg.cols[c]}, ${cfg.rows[r]}`},gHit);
