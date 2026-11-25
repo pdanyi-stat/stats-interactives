@@ -356,6 +356,12 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 #c3Svg .ov{opacity:0;transition:opacity .2s}#c3Svg .ov.on{opacity:1;transition:opacity .45s ease .75s}
 @media (prefers-reduced-motion:reduce){#c3Svg .dot,#c3Svg .ov{transition:none}}
 .c3say b{color:var(--ink)}
+.tiles .tile.pick{outline:3px solid var(--s1-line);outline-offset:2px}
+.mx th.axc{font:600 12px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0 0 4px;border-bottom:1px solid var(--line)}
+.mx th.axr{padding:0;vertical-align:middle}
+.mx th.axr span{display:inline-block;writing-mode:vertical-rl;transform:rotate(180deg);font:600 12px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+@media (max-width:520px){.mx th.axr span{font-size:10.5px}.mx col.c2{width:21%}}
+.sc3c .say{margin:0;font-size:14.5px;color:var(--ink-2)}.sc3c .say b{color:var(--ink)}.sc3c .row{margin:0}.sc3c input[type=range]{width:100%}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -538,8 +544,8 @@ h3 + details.stata-wrap{margin-top:4px}
 .mx{padding:0;background:none;border:0}
 .mx table{width:100%;border-collapse:collapse;table-layout:fixed}
 .mx th{font:600 13px var(--font-body);color:var(--ink-2);text-align:center;padding:4px 2px 10px;letter-spacing:.02em}
-.mx tr th:first-child{text-align:left;width:22%;font-size:15px;color:var(--ink);font-weight:600}
-.mx tr+tr{border-top:1px solid var(--line)}
+.mx tbody tr th:not(.axr){text-align:left;font-size:15px;color:var(--ink);font-weight:600}
+.mx tr:nth-child(n+4) td,.mx tr:nth-child(n+4) th:not(.axr){border-top:1px solid var(--line)}
 .mx td{text-align:center;padding:12px 3px}
 .mx td span,.mxk span{display:inline-block;font:600 13.5px var(--font-body);padding:4px 10px;border-radius:999px;border:1.5px solid;color:var(--ink);line-height:1.25}
 .mx .u span,.mxk .u{background:color-mix(in srgb,#3d9a2e 16%,var(--surface));border-color:color-mix(in srgb,#4a9a3a 70%,var(--surface))}
@@ -547,7 +553,7 @@ h3 + details.stata-wrap{margin-top:4px}
 .mx .x span,.mxk .x{background:color-mix(in srgb,#c2453a 14%,var(--surface));border-color:color-mix(in srgb,#b8483f 65%,var(--surface))}
 .mxk{margin:12px 0 0;font-size:13.5px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
 .mxk em{font-style:normal;flex-basis:100%}
-@media (max-width:520px){.mx td span{font-size:11.5px;padding:3px 5px;letter-spacing:-.01em;white-space:nowrap}.mxk span{font-size:12.5px;padding:3px 9px}.mx th{font-size:12px}.mx tr th:first-child{width:21%;font-size:14px}.mx td{padding:10px 1px}}
+@media (max-width:520px){.mx td span{font-size:11.5px;padding:3px 5px;letter-spacing:-.01em;white-space:nowrap}.mxk span{font-size:11.5px;padding:3px 8px}.mx th{font-size:12px}.mx tbody tr th:not(.axr){font-size:14px}.mx td{padding:10px 1px}}
 .dcard{scroll-margin-top:70px}
 .hbars{display:grid;gap:5px}
 .hbars .r{display:grid;grid-template-columns:minmax(92px,150px) 44px minmax(0,1fr);gap:8px;align-items:center;font-size:14px}
@@ -824,8 +830,8 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div class="row"><div id="mdSet"></div></div>
     <p id="mdIntro" class="p"></p>
     <div class="tiles" id="mdTiles" aria-label="Values to put in order"></div>
-    <div class="row"><span class="src">Put the smallest on the left and the largest on the right. Drag a tile, or tap two tiles to swap them. Arrow keys also move a focused tile.</span></div>
-    <div class="row" id="mdSortRow" hidden><button class="dbtn pri" id="mdSort">Sort them for me</button></div>
+    <div class="row"><span class="src">Put the smallest on the left and the largest on the right. Drag a tile, or tap two tiles to swap them. Once they are in order, tap the median.</span></div>
+    <div class="row" id="mdSortRow"><button class="dbtn" id="mdSort">Sort them for me</button></div>
     <div class="fbk" id="mdFb" aria-live="polite"></div>
   </section>
 
@@ -869,7 +875,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <p>Here is one more frequency distribution for practice. This time each observation is a country rather than a person.</p></section>
   <section class="dcard" id="rg" data-ds="World.sav">
     <h3>Regime type in 168 countries (regime_type3)</h3>
-    <p class="p">Each observation here is a country, so the country is our unit of analysis. The variable regime_type3 sorts each country's political system into one of three types. A <b>dictatorship</b> is a country whose leaders do not come to power through competitive elections. A <b>parliamentary democracy</b> is a democracy where the head of government, usually a prime minister, is chosen by the legislature and can be removed by it. A <b>presidential democracy</b> is a democracy where voters elect the head of government separately from the legislature, for a fixed term, as in the United States. The three types are categories with no order, so regime_type3 is nominal. Another 23 countries in the dataset are not classified, so SPSS lists them as missing.</p>
+    <p class="p">Each observation is a country. In a <b>dictatorship</b>, leaders do not come to power through competitive elections. In a <b>parliamentary democracy</b> the legislature chooses the head of government, and in a <b>presidential democracy</b> voters elect the head of government separately. The three types have no order, so regime_type3 is nominal.</p>
     <p class="p">Tap the bar for the mode.</p>
     <div id="rgChart"></div>
     <div class="fbk" id="rgFb" aria-live="polite"></div>
@@ -880,7 +886,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 
   <!-- 2a THREE LEVELS -->
   <section class="part" id="sec-three-levels-of-measurement"><p class="kick">Part 7</p><h2>Three levels of measurement</h2>
-    <p>Now that we know how each measure is built, we need to know what kind of variable we are applying it to. The level of measurement tells us what the numbers attached to a variable can and cannot mean.</p></section>
+    <p>Now that we know how each measure is built, we need to know what kind of variable we are applying it to. The level of measurement tells us what the numbers attached to a variable can and cannot mean. Try each card.</p></section>
   <section class="dcard" id="sc3">
     <div class="sc3" id="sc3Cards"></div>
   </section>
@@ -909,9 +915,10 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
   <section class="dcard" id="fit">
     <div class="mx" id="fitGrid">
       
-      <table>
-        <tr><th></th><th>Nominal</th><th>Ordinal</th><th>Interval</th></tr>
-        <tr><th>Mean</th><td class="x"><span>Meaning&shy;less</span></td><td class="m"><span>Not useful*</span></td><td class="u"><span>Useful</span></td></tr>
+      <table><colgroup><col style="width:24px"><col class="c2" style="width:19%"><col><col><col></colgroup>
+        <tr><th></th><th></th><th colspan="3" class="axc">Level of measurement</th></tr>
+        <tr><th></th><th></th><th>Nominal</th><th>Ordinal</th><th>Interval</th></tr>
+        <tr><th rowspan="3" class="axr"><span>Measure of central tendency</span></th><th>Mean</th><td class="x"><span>Meaning&shy;less</span></td><td class="m"><span>Not useful*</span></td><td class="u"><span>Useful</span></td></tr>
         <tr><th>Median</th><td class="x"><span>Meaning&shy;less</span></td><td class="u"><span>Useful</span></td><td class="u"><span>Useful</span></td></tr>
         <tr><th>Mode</th><td class="u"><span>Useful</span></td><td class="u"><span>Useful</span></td><td class="m"><span>Often useful</span></td></tr>
       </table>
@@ -1311,32 +1318,35 @@ const SETS={
  a9:{lab:'9 ages',intro:'The ages of nine people from the notes. Put them in order.',items:DATA.ages9.map(v=>({v,s:''}))},
  a8:{lab:'8 ages',intro:'These are the same ages without the 37-year-old. Now there are eight, so two values share the middle.',items:[17,17,23,35,48,57,62,78].map(v=>({v,s:''}))},
  cty:{lab:'13 counties',intro:'Lunatics per county in the 13 Massachusetts counties (NBR).',items:lun.map(r=>({v:r[1],s:r[0]}))},
- st:{lab:'50 states',intro:'The Democratic share of the 1984 presidential vote in each state. Fifty is too many to drag, so let SPSS-style sorting do it, and then tap the two values in the middle.',items:DATA.dem84.map(r=>({v:r[1],s:r[0]}))}
+ st:{lab:'50 states',intro:'The Democratic share of the 1984 presidential vote in each state. Fifty is too many to drag, so let SPSS-style sorting do it.',items:DATA.dem84.map(r=>({v:r[1],s:r[0]}))}
 };
 let mdKey='a9',mdPicked=new Set();
 D.seg($('#mdSet'),Object.keys(SETS).map(k=>[k,SETS[k].lab]),k=>{mdKey=k;mdLoad();},'a9');
+const mdNeed=()=>{const n=$('#mdTiles').children.length;return n%2?1:2;};
 function mdLoad(){const S0=SETS[mdKey];$('#mdIntro').textContent=S0.intro;const box=$('#mdTiles');box.innerHTML='';mdPicked.clear();delete box.dataset.sorted;if(mdKey==='st')box.dataset.nosort=1;else delete box.dataset.nosort;
   let it=D.shuffle(S0.items);const sorted=S0.items.map(x=>x.v).sort((a,b)=>a-b);
   while(it.length>2&&it.every((x,i)=>x.v===sorted[i]))it=D.shuffle(S0.items);
   it.forEach((x,i)=>box.appendChild(H('div',{class:'tile',tabindex:'0','data-v':x.v},`${x.v}${x.s?`<small>${x.s}</small>`:''}`)));
-  $('#mdSortRow').hidden=mdKey!=='st';$('#mdFb').className='fbk';mdCheck();}
-function mdCheck(){const tiles=[...$('#mdTiles').children],v=tiles.map(t=>+t.dataset.v),n=v.length;tiles.forEach(t=>t.classList.remove('mid','lo','hi'));
-  const ok=v.every((x,i)=>i===0||v[i-1]<=x);if(!ok||mdKey==='st'&&!$('#mdTiles').dataset.sorted){if(mdKey!=='st')$('#mdFb').className='fbk';return;}
-  if(mdKey==='st')return;
-  const mids=n%2?[(n-1)/2]:[n/2-1,n/2];
-  tiles.forEach((t,i)=>{if(mids.includes(i))t.classList.add('mid');else t.classList.add(i<mids[0]?'lo':'hi');});
-  const below=mids[0],m=n%2?v[mids[0]]:(v[mids[0]]+v[mids[1]])/2;
-  D.fb($('#mdFb'),'ok',n%2?`The tiles are in order, and the median is <b>${m}</b>${tiles[mids[0]].querySelector('small')?` (${tiles[mids[0]].querySelector('small').textContent})`:''}. There are ${below} values below it and ${below} above.`
-    :`The tiles are in order. With ${n} values, <b>${v[mids[0]]}</b> and <b>${v[mids[1]]}</b> share the middle (${below} values on each side). The median is halfway between them, (${v[mids[0]]} + ${v[mids[1]]}) ÷ 2 = <b>${m}</b>.`);}
+  $('#mdFb').className='fbk';mdCheck();}
+function mdCheck(){const box=$('#mdTiles'),tiles=[...box.children],v=tiles.map(t=>+t.dataset.v),n=v.length;tiles.forEach(t=>t.classList.remove('mid','lo','hi','pick'));
+  const ok=v.every((x,i)=>i===0||v[i-1]<=x);if(!ok||mdKey==='st'&&!box.dataset.sorted){$('#mdFb').className='fbk';return;}
+  box.dataset.sorted=1;box.dataset.nosort=1;
+  D.fb($('#mdFb'),'info',n%2?`The ${n} values are in order. Now tap the median, the one value with as many values below it as above it.`:`The ${n} values are in order. With an even number of values no single value sits in the middle, so tap the two values that share the middle.`);}
 D.sortable($('#mdTiles'),mdCheck);
 $('#mdSort').addEventListener('click',()=>{const box=$('#mdTiles');const tiles=[...box.children];const first=new Map(tiles.map(t=>[t,t.getBoundingClientRect()]));
   tiles.sort((a,b)=>+a.dataset.v-+b.dataset.v).forEach(t=>box.appendChild(t));
   tiles.forEach(t=>{const f=first.get(t),l=t.getBoundingClientRect();t.animate([{transform:`translate(${f.left-l.left}px,${f.top-l.top}px)`},{transform:'none'}],{duration:700,easing:'ease-in-out'});});
-  box.dataset.sorted=1;D.fb($('#mdFb'),'info','They are sorted. Now tap the two tiles in the middle, which should have 24 values below them and 24 above.');});
-$('#mdTiles').addEventListener('click',e=>{if(mdKey!=='st'||!$('#mdTiles').dataset.sorted)return;const t=e.target.closest('.tile');if(!t)return;
-  t.classList.toggle('mid');const tiles=[...$('#mdTiles').children];const sel=tiles.map((x,i)=>x.classList.contains('mid')?i:-1).filter(i=>i>=0);
-  if(sel.length===2){const v=tiles.map(x=>+x.dataset.v);if(sel[0]===24&&sel[1]===25){const m=(v[24]+v[25])/2;D.fb($('#mdFb'),'ok',`${v[24]} and ${v[25]} share the middle. The median is ${m.toFixed(2)}%, so in half the states Mondale won less than ${m.toFixed(2)}% of the vote, and in half he won more. The mean, for comparison, is ${D.mean(v).toFixed(2)}%.`);}
-    else{D.fb($('#mdFb'),'no','Those two aren\'t the middle pair. Count 25 tiles in from either end.');tiles.forEach(x=>x.classList.remove('mid'));}}});
+  box.dataset.sorted=1;mdCheck();});
+$('#mdTiles').addEventListener('click',e=>{const box=$('#mdTiles');if(!box.dataset.sorted)return;const t=e.target.closest('.tile');if(!t)return;
+  const tiles=[...box.children],v=tiles.map(x=>+x.dataset.v),n=v.length,mids=n%2?[(n-1)/2]:[n/2-1,n/2];
+  if(tiles.some(x=>x.classList.contains('lo')))return;
+  t.classList.toggle('pick');const sel=tiles.map((x,i)=>x.classList.contains('pick')?i:-1).filter(i=>i>=0);
+  if(sel.length<mids.length)return;
+  if(sel.join()===mids.join()){tiles.forEach((x,i)=>{x.classList.remove('pick');x.classList.add(mids.includes(i)?'mid':i<mids[0]?'lo':'hi');});
+    const below=mids[0],m=n%2?v[mids[0]]:(v[mids[0]]+v[mids[1]])/2,nm=tiles[mids[0]].querySelector('small');
+    D.fb($('#mdFb'),'ok',n%2?`The median is <b>${m}</b>${nm?` (${nm.textContent})`:''}. There are ${below} values below it and ${below} above.`
+      :`<b>${v[mids[0]]}</b> and <b>${v[mids[1]]}</b> share the middle, with ${below} values on each side. The median is halfway between them, (${v[mids[0]]} + ${v[mids[1]]}) ÷ 2 = <b>${+m.toFixed(2)}</b>.`);}
+  else{tiles.forEach(x=>x.classList.remove('pick'));D.fb($('#mdFb'),'no',n%2?`Not that one. Count ${mids[0]+1} tiles in from either end.`:`Not that pair. Count ${mids[1]} tiles in from either end, and take that tile and the one next to it toward the middle.`);}});
 // arrow-key moves for the 50-state set are pointless; sorting on tap is handled above
 mdLoad();
 
@@ -1635,23 +1645,48 @@ const pct=(a,b)=>(100*a/b).toFixed(1)+'%', cm=D.comma;
   if('ResizeObserver' in window){let lw=host.clientWidth;new ResizeObserver(()=>{if(Math.abs(host.clientWidth-lw)>4){lw=host.clientWidth;P=build();show(view,true);}}).observe(host);}
 })();
 
-/* ---------- Part 5: three levels of measurement ---------- */
+/* ---------- three levels of measurement, each with something to try ---------- */
 (function(){
-  const box=(x,y,w,t)=>`<rect x="${x}" y="${y}" width="${w}" height="26" rx="6" fill="var(--surface)" stroke="var(--ink-2)"/><text x="${x+w/2}" y="${y+17}" text-anchor="middle" font-size="12" fill="var(--ink)">${t}</text>`;
-  const nom=`<svg viewBox="0 0 260 96" aria-hidden="true">${box(8,10,104,'Southampton')}${box(150,20,96,'Cherbourg')}${box(60,58,104,'Queenstown')}</svg>`;
-  const ord=`<svg viewBox="0 0 260 96" aria-hidden="true"><line x1="10" y1="62" x2="250" y2="62" stroke="var(--axis)" stroke-width="2"/>
-    ${[[10,'Lower'],[118,'Middle'],[178,'First']].map(([x,t])=>`<circle cx="${x+30}" cy="62" r="5" fill="var(--s1)"/><text x="${x+30}" y="88" text-anchor="middle" font-size="12" fill="var(--ink)">${t}</text>`).join('')}
-    <path d="M40 46 Q94 18 148 46" fill="none" stroke="var(--ink-2)" stroke-dasharray="4 3"/><text x="94" y="26" text-anchor="middle" font-size="13" fill="var(--ink-2)">?</text>
-    <path d="M148 46 Q178 26 208 46" fill="none" stroke="var(--ink-2)" stroke-dasharray="4 3"/><text x="178" y="30" text-anchor="middle" font-size="13" fill="var(--ink-2)">?</text>
-    <text x="250" y="52" text-anchor="end" font-size="11" fill="var(--muted)">higher →</text></svg>`;
-  let ticks='';for(let a=0;a<=80;a+=10){const x=14+a*2.9;ticks+=`<line x1="${x}" y1="52" x2="${x}" y2="${a%20?60:64}" stroke="var(--ink-2)"/><text x="${x}" y="80" text-anchor="middle" font-size="11" fill="var(--ink-2)">${a}</text>`;}
-  const intv=`<svg viewBox="0 0 260 96" aria-hidden="true"><line x1="14" y1="52" x2="246" y2="52" stroke="var(--ink-2)" stroke-width="2"/>${ticks}
-    <circle cx="${14+20*2.9}" cy="40" r="5" fill="var(--s1)"/><circle cx="${14+40*2.9}" cy="40" r="5" fill="var(--s1)"/><circle cx="${14+50*2.9}" cy="40" r="5" fill="var(--s2)"/><circle cx="${14+70*2.9}" cy="40" r="5" fill="var(--s2)"/>
-    <text x="${14+30*2.9}" y="26" text-anchor="middle" font-size="11" fill="var(--s1-ink)">20 years</text><text x="${14+60*2.9}" y="26" text-anchor="middle" font-size="11" fill="var(--s2-ink)">20 years</text></svg>`;
-  const C=[['Nominal','Port where a passenger boarded the Titanic',nom,[['ok','We can say whether two passengers boarded at the same port.'],['no','We cannot say one port is higher, lower or farther along than another, because the categories have no order.']]],
-    ['Ordinal','Passenger class',ord,[['ok','We can say first class ranks above middle class, and middle class above lower class.'],['no','We cannot say the step from lower to middle class is the same size as the step from middle to first.']]],
-    ['Interval','Age in years',intv,[['ok','We can say who is older, and by how much, because every year is the same size.'],['ok','The gap from 20 to 40 is the same 20 years as the gap from 50 to 70, so adding and averaging ages makes sense.']]]];
-  $('#sc3Cards').innerHTML=C.map(([h,ex,sv,li])=>`<div class="sc3c"><h4>${h}</h4><p class="ex">Example: ${ex}</p>${sv}<ul>${li.map(([k,t])=>`<li class="${k}">${t}</li>`).join('')}</ul></div>`).join('');
+  const host=$('#sc3Cards');
+  host.innerHTML=`
+  <div class="sc3c" id="lvN"><h4>Nominal</h4><p class="ex">Example: the port where each Titanic passenger boarded</p>
+    <svg viewBox="0 0 260 100" aria-label="Three ports as unordered boxes"></svg>
+    <div class="row"><button class="dbtn" data-a="shuf">Rearrange the ports</button></div>
+    <p class="say"></p></div>
+  <div class="sc3c" id="lvO"><h4>Ordinal</h4><p class="ex">Example: passenger class</p>
+    <svg viewBox="0 0 260 112" aria-label="Three classes in order on a line"></svg>
+    <div class="row"><button class="dbtn" data-a="gap" aria-pressed="false">Show the real gaps</button></div>
+    <p class="say"></p></div>
+  <div class="sc3c" id="lvI"><h4>Interval</h4><p class="ex">Example: age in years</p>
+    <svg viewBox="0 0 260 100" aria-label="A 20-year span on an age ruler"></svg>
+    <label class="src" for="lvIr">Slide the 20-year span along the ruler</label><input type="range" id="lvIr" min="0" max="60" step="1" value="20">
+    <p class="say"></p></div>`;
+  const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,tr=RM?'':'transition:transform .7s cubic-bezier(.3,.8,.25,1)';
+  /* nominal: shuffling the boxes loses nothing */
+  const NP=[['Southampton',914],['Cherbourg',270],['Queenstown',123]],SL=[[8,12],[146,22],[64,62]];
+  const sN=$('#lvN svg');sN.innerHTML=NP.map(([n,c],i)=>`<g class="pb" data-i="${i}" style="${tr}"><rect width="108" height="30" rx="7" fill="var(--surface)" stroke="var(--ink-2)"/><text x="54" y="13" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">${n}</text><text x="54" y="25" text-anchor="middle" font-size="10.5" fill="var(--ink-2)">${c} passengers</text></g>`).join('');
+  let ord=[0,1,2],nShuf=0;const putN=()=>sN.querySelectorAll('.pb').forEach((g,i)=>{const [x,y]=SL[ord.indexOf(i)];g.style.transform=`translate(${x}px,${y}px)`;});putN();
+  const sayN=()=>{$('#lvN .say').innerHTML=nShuf?`Moved ${nShuf} time${nShuf>1?'s':''}, and nothing about the data changed. No port is first, last, higher or lower, so all we can do is <b>count</b> how many passengers share a port.`:'We can say whether two passengers boarded at the same port, and count how many boarded at each. Rearrange the ports and see what changes.';};sayN();
+  $('#lvN [data-a=shuf]').onclick=()=>{let o;do{o=D.shuffle(ord.slice());}while(o.join()===ord.join());ord=o;nShuf++;putN();sayN();};
+  /* ordinal: equal steps on paper, unequal steps in fact (median fare paid by class) */
+  const OC=[['Lower',8.05],['Middle',15.05],['First',60]],sO=$('#lvO svg');let real=false;
+  const xEq=i=>40+i*90,xReal=f=>20+f/62*220;
+  sO.innerHTML=`<line x1="10" y1="60" x2="250" y2="60" stroke="var(--axis)" stroke-width="2"/><text x="250" y="110" text-anchor="end" font-size="11" fill="var(--muted)">higher class →</text>
+    <g class="gl"></g>`+OC.map(([n,f],i)=>`<g class="cd" style="${tr}"><circle cy="60" r="6" fill="var(--s1)"/><text y="82" text-anchor="middle" font-size="12" fill="var(--ink)">${n}</text><text class="fv" y="96" text-anchor="middle" font-size="10.5" fill="var(--ink-2)" opacity="0">£${f}</text></g>`).join('');
+  const putO=()=>{const xs=OC.map((c,i)=>real?xReal(c[1]):xEq(i));sO.querySelectorAll('.cd').forEach((g,i)=>{g.style.transform=`translateX(${xs[i]}px)`;g.querySelector('.fv').setAttribute('opacity',real?1:0);
+      const side=real&&i<2?(i===0?['end',-7]:['start',7]):['middle',0];g.querySelectorAll('text').forEach(t=>{t.setAttribute('text-anchor',side[0]);t.setAttribute('x',side[1]);});});
+    sO.querySelector('.gl').innerHTML=[0,1].map(k=>{const a=xs[k],b=xs[k+1],m=(a+b)/2,h=real?Math.min(40,8+(b-a)*.25):22;return `<path d="M${a} 48 Q${m} ${48-h} ${b} 48" fill="none" stroke="var(--ink-2)" stroke-dasharray="4 3"/><text x="${m}" y="${44-h*.55}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">${real?'£'+(OC[k+1][1]-OC[k][1]).toFixed(0):'1 step'}</text>`;}).join('');
+    $('#lvO .say').innerHTML=real?`Placed by the median fare each class paid, the step from lower to middle class is about £7, and the step from middle to first class is about £45. The classes really are in order, but the steps between them are far from equal.`
+      :`The codes put the classes one step apart, so lower to middle looks the same as middle to first. We can say first class ranks above middle class. Tap the button to see whether the steps are really the same size.`;};
+  putO();sO.querySelector('.gl').style.transition='none';
+  $('#lvO [data-a=gap]').onclick=e=>{real=!real;e.target.setAttribute('aria-pressed',real);e.target.textContent=real?'Back to equal steps':'Show the real gaps';putO();};
+  /* interval: a 20-year span is 20 years anywhere on the ruler */
+  const sI=$('#lvI svg'),X=a=>14+a*2.9;let tk='';for(let a=0;a<=80;a+=10)tk+=`<line x1="${X(a)}" y1="62" x2="${X(a)}" y2="${a%20?70:74}" stroke="var(--ink-2)"/><text x="${X(a)}" y="90" text-anchor="middle" font-size="11" fill="var(--ink-2)">${a}</text>`;
+  sI.innerHTML=`<line x1="14" y1="62" x2="246" y2="62" stroke="var(--ink-2)" stroke-width="2"/>${tk}<g class="sp"><rect y="50" height="12" rx="3" fill="color-mix(in srgb,var(--s2) 30%,transparent)" stroke="var(--s2)"/><circle cy="56" r="5" fill="var(--s2)"/><circle cy="56" r="5" fill="var(--s2)"/><text y="40" text-anchor="middle" font-size="12" font-weight="600" fill="var(--s2-ink)"></text></g>`;
+  const putI=()=>{const a=+$('#lvIr').value,b=a+20,g=sI.querySelector('.sp'),r=g.querySelector('rect'),c=g.querySelectorAll('circle'),t=g.querySelector('text');
+    r.setAttribute('x',X(a));r.setAttribute('width',X(b)-X(a));c[0].setAttribute('cx',X(a));c[1].setAttribute('cx',X(b));t.setAttribute('x',(X(a)+X(b))/2);t.textContent=`${a} to ${b} = 20 years`;
+    $('#lvI .say').innerHTML=`From ${a} to ${b} is 20 years, and so is any other 20-year stretch, because every year on the ruler is the same size. That is why we can add ages, subtract them and take their average.`;};
+  $('#lvIr').addEventListener('input',putI);putI();
 })();
 
 /* ---------- Part 7: tap the grid for the reason ---------- */
@@ -1659,9 +1694,9 @@ const pct=(a,b)=>(100*a/b).toFixed(1)+'%', cm=D.comma;
   const R={Mean:{Nominal:'The codes for a nominal variable are only labels, so adding them up and dividing gives a number that names no category.',Ordinal:'The codes are one step apart, but the categories may not be, so the mean of the codes depends on how they were numbered. It is marginally useful only when the gaps are roughly equal.',Interval:'The gaps between values are equal, so the balance point means something. Watch for a long tail, though, because it pulls the mean toward it.'},
     Median:{Nominal:'The median is the middle case once the cases are lined up in order, and nominal categories have no order to line them up in.',Ordinal:'The categories have a real order, so the middle case falls in a category that really is in the middle.',Interval:'The values have an order, and the median is not pulled around by a few extreme cases.'},
     Mode:{Nominal:'We can always count which category is most common, so the mode is the measure for nominal variables.',Ordinal:'The most common category still means something, and it is worth reporting alongside the median.',Interval:'With exact values almost every case can be different, so the mode depends on how we round or group the values.'}};
-  const t=$('#fitGrid table'),cols=[...t.rows[0].cells].map(c=>c.textContent.trim());
-  [...t.rows].slice(1).forEach(r=>{const m=r.cells[0].textContent.trim();[...r.cells].slice(1).forEach((c,k)=>{c.tabIndex=0;c.setAttribute('role','button');
-    const go=()=>{t.querySelectorAll('td.sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');D.fb($('#fitFb'),'info',`<b>${m}, ${cols[k+1].toLowerCase()} variable.</b> ${R[m][cols[k+1]]}`);};
+  const t=$('#fitGrid table'),cols=['Nominal','Ordinal','Interval'];
+  [...t.rows].slice(2).forEach(r=>{const hs=r.querySelectorAll('th'),m=hs[hs.length-1].textContent.trim();[...r.querySelectorAll('td')].forEach((c,k)=>{c.tabIndex=0;c.setAttribute('role','button');
+    const go=()=>{t.querySelectorAll('td.sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');D.fb($('#fitFb'),'info',`<b>${m}, ${cols[k].toLowerCase()} variable.</b> ${R[m][cols[k]]}`);};
     c.addEventListener('click',go);c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});});});
 })();
 
