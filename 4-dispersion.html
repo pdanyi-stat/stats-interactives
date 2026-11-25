@@ -276,6 +276,8 @@ svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):
 svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
 svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
+.wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
 
 
 /* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
@@ -724,7 +726,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
   <section class="dcard" id="va" data-ds="LunaticData.sav">
     <h3>Lunatics per county, Massachusetts, 1854 (NBR)</h3>
     <p class="p"><span class="keyfx">s² = Σ(X − x̄)² ÷ (n − 1)</span>. The mean is <b>180.85</b> and n = 13.</p>
-    <p class="byhand"><b>Work it out by hand first.</b> Pen and paper or a calculator will do. Then check your answers with the buttons below, or by running NBR in SPSS with LunaticData.sav.</p>
+    <p class="byhand"><b>Work it out by hand first.</b> Pen and paper or a calculator will do. Then check your answers with the buttons below, or by running NBR in statistical software with LunaticData.sav.</p>
     <div id="vaStrip"></div>
     <div class="row"><button class="dbtn pri" id="vaNext">Fill the next row for me</button><button class="dbtn" id="vaAll">Fill them all</button><button class="dbtn" id="vaClear">Clear</button></div>
     <div class="tblwrap"><table class="tbl" id="vaTbl" style="max-width:640px"></table></div>
@@ -845,7 +847,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <p class="p">A decade on, Sue and Jim are making the same four claims word for word. A lot has changed in both parties since 2014, so check whether the 2014 answers still hold. You have two sources this time, and they measure different things.</p>
     <p class="p"><b>Gallup, January 2025.</b><sup class="fn"><a href="#gallup-note" aria-label="Note on the Gallup data">†</a></sup> Gallup asked Republicans and leaners whether they would rather see the Republican Party become more conservative, stay the same, or become more moderate (q7), and asked Democrats and leaners the same about becoming more liberal (q6). This is the closest match to the 2014 Pew question, but it has one difference. “Stay the same” is now offered as an answer instead of being volunteered, so many more people choose it.</p>
     <div class="two"><div><p class="codes-h">Gallup's own codes (q7 and q6)</p><dl class="codes"><dt>1</dt><dd>More conservative (q6: More liberal)</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More moderate</dd><dt class="miss">9</dt><dd class="miss">No opinion</dd></dl></div><div><p class="codes-h">Recoded to match RepPref and DemPref (the charts below)</p><dl class="codes"><dt>1</dt><dd>More moderate</dd><dt>2</dt><dd>Stay the same</dd><dt>3</dt><dd>More conservative (or more liberal)</dd></dl></div></div>
-    <p class="p">To recode it in SPSS, turn 1 into 3, keep 2 as 2, turn 3 into 1, and set 9 to System-missing.</p>
+    <p class="p">To recode it, turn 1 into 3, keep 2 as 2, turn 3 into 1, and set 9 to missing.</p>
     <div class="two"><div id="r24A"></div><div id="r24B"></div></div>
     <div id="r24Out1"></div>
     <p class="p"><b>ANES 2024.</b> The ANES asked everyone to place themselves on a 7-point liberal–conservative scale (V241177). Split by party, it shows what Republicans and Democrats <i>are</i>, which speaks to claims about a “small faction” or “super liberal” voters. It doesn't say which way they want their party to move.</p>
