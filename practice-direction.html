@@ -558,8 +558,14 @@ header.mast.rv .wrap{display:block;padding-top:2px;padding-bottom:22px}
 .mtitle h1 em{font:italic 400 1.07em/1 RvSerif,Georgia,serif;letter-spacing:-.02em}
 .mtitle .dek{font:400 19.5px/1.5 RvSerif,Georgia,serif;color:var(--ink-2);margin:0;max-width:none}
 .rv .mhd.sh{margin-top:4px}
-.mpic{display:flex;justify-content:center;margin:6px 0 30px}
-.hstack{width:min(100%,420px);display:flex;flex-direction:column;filter:drop-shadow(0 14px 12px var(--rvshadow))}
+.mpic{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:6px 0 30px}
+.cup{flex:0 0 112px;width:112px;height:auto;margin-bottom:0;filter:drop-shadow(0 12px 10px var(--rvshadow));overflow:visible}
+.cup .steam path{stroke:var(--ink-2);stroke-width:2.2;opacity:.4;animation:cupsteam 5.5s ease-in-out infinite}
+.cup .steam path:nth-child(2){animation-delay:-2.4s}
+@keyframes cupsteam{0%,100%{opacity:.12;transform:translateY(3px)}50%{opacity:.5;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.cup .steam path{animation:none;opacity:.35}}
+@media (max-width:520px){.mpic{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
+.hstack{min-width:0;width:min(100%,420px);display:flex;flex-direction:column;filter:drop-shadow(0 14px 12px var(--rvshadow))}
 .hb{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--c);color:var(--k);border-radius:3px;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2);overflow:hidden;margin-top:-1px}
 .hb.gild{background:var(--gold)}
 .hb::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.26) 0,rgba(255,255,255,.06) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.34) 100%)}
