@@ -1637,7 +1637,7 @@ $('#greset').addEventListener('click',()=>gload(G.i));
 
 /* ===================== START SIMPLE: R-SQUARED ===================== */
 const LB=JSON.parse(document.getElementById('nes_lb').textContent); // [rep_therm, laura_bush_therm]
-const RS2={pts:[],step:1,t:0,anim:0};
+const RS2={pts:[],step:1,t:0,anim:0,b:1};
 function rsetPts(raw){ const p=raw.map(r=>({x:r[0],y:r[1]})).sort((a,b)=>(a.x-b.x)||(a.y-b.y)); p.forEach((v,i)=>v.id='ABCDEF'[i]);
   const n=p.length, mx=p.reduce((s,v)=>s+v.x,0)/n, my=p.reduce((s,v)=>s+v.y,0)/n; let sxx=0,sxy=0; p.forEach(v=>{sxx+=(v.x-mx)**2;sxy+=(v.x-mx)*(v.y-my);});
   const b=Math.round(sxy/sxx*1000)/1000, a=Math.round((my-b*mx)*100)/100, ybar=Math.round(my*10)/10;
@@ -1659,14 +1659,18 @@ function rrender(){
   const defs=el('defs',{},svg), cp=el('clipPath',{id:'rsclip'},defs); el('rect',{x:m.l,y:m.t,width:P,height:P},cp);
   const sq=el('g',{'clip-path':'url(#rsclip)'},svg);
   if(s>=2){
+    // build-in on first arrival: the mean line draws left to right, each miss grows up or down from the line to its point, then swings out sideways into a square
+    const bb=RS2.b, ph=(a,z)=>Math.max(0,Math.min(1,(bb-a)/(z-a))), ez=u=>1-Math.pow(1-u,3), lineP=ez(ph(0,.32));
     // guesses morph from the mean (t=0) to the line (t=1)
-    RS2.pts.forEach(p=>{ const guess=F.ybar*(1-t)+(F.a+F.b*p.x)*t; const y1=ys(p.y), y2=ys(guess), side=Math.abs(y2-y1), X=xs(p.x), left=X+side>W-m.r;
-      el('rect',{x:left?X-side:X,y:Math.min(y1,y2),width:side,height:side,fill:css('--miss'),'fill-opacity':.13,stroke:css('--miss'),'stroke-opacity':.5},sq);
-      el('line',{x1:X,x2:X,y1,y2,stroke:css('--miss'),'stroke-width':2.5},sq); });
+    RS2.pts.forEach((p,i)=>{ const guess=F.ybar*(1-t)+(F.a+F.b*p.x)*t; const y1=ys(p.y), y2=ys(guess), side=Math.abs(y2-y1), X=xs(p.x), left=X+side>W-m.r;
+      const k=i*.035, stP=ez(ph(.30+k,.52+k)), sqP=ez(ph(.56+k,.80+k)), wq=side*sqP, ye=y2+(y1-y2)*stP;
+      if(wq>0) el('rect',{x:left?X-wq:X,y:Math.min(y1,y2),width:wq,height:side,fill:css('--miss'),'fill-opacity':.13,stroke:css('--miss'),'stroke-opacity':.5},sq);
+      if(stP>0) el('line',{x1:X,x2:X,y1:y2,y2:ye,stroke:css('--miss'),'stroke-width':2.5},sq); });
     // the guess line: flat at ybar morphing into the regression line
     const gl=x=>F.ybar*(1-t)+(F.a+F.b*x)*t;
-    el('line',{x1:xs(0),x2:xs(100),y1:ys(gl(0)),y2:ys(gl(100)),stroke:t<0.5?css('--ink'):css('--s2'),'stroke-width':2.5,'stroke-dasharray':t<0.02?'6 4':''},svg);
-    const lab=el('text',{x:xs(100)-2,y:ys(gl(100))+(t>0.5?16:-8),'text-anchor':'end',class:'mlab',fill:t<0.5?css('--ink'):css('--s2-ink')},svg);
+    const xe=xs(0)+(xs(100)-xs(0))*lineP;
+    el('line',{x1:xs(0),x2:xe,y1:ys(gl(0)),y2:ys(gl(0)+(gl(100)-gl(0))*lineP),stroke:t<0.5?css('--ink'):css('--s2'),'stroke-width':2.5,'stroke-dasharray':t<0.02?'6 4':''},svg);
+    const lab=el('text',{x:xs(100)-2,y:ys(gl(100))+(t>0.5?16:-8),'text-anchor':'end',class:'mlab',fill:t<0.5?css('--ink'):css('--s2-ink'),opacity:ph(.24,.4)},svg);
     lab.textContent= t<0.5? `guess ȳ = ${F.ybar} for everyone` : `guess ŷ = ${F.b.toFixed(3)}x + ${F.a.toFixed(2)}`;
   }
   RS2.pts.forEach(p=>{ el('circle',{cx:xs(p.x),cy:ys(p.y),r:13,fill:css('--surface'),stroke:css('--ink'),'stroke-width':2},svg); const tx=el('text',{x:xs(p.x),y:ys(p.y)+4.5,'text-anchor':'middle',style:'font:700 12.5px var(--font-body)',fill:css('--ink')},svg); tx.textContent=p.id; });
@@ -1693,11 +1697,14 @@ function rtextRender(){
 }
 const LBALL=(()=>{const n=LB.length;let mx=0,my=0;LB.forEach(([x,y])=>{mx+=x;my+=y;});mx/=n;my/=n;let sxx=0,sxy=0,syy=0;LB.forEach(([x,y])=>{sxx+=(x-mx)**2;sxy+=(x-mx)*(y-my);syy+=(y-my)**2;});return sxy*sxy/(sxx*syy);})();
 function rgo(step){ const prev=RS2.step; RS2.step=step; const target=step>=3?1:0;
+  if(prev<2&&step===2&&!reduce){ RS2.t=0; RS2.b=0; cancelAnimationFrame(RS2.anim); const t0=performance.now(), D=2300;
+    const bf=now=>{RS2.b=Math.min(1,(now-t0)/D); rrender(); if(RS2.b<1) RS2.anim=requestAnimationFrame(bf);}; RS2.anim=requestAnimationFrame(bf); return; }
+  RS2.b=1;
   if(reduce||Math.abs(RS2.t-target)<1e-6||prev<2){ RS2.t=target; rrender(); return; }
   const from=RS2.t,t0=performance.now(); cancelAnimationFrame(RS2.anim);
   const stp=now=>{const p=Math.min(1,(now-t0)/900),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; RS2.t=from+(target-from)*e; rrender(); if(p<1) RS2.anim=requestAnimationFrame(stp);}; RS2.anim=requestAnimationFrame(stp); }
 document.querySelectorAll('#rsteps button').forEach(b=>b.addEventListener('click',()=>rgo(+b.dataset.s)));
-$('#rdraw').addEventListener('click',()=>{cancelAnimationFrame(RS2.anim);rdraw6();RS2.step=1;RS2.t=0;rrender();});
+$('#rdraw').addEventListener('click',()=>{cancelAnimationFrame(RS2.anim);RS2.b=1;rdraw6();RS2.step=1;RS2.t=0;rrender();});
 rpreset(); setTimeout(rrender,0);
 if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;rrender();}}).observe($('#rstage'));}
 
