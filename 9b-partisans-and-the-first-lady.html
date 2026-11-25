@@ -1014,10 +1014,10 @@ function plot(box,d,k,opt){
     opt.legendMax=mx; }
   if(step>=3){ el('line',{x1:xs(0),x2:xs(100),y1:ys(f.b0),y2:ys(f.b0+f.b1*100),stroke:css('--s2'),'stroke-width':3},svg);
     if(opt.eqLabel&&!(step===5&&W<520)){const t=el('text',{x:xs(100)-4,y:ys(f.b0+f.b1*100)+(step===5?(f.b1<0?20:-12):(f.b1<0?-10:18)),'text-anchor':'end',class:'mlab',fill:css('--s2-ink')},svg);t.textContent=`ŷ = ${f3(h.b)}x ${sgnA(h.a)}`;} }
-  const refs=(x,y)=>{ el('line',{x1:xs(x),x2:xs(x),y1:H-m.b,y2:ys(y),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);
-    el('line',{x1:m.l,x2:xs(x),y1:ys(y),y2:ys(y),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);
-    el('circle',{cx:xs(x),cy:ys(y),r:6,fill:css('--ink'),stroke:css('--surface'),'stroke-width':2},svg); };
-  if(step===4){ const x=opt.x, y=h.a+h.b*x; refs(x,y); const l=el('text',{x:m.l+5,y:ys(y)-6,class:'mlab',fill:css('--ink')},svg);l.textContent=`ŷ = ${y.toFixed(2)}`; const t=el('text',{x:xs(x)+6,y:H-m.b-8,class:'mlab',fill:css('--ink')},svg);t.textContent='x = '+x; }
+  const refs=(x,y)=>{ const v=el('line',{x1:xs(x),x2:xs(x),y1:H-m.b,y2:ys(y),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);
+    const hz=el('line',{x1:m.l,x2:xs(x),y1:ys(y),y2:ys(y),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);
+    const c=el('circle',{cx:xs(x),cy:ys(y),r:6,fill:css('--ink'),stroke:css('--surface'),'stroke-width':2},svg); return {v,hz,c}; };
+  if(step===4){ const x=opt.x, y=h.a+h.b*x; const R=refs(x,y);     /* a new value chosen from the menu or typed in: the point slides along the line to it, and its guides follow */     if(opt.fromX!=null&&opt.fromX!==x&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){ const f0=opt.fromX,t0=performance.now(),D=650,ez=u=>1-Math.pow(1-u,3);       const put=xv=>{const yv=h.a+h.b*xv,X=xs(xv),Y=ys(yv);R.v.setAttribute('x1',X);R.v.setAttribute('x2',X);R.v.setAttribute('y2',Y);R.hz.setAttribute('x2',X);R.hz.setAttribute('y1',Y);R.hz.setAttribute('y2',Y);R.c.setAttribute('cx',X);R.c.setAttribute('cy',Y);};       put(f0); const stp=n=>{const u=Math.min(1,(n-t0)/D);put(f0+(x-f0)*ez(u));if(u<1)requestAnimationFrame(stp);};requestAnimationFrame(stp); }  const l=el('text',{x:m.l+5,y:ys(y)-6,class:'mlab',fill:css('--ink')},svg);l.textContent=`ŷ = ${y.toFixed(2)}`; const t=el('text',{x:xs(x)+6,y:H-m.b-8,class:'mlab',fill:css('--ink')},svg);t.textContent='x = '+x; }
   if(step===5){ refs(h.m,h.yM); refs(100,h.y100);
     el('path',{d:`M${xs(h.m)},${ys(h.yM)}L${xs(100)},${ys(h.yM)}L${xs(100)},${ys(h.y100)}Z`,fill:css('--s2'),'fill-opacity':.18},svg);
     el('line',{x1:xs(100),x2:xs(100),y1:ys(h.yM),y2:ys(h.y100),stroke:css('--s2'),'stroke-width':4},svg);
@@ -1096,12 +1096,12 @@ function makeInstance(root,d){
     P.innerHTML=body+nav;
     P.querySelector('[data-r="prev"]').onclick=()=>go(s-1);
     P.querySelector('[data-r="next"]').onclick=()=>{ if(s===5) jumpTo(q('cmph')); else go(s+1); };
-    if(s===4){ const pk=P.querySelector('[data-r="pick"]'); pk.value=st.pick; pk.onchange=e=>{st.pick=e.target.value;main();};
+    if(s===4){ const pk=P.querySelector('[data-r="pick"]'); pk.value=st.pick; pk.onchange=e=>{st.slideFrom=st.step===4?st.lastX:null;st.pick=e.target.value;main();};
       const sync=v=>{st.custom=Math.max(0,Math.min(100,Math.round(+v||0)));main();};
-      const cx=P.querySelector('[data-r="cx"]'), cxr=P.querySelector('[data-r="cxr"]'); if(cx){cx.oninput=e=>sync(e.target.value);cxr.oninput=e=>sync(e.target.value);} }
+      const cx=P.querySelector('[data-r="cx"]'), cxr=P.querySelector('[data-r="cxr"]'); if(cx){cx.oninput=e=>sync(e.target.value);cx.onchange=e=>{st.slideFrom=st.lastX;sync(e.target.value);};cxr.oninput=e=>sync(e.target.value);} }
   }
   function main(){
-    const o=plot(q('chart'),d,st.iv,{step:st.step,x:pickX(),eqLabel:true});
+    const nx=pickX(), o=plot(q('chart'),d,st.iv,{step:st.step,x:nx,eqLabel:true,fromX:st.slideFrom}); st.slideFrom=null; st.lastX=nx;
     q('legend').innerHTML= st.step===1? `<span><i class="sw" style="background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-radius:50%"></i> one dot (may hide many respondents)</span>` :
       `<span>respondents per bin: 1</span><span class="bar"></span><span>${o.legendMax}</span>${st.step>=3?'<span style="margin-left:10px"><i class="sw ols"></i> regression line</span>':''}${st.step>=4?'<span><i class="sw ref"></i> reference lines</span>':''}`;
     q('stepper').querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',+b.dataset.s===st.step?'step':'false'));

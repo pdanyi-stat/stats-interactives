@@ -1364,6 +1364,28 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <section class="controls" aria-label="Simulation controls">
     <div class="ctl">
       <label class="lab" for="pop">Population: 3,112 U.S. counties</label>
@@ -1645,6 +1667,11 @@ function hideTip(){tip.classList.remove('on');}
 function bindTip(node,h){node.addEventListener('pointerenter',e=>showTip(h,e));node.addEventListener('pointermove',e=>showTip(h,e));node.addEventListener('pointerdown',e=>showTip(h,e));node.addEventListener('pointerleave',hideTip);}
 
 /* ---- interval plot ---- */
+/* move only the marks that change: ease an element's numeric attributes from old values to new ones */
+const ANI=(()=>{const rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return (el,attrs,dur)=>{if(rm||!el)return;dur=dur||520;const t0=performance.now(),ez=u=>1-Math.pow(1-u,3);
+    const set=u=>{for(const k in attrs){const [f,t]=attrs[k];el.setAttribute(k,f+(t-f)*ez(u));}};set(0);
+    const st=n=>{const u=Math.min(1,(n-t0)/dur);set(u);if(u<1)requestAnimationFrame(st);};requestAnimationFrame(st);};})();
 function intervalPlot(box,o){
   box.innerHTML='';
   const W=Math.max(280,box.clientWidth), m={l:12,r:12,t:24,b:30};
@@ -1659,14 +1686,15 @@ function intervalPlot(box,o){
   if(o.zero!=null && o.zero>o.xlo && o.zero<o.xhi) el('line',{x1:xs(o.zero),x2:xs(o.zero),y1:m.t,y2:H-m.b,stroke:css('--axis'),'stroke-width':1},g0);
   el('line',{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:css('--axis')},svg);
   const g=el('g',{},svg);
-  const hitC=css('--s1'), missC=css('--miss');
+  const hitC=css('--s1'), missC=css('--miss'), prev=box.__prev||[], now=[]; box.__prev=now;
   o.rows.forEach((r,i)=>{
     const y=m.t+(i+0.5)*o.rowH;
     const col=r.hit?hitC:missC, sw=r.hit?o.lw:o.lw+1;
     const a=Math.max(r.lo,o.xlo), b=Math.min(r.hi,o.xhi);
     if(b>=a){
       const x1=xs(a), x2=Math.max(xs(b), xs(a)+ (r.hi-r.lo===0?2:0));
-      el('line',{x1,x2,y1:y,y2:y,stroke:col,'stroke-width':sw,'stroke-linecap':'butt'},g);
+      const ln=el('line',{x1,x2,y1:y,y2:y,stroke:col,'stroke-width':sw,'stroke-linecap':'butt'},g); now[i]=[x1,x2];
+      if(o.anim&&prev[i]) ANI(ln,{x1:[prev[i][0],x1],x2:[prev[i][1],x2]},600);
       const ah=Math.max(3,o.rowH*0.45);
       if(r.lo<o.xlo) el('path',{d:`M${xs(o.xlo)-4},${y}l${ah+2},${-ah}v${2*ah}z`,fill:col},g);
       if(r.hi>o.xhi) el('path',{d:`M${xs(o.xhi)+4},${y}l${-ah-2},${-ah}v${2*ah}z`,fill:col},g);
@@ -1745,7 +1773,7 @@ function render(){
     return {lo:iv.lo,hi:iv.hi,est:iv.est,hit,tip:`Sample ${num.toLocaleString('en-US')}: ${p.f(iv.est)}${p.u}<br>${st.lev}% CI ${p.f(iv.lo)} to ${p.f(iv.hi)}<br>${hit?'Captured μ':'Missed μ'}`}; });
   const missShown=rows.filter(r=>!r.hit).length;
   $('#ivSub').textContent = M ? `${st.lev}% ${p.binary?'Wald':st.method} intervals from samples of n = ${st.n}. ${missShown} of the ${rows.length} shown missed μ.` : 'Draw some samples.';
-  intervalPlot($('#ivChart'),{rows,slots:100,rowH:4.4,lw:1.6,xlo:p.xlo,xhi:p.xhi,truth:p.mu,truthLabel:'μ = '+p.f(p.mu)+p.u,xfmt:p.tick,aria:'Latest 100 confidence intervals'});
+  intervalPlot($('#ivChart'),{anim:st.anim,rows,slots:100,rowH:4.4,lw:1.6,xlo:p.xlo,xhi:p.xhi,truth:p.mu,truthLabel:'μ = '+p.f(p.mu)+p.u,xfmt:p.tick,aria:'Latest 100 confidence intervals'});
   $('#covBig').textContent = M ? (100*H/M).toFixed(1)+'%' : '–';
   $('#covBig').style.color = M && Math.abs(100*H/M-st.lev) > Math.max(3, 300/Math.sqrt(M)) ? css('--miss-ink') : '';
   $('#covOf').innerHTML = M ? `of ${M.toLocaleString('en-US')} intervals captured μ.<br><span class="target">Stated level: ${st.lev}%</span>` : '';
@@ -1802,7 +1830,7 @@ function segment(id,vals,cur,fmt,on){
     const l=document.createElement('label'); l.htmlFor=i.id; l.textContent=fmt(v); box.append(i,l); i.addEventListener('change',()=>on(v)); });
 }
 segment('#nseg',NS,st.n,v=>v,v=>{st.n=v; reset();});
-segment('#cseg',LV,st.lev,v=>v+'%',v=>{st.lev=v; render();});
+segment('#cseg',LV,st.lev,v=>v+'%',v=>{st.lev=v; st.anim=true; render(); st.anim=false;});
 segment('#mseg',['z','t'],st.method,v=>v,v=>{st.method=v; render();});
 function syncMethod(){ const b=!!POPS[st.pop].binary; $('#votesNote').hidden=st.pop!=='votes'; $('#mseg').classList.toggle('dis',b); $('#mnote').textContent=b?'Proportions use the Wald z interval.':''; }
 function reset(){ st.S=[]; draw(1); }

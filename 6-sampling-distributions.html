@@ -1725,8 +1725,8 @@ const dCol=n=>css('--nc'+(NS.indexOf(n)+1));
     b.addEventListener('click',()=>{ DS.pop=k; renderD(); }); cards.appendChild(b); }
   for(const n of NS){ const b=document.createElement('button'); b.type='button'; b.className='nchip dsbtn'; b.dataset.n=n; b.style.setProperty('--c',`var(--nc${NS.indexOf(n)+1})`);
     b.innerHTML=`<i></i>n = ${n}`;
-    b.addEventListener('click',()=>{ if(DS.on.has(n)) DS.on.delete(n); else DS.on.add(n); renderD(); }); chips.appendChild(b); }
-  $('#dNext').addEventListener('click',()=>{ const n=NS.find(x=>!DS.on.has(x)); if(n){ DS.on.add(n); renderD(); } });
+    b.addEventListener('click',()=>{ if(DS.on.has(n)) DS.on.delete(n); else { DS.on.add(n); DS.added=n; } renderD(); }); chips.appendChild(b); }
+  $('#dNext').addEventListener('click',()=>{ const n=NS.find(x=>!DS.on.has(x)); if(n){ DS.on.add(n); DS.added=n; renderD(); } });
   $('#dAll').addEventListener('click',()=>{ NS.forEach(n=>DS.on.add(n)); renderD(); });
   $('#dReset').addEventListener('click',()=>{ DS.on=new Set([2]); renderD(); });
 })();
@@ -1749,11 +1749,19 @@ function renderD(){
   const mx=xs(p.mu);
   el('line',{x1:mx,x2:mx,y1:m.t-4,y2:ys(0),stroke:css('--ink'),'stroke-width':1.5},svg);
   const ml=el('text',{x:mx+(mx>W-110?-6:6),y:m.t-9,class:'mlab','text-anchor':mx>W-110?'end':'start',fill:css('--ink')},svg); ml.textContent='μ = '+p.mean(p.mu);
+  const curve=se=>{ let d='', first=null, last=null; const h=1/(se*Math.sqrt(2*Math.PI));
+    for(let i=0;i<=600;i++){ const x=p.lo+(p.hi-p.lo)*i/600; const y=h*Math.exp(-0.5*((x-p.mu)/se)**2); const px=xs(x).toFixed(1), py=ys(y).toFixed(1); d+=(i?'L':'M')+px+','+py; if(i===0)first=px; last=px; }
+    return [d, d+`L${last},${ys(0)}L${first},${ys(0)}Z`]; };
+  const grow=DS.added; DS.added=null;
   for(const n of on){
-    const se=p.sigma/Math.sqrt(n), col=dCol(n); let d='', first=null, last=null;
-    for(let i=0;i<=600;i++){ const x=p.lo+(p.hi-p.lo)*i/600; const y=pk(n)*Math.exp(-0.5*((x-p.mu)/se)**2); const px=xs(x).toFixed(1), py=ys(y).toFixed(1); d+=(i?'L':'M')+px+','+py; if(i===0)first=px; last=px; }
-    el('path',{d:d+`L${last},${ys(0)}L${first},${ys(0)}Z`,fill:col,'fill-opacity':.16,stroke:'none','pointer-events':'none'},svg);
-    el('path',{d,fill:'none',stroke:col,'stroke-width':2.4,'stroke-linejoin':'round','pointer-events':'none'},svg);
+    const se=p.sigma/Math.sqrt(n), col=dCol(n); const [d,fd]=curve(se);
+    const fp=el('path',{d:fd,fill:col,'fill-opacity':.16,stroke:'none','pointer-events':'none'},svg);
+    const lp=el('path',{d,fill:'none',stroke:col,'stroke-width':2.4,'stroke-linejoin':'round','pointer-events':'none'},svg);
+    // a newly added sample size grows out of the curve just wider than it, so the narrowing is what moves
+    const from=on.filter(m=>m<n).pop();
+    if(grow===n&&from&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){ const s0=p.sigma/Math.sqrt(from), t0=performance.now(), D=750;
+      const stp=now=>{ const u=Math.min(1,(now-t0)/D), e=1-Math.pow(1-u,3), sv=s0+(se-s0)*e; const [a,b]=curve(sv); lp.setAttribute('d',a); fp.setAttribute('d',b); if(u<1&&lp.isConnected) requestAnimationFrame(stp); };
+      const [a0,b0]=curve(s0); lp.setAttribute('d',a0); fp.setAttribute('d',b0); requestAnimationFrame(stp); }
     const hit=el('path',{d,fill:'none',stroke:'transparent','stroke-width':16},svg);
     const tipHtml=`<b>n = ${n}</b><br>standard error ${seTxt(p,se)}`;
     hit.addEventListener('pointerenter',e=>showTip(tipHtml,e)); hit.addEventListener('pointermove',e=>showTip(tipHtml,e)); hit.addEventListener('pointerdown',e=>showTip(tipHtml,e)); hit.addEventListener('pointerleave',hideTip);

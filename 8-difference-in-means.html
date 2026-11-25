@@ -1333,7 +1333,16 @@ $('#bChart').addEventListener('pointermove',e=>{ if(!geomB) return; const r=e.cu
 $('#bChart').addEventListener('pointerleave',hideTip);
 
 /* ---------- panel C ---------- */
+/* panel C: when a new sample arrives, the t marker travels from its last value instead of jumping */
+let cShownT=null,cRaf=0;
 function drawC(R){
+  cancelAnimationFrame(cRaf);
+  if(R&&cShownT!=null&&st.slideT&&!reduce&&Math.abs(R.t-cShownT)>1e-6){ const f=cShownT,t0=performance.now(),D=520;
+    const stp=now=>{const u=Math.min(1,(now-t0)/D),e=1-Math.pow(1-u,3),tv=f+(R.t-f)*e;cShownT=tv;drawC0(u<1?Object.assign({},R,{t:tv}):R);if(u<1)cRaf=requestAnimationFrame(stp);};
+    st.slideT=false; cRaf=requestAnimationFrame(stp); return; }
+  st.slideT=false; cShownT=R?R.t:null; drawC0(R);
+}
+function drawC0(R){
   const box=$('#cChart'); const H=220; const {ctx,W}=canvasIn(box,H);
   const m={l:14,r:14,t:30,b:30}, yb=H-m.b;
   if(!R){ $('#cStatus').innerHTML=''; return; }
@@ -1424,6 +1433,7 @@ function refreshText(){
   statusA(R); drawC(R); stata(R,st.S[st.S.length-1]); tally();
 }
 function addSamples(k,animate){
+  st.slideT=(k===1);
   for(let i=0;i<k;i++) st.S.push(sampleOnce());
   const to=targetA();
   if(animate && !reduce){

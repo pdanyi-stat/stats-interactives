@@ -1179,13 +1179,21 @@ function renderA(){
   if(!A) return; const f=fit(st.x,st.y), {xs,ys,dyn,m,W,H}=A, {xlo,xhi}=st.dom;
   dyn.innerHTML='';
   const showRes=$('#tRes').checked, showSq=$('#tSq').checked, mine=$('#tMine').checked;
+  const grow=st.grow; st.grow=null; const growLater=[];
   // the line whose errors we display
   let lb1=f.b1,lb0=f.b0;
   if(mine){ const [p,q]=st.mine; lb1=(q.y-p.y)/((q.x-p.x)||1e-9); lb0=p.y-lb1*p.x; }
   let sseMine=0; for(let i=0;i<st.x.length;i++){const e=st.y[i]-(lb0+lb1*st.x[i]);sseMine+=e*e;}
   if(showSq){ for(let i=0;i<st.x.length;i++){ const yh=lb0+lb1*st.x[i]; const y1=ys(st.y[i]), y2=ys(yh); const side=Math.abs(y2-y1); const x=xs(st.x[i]); const left= x+side>W-m.r;
-      el('rect',{x:left?x-side:x,y:Math.min(y1,y2),width:side,height:side,fill:css('--miss'),'fill-opacity':.1,stroke:css('--miss'),'stroke-opacity':.45,'stroke-width':1},dyn);} }
-  if(showRes){ for(let i=0;i<st.x.length;i++){ const yh=lb0+lb1*st.x[i]; el('line',{x1:xs(st.x[i]),x2:xs(st.x[i]),y1:ys(st.y[i]),y2:ys(yh),stroke:css('--miss'),'stroke-width':1.5,opacity:.75},dyn);} }
+      const r=el('rect',{x:left?x-side:x,y:Math.min(y1,y2),width:side,height:side,fill:css('--miss'),'fill-opacity':.1,stroke:css('--miss'),'stroke-opacity':.45,'stroke-width':1},dyn);
+      if(grow==='sq') growLater.push({r,x,side,left,i});} }
+  if(showRes){ for(let i=0;i<st.x.length;i++){ const yh=lb0+lb1*st.x[i]; const ln=el('line',{x1:xs(st.x[i]),x2:xs(st.x[i]),y1:ys(st.y[i]),y2:ys(yh),stroke:css('--miss'),'stroke-width':1.5,opacity:.75},dyn); if(grow==='res') growLater.push({ln,y1:ys(st.y[i]),y2:ys(yh),i});} }
+  // turning errors on grows each stick from the line to its point; turning squares on swings each stick out into its square
+  if(growLater.length&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){ const t0=performance.now(),D=620,ez=u=>1-Math.pow(1-u,3),n=growLater.length;
+    const stp=now=>{let more=false;for(const g of growLater){const u=Math.max(0,Math.min(1,(now-t0-g.i*(260/n))/D)),e=ez(u);if(u<1)more=true;
+        if(g.ln)g.ln.setAttribute('y1',g.y2+(g.y1-g.y2)*e);else{const w=g.side*e;g.r.setAttribute('width',w);g.r.setAttribute('x',g.left?g.x-w:g.x);}}
+      if(more)requestAnimationFrame(stp);};
+    stp(t0); requestAnimationFrame(stp); }
   // OLS line
   el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(f.b0+f.b1*xlo),y2:ys(f.b0+f.b1*xhi),stroke:css('--s2'),'stroke-width':2.75},dyn);
   if(mine){ el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(lb0+lb1*xlo),y2:ys(lb0+lb1*xhi),stroke:css('--ink'),'stroke-width':2,'stroke-dasharray':'6 4'},dyn); }
@@ -1420,7 +1428,7 @@ function stata(){
 function renderAll(){ renderA(); renderEq(); renderC(false); renderD(); stata(); }
 sel.addEventListener('change',()=>{cancelAnimationFrame(st.anim);load(+sel.value);});
 $('#reset').addEventListener('click',()=>{cancelAnimationFrame(st.anim);load(st.i);});
-['#tRes','#tSq','#tMine'].forEach(id=>$(id).addEventListener('change',()=>{ if(id==='#tSq'&&$('#tSq').checked) $('#tRes').checked=true; renderA(); }));
+['#tRes','#tSq','#tMine'].forEach(id=>$(id).addEventListener('change',()=>{ if(id==='#tSq'&&$('#tSq').checked) $('#tRes').checked=true; st.grow=(id==='#tRes'&&$('#tRes').checked)?'res':(id==='#tSq'&&$('#tSq').checked)?'sq':null; renderA(); }));
 const drawer=$('#drawer');let lastFocus=null;
 function openFx(){lastFocus=document.activeElement;document.body.classList.add('formulas-open');drawer.setAttribute('aria-hidden','false');$('#closeFx').focus();}
 function closeFx(){document.body.classList.remove('formulas-open');drawer.setAttribute('aria-hidden','true');if(lastFocus)lastFocus.focus();}
