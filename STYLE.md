@@ -44,7 +44,24 @@ The model is his own course documents in Drive: *Describing Attributes of Data N
 - Use the AHCA final exam only as a model, never as data.
 - Ask before adding content beyond what was agreed.
 
-## 4. Check before shipping
+## 4. Software names in the main text
+
+- In the main text of a page (introductions, card text, captions, feedback, summaries), say "statistical software", not "SPSS" or "Stata".
+- Name SPSS or Stata only inside the output drawers, their notes and menu paths, and on pages about reading software output.
+
+## 5. "What we learned" summaries
+
+Every teaching module ends with a "What we learned" list. Practice pages, application pages and exam prep do not get one.
+
+1. **Keep it light.** Four to six bullets, never more than seven.
+2. **Main concepts and main conclusions only.** A bullet states an idea a student should carry into the next module, or a conclusion the module's data showed.
+3. **Order by importance.** The core conceptual idea comes first, and supporting cautions come last.
+4. **Leave out mechanics.** No software steps, menu paths, output columns, data cleaning (such as setting missing codes), button names or descriptions of the page's activities.
+5. **One idea per bullet,** written as one or two full sentences that follow Section 1.
+6. **No new material.** Every bullet must restate something the module taught.
+7. The list sits under a "Wrap-up" banner just above the sources, and it gets its own spine on the module's shelf.
+
+## 6. Check before shipping
 
 For every sentence you add or change:
 
