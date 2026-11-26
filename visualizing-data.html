@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visualizing data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#F4F5F6;
+  --surface:#FFFFFF;
+  --ink:#16191C;
+  --ink-2:#4A4F55;
+  --muted:#5F6266;
+  --grid:#E3E5E8;
+  --axis:#B9BCC0;
+  --line:rgba(22,25,28,.12);
+  --accent:#004C97;          /* masthead rule, kicker */
+  --pop:#75787B;             /* population bars */
+  --s1:#004C97;--s1-edge:transparent;--s1-line:#004C97;--accent-ink:#004C97;              /* sample means (blue) */
+  --s1-ink:#004C97;
+  --s2:#C25E00;              /* the current sample (orange) */
+  --s2-ink:#9A4A00;
+  --code-bg:#EDEFF1;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+    --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+    --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+  --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+  --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1-line);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+button.primary{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-color:var(--s1-ink);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 6 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; --q1:#cde2fb; --q2:#86b6ef; --q3:#3987e5; --q4:#1c5cab; --q5:#0d366b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-b1{color:var(--s2-ink);font-weight:600}
+.k-b2{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--ink-2);font-weight:600}
+.chart svg{display:block}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:92ch}
+.steps b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:92px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1-ink)}
+.calc{font-family:var(--font-mono);font-size:13px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.big{font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ramp{display:inline-block;width:70px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--q1),var(--q3),var(--q5))}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.ghost{height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0}
+/* filled equation */
+.terms{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;margin-top:6px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:17px;font-weight:600;padding:3px 8px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.b1{border-color:var(--s2);color:var(--s2-ink)} .term .t.b2{border-color:var(--s1-ink);color:var(--s1-ink)} .term .t.v{border-color:var(--ink)} .term .t.op{border:0;padding:3px 0;color:var(--ink-2)}
+.term .n{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);line-height:1.2;max-width:14ch}
+/* OVB */
+.ovb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:center}
+@media (max-width:860px){.ovb{grid-template-columns:1fr}}
+.decomp{font-size:15px;display:grid;gap:8px}
+.decomp .eqn{font-family:var(--font-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.verdict{display:inline-block;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;background:var(--ink);color:var(--surface)}
+/* model builder */
+.ivlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;margin:6px 0 10px}
+.ivlist label{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+.ivlist input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+.fitbars{display:grid;gap:10px;margin-top:6px}
+.fb .lab{font-size:13.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.fb .lab b{color:var(--ink)}
+.track{height:16px;border-radius:4px;background:var(--page);border:1px solid var(--line);position:relative;overflow:hidden}
+.fill{height:100%;background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fill.adj{background:var(--s2)}
+.ghostmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55;transition:left .5s}
+@media (prefers-reduced-motion: reduce){.fill,.ghostmark{transition:none}}
+pre.stata .b1{color:var(--s2-ink);font-weight:600}
+pre.stata .b2{color:var(--s1-ink);font-weight:600}
+pre.stata .ns{color:var(--muted)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#B07A12;--amber-bg:#FFF1D6;--amber-ink:#6B4A00;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:9px 14px;border-radius:7px;border:2px solid var(--amber)}
+.fljumpbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.fljumpbox p{margin:0;font-size:14.5px;color:var(--ink);max-width:75ch}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
+
+/* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
+svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):not([stroke]){stroke:var(--s1-edge);stroke-width:1px}
+svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
+svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
+svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
+.wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+
+.subnav{margin:18px 0 4px;display:grid;gap:12px}
+.subnav .grp{margin:0 0 6px;font:700 12px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.subnav .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.subnav a{display:flex;flex-direction:column;justify-content:center;gap:2px;min-height:52px;padding:8px 11px;border-radius:9px;border:1px solid var(--line);border-left:4px solid var(--s1-line);background:var(--surface);color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:600;line-height:1.3}
+.subnav a:hover,.subnav a:focus-visible{background:color-mix(in srgb,var(--s1) 10%,var(--surface))}
+.subnav a .sy{font:500 12.5px var(--font-mono);color:var(--muted)}
+.subnav .err a{border-left-color:var(--s2)}
+.subnav .prac a{border-left-color:#5a9a3a}
+.part{scroll-margin-top:70px}
+.wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+</style>
+<style>
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
+.dcard{scroll-margin-top:70px}
+.p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+.p b{color:var(--ink)}
+ul.p,ol.p{padding-left:20px;display:grid;gap:6px}
+.dg{width:100%;max-width:460px;display:block;margin:0 auto}
+.dgwrap{background:color-mix(in srgb,var(--page) 60%,var(--surface));border:1px solid var(--line);border-radius:10px;padding:8px}
+.dgcap{margin:6px 0 0;text-align:center;font:600 13px var(--font-mono);color:var(--muted)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btnrow .note{font-size:13.5px;color:var(--muted)}
+.big{font-size:15px;padding:9px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:14.5px}
+.chips button[aria-pressed="true"]{background:var(--selbg,#DCE8F5);color:var(--selink,#003D7A);border-color:var(--s1-line)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chips button[aria-pressed="true"]{--selbg:#1E3550;--selink:#CFE3FA}}
+:root[data-theme="dark"] .chips button[aria-pressed="true"]{--selbg:#1E3550;--selink:#CFE3FA}
+.chips button:disabled{opacity:.55;cursor:not-allowed}
+.chips button.right{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));border-color:#6d9b4e;color:var(--ink)}
+.chips button.wrong{background:color-mix(in srgb,#c2453a 12%,var(--surface));border-color:#c26a63;color:var(--ink)}
+.checks{display:grid;gap:8px}
+.chk{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 10px;align-items:start;text-align:left;padding:10px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-size:15px;line-height:1.5;color:var(--ink);width:100%}
+.chk .lt{grid-row:span 2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--font-body);border:2px solid var(--axis);color:var(--muted);background:var(--page)}
+.chk .nm{font-weight:600}
+.chk .ex{font-size:14.5px;color:var(--ink-2);display:none}
+.chk.open .ex{display:block}
+.chk.pass .lt{background:#2E7D32;border-color:#2E7D32;color:#fff}
+.chk.fail .lt{background:#B3261E;border-color:#B3261E;color:#fff}
+.chk.unk .lt{background:#B5862A;border-color:#B5862A;color:#1d1600}
+.chk .vd{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-left:8px}
+.chk.pass .vd{color:#2E7D32}.chk.fail .vd{color:#C0392B}.chk.unk .vd{color:#9A6B12}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chk.pass .vd{color:#81C784}:root:not([data-theme="light"]) .chk.fail .vd{color:#FF8A80}:root:not([data-theme="light"]) .chk.unk .vd{color:#E8C170}}
+:root[data-theme="dark"] .chk.pass .vd{color:#81C784}:root[data-theme="dark"] .chk.fail .vd{color:#FF8A80}:root[data-theme="dark"] .chk.unk .vd{color:#E8C170}
+.verdict{margin:0;font-size:15px;line-height:1.55;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--ink)}
+.vz{width:100%;display:block}
+.vz text{font-family:var(--font-body)}
+.say2{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.say2 b{color:var(--ink)}
+.kk{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2)}
+.kk span{display:inline-flex;align-items:center;gap:6px}
+.kk i{display:inline-block;width:12px;height:12px;border-radius:50%}
+.kk i.ln{height:3px;width:16px;border-radius:2px}
+.src{font-size:13px;color:var(--muted)}
+.support{margin:0;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);font-size:14.5px;color:var(--ink-2)}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain .nd{padding:7px 11px;border-radius:8px;border:2px solid var(--axis);background:var(--surface);font-size:14.5px;font-weight:600;color:var(--ink)}
+.chain .nd.x{border-color:var(--s1-line)}.chain .nd.y{border-color:var(--s2)}.chain .nd.z{border-style:dashed;border-color:var(--ink-2)}
+.chain .gap{font:600 12px var(--font-mono);color:#B3261E;border:1px dashed #B3261E;border-radius:6px;padding:4px 6px;text-align:center}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chain .gap{color:#FF8A80;border-color:#FF8A80}}
+:root[data-theme="dark"] .chain .gap{color:#FF8A80;border-color:#FF8A80}
+.chain .ar{color:var(--muted);font-weight:700}
+.dots{display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap}
+.dots i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--s1-line) 22%,var(--surface));border:1px solid color-mix(in srgb,var(--s1-line) 45%,var(--line))}
+.dots i.on{background:var(--s1-line);border-color:var(--s1-line)}
+.dots i.cur{background:var(--s2);border-color:var(--s2);transform:scale(1.25)}
+.claim{margin:0;font-size:17px;line-height:1.5;color:var(--ink);padding:12px 14px;border-left:5px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 7%,var(--surface));border-radius:8px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.tlrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tlrow button{display:block;text-align:left;font:400 13.5px/1.4 var(--font-body);padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--muted);opacity:.5;transition:opacity .25s;min-height:44px}
+.tlrow button.on{opacity:1;color:var(--ink);border-color:var(--s1-line)}.tl .tlrow button[aria-current="step"]{border-width:2px;background:var(--surface);color:var(--ink);border-color:var(--s1-line)}
+.tlrow button b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+@media (max-width:520px){.tlrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.regs{display:flex;flex-wrap:wrap;gap:6px}
+.regs button{font-size:13.5px;padding:5px 10px}
+.regs button[aria-pressed="true"]{background:var(--s2);color:#fff;border-color:var(--s2)}
+ol.refs{margin:0;padding:4px 16px 14px 36px;font-size:14px;color:var(--ink-2);display:grid;gap:6px}
+details.srcd{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.srcd>summary{cursor:pointer;padding:11px 14px;font:600 15px/1.35 var(--font-body);color:var(--ink);min-height:44px;display:flex;align-items:center;gap:9px;list-style:none}
+details.srcd>summary::-webkit-details-marker{display:none}
+details.srcd>summary::before{content:"";flex:0 0 auto;border-left:6px solid var(--ink-2);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;transition:transform .15s}
+details.srcd[open]>summary::before{transform:rotate(90deg)}
+details.srcd .sp-badge{font:700 11.5px var(--font-mono);letter-spacing:.04em;padding:2px 7px;border-radius:5px;background:var(--ink);color:var(--surface)}
+@media (prefers-reduced-motion:reduce){.loopdot{display:none}}
+p.say2[id],#ceSay,#ceSay2,p.verdict{margin:0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:15px;line-height:1.6}
+p.say2[id]:empty{display:none}
+p.say2[id] b,#ceSay b,#ceSay2 b,p.verdict b,#ceSay .say2,#ceSay2 .say2{color:#181A1D}
+p.say2[id] a,#ceSay a{color:#0b3f73;font-weight:600}
+#ceSay[hidden],#ceSay2[hidden]{display:none!important}
+#ceSay2{display:grid;gap:10px}
+.exs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.exs{grid-template-columns:1fr}}
+.ex{display:grid;gap:8px;align-content:start;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--page)}
+.ex h4{margin:0;font-size:16px}
+.exh{display:flex;justify-content:space-between;align-items:center;gap:8px}.exh .rp{font-size:13px;padding:5px 10px}
+</style>
+<style id="toggle-sel">
+button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
+:root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
+</style>
+<style id="sec-lines">
+:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
+:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
+main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
+main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
+main section.part:first-child{margin-top:8px!important}
+main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
+.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
+.pager a.nx .k{color:var(--nxk)}
+.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
+@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
+@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
+</style>
+<style id="viz">
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
+details.spss,details.stata-wrap{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+details.spss > summary,details.stata-wrap > summary{cursor:pointer;padding:9px 12px;font:600 14px/1.35 var(--font-body);color:var(--ink);min-height:42px;display:flex;align-items:center;gap:8px;list-style:none}
+details.spss > summary::-webkit-details-marker,details.stata-wrap > summary::-webkit-details-marker{display:none}
+details.spss > summary::before,details.stata-wrap > summary::before{content:"";flex:0 0 auto;width:0;height:0;border-left:6px solid var(--ink-2);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;transition:transform .15s}
+details.spss[open] > summary::before,details.stata-wrap[open] > summary::before{transform:rotate(90deg)}
+.sp-lab code{font:500 13px var(--font-mono);background:var(--code-bg);padding:1px 5px;border-radius:4px}
+details.spss > summary:hover,details.stata-wrap > summary:hover{background:var(--page);border-radius:8px}
+details.spss[open] > summary,details.stata-wrap[open] > summary{border-bottom:1px solid var(--line);border-radius:8px 8px 0 0}
+.sp-badge{flex:0 0 auto;display:inline-block;font:700 11px var(--font-mono);letter-spacing:.06em;background:var(--ink);color:var(--surface);border-radius:4px;padding:2px 6px}
+.sp-body{padding:12px}
+.sp-note{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--ink-2);max-width:82ch}
+.sp-note b{color:var(--ink)}
+.sp-sheet{background:#fff;color:#000;border:1px solid #c9ccd2;border-radius:4px;padding:16px 12px 4px;overflow-x:auto;font:12.5px/1.35 Arial,"Helvetica Neue",Helvetica,sans-serif;color-scheme:light}
+.sp-t{margin:0 auto 18px;width:max-content}
+.sp-title{margin:0 0 5px;text-align:center;font-weight:700;font-size:13.5px;color:#000}
+table.sp{border-collapse:collapse;border:1px solid #8a9099}
+table.sp th,table.sp td{border:1px solid #c3c8d0;padding:3px 9px;white-space:nowrap;color:#000}
+table.sp thead th{font-weight:400;text-align:center;vertical-align:bottom;background:#fff;white-space:normal;min-width:3.6em;max-width:9.5em;line-height:1.25}
+table.sp td{text-align:right;background:#fff}
+table.sp .rh{text-align:left;background:#e9eef5;font-weight:400;vertical-align:top}
+table.sp .rh.c{text-align:center}
+table.sp sup,.sp-title sup{font-size:.72em;line-height:0}
+.sp-fn{font-size:11.5px;margin-top:4px;color:#000}
+@media (max-width:520px){.sp-sheet{font-size:11.5px;padding:12px 8px 2px}.sp-body{padding:10px}}
+@media print{details.spss{break-inside:avoid}}
+.sp-hint{display:none;margin:0 0 6px;font-size:12.5px;color:var(--muted)}
+@media (max-width:700px){.sp-hint{display:block}}
+.st-body{padding:10px}
+.st-body > pre.stata{margin:0 !important}
+h3 + details.stata-wrap{margin-top:4px}
+.sp-sheet td.tap{cursor:pointer;text-decoration:underline dotted #b07800;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.sp-sheet td.tap:hover{background:#f2f5fa}
+.sp-sheet td.tap:focus-visible{outline:2px solid #2a78d6;outline-offset:-2px}
+.sp-sheet td.tap.sel{background:#dbe9f9;color:#0b3f73}
+.sp-exp{margin:10px 0 0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:14.5px;line-height:1.6}
+.sp-exp .sp-hint2{color:#5c5440}
+.sp-exp a{color:#0b3f73;font-weight:600}
+.sp-exp b{color:#181A1D}
+
+main.wrap{padding-bottom:40px}
+.draft{margin:10px 0 0;padding:8px 12px;border-left:4px solid #b4572b;background:color-mix(in srgb,#b4572b 10%,transparent);font-size:14.5px;color:var(--ink)}
+.note{font-size:14px;color:var(--ink-2);margin:12px 0 0}
+.paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:16px 0 4px}
+.pathcard{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:1px solid var(--line);border-left:5px solid var(--s1);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none}
+.pathcard.b{border-left-color:var(--s2)}
+.pathcard b{font-size:18px}
+.pathcard span{font-size:14.5px;color:var(--ink-2)}
+.pathcard .pk{font:600 11px/1.2 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dcard .p{margin:0 0 10px}
+.menu{font-family:var(--font-mono);font-size:.88em;background:color-mix(in srgb,var(--ink) 7%,transparent);padding:1px 5px;border-radius:4px;white-space:normal}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0}
+.ctl .lab{font:600 11px/1.2 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:110px}
+.ctl select{max-width:100%;font:inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.ctl input[type=range]{flex:1 1 160px;max-width:320px}
+.ov{margin:12px 0 8px;border:1px solid #b9b9b9;border-radius:4px;background:#fff;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.ovh{font:12px/1.2 Arial,Helvetica,sans-serif;color:#222;background:linear-gradient(#f7f7f7,#e6e6e6);border-bottom:1px solid #c8c8c8;padding:5px 9px}
+.ovb{padding:8px 6px 6px;overflow-x:auto}
+.ovb svg{display:block;margin:0 auto;max-width:none}
+.ov.paper .ovb{background:repeating-linear-gradient(0deg,#fff,#fff 23px,#fafafa 23px,#fafafa 24px)}
+.say{margin:8px 0 0}
+.vdx{margin:6px 0 0;font-size:15px}
+.vdx .vb{display:inline-block;font:700 11px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;margin-right:8px;vertical-align:2px}
+.vb.ok{background:#d8ecd9;color:#1d5b26}.vb.care{background:#f6e7c6;color:#6b4a07}.vb.bad{background:#f5d4d0;color:#7d211a}
+.menuline{font-size:14.5px;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.chips button{font:inherit;font-size:14px;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--s1);border-color:var(--s1);color:#fff}
+.chips button[aria-pressed="true"]::before{content:"✓ "}
+.inkrow{display:flex;align-items:center;gap:10px;margin:12px 0 4px}
+.inkrow .lab{font:600 11px/1.2 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.inkbar{flex:1 1 auto;height:10px;border-radius:5px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden}
+.inkbar.t i{background:var(--s2)}
+.inkbar i{display:block;height:100%;width:0;background:var(--s1);transition:width .5s ease}
+.inkrow b{font:700 16px/1 var(--font-mono);min-width:3.2em;text-align:right}
+.howto{margin:8px 0 0;padding:10px 12px;border-left:4px solid var(--s1);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;font-size:14.5px}
+.howto:empty{display:none}
+.howto b{display:block;margin-bottom:2px}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.btnrow button{font:inherit;font-size:14px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.specs{margin:10px 0 0;overflow-x:auto}
+.specs table{border-collapse:collapse;width:100%;font-size:14px}
+.specs td,.specs th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.specs th{font:600 11px/1.2 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.drw{margin-top:10px}
+.drw details{margin-top:8px}
+.drw pre{white-space:pre-wrap;overflow-wrap:anywhere}
+ol.try li{margin:0 0 8px}
+.srcs{margin:24px 0 0}
+.srcs li{margin:0 0 6px;font-size:14px}
+</style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
+<style id="presentcss">/* presentation mode */
+.pv-hide{display:none!important}
+.pv-bar{display:none;position:fixed;right:14px;bottom:12px;z-index:80;align-items:center;gap:8px;padding:6px 8px;border-radius:999px;background:var(--surface,#fff);border:1px solid var(--line,#ccc);box-shadow:0 4px 18px rgba(0,0,0,.18);font:600 14px var(--font-body,system-ui)}
+.pv-bar button{min-width:46px;min-height:42px;border-radius:999px;font:700 17px var(--font-body,system-ui);padding:4px 12px}
+.pv-bar .pv-exit{font-size:14px}
+.pv-bar button:disabled{opacity:.35}
+.pv-n{min-width:64px;text-align:center;color:var(--ink-2,#444);font-variant-numeric:tabular-nums}
+html.presenting .pv-bar{display:flex}
+html.presenting .topnav,html.presenting .rule,html.presenting header.mast,html.presenting .modnav{display:none!important}
+html.presenting body{padding-bottom:70px}
+html.presenting main{max-width:min(980px,96vw)!important;margin:0 auto!important;padding-top:14px!important}
+html.presenting main .part{margin-top:0!important}
+.pv-open{margin-left:auto;font:600 14px var(--font-body,system-ui);padding:6px 12px;min-height:36px;border-radius:8px;border:1px solid var(--s1-line,#004C97);background:var(--surface,#fff);color:var(--ink,#111);cursor:pointer}
+.pv-open::before{content:"▶ ";font-size:11px;color:var(--s1-line,#004C97)}
+.pv-open+a{margin-left:0!important}
+@media (max-width:760px){.pv-open{display:none}}
+@media print{.pv-bar,.pv-open{display:none!important}}
+</style>
+<style id="revamp">@font-face{font-family:RvSpine;font-weight:600;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvSerif;font-weight:400;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvSerif;font-weight:400;font-style:italic;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvMono;font-weight:500;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvSans;font-weight:600;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+:root{--mc:#704759;--mci:#704759;--page:#F5F2E9;--surface:#FFFEFA;--rvboard1:#d9c9ab;--rvboard2:#bba882;--rvend1:#9c917f;--rvend2:#7a705f;--rvshadow:rgba(80,60,30,.25);--gold:linear-gradient(100deg,#7d5f1c 0%,#b98d2f 14%,#e9cf86 30%,#fbefc6 38%,#d4ae55 50%,#a47a24 66%,#d9bb6a 84%,#8f6c22 100%);--goldink:#2a1c05}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#15171A;--surface:#1C1F22;--mci:#ac7b91;--rvboard1:#3a332c;--rvboard2:#241f1a;--rvend1:#55504a;--rvend2:#2e2b28;--rvshadow:rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--page:#15171A;--surface:#1C1F22;--mci:#ac7b91;--rvboard1:#3a332c;--rvboard2:#241f1a;--rvend1:#55504a;--rvend2:#2e2b28;--rvshadow:rgba(0,0,0,.45)}
+
+.shelf2{position:relative;display:flex;align-items:flex-end;gap:2px;padding:0 6px;--sh:370px;--bh:calc(var(--sh) - 36px);height:var(--sh);z-index:1}
+.board{height:15px;margin:0 -8px 8px;border-radius:2px;background:linear-gradient(var(--rvboard1),var(--rvboard2));box-shadow:0 10px 18px var(--rvshadow),inset 0 2px 0 rgba(255,255,255,.3)}
+.bk{position:relative;flex:0 1 var(--w);min-width:44px;height:var(--h);background:var(--c);color:var(--k);border-radius:4px 4px 1px 1px;text-decoration:none!important;
+ display:flex;flex-direction:column;align-items:center;overflow:hidden;box-shadow:inset 0 3px 0 rgba(255,255,255,.18),0 0 0 1px rgba(0,0,0,.18);transform:rotate(var(--rot,0deg));transform-origin:bottom left;transition:transform .15s ease}
+.bk::before{content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(90deg,rgba(0,0,0,.34) 0,rgba(0,0,0,.08) 6%,rgba(255,255,255,.22) 18%,rgba(255,255,255,.06) 34%,rgba(0,0,0,0) 55%,rgba(0,0,0,.10) 80%,rgba(0,0,0,.38) 100%)}
+.bk:hover,.bk:focus-visible{transform:rotate(var(--rot,0deg)) translateY(-8px)}
+.bk.lean-r{transform-origin:bottom right}
+.bk.din{filter:brightness(.82) saturate(.92);box-shadow:inset 7px 0 8px -3px rgba(0,0,0,.5),inset -7px 0 8px -3px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.22)}
+.bk.dout{z-index:2;margin-bottom:-5px;filter:brightness(1.05);box-shadow:inset 0 3px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2),6px 2px 9px -2px rgba(0,0,0,.42),-6px 2px 9px -2px rgba(0,0,0,.42)}
+.bk:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.bk.gild{background:var(--gold)}
+.bk .bands{position:absolute;left:0;right:0;height:12px;border-top:2px solid var(--band);border-bottom:2px solid var(--band);opacity:.85}
+.bk .bands.t{top:16px}.bk .bands.b{bottom:30px}
+.bk .plate{position:relative;margin-top:38px;min-width:58%;max-width:88%;padding:2px 4px;text-align:center;font:500 var(--pfs,11px)/1.3 RvMono,var(--font-mono);letter-spacing:.03em;border:1.5px solid var(--k);border-radius:2px;color:var(--k);background:rgba(255,255,255,.08);white-space:nowrap}
+.bk .ti{position:relative;writing-mode:vertical-rl;transform:rotate(180deg);flex:1;margin:12px 0 60px;font:600 var(--fs,15px)/1.12 RvSpine,Georgia,serif;letter-spacing:.012em;color:var(--k);overflow:hidden;white-space:nowrap;max-height:calc(100% - 116px)}
+.bk .ti small{font:500 11.5px/1.5 RvMono,var(--font-mono);letter-spacing:.04em;opacity:.85}
+.bk .mk{position:absolute;bottom:9px;font:500 9px RvMono,var(--font-mono);letter-spacing:.08em;color:var(--k);opacity:.7}
+.bk.cloth::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(0deg,rgba(0,0,0,.6) 0 1px,transparent 1px 3px)}
+.bookend{flex:0 0 13px;height:56%;align-self:flex-end;background:linear-gradient(90deg,var(--rvend1),var(--rvend2));border-radius:2px 2px 0 0;margin:0 9px;box-shadow:2px 0 6px rgba(0,0,0,.3)}
+.shelf2 .bookend{margin:0 7px}
+.face{flex:0 0 196px;height:100%;border-radius:3px 7px 1px 1px;padding:18px 16px 14px;align-items:flex-start;box-shadow:0 18px 40px var(--rvshadow),inset 6px 0 0 rgba(0,0,0,.18)}
+.face::before{background:linear-gradient(90deg,rgba(0,0,0,.25) 0,rgba(0,0,0,.05) 4%,rgba(255,255,255,.10) 10%,rgba(0,0,0,0) 30%,rgba(0,0,0,.08) 100%)}
+.face .fn{position:relative;font:500 11.5px RvMono,var(--font-mono);letter-spacing:.1em;color:var(--k)}
+.face .ft{position:relative;font:600 26px/1.04 RvSans,Inter,system-ui,sans-serif;letter-spacing:-.02em;margin-top:10px;color:var(--k);text-wrap:balance}
+.face .fs2{position:relative;font:500 10.5px RvMono,var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-top:8px;opacity:.82;color:var(--k)}
+.face .cov{position:relative;margin-top:auto;width:100%}
+.gbox{display:flex;flex-direction:column;height:100%;flex:0 1 auto}
+.gbooks{flex:1;display:flex;align-items:flex-end;gap:2px;min-height:0}
+.gbooks .bk:not(.face){flex:0 1 var(--w);min-width:56px}
+.gbooks .face{flex:0 1 196px;min-width:168px}
+.gl{box-sizing:border-box;height:24px;margin:0 0 12px;padding-top:8px;border-top:2px solid var(--mc);font:500 11px RvMono,var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+body{background:var(--page)}
+.topnav.rv{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:8px;padding:10px max(20px,calc((100% - 1040px)/2));background:color-mix(in srgb,var(--page) 90%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);font:500 12px/1 RvMono,var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+.topnav.rv .brand{border:0!important;background:none!important;box-shadow:none!important;display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0;padding:6px 0;color:var(--ink);text-decoration:none;font-weight:500}
+.topnav.rv .brand span:not(.dot){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topnav.rv .brand .short{display:none}
+.topnav.rv .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--mc)}
+.topnav.rv .pill,.topnav.rv .pv-open{display:inline-flex;align-items:center;min-height:36px;margin:0;border:1px solid var(--ink);border-radius:999px;padding:0 14px;color:var(--ink);background:none;font:500 12px/1 RvMono,var(--font-mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
+.topnav.rv .pill.f{background:var(--ink);color:var(--page)}
+.topnav.rv .pv-open::before{content:"▶";font-size:10px;margin-right:8px;color:var(--ink)}
+.topnav.rv .pill:hover,.topnav.rv .pv-open:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)}.topnav.rv .pill.f:hover{background:var(--ink-2)}
+.rule{display:none}
+header.mast.rv{background:none;border:0}
+header.mast.rv .wrap{display:block;padding-top:2px;padding-bottom:22px}
+.rv .mhd{display:flex;justify-content:space-between;gap:12px;font:500 11.5px RvMono,var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:22px 0 9px}
+.rv .mhd a{color:inherit;text-decoration:none}.rv .mhd a:hover{color:var(--ink)}
+.sitestrip{display:flex;gap:3px}
+.sitestrip .tab{flex:1 1 0;min-width:0;height:30px;display:flex;align-items:center;justify-content:center;border-radius:3px;background:var(--c);color:var(--k)!important;font:500 10.5px/1 RvMono,var(--font-mono);text-decoration:none;overflow:hidden;white-space:nowrap;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.sitestrip .tab span{overflow:hidden;text-overflow:ellipsis}
+.sitestrip .tab.gild{background:var(--gold);color:var(--goldink)!important}
+.sitestrip .tab[aria-current]{flex:0 1 auto;justify-content:flex-start;padding:0 12px;font-size:11.5px;letter-spacing:.03em;box-shadow:0 0 0 2px var(--ink),inset 0 -3px 0 rgba(0,0,0,.18)}
+.sitestrip .tab:hover{filter:brightness(1.07)}
+.mtitle{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;padding:44px 0 30px}
+.mtitle .kicker{font:500 12px/1.4 RvMono,var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mci);margin:0 0 16px}
+.mtitle h1{font:600 clamp(40px,5.6vw,64px)/1.02 RvSans,Inter,system-ui,sans-serif;letter-spacing:-.035em;margin:0;text-wrap:balance;color:var(--ink)}
+.mtitle h1 em{font:italic 400 1.07em/1 RvSerif,Georgia,serif;letter-spacing:-.02em}
+.mtitle .dek{font:400 19.5px/1.5 RvSerif,Georgia,serif;color:var(--ink-2);margin:0;max-width:none}
+.rv .mhd.sh{margin-top:4px}
+.mpic{display:flex;flex-direction:column;align-items:center;margin:6px 0 30px}
+.mset{display:flex;align-items:flex-end;justify-content:center;gap:14px;width:100%;max-width:600px}
+.mpic .mtbl{width:min(100%,600px);height:24px;position:relative;border-radius:3px 3px 14px 14px/3px 3px 12px 12px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px,rgba(255,255,255,.04) 9px 11px,transparent 11px 23px),linear-gradient(180deg,#d9ab76 0,#c08a55 3px,#8d5a30 4px,#9c6638 6px,#7e4c26 55%,#5a3418 82%,#3f2410 100%);box-shadow:0 10px 14px -6px var(--rvshadow),inset 0 1px 0 rgba(255,236,200,.55)}
+.mpic .mtbl::after{content:"";position:absolute;left:10px;right:10px;bottom:3px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(1.5px)}
+.cup{flex:0 0 112px;width:112px;height:auto;margin-bottom:0;filter:drop-shadow(0 12px 10px var(--rvshadow));overflow:visible}
+.cup .steam path{stroke:var(--ink-2);stroke-width:2.2;opacity:.4;animation:cupsteam 5.5s ease-in-out infinite}
+.cup .steam path:nth-child(2){animation-delay:-2.4s}
+@keyframes cupsteam{0%,100%{opacity:.12;transform:translateY(3px)}50%{opacity:.5;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.cup .steam path{animation:none;opacity:.35}}
+@media (max-width:520px){.mset{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
+.hstack{min-width:0;width:min(100%,420px);display:flex;flex-direction:column;filter:drop-shadow(0 14px 12px var(--rvshadow))}
+.hb{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--c);color:var(--k);border-radius:3px;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2);overflow:hidden;margin-top:-1px}
+.hb.gild{background:var(--gold)}
+.hb::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.26) 0,rgba(255,255,255,.06) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.34) 100%)}
+.hb::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,rgba(0,0,0,.6) 0 1px,transparent 1px 3px)}
+.hb .bd{position:absolute;top:0;bottom:0;width:11px;border-left:2px solid var(--band);border-right:2px solid var(--band);opacity:.85}
+.hb .bd.l{left:9%}.hb .bd.r{right:9%}
+.hb .pl{position:relative;padding:1px 6px;border:1.5px solid var(--k);border-radius:2px;font:500 10px/1.3 RvMono,var(--font-mono);letter-spacing:.04em;background:rgba(255,255,255,.08)}
+.hb .tt{position:relative;font:600 15px/1.1 RvSpine,Georgia,serif;letter-spacing:.012em;white-space:nowrap}
+.hb .mk{position:absolute;right:calc(9% + 20px);font:500 8.5px RvMono,var(--font-mono);letter-spacing:.08em;opacity:.7}
+.hp.sheet{background:linear-gradient(180deg,#f4ecd8,#e2d6b6);border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.18);margin-top:-1px;position:relative}
+.hp.sheet::after{content:"";position:absolute;left:6px;right:6px;top:3px;height:1px;background:rgba(0,0,0,.18)}
+.hp.folder{background:linear-gradient(180deg,#d9b873,#b8934a);border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.25);margin-top:-1px;position:relative}
+.hp.folder i{position:absolute;right:14%;top:-6px;width:70px;height:8px;border-radius:3px 3px 0 0;background:#d9b873;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.mextra{margin:-10px 0 26px;font:400 17px/1.5 RvSerif,Georgia,serif;color:var(--ink-2)}.mextra p{margin:0!important;font-size:inherit!important}
+main [id]{scroll-margin-top:72px}
+.part{border-color:color-mix(in srgb,var(--mc) 26%,var(--line))!important;border-left:6px solid var(--mc)!important;background:color-mix(in srgb,var(--mc) 8%,var(--surface))!important;border-radius:3px 12px 12px 3px!important}
+.part .kick{font:500 12px/1.4 RvMono,var(--font-mono)!important;letter-spacing:.1em!important;text-transform:uppercase;color:var(--mci)!important}
+.part h2{font:600 clamp(25px,3.4vw,34px)/1.1 RvSans,Inter,system-ui,sans-serif!important;letter-spacing:-.025em!important}
+.pager .k{font:500 11px/1.4 RvMono,var(--font-mono);letter-spacing:.08em}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .part{background:color-mix(in srgb,var(--mc) 12%,var(--surface))!important}}
+:root[data-theme="dark"] .part{background:color-mix(in srgb,var(--mc) 12%,var(--surface))!important}
+@media (max-width:760px){
+ .topnav.rv .pv-open{display:none!important}
+ .topnav.rv .brand .long{display:none}.topnav.rv .brand .short{display:inline}
+ .mtitle{grid-template-columns:1fr;gap:16px;padding:28px 0 22px}
+ .mtitle .dek{font-size:18px}
+}
+@media (max-width:560px){
+ .topnav.rv{padding:8px 16px}.topnav.rv .pill.ghost{display:none}
+ .sitestrip{gap:2px}.sitestrip .tab{height:22px;font-size:0}.sitestrip .tab[aria-current]{flex:0 0 auto;max-width:62%;font-size:10.5px}
+ .shelf2{--sh:320px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+ .board{margin:0 -16px 8px}.shelf2::-webkit-scrollbar{display:none}
+ .gbooks .bk:not(.face){flex:0 0 58px}.bk .ti{font-size:calc(var(--fs) * .8)!important;margin-bottom:54px;max-height:calc(100% - 106px)}.bk .plate{font-size:9.5px;margin-top:32px}
+ .face{flex:0 0 150px!important;padding:12px 11px}.face .ft{font-size:19px}
+ .gbox{flex:none;min-width:0!important}.rv .mhd.sh>span:first-child{display:none}
+ .mtitle h1{font-size:40px}
+}
+
+.rv .mhd.sh .rt{display:inline-flex;align-items:center;gap:10px}
+.swipehint{display:none;letter-spacing:.09em}
+.mhd.sh.swipe .swipehint{display:inline-block}
+.mhd.sh.swipe.swiped .swipehint{animation:none}
+/* one amber pulse for everything that asks to be tapped: the swipe hint, tappable terms and the Start here pill */
+.swipehint,.amberpill,button.tapterm{padding:4px 11px;border-radius:999px;color:#5c3d00;background:#FBE3A6;border:1px solid #E8B64A;animation:amberpulse 2s ease-in-out infinite}
+.amberpill{display:inline-block;font:600 14px/1.2 RvSans,Inter,system-ui,sans-serif;letter-spacing:.01em}
+@keyframes amberpulse{0%{box-shadow:0 0 0 0 rgba(232,182,74,.7)}70%{box-shadow:0 0 0 10px rgba(232,182,74,0)}100%{box-shadow:0 0 0 0 rgba(232,182,74,0)}}
+@media (prefers-reduced-motion:reduce){.swipehint,.amberpill,button.tapterm{animation:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.swipehint,.amberpill,button.tapterm){color:#FBE3A6;background:#4a3508;border-color:#C9962E}}
+:root[data-theme="dark"] :is(.swipehint,.amberpill,button.tapterm){color:#FBE3A6;background:#4a3508;border-color:#C9962E}
+.shelf2.scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.shelf2.scroll::-webkit-scrollbar{display:none}
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
+
+/* drawers added in the November review: one look on every page */
+details.rvd{margin:14px 0 0;border:1px solid var(--line);border-left:4px solid var(--mc);border-radius:10px;background:var(--surface)}
+details.rvd>summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:16px;line-height:1.35;min-height:44px;display:flex;align-items:center;gap:10px;list-style:none;color:var(--ink)}
+details.rvd>summary::-webkit-details-marker{display:none}
+details.rvd>summary::before{content:"";flex:0 0 auto;border-left:7px solid var(--mci);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+details.rvd[open]>summary::before{transform:rotate(90deg)}
+details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:78ch}
+details.rvd .in p{margin:0}
+details.rvd .in b{color:var(--ink)}
+details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
+.jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
+.jumpto a{color:var(--mci);font-weight:600}
+/* a term that opens a note: pulses from white to amber so it reads as tappable */
+button.tapterm{font:inherit;font-weight:700;padding:0 8px;margin:0 1px;cursor:pointer}
+button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
+.tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
+.tapnote a{color:var(--mci);font-weight:600}
+</style>
+</head>
+<body>
+<nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="index.html">Done ✓</a></nav>
+<header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Draft</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion"><span>4</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²"><span>5</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means"><span>8</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables"><span>11</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P2</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P3</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P4</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P5</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P6</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data" aria-current="page"><span>Viz · Visualizing data</span></a></nav><div class="mtitle"><div><p class="kicker">● Draft · Visualizing data</p><h1>Visualizing <em>data.</em></h1></div><p class="dek">A chart lets a reader see a pattern before reading a single number, so it is often the first thing people look at in our work and sometimes the only thing they remember. This module walks through charts built in SPSS. The first path covers which kind of chart fits which kind of variable and technique, and the second covers how to edit a chart down to its data, or up for a poster or a journal.</p></div><div class="mextra"><p class="draft"><b>[DRAFT ONLY]</b> <span>This module is still being written, so its parts and examples may change or move.</span></p></div><div class="mhd sh"><span>In this module · tap a book to open it</span><span class="rt"><span class="cnt">9 sections</span><span class="swipehint" aria-hidden="true">Swipe →</span></span></div><nav class="shelf2" aria-label="Sections on this page"><div class="gbox" style="min-width:342px"><p class="gl">Path A · Choosing the form</p><div class="gbooks"><a class="bk cloth" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:93%;--w:76px;--fs:15px;--pfs:9.5px" href="#p0" aria-label="Part Start: Three jobs for a chart"><span class="bands t"></span><span class="plate">Start</span><span class="ti">Three jobs for a chart</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#88566c;--k:#f8f5ec;--band:#c7a7b5;--h:86%;--w:80px;--fs:14px" href="#pathA" aria-label="Part 1: Counts across cases"><span class="bands t"></span><span class="plate">1</span><span class="ti">Counts across cases<br><small>bar per case</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk face" style="--c:#faeaab;--k:#1b1813;--ink:#1b1813;--h:100%;flex-basis:196px" href="#pa2" aria-label="Part 2: One variable"><span class="fn">PART 2</span><span class="ft">One variable</span><span class="fs2">level of measurement</span><svg class="cov" viewBox="0 0 170 124" aria-hidden="true"><g fill="var(--ink)" opacity=".88"><line x1="8.0" y1="105.0" x2="162.0" y2="25.0" stroke="var(--ink)" stroke-width="2" opacity="1"/><circle cx="14.0" cy="99.1" r="2.8"/><circle cx="23.4" cy="100.4" r="1.1" opacity=".55"/><circle cx="23.4" cy="102.7" r="2.8"/><circle cx="32.8" cy="89.7" r="2.8"/><circle cx="42.2" cy="83.8" r="2.8"/><circle cx="51.6" cy="79.0" r="1.1" opacity=".55"/><circle cx="51.6" cy="75.6" r="1.1" opacity=".55"/><circle cx="51.6" cy="72.1" r="2.8"/><circle cx="61.0" cy="75.1" r="2.8"/><circle cx="70.4" cy="76.0" r="1.1" opacity=".55"/><circle cx="70.4" cy="79.4" r="1.1" opacity=".55"/><circle cx="70.4" cy="82.8" r="1.1" opacity=".55"/><circle cx="70.4" cy="84.8" r="2.8"/><circle cx="79.8" cy="71.1" r="1.1" opacity=".55"/><circle cx="79.8" cy="72.4" r="2.8"/><circle cx="89.2" cy="66.2" r="1.1" opacity=".55"/><circle cx="89.2" cy="69.6" r="1.1" opacity=".55"/><circle cx="89.2" cy="73.0" r="1.1" opacity=".55"/><circle cx="89.2" cy="74.2" r="2.8"/><circle cx="98.6" cy="60.7" r="2.8"/><circle cx="108.0" cy="56.4" r="1.1" opacity=".55"/><circle cx="108.0" cy="57.4" r="2.8"/><circle cx="117.4" cy="50.2" r="2.8"/><circle cx="126.8" cy="39.9" r="1.1" opacity=".55"/><circle cx="126.8" cy="36.5" r="1.1" opacity=".55"/><circle cx="126.8" cy="33.1" r="1.1" opacity=".55"/><circle cx="126.8" cy="29.7" r="1.1" opacity=".55"/><circle cx="126.8" cy="26.3" r="1.1" opacity=".55"/><circle cx="126.8" cy="24.9" r="2.8"/><circle cx="136.2" cy="41.8" r="1.1" opacity=".55"/><circle cx="136.2" cy="45.2" r="1.1" opacity=".55"/><circle cx="136.2" cy="47.8" r="2.8"/><circle cx="145.6" cy="36.9" r="1.1" opacity=".55"/><circle cx="145.6" cy="39.1" r="2.8"/><circle cx="155.0" cy="32.0" r="1.1" opacity=".55"/><circle cx="155.0" cy="34.1" r="2.8"/></g></svg></a><a class="bk cloth" style="--c:#a9778d;--k:#1b1813;--band:#6d4557;--h:93%;--w:80px;--fs:17px" href="#pa3" aria-label="Part 3: Relationships"><span class="bands t"></span><span class="plate">3</span><span class="ti">Relationships<br><small>by technique</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:193px"><p class="gl">Path B · Editing the ink</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:100%;--w:80px;--fs:17px" href="#pathB" aria-label="Part 4: Strip the ink"><span class="bands t"></span><span class="plate">4</span><span class="ti">Strip the ink<br><small>data-ink ratio</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth dout" style="--c:#7a4d61;--k:#f8f5ec;--band:#c3a0af;--h:93%;--w:80px;--fs:17px" href="#pb2" aria-label="Part 5: Honest scales"><span class="bands t"></span><span class="plate">5</span><span class="ti">Honest scales<br><small>lie factor</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth din" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:96%;--w:80px;--fs:14px" href="#pb3" aria-label="Part 6: Paper, poster, journal"><span class="bands t"></span><span class="plate">6</span><span class="ti">Paper, poster, journal<br><small>edit down or up</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:138px"><p class="gl">Wrap-up</p><div class="gbooks"><a class="bk cloth" style="--c:#945e76;--k:#f8f5ec;--band:#cbadba;--h:96%;--w:84px;--fs:17px" href="#try" aria-label="Try this"><span class="bands t"></span><span class="plate">Try</span><span class="ti">Try this</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth lean-l" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:90%;--w:76px;--fs:17px;--rot:-4.5deg;margin-left:calc(var(--bh) * 0.0714 - 2px)" href="#wwl" aria-label="Part ✓: What we learned"><span class="bands t"></span><span class="plate">✓</span><span class="ti">What we learned<br><small>the main ideas</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div></nav><div class="board" aria-hidden="true"></div></div></header>
+
+<main class="wrap">
+
+  <section class="part" id="p0"><p class="kick">Before we start</p><h2>Three jobs for a chart</h2>
+    <p class="lede">Most charts in research do one of three jobs. Some show counts across cases, such as how many patients each county reported. Some show the attributes of one variable, such as where its values bunch up and how far they spread. The rest show a relationship between two variables, which is the job behind every technique from crosstabs to regression. Which chart fits depends on the job and on the level of measurement of each variable, so that is where Path A starts. Path B then takes the charts SPSS gives us and edits them, because the defaults spend more ink than the data need.</p>
+    <div class="paths">
+      <a class="pathcard" href="#pathA"><span class="pk">Path A</span><b>Choosing the form</b><span>Which chart fits which variable and which technique, built step by step in SPSS.</span></a>
+      <a class="pathcard b" href="#pathB"><span class="pk">Path B</span><b>Editing the ink</b><span>Data-ink, honest scales, and the same chart sized for a paper, a poster or a journal.</span></a>
+    </div>
+    <p class="note">Every chart on this page is drawn to look like SPSS output in the classic (legacy) chart style, with the gray plot area, the black frame and the khaki bars. SPSS 25 and later use a newer default look, but the dialogs, the Chart Editor and the editing steps are the same. The Stata drawers give the matching commands.</p>
+  </section>
+
+  <!-- ================= PATH A ================= -->
+  <section class="part" id="pathA"><p class="kick">Path A · Part 1</p><h2>Counts across cases</h2>
+    <p class="lede">Our data here are the 13 counties of Massachusetts in 1854, from a state report that counted the people it called “lunatics” in each county (pardon the term, it was the language of the era and the dataset). Each county is one case, and the variable Lunatics Per County holds its count, so we want one bar per case.</p></section>
+
+  <section class="dcard" id="a1">
+    <h3>One bar per county</h3>
+    <p class="p">In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Bar</span>, choose <span class="menu">Simple</span> and <span class="menu">Values of individual cases</span>, since our cases are counties and we want the count within each one. Put Lunatics Per County in <span class="menu">Bars Represent</span> and choose <span class="menu">Variable: County</span> for the category labels.</p>
+    <div class="ctl"><span class="lab">Order the bars</span><div class="seg" id="a1o" role="radiogroup" aria-label="Order the bars"></div></div>
+    <div class="ov"><div class="ovh">Graph</div><div class="ovb" id="a1c"></div></div>
+    <p class="say" id="a1s" aria-live="polite"></p>
+    <div class="drw" id="a1d"></div>
+  </section>
+
+  <section class="part" id="pa2"><p class="kick">Path A · Part 2</p><h2>The attributes of one variable</h2>
+    <p class="lede">When the job is to describe one variable, the level of measurement decides the chart, much as it decided the measure of central tendency back in Module 2. Pick a variable and then a chart, and the page says whether that pairing works.</p></section>
+
+  <section class="dcard" id="a2">
+    <h3>Match the chart to the level of measurement</h3>
+    <div class="ctl"><span class="lab">Variable</span><select id="a2v" aria-label="Variable"></select></div>
+    <div class="ctl"><span class="lab">Chart</span><div class="seg" id="a2k" role="radiogroup" aria-label="Chart"></div></div>
+    <p class="vdx" id="a2vd" aria-live="polite"></p>
+    <div class="ov"><div class="ovh">Graph</div><div class="ovb" id="a2c"></div></div>
+    <p class="say" id="a2s"></p>
+    <p class="p menuline" id="a2m"></p>
+    <div class="drw" id="a2d"></div>
+  </section>
+
+  <section class="part" id="pa3"><p class="kick">Path A · Part 3</p><h2>Relationships, technique by technique</h2>
+    <p class="lede">Each technique in this course has a chart that shows what its numbers summarize. A crosstab compares percentages, a difference in means compares two means and their uncertainty, and a regression draws a line through a cloud of cases. Pick a technique to see its chart and how to build it.</p></section>
+
+  <section class="dcard" id="a3">
+    <h3>A chart for each technique</h3>
+    <div class="ctl"><span class="lab">Technique</span><div class="seg" id="a3t" role="radiogroup" aria-label="Technique"></div></div>
+    <div class="ctl" id="a3xw"><span class="lab" id="a3xl">Option</span><div class="seg" id="a3x" role="radiogroup" aria-labelledby="a3xl"></div></div>
+    <div class="ov"><div class="ovh">Graph</div><div class="ovb" id="a3c"></div></div>
+    <p class="say" id="a3s" aria-live="polite"></p>
+    <p class="p menuline" id="a3m"></p>
+    <div class="drw" id="a3d"></div>
+  </section>
+
+  <!-- ================= PATH B ================= -->
+  <section class="part" id="pathB"><p class="kick">Path B · Part 4</p><h2>Strip the ink</h2>
+    <p class="lede">Edward Tufte (2001) asks how much of the ink on a chart shows data, which he calls the data-ink ratio, and his advice is to erase ink that shows nothing, within reason. SPSS defaults use more ink than the data need, so a reader has to look past a gray background, a frame and heavy fills to find the counts. Start from the sorted bar chart in Part 1, and tap each edit to make it. The two meters track how much ink is left that shows no data and how much ink the whole chart uses, and each one compares the chart with the SPSS default.</p></section>
+
+  <section class="dcard" id="b1">
+    <h3>From the SPSS default to a clean chart</h3>
+    <p class="p">Double-click the chart in the Output Viewer to open the Chart Editor. Most edits work the same way, since you double-click the element you want to change, then change it on the tab that opens.</p>
+    <div class="chips" id="b1e" role="group" aria-label="Edits"></div>
+    <div class="inkrow"><span class="lab">Ink showing no data</span><div class="inkbar"><i id="b1bar"></i></div><b id="b1r">…</b></div>
+    <div class="inkrow"><span class="lab">All ink</span><div class="inkbar t"><i id="b1bar2"></i></div><b id="b1r2">…</b></div>
+    <div class="ov"><div class="ovh">Graph</div><div class="ovb" id="b1c"></div></div>
+    <div class="howto" id="b1h" aria-live="polite"></div>
+    <div class="btnrow"><button id="b1all">Make every edit</button><button id="b1x">Back to the default</button></div>
+    <div class="drw" id="b1d"></div>
+  </section>
+
+  <section class="part" id="pb2"><p class="kick">Path B · Part 5</p><h2>Honest scales</h2>
+    <p class="lede">Erasing ink should never change what the data say. Tufte's lie factor measures how far a chart distorts them, as the size of an effect shown in the graphic divided by the size of the effect in the data. A lie factor of 1 is honest, and anything far from 1 overstates or understates the difference. Alberto Cairo (2019) shows how often charts in the news break this rule without anyone meaning to.</p></section>
+
+  <section class="dcard" id="b2">
+    <h3>Three ways a scale can mislead</h3>
+    <div class="ctl"><span class="lab">Problem</span><div class="seg" id="b2t" role="radiogroup" aria-label="Problem"></div></div>
+    <div class="ctl" id="b2sw"><span class="lab" id="b2sl">Axis starts at</span><input type="range" id="b2r" aria-labelledby="b2sl"><b id="b2rv"></b></div>
+    <p class="vdx" id="b2lf" aria-live="polite"></p>
+    <div class="ov"><div class="ovh">Graph</div><div class="ovb" id="b2c"></div></div>
+    <p class="say" id="b2s"></p>
+    <p class="p menuline" id="b2m"></p>
+  </section>
+
+  <section class="part" id="pb3"><p class="kick">Path B · Part 6</p><h2>Paper, poster or journal</h2>
+    <p class="lede">The same chart needs different settings depending on where it will be read. A lab write-up is read at arm's length, a poster from several feet away, and a journal figure is shrunk to a column and often printed in gray. Editing down for a journal and editing up for a poster both happen in the same Chart Editor, so pick where the chart is headed and see what changes.</p></section>
+
+  <section class="dcard" id="b3">
+    <h3>One chart, three destinations</h3>
+    <div class="ctl"><span class="lab">Headed for</span><div class="seg" id="b3v" role="radiogroup" aria-label="Headed for"></div></div>
+    <div class="ov paper"><div class="ovh" id="b3sz">Graph</div><div class="ovb" id="b3c"></div></div>
+    <p class="note" id="b3n"></p>
+    <div class="specs" id="b3t"></div>
+    <div class="howto" id="b3h"></div>
+    <div class="drw" id="b3d"></div>
+  </section>
+
+  <!-- TRY THIS -->
+  <section class="part" id="try"><p class="kick">Practice</p><h2>Try this</h2></section>
+  <section class="dcard">
+    <ol class="try">
+      <li>In Part 1, switch between the data file order and the sorted order. Which three counties had the most patients, and how long did it take you to find them each way?</li>
+      <li>In Part 2, choose Party ID and then the pie chart. Which two neighboring categories are hardest to compare, and what does the bar chart do that the pie cannot?</li>
+      <li>In Part 3, choose Regression with the 1,146 respondents and turn binning on. Where do most respondents sit, and does the regression line run through that crowd?</li>
+      <li>In Part 4, make every edit and then put the background fill back on its own. How far does the data-ink ratio fall from that one change?</li>
+      <li>In Part 5, drag the axis start up until the lie factor passes 3. Then write one sentence about the two groups that the chart now seems to support but the data do not.</li>
+    </ol>
+  </section>
+
+  <!-- SOURCES -->
+  <details class="srcs" id="src">
+    <summary>Sources and data</summary>
+    <ol>
+      <li>Cairo, Alberto. 2019. <i>How Charts Lie: Getting Smarter about Visual Information</i>. New York: W. W. Norton.</li>
+      <li>Cambridge University Press. Journals artwork guide and figure requirements for Cambridge journals (font size, line weight, resolution and file formats).</li>
+      <li>Franconeri, Steven L., Lace M. Padilla, Priti Shah, Jeffrey M. Zacks, and Jessica Hullman. 2021. “The Science of Visual Data Communication: What Works.” <i>Psychological Science in the Public Interest</i> 22 (3): 110–161.</li>
+      <li>Tufte, Edward R. 2001. <i>The Visual Display of Quantitative Information</i>. 2nd ed. Cheshire, CT: Graphics Press.</li>
+      <li>Western Kentucky University Libraries. “Academic Posters: Text.” Recommended minimum font sizes for posters read from 4 to 7 feet.</li>
+      <li>Lunatics data (LunaticData.sav, class dataset). Massachusetts counties, 1854: patients per county, distance to the nearest mental hospital, percent cared for at home, population, density and whether the county has a large city.</li>
+      <li>2004 American National Election Study (NES2004.sav, class dataset). Feeling thermometers for the Democratic Party and Laura Bush.</li>
+      <li>2024 American National Election Study (NES_2024_Party_Placement_and_Ideology_F26.sav, class dataset). Seven-point party identification and the two party thermometers.</li>
+      <li>British Election Panel Study, 1997–2001. Political knowledge of party positions toward Europe, by sex.</li>
+      <li>Titanic passenger list (titanic.sav, class dataset). Sex and survival for 1,309 passengers.</li>
+    </ol>
+  </details>
+
+  <!-- WHAT WE LEARNED -->
+  <section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
+  <section class="dcard wwl">
+    <ul>
+      <li>A chart has a job, whether that is showing counts across cases, the attributes of one variable or a relationship, and the job together with the level of measurement decides which chart fits.</li>
+      <li>Each technique has a matching chart, such as percentage bars for a crosstab, means with error bars for a difference in means and a scatterplot with a line for regression.</li>
+      <li>Software defaults spend ink on backgrounds, frames and fills, so we erase what shows no data and keep everything that does.</li>
+      <li>A scale has to show effects at their true size, and the lie factor measures how far a chart drifts from that.</li>
+      <li>The same chart needs larger type and heavier lines for a poster, and smaller, grayscale settings that still meet the minimums for a journal.</li>
+    </ul>
+  </section>
+
+  <nav class="pager" aria-label="Previous and next"><a href="case-selection.html"><span class="k">← Previous · Research design</span><span class="t">Choosing cases to compare</span></a><a class="home" href="index.html">All modules</a><span></span></nav>
+</main>
+<script>
+/* data for the Visualizing data draft */
+const LUN=[{"c":"BERKSHIRE","nbr":119,"dist":97,"phome":77,"city":0},{"c":"FRANKLIN","nbr":84,"dist":62,"phome":81,"city":0},{"c":"HAMPSHIRE","nbr":94,"dist":54,"phome":75,"city":0},{"c":"HAMPDEN","nbr":105,"dist":52,"phome":69,"city":0},{"c":"WORCESTER","nbr":351,"dist":20,"phome":64,"city":0},{"c":"MIDDLESEX","nbr":357,"dist":14,"phome":47,"city":1},{"c":"ESSEX","nbr":377,"dist":10,"phome":47,"city":1},{"c":"SUFFOLK","nbr":458,"dist":4,"phome":6,"city":1},{"c":"DUKES","nbr":19,"dist":52,"phome":79,"city":0},{"c":"BRISTOL","nbr":158,"dist":14,"phome":60,"city":0},{"c":"PLYMOUTH","nbr":139,"dist":16,"phome":68,"city":0},{"c":"BARNSTABLE","nbr":78,"dist":44,"phome":76,"city":0},{"c":"NANTUCKET","nbr":12,"dist":77,"phome":25,"city":0}];
+const PID7={"1":1314,"2":616,"3":714,"4":380,"5":716,"6":577,"7":1166};
+const GAPC={"0":571,"1":6,"2":8,"3":2,"4":3,"5":43,"6":2,"7":2,"8":1,"9":2,"10":238,"11":3,"12":3,"13":2,"14":1,"15":93,"16":1,"18":2,"20":276,"21":1,"23":2,"24":1,"25":105,"28":3,"29":3,"30":377,"31":2,"32":1,"35":88,"37":1,"38":1,"39":1,"40":265,"41":1,"42":1,"44":2,"45":283,"47":3,"49":4,"50":183,"51":3,"52":1,"53":4,"55":401,"56":2,"57":1,"59":4,"60":297,"61":1,"62":4,"64":3,"65":104,"66":1,"68":1,"69":3,"70":639,"71":1,"73":6,"74":1,"75":112,"77":1,"78":5,"79":1,"80":77,"81":2,"82":3,"83":3,"84":4,"85":508,"88":6,"89":5,"90":85,"91":2,"92":1,"93":2,"95":34,"98":7,"99":2,"100":526};
+const KNOW={"men":{"2":360,"0":173,"3":165,"1":15},"women":{"2":422,"0":282,"3":85,"1":23}};
+const FL=[[0,0,2],[0,50,1],[0,70,1],[0,85,11],[0,100,27],[3,70,1],[10,1,1],[10,100,1],[15,30,1],[15,40,1],[15,50,2],[15,60,1],[15,70,2],[15,85,6],[15,95,1],[15,100,33],[20,90,1],[25,0,1],[25,50,1],[25,80,1],[25,100,2],[30,40,1],[30,50,8],[30,60,6],[30,70,14],[30,85,17],[30,90,2],[30,100,22],[35,70,2],[40,0,3],[40,15,1],[40,30,2],[40,40,1],[40,50,26],[40,55,1],[40,60,13],[40,70,20],[40,80,1],[40,85,30],[40,90,1],[40,100,40],[45,95,1],[45,100,1],[49,70,1],[49,85,1],[50,15,3],[50,30,1],[50,40,4],[50,50,56],[50,55,1],[50,60,27],[50,70,21],[50,75,4],[50,85,39],[50,90,3],[50,95,2],[50,100,27],[51,50,1],[55,50,1],[55,75,1],[55,85,1],[55,90,1],[55,100,1],[57,50,1],[60,0,4],[60,3,1],[60,15,6],[60,30,8],[60,40,14],[60,50,49],[60,60,24],[60,70,35],[60,85,35],[60,95,1],[60,100,17],[65,80,1],[65,85,1],[70,0,7],[70,15,11],[70,30,10],[70,40,10],[70,50,46],[70,60,26],[70,70,27],[70,75,1],[70,80,1],[70,85,23],[70,90,2],[70,95,1],[70,100,12],[75,45,1],[75,50,3],[75,60,1],[75,75,3],[75,85,1],[75,100,2],[80,0,1],[80,40,1],[80,50,2],[80,70,1],[85,0,5],[85,5,1],[85,15,5],[85,30,5],[85,40,10],[85,50,43],[85,60,27],[85,70,19],[85,72,1],[85,85,19],[85,100,14],[90,80,1],[95,15,1],[95,75,1],[95,95,1],[100,0,11],[100,15,6],[100,20,1],[100,30,3],[100,40,8],[100,50,22],[100,60,12],[100,70,14],[100,85,10],[100,100,9]];
+const TITANIC={women:{surv:339,died:127},men:{surv:161,died:682}};
+(function(){"use strict";
+const $=s=>document.querySelector(s);
+const NS='http://www.w3.org/2000/svg';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function tx(p,x,y,s,a){const e=el('text',Object.assign({x,y},a||{}),p);e.textContent=s;return e;}
+const com=v=>Math.round(v).toLocaleString('en-US');
+const f1=v=>v.toFixed(1), f2=v=>v.toFixed(2);
+const SP={bg:'#F0F0F0',bar:'#D3CE97',ink:'#000',font:'Arial, Helvetica, sans-serif',c:['#3E58AC','#2EB848','#D3CE97','#D11141','#7A3E9D','#F6A800','#1C8B8B']};
+function ticks(lo,hi,n){const span=hi-lo,st=Math.pow(10,Math.floor(Math.log10(span/n))),e=span/n/st,step=st*(e>=5?5:e>=2?2:1);const o=[];for(let v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step)o.push(+v.toFixed(10));return o;}
+function seg(host,opts,cur,cb){host.innerHTML='';opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('role','radio');b.setAttribute('aria-checked',String(v===cur));b.addEventListener('click',()=>{host.querySelectorAll('button').forEach(x=>x.setAttribute('aria-checked','false'));b.setAttribute('aria-checked','true');cb(v);});host.appendChild(b);});}
+function boxW(host,max){return Math.max(280,Math.min(max||640,(host.clientWidth||340)-12));}
+function drw(host,o){host.innerHTML='';
+  if(o.spss){const d=document.createElement('details');d.className='spss';d.innerHTML=`<summary><span class="sp-badge">SPSS</span><span class="sp-lab">Show SPSS syntax</span></summary><div class="sp-body"><p class="sp-note">${o.spssNote||'Pressing Paste instead of OK in the dialog writes this syntax into a Syntax window, so you can rerun the chart later.'}</p><pre class="cmd">${o.spss}</pre></div>`;host.appendChild(d);}
+  if(o.stata){const d=document.createElement('details');d.className='stata-wrap';d.innerHTML=`<summary><span class="sp-badge">Stata</span><span class="sp-lab">Show Stata commands</span></summary><div class="st-body">${o.stataNote?`<p class="sp-note">${o.stataNote}</p>`:''}<pre class="cmd">${o.stata}</pre></div>`;host.appendChild(d);}}
+
+/* ---------- the SPSS legacy look ---------- */
+/* st: bg, frame, fill, bold, font, barW, lw, ytitle, xtitle */
+const DEF={bg:true,frame:true,fill:true,bold:true,font:SP.font,barW:0.7,lw:1,fs:1};
+function spFrame(host,W,H,m,st){host.innerHTML='';
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','font-family':st.font||SP.font},host);
+  el('rect',{x:0,y:0,width:W,height:H,fill:'#fff'},svg);
+  const P={x0:m.l,x1:W-m.r,y0:m.t,y1:H-m.b};
+  P.bgR=el('rect',{x:P.x0,y:P.y0,width:P.x1-P.x0,height:P.y1-P.y0,fill:st.bg?SP.bg:'#fff'},svg);
+  P.svg=svg;return P;}
+function spFrameLine(P,st){return el('rect',{x:P.x0,y:P.y0,width:P.x1-P.x0,height:P.y1-P.y0,fill:'none',stroke:'#000','stroke-width':st.frame?1:0,'shape-rendering':'crispEdges'},P.svg);}
+function spAxes(P,st){const g=el('g',{stroke:'#000','stroke-width':1,'shape-rendering':'crispEdges'},P.svg);el('line',{x1:P.x0,x2:P.x0,y1:P.y0,y2:P.y1},g);el('line',{x1:P.x0,x2:P.x1,y1:P.y1,y2:P.y1},g);return g;}
+function yAxis(P,ys,tk,fmt,st,title){const fs=st.fs||1;tk.forEach(v=>{const y=ys(v);el('line',{x1:P.x0-4,x2:P.x0,y1:y,y2:y,stroke:'#000'},P.svg);tx(P.svg,P.x0-6,y+3.5,fmt?fmt(v):v,{'text-anchor':'end','font-size':10*fs,fill:'#000'});});
+  if(title){const t=tx(P.svg,0,0,title,{'text-anchor':'middle','font-size':12*fs,'font-weight':st.bold?700:400,fill:'#000',transform:`translate(${13*fs},${(P.y0+P.y1)/2}) rotate(-90)`});return t;}}
+function xAxisNum(P,xs,tk,fmt,st,title){const fs=st.fs||1;tk.forEach(v=>{const x=xs(v);el('line',{x1:x,x2:x,y1:P.y1,y2:P.y1+4,stroke:'#000'},P.svg);tx(P.svg,x,P.y1+15*fs,fmt?fmt(v):v,{'text-anchor':'middle','font-size':10*fs,fill:'#000'});});
+  if(title)return tx(P.svg,(P.x0+P.x1)/2,P.y1+33*fs,title,{'text-anchor':'middle','font-size':12*fs,'font-weight':st.bold?700:400,fill:'#000'});}
+function catLabels(P,cats,xc,st,rot){const fs=st.fs||1;cats.forEach((c,k)=>{if(rot)tx(P.svg,0,0,c,{'font-size':9*fs,fill:'#000','text-anchor':'end',transform:`translate(${xc(k)+3},${P.y1+6}) rotate(-90)`});else tx(P.svg,xc(k),P.y1+15*fs,c,{'text-anchor':'middle','font-size':10*fs,fill:'#000'});});}
+
+/* ============ PATH A · 1 counts across cases ============ */
+const st1={ord:'file'};
+function barCases(host,items,st,o){o=o||{};const W=boxW(host,o.max||600),H=o.H||Math.round(Math.min(380,Math.max(300,W*.66)));
+  const m={l:56,r:12,t:14,b:o.bm||96};const P=spFrame(host,W,H,m,st);
+  const ymax=o.ymax||500,ys=v=>P.y1-v/ymax*(P.y1-P.y0);const tk=ticks(0,ymax,5);
+  const n=items.length,slot=(P.x1-P.x0)/n,xc=k=>P.x0+slot*(k+.5);
+  const bars=items.map((it,k)=>{const w=slot*st.barW;return el('rect',{x:xc(k)-w/2,y:ys(it.v),width:w,height:P.y1-ys(it.v),fill:st.fill?SP.bar:'none',stroke:'#000','stroke-width':st.lw,class:'di'},P.svg);});
+  const fr=spFrameLine(P,st);spAxes(P,st);
+  const yt=yAxis(P,ys,tk,null,st,o.ytitle);catLabels(P,items.map(i=>i.lab),xc,st,true);
+  const xt=tx(P.svg,(P.x0+P.x1)/2,H-8,o.xtitle||'County',{'text-anchor':'middle','font-size':12,'font-weight':st.bold?700:400,fill:'#000'});
+  return {P,bars,fr,yt,xt,xc,slot,ys};}
+function renderA1(){
+  const items=LUN.map(r=>({lab:r.c,v:r.nbr}));if(st1.ord==='desc')items.sort((a,b)=>b.v-a.v);
+  barCases($('#a1c'),items,DEF,{ytitle:'Value Lunatics Per County'});
+  $('#a1s').innerHTML=st1.ord==='file'?'In the order the counties sit in the data file, the bars jump up and down, so finding the largest county or comparing two neighbors takes a search. The order of the cases means nothing here, so nothing stops us from changing it.':'Sorted from most to fewest, the chart reads like a ranking. Suffolk, the county that holds Boston, had the most patients (458), and Essex, Middlesex and Worcester follow at about 350 to 380 each before a steep drop to Bristol at 158. To sort in SPSS, double-click the chart to open the Chart Editor, double-click a bar, and on the <span class="menu">Categories</span> tab set <span class="menu">Sort by: Statistic</span> and <span class="menu">Direction: Descending</span>.';
+  drw($('#a1d'),{spss:'GRAPH\n  /BAR(SIMPLE)=VALUE(NBR) BY County.',stata:'* one bar per county, sorted from most to fewest\ngraph bar (asis) NBR, over(County, sort(1) descending label(angle(90)))'});}
+seg($('#a1o'),[['file','Data file order'],['desc','Sorted, most to fewest']],st1.ord,v=>{st1.ord=v;renderA1();});
+
+/* ============ PATH A · 2 one variable ============ */
+const PIDL=['Strong Democrat','Not very strong Democrat','Independent-Democrat','Independent','Independent-Republican','Not very strong Republican','Strong Republican'];
+function expand(cnt){const o=[];for(const k in cnt)for(let i=0;i<cnt[k];i++)o.push(+k);return o.sort((a,b)=>a-b);}
+const GAPV=expand(GAPC);
+const VARS={
+  city:{lab:'Large City (Lunatics data, nominal)',lev:'nom',name:'CITY',cats:[['No Large City in County',LUN.filter(r=>!r.city).length],['Large City in County',LUN.filter(r=>r.city).length]],vals:LUN.map(r=>r.city),title:'Large City',lo:0,hi:1},
+  pid:{lab:'Party ID, seven points (2024 ANES, ordinal)',lev:'ord',name:'V241227x',cats:PIDL.map((l,k)=>[l,PID7[k+1]]),vals:expand(PID7),title:'PRE: SUMMARY: Party ID',lo:1,hi:7},
+  dist:{lab:'Distance to Mental Hospital (Lunatics data, interval)',lev:'int',name:'DIST',vals:LUN.map(r=>r.dist).sort((a,b)=>a-b),title:'Distance to Mental Hospital in Miles',lo:0,hi:100,bw:20},
+  gap:{lab:'Thermometer gap, |Dem − Rep| (2024 ANES, interval)',lev:'int',name:'thermgap',vals:GAPV,title:'Distance between the two party thermometers',lo:0,hi:100,bw:5}
+};
+const KINDS=[['bar','Bar'],['pie','Pie'],['hist','Histogram'],['box','Box plot']];
+const VERD={
+  city:{bar:['ok','A bar chart shows how many counties fall in each category, and the order of the bars doesn\'t matter for a nominal variable.'],
+    pie:['care','With two categories a pie can show the parts of one whole, but readers judge angles less accurately than lengths, so the bar chart is still easier to read.'],
+    hist:['bad','A histogram treats the codes 0 and 1 as numbers on a scale, so it draws a distance between categories that only have names.'],
+    box:['bad','A box plot needs ordered values. The codes 0 and 1 have no order, so the median and quartiles of those codes mean nothing.']},
+  pid:{bar:['ok','A bar chart keeps the seven categories in their order, from strong Democrat to strong Republican, so you can see both ends and the middle at once.'],
+    pie:['bad','Seven slices of similar size are hard to compare by angle, and a circle has no start or end, so the order from Democrat to Republican disappears.'],
+    hist:['care','The bars look like the bar chart, but a histogram treats the codes 1 to 7 as equally spaced numbers, which an ordinal variable doesn\'t promise.'],
+    box:['care','The median and the quartiles of an ordinal variable make sense, but the whiskers and outliers assume real distances between codes.']},
+  dist:{bar:['bad','A bar for every distinct distance treats each value as its own category, so 52 miles and 54 miles end up as separate, unrelated bars.'],
+    pie:['bad','Slices for each distinct distance throw away the scale entirely, so near and far counties look no different.'],
+    hist:['care','A histogram fits interval data, but with only 13 counties its shape depends heavily on where the bins fall.'],
+    box:['ok','A box plot suits a small interval variable well, since it shows the median, the middle half of the counties and the full range in one mark.']},
+  gap:{bar:['bad','Over 100 distinct values give over 100 bars, and the chart turns into a histogram with the wrong spacing and no bins.'],
+    pie:['bad','A pie with dozens of slivers shows nothing about where the values bunch up or how far they spread.'],
+    hist:['ok','With 5,450 respondents a histogram shows the full shape, which here is a broad spread with piles at the round numbers.'],
+    box:['ok','The box plot sums up the same shape in five numbers, which is handy for comparing groups side by side.']}};
+const MENU={bar:'<span class="menu">Graphs → Legacy Dialogs → Bar → Simple</span>, with <span class="menu">Summaries for groups of cases</span> and <span class="menu">Bars Represent: N of cases</span>.',
+  pie:'<span class="menu">Graphs → Legacy Dialogs → Pie</span>, with <span class="menu">Summaries for groups of cases</span> and <span class="menu">Slices Represent: N of cases</span>.',
+  hist:'<span class="menu">Graphs → Legacy Dialogs → Histogram</span>. Tick <span class="menu">Display normal curve</span> to lay a normal curve with the same mean and SD over the bars.',
+  box:'<span class="menu">Graphs → Legacy Dialogs → Boxplot → Simple</span>, with <span class="menu">Summaries of separate variables</span>.'};
+const st2={v:'pid',k:'bar'};
+function tukey(x){const n=x.length,med=a=>a.length%2?a[(a.length-1)/2]:(a[a.length/2-1]+a[a.length/2])/2;const h=Math.floor((n+1)/2);return {lo:med(x.slice(0,h)),md:med(x),hi:med(x.slice(n-h)),min:x[0],max:x[n-1]};}
+function boxStats(x){const t=tukey(x),iqr=t.hi-t.lo,lf=t.lo-1.5*iqr,uf=t.hi+1.5*iqr;const inn=x.filter(v=>v>=lf&&v<=uf);return Object.assign(t,{wl:inn[0],wh:inn[inn.length-1],out:x.filter(v=>v<lf||v>uf)});}
+function drawBox(P,xc,w,b,ys,st,lab){const g=el('g',{},P.svg);
+  el('line',{x1:xc,x2:xc,y1:ys(b.wh),y2:ys(b.hi),stroke:'#000'},g);el('line',{x1:xc,x2:xc,y1:ys(b.lo),y2:ys(b.wl),stroke:'#000'},g);
+  for(const v of [b.wh,b.wl])el('line',{x1:xc-w/4,x2:xc+w/4,y1:ys(v),y2:ys(v),stroke:'#000'},g);
+  el('rect',{x:xc-w/2,y:ys(b.hi),width:w,height:Math.max(1,ys(b.lo)-ys(b.hi)),fill:st.fill?SP.bar:'none',stroke:'#000'},g);
+  el('line',{x1:xc-w/2,x2:xc+w/2,y1:ys(b.md),y2:ys(b.md),stroke:'#000','stroke-width':2.5},g);
+  b.out.forEach(v=>el('circle',{cx:xc,cy:ys(v),r:3,fill:'none',stroke:'#000'},g));}
+function histLegend(P,x,st){const m=x.reduce((a,b)=>a+b,0)/x.length,sd=Math.sqrt(x.reduce((a,b)=>a+(b-m)**2,0)/(x.length-1));
+  const g=el('g',{'font-size':10,fill:'#000'},P.svg);const X=P.x1-6;[`Mean = ${f2(m)}`,`Std. Dev. = ${(sd).toFixed(3)}`,`N = ${com(x.length)}`].forEach((s,k)=>tx(g,X,P.y0+14+k*13,s,{'text-anchor':'end'}));return {m,sd};}
+function npdf(x,m,s){return Math.exp(-(((x-m)/s)**2)/2)/(s*Math.sqrt(2*Math.PI));}
+function renderA2(){
+  const V=VARS[st2.v],K=st2.k,host=$('#a2c'),W=boxW(host,600),H=Math.round(Math.min(380,Math.max(300,W*.7)))+(st2.v==='pid'&&K==='bar'?70:0),st=DEF;
+  const vd=VERD[st2.v][K];$('#a2vd').innerHTML=`<span class="vb ${vd[0]}">${{ok:'Works',care:'Use with care',bad:'Misleads'}[vd[0]]}</span>${vd[1]}`;
+  let cats=V.cats;if(!cats){const c=new Map();V.vals.forEach(v=>c.set(v,(c.get(v)||0)+1));cats=[...c.entries()].sort((a,b)=>a[0]-b[0]).map(([k,n])=>[String(k),n]);}
+  if(K==='bar'){const many=cats.length>8;const m={l:56,r:12,t:14,b:many?44:(st2.v==='pid'?150:44)};const P=spFrame(host,W,H,m,st);
+    const ymax=Math.max(...cats.map(c=>c[1]))*1.1,ys=v=>P.y1-v/ymax*(P.y1-P.y0);const n=cats.length,slot=(P.x1-P.x0)/n,xc=k=>P.x0+slot*(k+.5);
+    cats.forEach((c,k)=>el('rect',{x:xc(k)-slot*.35,y:ys(c[1]),width:slot*.7,height:P.y1-ys(c[1]),fill:SP.bar,stroke:'#000','stroke-width':many?.5:1},P.svg));
+    spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,ticks(0,ymax,5),com,st,'Count');
+    if(many){const every=Math.ceil(n/12);cats.forEach((c,k)=>{if(k%every===0)tx(P.svg,xc(k),P.y1+13,c[0],{'text-anchor':'middle','font-size':9,fill:'#000'});});}
+    else if(st2.v==='pid')catLabels(P,cats.map(c=>c[0]),xc,st,true);else catLabels(P,cats.map(c=>c[0]),xc,st,false);
+    tx(P.svg,(P.x0+P.x1)/2,H-6,V.title,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#000'});}
+  else if(K==='pie'){const P=spFrame(host,W,H,{l:0,r:0,t:0,b:0},Object.assign({},st,{bg:false}));const tot=cats.reduce((a,c)=>a+c[1],0);
+    const legW=Math.min(200,W*.42),cx=(W-legW)/2,cy=H/2+6,R=Math.min(cx-14,H/2-24);let a0=-Math.PI/2;
+    const col=k=>cats.length>SP.c.length?`hsl(${(k*47)%360} 45% ${55+(k%3)*10}%)`:SP.c[k];
+    cats.forEach((c,k)=>{const a1=a0+c[1]/tot*2*Math.PI,large=a1-a0>Math.PI?1:0;el('path',{d:`M${cx},${cy}L${cx+R*Math.cos(a0)},${cy+R*Math.sin(a0)}A${R},${R} 0 ${large} 1 ${cx+R*Math.cos(a1)},${cy+R*Math.sin(a1)}Z`,fill:col(k),stroke:'#000','stroke-width':cats.length>20?.3:.8},P.svg);a0=a1;});
+    const show=cats.slice(0,14);tx(P.svg,W-legW+4,18,V.name,{'font-size':11,'font-weight':700,fill:'#000'});
+    show.forEach((c,k)=>{el('rect',{x:W-legW+4,y:28+k*16,width:10,height:10,fill:col(k),stroke:'#000','stroke-width':.6},P.svg);tx(P.svg,W-legW+19,37+k*16,c[0].length>24?c[0].slice(0,23)+'…':c[0],{'font-size':10,fill:'#000'});});
+    if(cats.length>show.length)tx(P.svg,W-legW+4,37+show.length*16,`… and ${cats.length-show.length} more`,{'font-size':10,fill:'#000'});}
+  else if(K==='hist'){const m={l:56,r:12,t:14,b:44};const P=spFrame(host,W,H,m,st);const x=V.vals,lo=V.lo-(V.lev==='int'?0:.5),hi=V.hi+(V.lev==='int'?0:.5),bw=V.bw||1;
+    const bins=[];for(let a=lo;a<hi-1e-9;a+=bw){const last=a+bw>=hi-1e-9;bins.push({a,b:a+bw,n:x.filter(v=>v>=a&&(last?v<=a+bw:v<a+bw)).length});}
+    const ymax=Math.max(...bins.map(b=>b.n))*1.15,ys=v=>P.y1-v/ymax*(P.y1-P.y0),xs=v=>P.x0+(v-lo)/(hi-lo)*(P.x1-P.x0);
+    bins.forEach(b=>el('rect',{x:xs(b.a),y:ys(b.n),width:xs(b.b)-xs(b.a),height:P.y1-ys(b.n),fill:SP.bar,stroke:'#000','stroke-width':.8},P.svg));
+    const L=histLegend(P,x,st);let d='';for(let k=0;k<=120;k++){const v=lo+(hi-lo)*k/120;d+=(k?'L':'M')+xs(v).toFixed(1)+','+ys(x.length*bw*npdf(v,L.m,L.sd)).toFixed(1);}el('path',{d,fill:'none',stroke:'#000','stroke-width':1.5},P.svg);
+    spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,ticks(0,ymax,5).filter(Number.isInteger),com,st,'Frequency');
+    xAxisNum(P,xs,V.lev==='int'?ticks(lo,hi,5):[...Array(hi-lo).keys()].map(i=>Math.round(lo+.5+i)),null,st,V.title.length>40?V.title.slice(0,38)+'…':V.title);}
+  else {const m={l:56,r:12,t:14,b:44};const P=spFrame(host,W,H,m,st);const x=V.vals,b=boxStats(x);const pad=(V.hi-V.lo)*.06,ymin=V.lo-pad,ymax=V.hi+pad,ys=v=>P.y1-(v-ymin)/(ymax-ymin)*(P.y1-P.y0);
+    drawBox(P,(P.x0+P.x1)/2,Math.min(160,(P.x1-P.x0)*.38),b,ys,st);spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,ticks(V.lo,V.hi,5),null,st,null);
+    tx(P.svg,(P.x0+P.x1)/2,P.y1+18,V.title.length>44?V.title.slice(0,42)+'…':V.title,{'text-anchor':'middle','font-size':10,fill:'#000'});}
+  const sname=V.name;
+  $('#a2m').innerHTML='In SPSS, go to '+MENU[K];
+  const SY={bar:`GRAPH\n  /BAR(SIMPLE)=COUNT BY ${sname}.`,pie:`GRAPH\n  /PIE=COUNT BY ${sname}.`,hist:`GRAPH\n  /HISTOGRAM(NORMAL)=${sname}.`,box:`EXAMINE VARIABLES=${sname}\n  /PLOT=BOXPLOT\n  /STATISTICS=NONE\n  /NOTOTAL.`};
+  const ST={bar:`graph bar (count), over(${sname})`,pie:`graph pie, over(${sname})`,hist:`histogram ${sname}, frequency normal`,box:`graph box ${sname}`};
+  $('#a2s').innerHTML={nom:'A nominal variable has categories with names but no order, so the chart should compare the size of each category and nothing more.',ord:'An ordinal variable has ordered categories, so the chart should keep them in order but shouldn\'t pretend the gaps between them are equal.',int:'An interval variable has real distances between values, so the chart should show where the values bunch up and how far they spread on that scale.'}[V.lev];
+  drw($('#a2d'),{spss:SY[K],stata:ST[K],spssNote:K==='box'?'The legacy Boxplot dialog pastes an EXAMINE command, which is the same procedure as Analyze → Descriptive Statistics → Explore.':null});}
+selFill();function selFill(){const s=$('#a2v');s.innerHTML=Object.entries(VARS).map(([k,v])=>`<option value="${k}"${k===st2.v?' selected':''}>${v.lab}</option>`).join('');s.addEventListener('change',()=>{st2.v=s.value;renderA2();});}
+seg($('#a2k'),KINDS,st2.k,v=>{st2.k=v;renderA2();});
+
+/* ============ PATH A · 3 relationships ============ */
+const TECH=[['xt','Crosstab'],['dm','Two means'],['bx','Box plots'],['rg','Regression']];
+const OPTS={xt:[['cnt','Clustered counts'],['pct','Stacked, scaled to 100%']],dm:[['eb','Error bars, 95% CI'],['bm','Bars of the means']],bx:null,rg:[['lun','13 counties'],['fl','1,146 respondents'],['flb','1,146, binned']]};
+const st3={t:'xt',o:{xt:'cnt',dm:'eb',rg:'lun'}};
+function tcrit(df){/* two-tailed .05 */const T={1:12.706,2:4.303,3:3.182,4:2.776,5:2.571,10:2.228,20:2.086,30:2.042,60:2.0,120:1.98};if(df>120)return 1.962;let k=Object.keys(T).map(Number).filter(d=>d<=df).pop();return T[k];}
+function legendBox(P,items,x,y){const g=el('g',{'font-size':10,fill:'#000'},P.svg);items.forEach(([c,l],k)=>{el('rect',{x,y:y+k*15,width:10,height:10,fill:c,stroke:'#000','stroke-width':.6},g);tx(g,x+15,y+9+k*15,l);});return g;}
+function ols(x,y,w){let sw=0,sx=0,sy=0;for(let i=0;i<x.length;i++){const wi=w?w[i]:1;sw+=wi;sx+=wi*x[i];sy+=wi*y[i];}const mx=sx/sw,my=sy/sw;let sxy=0,sxx=0;for(let i=0;i<x.length;i++){const wi=w?w[i]:1;sxy+=wi*(x[i]-mx)*(y[i]-my);sxx+=wi*(x[i]-mx)**2;}const b=sxy/sxx;return {b,a:my-b*mx,mx,my};}
+function renderA3(){
+  const t=st3.t,o=st3.o[t],host=$('#a3c'),W=boxW(host,600),H=Math.round(Math.min(400,Math.max(310,W*.7))),st=DEF;
+  $('#a3xw').hidden=!OPTS[t];if(OPTS[t])seg($('#a3x'),OPTS[t],o,v=>{st3.o[t]=v;renderA3();});
+  let say='',menu='',spss='',stata='',note=null;
+  if(t==='xt'){const m={l:56,r:74,t:14,b:44};const P=spFrame(host,W,H,m,st);const G=[['Female',TITANIC.women],['Male',TITANIC.men]],S=[['No','died',SP.c[0]],['Yes','surv',SP.c[1]]];
+    const cw=(P.x1-P.x0)/2,xc=k=>P.x0+cw*(k+.5);
+    if(o==='cnt'){const ymax=750,ys=v=>P.y1-v/ymax*(P.y1-P.y0);G.forEach(([l,d],k)=>S.forEach(([s,key,c],j)=>{const bw=cw*.28,x=xc(k)+(j-1)*bw;el('rect',{x,y:ys(d[key]),width:bw,height:P.y1-ys(d[key]),fill:c,stroke:'#000'},P.svg);}));
+      spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,ticks(0,ymax,5),com,st,'Count');
+      say='Counts make the men look like the bigger story, since 682 men died. But 843 men and 466 women were aboard, so the counts mix up who survived with how many of each sex were on the ship.';}
+    else{const ys=v=>P.y1-v/100*(P.y1-P.y0);G.forEach(([l,d],k)=>{const tot=d.surv+d.died;let base=0;S.forEach(([s,key,c])=>{const p=d[key]/tot*100;const bw=cw*.5;el('rect',{x:xc(k)-bw/2,y:ys(base+p),width:bw,height:ys(base)-ys(base+p),fill:c,stroke:'#000'},P.svg);tx(P.svg,xc(k),ys(base+p/2)+4,f1(p)+'%',{'text-anchor':'middle','font-size':10,fill:key==='died'?'#fff':'#000'});base+=p;});});
+      spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,[0,20,40,60,80,100],v=>v+'%',st,'Percent');
+      say='Scaled to 100% within each sex, the bars show the column percentages of the crosstab. 72.7% of the women survived against 19.1% of the men, which is the comparison the hypothesis is about.';}
+    catLabels(P,G.map(g=>g[0]),xc,st,false);tx(P.svg,(P.x0+P.x1)/2,H-8,'sex',{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#000'});
+    legendBox(P,[[SP.c[0],'No'],[SP.c[1],'Yes']],P.x1+10,P.y0+22);tx(P.svg,P.x1+10,P.y0+14,'survived',{'font-size':10,'font-weight':700,fill:'#000'});
+    menu='In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Bar</span> and choose <span class="menu">'+(o==='cnt'?'Clustered':'Stacked')+'</span> with <span class="menu">Summaries for groups of cases</span>. Put sex in <span class="menu">Category Axis</span> and survived in <span class="menu">Define '+(o==='cnt'?'Clusters':'Stacks')+' by</span>.'+(o==='pct'?' Then open the Chart Editor and choose <span class="menu">Options → Scale to 100%</span>.':'');
+    spss=`GRAPH\n  /BAR(${o==='cnt'?'GROUPED':'STACK'})=COUNT BY sex BY survived.`;
+    stata=o==='cnt'?'graph bar (count), over(survived) over(sex) asyvars':'* percent within each sex, stacked\ngraph bar, over(survived) over(sex) asyvars stack percentages';}
+  else if(t==='dm'){const m={l:56,r:12,t:14,b:44};const P=spFrame(host,W,H,m,st);
+    const grp=[['Male',KNOW.men],['Female',KNOW.women]].map(([l,c])=>{const x=expand(c),n=x.length,mn=x.reduce((a,b)=>a+b,0)/n,sd=Math.sqrt(x.reduce((a,b)=>a+(b-mn)**2,0)/(n-1)),me=tcrit(n-1)*sd/Math.sqrt(n);return {l,n,mn,lo:mn-me,hi:mn+me};});
+    const cw=(P.x1-P.x0)/2,xc=k=>P.x0+cw*(k+.5);
+    if(o==='eb'){const lo=1.2,hi=1.9,ys=v=>P.y1-(v-lo)/(hi-lo)*(P.y1-P.y0);grp.forEach((g,k)=>{const x=xc(k);el('line',{x1:x,x2:x,y1:ys(g.hi),y2:ys(g.lo),stroke:'#000'},P.svg);for(const v of [g.lo,g.hi])el('line',{x1:x-10,x2:x+10,y1:ys(v),y2:ys(v),stroke:'#000'},P.svg);el('circle',{cx:x,cy:ys(g.mn),r:4,fill:'#fff',stroke:'#000'},P.svg);});
+      spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,[1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9],v=>v.toFixed(1),st,'95% CI Political knowledge');
+      say=`Each circle is a group mean and each bar is its 95% confidence interval. Men averaged ${f2(grp[0].mn)} correct answers (n = ${com(grp[0].n)}) and women ${f2(grp[1].mn)} (n = ${com(grp[1].n)}), and the two intervals sit far apart, which fits the t test in Module 8 rejecting H₀. Because the axis shows only the range of the means, the gap looks large, so read the numbers on the axis before judging the size of the difference.`;}
+    else{const ys=v=>P.y1-v/3*(P.y1-P.y0);grp.forEach((g,k)=>{const x=xc(k),w=cw*.45;el('rect',{x:x-w/2,y:ys(g.mn),width:w,height:P.y1-ys(g.mn),fill:SP.bar,stroke:'#000'},P.svg);});
+      spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,[0,.5,1,1.5,2,2.5,3],v=>v.toFixed(1),st,'Mean Political knowledge');
+      say='Bars of the means start at zero, which is honest about size, but a bar has no way to show uncertainty, and its solid area suggests every respondent sits below the top. The error bar chart shows the same two means with their confidence intervals, which is what a difference in means is about.';}
+    catLabels(P,grp.map(g=>g.l),xc,st,false);tx(P.svg,(P.x0+P.x1)/2,H-8,'gender',{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#000'});
+    menu=o==='eb'?'In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Error Bar → Simple</span> with <span class="menu">Summaries for groups of cases</span>. Put the DV in <span class="menu">Variable</span>, the grouping variable in <span class="menu">Category Axis</span>, and keep <span class="menu">Bars Represent: Confidence interval for mean</span> at <span class="menu">Level: 95%</span>.':'In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Bar → Simple</span> with <span class="menu">Summaries for groups of cases</span>, and set <span class="menu">Bars Represent: Other statistic</span> to the mean of the DV.';
+    spss=o==='eb'?'GRAPH\n  /ERRORBAR(CI 95)=polknow BY gender.':'GRAPH\n  /BAR(SIMPLE)=MEAN(polknow) BY gender.';
+    stata=o==='eb'?'* the means and their 95% CIs\nregress polknow i.gender\nmargins gender\nmarginsplot, recast(scatter)':'graph bar (mean) polknow, over(gender)';}
+  else if(t==='bx'){const m={l:56,r:12,t:14,b:44};const P=spFrame(host,W,H,m,st);const ys=v=>P.y1-(v+6)/112*(P.y1-P.y0);const G=[['No Large City in County',0],['Large City in County',1]];const cw=(P.x1-P.x0)/2,xc=k=>P.x0+cw*(k+.5);
+    G.forEach(([l,c],k)=>drawBox(P,xc(k),Math.min(110,cw*.45),boxStats(LUN.filter(r=>r.city===c).map(r=>r.dist).sort((a,b)=>a-b)),ys,st));
+    spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,[0,20,40,60,80,100],null,st,'Distance to Mental Hospital in Miles');catLabels(P,G.map(g=>g[0]),xc,st,false);
+    tx(P.svg,(P.x0+P.x1)/2,H-8,'Large City',{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#000'});
+    say='Side-by-side box plots compare a whole distribution across groups rather than just a mean. The three counties with a large city all sit within 14 miles of a hospital, while the other ten spread from 14 to 97 miles with a median of 52. With only three counties in one group, a box plot is more honest than a mean with an error bar would be.';
+    menu='In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Boxplot → Simple</span> with <span class="menu">Summaries for groups of cases</span>. Put the interval variable in <span class="menu">Variable</span> and the grouping variable in <span class="menu">Category Axis</span>.';
+    spss='EXAMINE VARIABLES=DIST BY CITY\n  /PLOT=BOXPLOT\n  /STATISTICS=NONE\n  /NOTOTAL.';stata='graph box DIST, over(CITY)';}
+  else{const m={l:58,r:o==='flb'?54:14,t:14,b:46};const P=spFrame(host,W,H,m,st);
+    if(o==='lun'){const xs=v=>P.x0+(v+20)/520*(P.x1-P.x0),ys=v=>P.y1-(v+5)/110*(P.y1-P.y0);const f=ols(LUN.map(r=>r.nbr),LUN.map(r=>r.phome));
+      el('line',{x1:xs(-20),x2:xs(500),y1:ys(f.a+f.b*-20),y2:ys(f.a+f.b*500),stroke:'#000','stroke-width':1},P.svg);
+      const fsL=W<420?8:9,placed=[];
+      LUN.slice().sort((a,b)=>b.phome-a.phome).forEach(r=>{const right=r.nbr<400,x=xs(r.nbr)+(right?6:-6),w=r.c.length*fsL*.55;let y=ys(r.phome)+(r.c==='ESSEX'?-6:r.c==='MIDDLESEX'?12:3.5);
+        const hit=yy=>placed.some(q=>Math.abs(q.y-yy)<fsL+1&&(right?x:x-w)<q.x1&&(right?x+w:x)>q.x0);let tries=0;while(hit(y)&&tries++<6)y+=fsL+1;
+        placed.push({y,x0:right?x:x-w,x1:right?x+w:x});
+        if(Math.abs(y-ys(r.phome)-3.5)>fsL)el('line',{x1:xs(r.nbr)+(right?3:-3),y1:ys(r.phome)+2,x2:x,y2:y-3,stroke:'#888','stroke-width':.6},P.svg);
+        tx(P.svg,x,y,r.c.charAt(0)+r.c.slice(1).toLowerCase(),{'font-size':fsL,fill:'#000','text-anchor':right?'start':'end'});});
+      LUN.forEach(r=>el('circle',{cx:xs(r.nbr),cy:ys(r.phome),r:3.5,fill:'none',stroke:'#000'},P.svg));
+      spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,[0,20,40,60,80,100],null,st,'Percent of Lunatics Cared for at Home');xAxisNum(P,xs,[0,100,200,300,400,500],null,st,'Lunatics Per County');
+      tx(P.svg,P.x1-6,P.y0+14,`R² Linear = ${(()=>{const y=LUN.map(r=>r.phome),my=y.reduce((a,b)=>a+b,0)/y.length;let sst=0,sse=0;LUN.forEach(r=>{sst+=(r.phome-my)**2;sse+=(r.phome-f.a-f.b*r.nbr)**2;});return (1-sse/sst).toFixed(3);})()}`,{'text-anchor':'end','font-size':10,fill:'#000'});
+      say=`With 13 cases we can label every dot. Counties with more patients cared for fewer of them at home, and the fit line drops about ${Math.abs(f.b*100).toFixed(0)} points for every 100 more patients. The labels also show that Nantucket, a small island far from any hospital, sits well below the line, which a reader would never see in a table of coefficients.`;
+      menu='In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Scatter/Dot → Simple Scatter</span>. Put the DV in <span class="menu">Y Axis</span>, the IV in <span class="menu">X Axis</span> and County in <span class="menu">Label Cases by</span>. In the Chart Editor, choose <span class="menu">Elements → Fit Line at Total</span> and keep <span class="menu">Linear</span>, and then choose <span class="menu">Elements → Show Data Labels</span>.';
+      spss='GRAPH\n  /SCATTERPLOT(BIVAR)=NBR WITH PHOME\n  /MISSING=LISTWISE.';stata='twoway (scatter PHOME NBR, mlabel(County)) (lfit PHOME NBR)';}
+    else{const xs=v=>P.x0+(v+5)/110*(P.x1-P.x0),ys=v=>P.y1-(v+5)/110*(P.y1-P.y0);const bin=o==='flb';const mx=Math.max(...FL.map(r=>r[2]));
+      const shade=n=>{const t=Math.sqrt(n/mx);const g=Math.round(235-205*t);return `rgb(${g},${g},${g})`;};
+      FL.forEach(([x,y,n])=>{if(bin)el('circle',{cx:xs(x),cy:ys(y),r:4,fill:shade(n),stroke:'none'},P.svg);else el('circle',{cx:xs(x),cy:ys(y),r:3.5,fill:'none',stroke:'#000'},P.svg);});
+      el('line',{x1:xs(0),x2:xs(100),y1:ys(89.177),y2:ys(89.177-39.3),stroke:'#B22',"stroke-width":1.3,'stroke-dasharray':bin?'5 3':''},P.svg);
+      spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,[0,20,40,60,80,100],null,st,'Feeling Thermometer: Laura Bush');xAxisNum(P,xs,[0,20,40,60,80,100],null,st,'Feeling Thermometer: Democratic party');
+      if(bin){const g=el('g',{'font-size':9,fill:'#000'},P.svg);tx(g,P.x1+6,P.y0+10,'Count');[1,10,20,30,40,mx].forEach((n,k)=>{el('circle',{cx:P.x1+11,cy:P.y0+22+k*14,r:4,fill:shade(n)},g);tx(g,P.x1+19,P.y0+25+k*14,n);});}
+      say=bin?'Binned by color intensity, the darker dots show where many respondents give the same pair of ratings, often round numbers such as 50, 85 and 100. The crowd runs from the upper left to the lower right, and the regression line y = −.393x + 89.177 runs right through it.':'With 1,146 respondents and only a couple of dozen distinct ratings on each thermometer, most dots sit on top of other dots. A dot could stand for 1 respondent or 60, so the chart hides exactly where the data are thickest.';
+      menu=bin?'Open the Chart Editor and click <span class="menu">Bin Element</span> on the toolbar. Under <span class="menu">Count Indicator</span>, choose <span class="menu">Color Intensity</span>, since marker size gets crowded with this many cases. Then use <span class="menu">Add Reference Line from Equation</span> and type the regression equation, -.393 * x + 89.177.':'In SPSS, go to <span class="menu">Graphs → Legacy Dialogs → Scatter/Dot → Simple Scatter</span>, with the Democratic Party thermometer on the X axis (the IV) and the Laura Bush thermometer on the Y axis (the DV).';
+      spss='GRAPH\n  /SCATTERPLOT(BIVAR)=dem_therm WITH laura_bush_therm\n  /MISSING=LISTWISE.';
+      stata=bin?'* Stata has no built-in binning by color; jitter spreads the stacked dots instead\ntwoway (scatter laura_bush_therm dem_therm, jitter(4) msize(tiny)) ///\n       (function y = -.393*x + 89.177, range(0 100))':'twoway (scatter laura_bush_therm dem_therm) (lfit laura_bush_therm dem_therm)';
+      note='This is the First Lady example from Module 10b. The regression line comes from the same data, with slope −.393 and intercept 89.177.';}}
+  $('#a3s').innerHTML=say+(note?' '+note:'');$('#a3m').innerHTML=menu;drw($('#a3d'),{spss,stata});}
+seg($('#a3t'),TECH,st3.t,v=>{st3.t=v;renderA3();});
+
+/* ============ PATH B · 4 strip the ink ============ */
+const EDITS=[
+ ['bg','Background fill','<b>Remove the background fill.</b> Double-click the gray area behind the bars. On the <span class="menu">Fill &amp; Border</span> tab, click the <span class="menu">Fill</span> swatch, choose the transparent (no fill) swatch, and click <span class="menu">Apply</span>.'],
+ ['frame','Frame','<b>Remove the frame.</b> Select the frame around the plot area and set its <span class="menu">Border</span> to transparent on the <span class="menu">Fill &amp; Border</span> tab, so only the left and bottom axes remain.'],
+ ['fill','Bar fill','<b>Remove the bar fill.</b> Double-click any bar to select them all. On <span class="menu">Fill &amp; Border</span>, set <span class="menu">Fill</span> to transparent and keep the <span class="menu">Border</span> black. The fill was data ink, but it was redundant, since the outline alone shows each bar\'s height, and Tufte\'s second rule is to erase redundant data ink.'],
+ ['width','Bar width','<b>Narrow the bars.</b> With the bars selected, open the <span class="menu">Bar Options</span> tab and drag <span class="menu">Width</span> down to about 45 or 50 percent, which makes the chart crisper.'],
+ ['lw','Outline weight','<b>Thin the outlines.</b> With the bars selected, open the <span class="menu">Lines</span> tab and pick a lighter <span class="menu">Weight</span>.'],
+ ['bold','Axis title font','<b>Unbold the axis titles.</b> Double-click an axis title. On the <span class="menu">Text Style</span> tab, change <span class="menu">Style</span> from Bold to Regular and the <span class="menu">Family</span> to a slimmer font such as Calibri, then do the same for the other title.'],
+ ['title','Axis title wording','<b>Fix the wording.</b> SPSS writes “Value Lunatics Per County” on the Y axis. Click the title once to select it and again to edit it, then type a plain label such as “Patients per county.” Words count as ink a reader has to get through.']];
+const st4={on:new Set()};let B1=null;
+function sty4(){const o=st4.on;return {bg:!o.has('bg'),frame:!o.has('frame'),fill:!o.has('fill'),barW:o.has('width')?.47:.7,lw:o.has('lw')?.6:1.2,bold:!o.has('bold'),font:o.has('bold')?'Calibri, Carlito, "Segoe UI", Arial, sans-serif':SP.font,fs:1};}
+function renderB1(){const items=LUN.map(r=>({lab:r.c,v:r.nbr})).sort((a,b)=>b.v-a.v);const st=sty4();
+  B1=barCases($('#b1c'),items,st,{ytitle:st4.on.has('title')?'Patients per county':'Value Lunatics Per County'});
+  B1.svg=B1.P.svg;B1.yt.setAttribute('font-family',st.font);B1.xt.setAttribute('font-family',st.font);measureInk();}
+function apply4(key){const st=sty4(),P=B1.P,ease=RM?0:420;
+  const tween=(e,a,b,attr)=>{if(!ease){e.setAttribute(attr,b);return;}const t0=performance.now();const f=n=>{const u=Math.min(1,(n-t0)/ease),k=1-Math.pow(1-u,3);e.setAttribute(attr,a+(b-a)*k);if(u<1)requestAnimationFrame(f);else measureInk();};requestAnimationFrame(f);};
+  const fade=(e,attr,to)=>{e.style.transition=ease?'all .42s ease':'none';e.setAttribute(attr,to);};
+  if(key==='bg')fade(P.bgR,'fill',st.bg?SP.bg:'#fff');
+  if(key==='frame')fade(B1.fr,'stroke-width',st.frame?1:0);
+  if(key==='fill')B1.bars.forEach(b=>fade(b,'fill',st.fill?SP.bar:'#fff'));
+  if(key==='width')B1.bars.forEach((b,k)=>{const w0=+b.getAttribute('width'),w1=B1.slot*st.barW,xc=B1.xc(k);tween(b,w0,w1,'width');tween(b,xc-w0/2,xc-w1/2,'x');});
+  if(key==='lw')B1.bars.forEach(b=>fade(b,'stroke-width',st.lw));
+  if(key==='bold')for(const t of [B1.yt,B1.xt]){t.style.transition=ease?'opacity .42s':'none';t.setAttribute('font-weight',st.bold?700:400);t.setAttribute('font-family',st.font);}
+  if(key==='title'){B1.yt.style.transition=ease?'opacity .25s':'none';B1.yt.style.opacity=0;setTimeout(()=>{B1.yt.textContent=st4.on.has('title')?'Patients per county':'Value Lunatics Per County';B1.yt.style.opacity=1;measureInk();},ease?250:0);}
+  setTimeout(measureInk,ease+30);}
+let inkTok=0;
+function inkOf(svg,dataOnly){return new Promise(res=>{const c=svg.cloneNode(true);c.querySelector('rect').setAttribute('fill','#fff');if(dataOnly)c.querySelectorAll(':scope > *:not(.di)').forEach((e,i)=>{if(i>0)e.setAttribute('visibility','hidden');});
+  c.querySelectorAll('[style]').forEach(e=>e.removeAttribute('style'));
+  const W=+svg.getAttribute('width'),H=+svg.getAttribute('height');const s=new XMLSerializer().serializeToString(c);const img=new Image();
+  img.onload=()=>{const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);x.drawImage(img,0,0);const d=x.getImageData(0,0,W,H).data;let ink=0;for(let i=0;i<d.length;i+=4){ink+=1-(0.2126*d[i]+0.7152*d[i+1]+0.0722*d[i+2])/255;}res(ink);};
+  img.onerror=()=>res(NaN);img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);});}
+async function measureInk(){if(!B1)return;const tok=++inkTok;const svg=B1.P.svg;const [all,data]=await Promise.all([inkOf(svg,false),inkOf(svg,true)]);if(tok!==inkTok)return;
+  if(!isFinite(all)){$('#b1r').textContent='—';return;}const non=all-data;if(!st4.on.size||!INKBASE)INKBASE={non,all};
+  const a=non/INKBASE.non,t=all/INKBASE.all;$('#b1r').textContent=Math.round(a*100)+'%';$('#b1bar').style.width=Math.min(100,a*100).toFixed(1)+'%';$('#b1r2').textContent=Math.round(t*100)+'%';$('#b1bar2').style.width=Math.min(100,t*100).toFixed(1)+'%';}
+let INKBASE=null;
+function chips(){const h=$('#b1e');h.innerHTML='';EDITS.forEach(([k,l,how])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed',String(st4.on.has(k)));
+  b.addEventListener('click',()=>{const on=!st4.on.has(k);on?st4.on.add(k):st4.on.delete(k);b.setAttribute('aria-pressed',String(on));$('#b1h').innerHTML=on?how:`<b>${l} restored.</b> This puts the SPSS default back for that one element.`;apply4(k);});h.appendChild(b);});}
+$('#b1all').addEventListener('click',()=>{EDITS.forEach(e=>st4.on.add(e[0]));chips();renderB1();$('#b1h').innerHTML='<b>Every edit is made.</b> Only the bars, the two axes, the tick labels and two short titles are left, and every one of them tells the reader something about the data. Note that the labels still count as ink that shows no data, since Tufte counts only the marks that draw the numbers, which is why the first meter never reaches zero.';});
+$('#b1x').addEventListener('click',()=>{st4.on.clear();chips();renderB1();$('#b1h').innerHTML='';});
+drw($('#b1d'),{spssNote:'A chart template saves these edits so you can apply them to the next chart. In the Chart Editor, choose File → Save Chart Template, and later File → Apply Chart Template.',spss:'* make the chart, then edit it in the Chart Editor\nGRAPH\n  /BAR(SIMPLE)=VALUE(NBR) BY County.',stata:'graph bar (asis) NBR, over(County, sort(1) descending label(angle(90))) ///\n    bar(1, fcolor(none) lcolor(black) lwidth(thin)) bargap(100) ///\n    graphregion(color(white)) plotregion(style(none)) ///\n    ytitle("Patients per county") ylabel(, nogrid)'});
+
+/* ============ PATH B · 5 honest scales ============ */
+const st5={t:'trunc',s:0,a:'area',r:100};
+const MEANH={no:LUN.filter(r=>!r.city).reduce((a,r)=>a+r.phome,0)/10,yes:LUN.filter(r=>r.city).reduce((a,r)=>a+r.phome,0)/3};
+function renderB2(){const host=$('#b2c'),W=boxW(host,560),H=Math.round(Math.min(360,Math.max(290,W*.66))),st=DEF,t=st5.t;const sw=$('#b2sw'),r=$('#b2r');
+  let lf='',say='',menu='';
+  if(t==='trunc'){sw.hidden=false;$('#b2sl').textContent='Axis starts at';r.min=0;r.max=32;r.step=1;r.value=st5.s;$('#b2rv').textContent=st5.s;
+    const m={l:56,r:12,t:14,b:44};const P=spFrame(host,W,H,m,st);const lo=st5.s,ys=v=>P.y1-(v-lo)/(80-lo)*(P.y1-P.y0);const G=[['No Large City',MEANH.no],['Large City',MEANH.yes]];const cw=(P.x1-P.x0)/2,xc=k=>P.x0+cw*(k+.5);
+    G.forEach(([l,v],k)=>el('rect',{x:xc(k)-cw*.25,y:ys(v),width:cw*.5,height:P.y1-ys(v),fill:SP.bar,stroke:'#000'},P.svg));
+    spFrameLine(P,st);spAxes(P,st);yAxis(P,ys,ticks(lo,80,5),null,st,'Mean Percent Cared for at Home');catLabels(P,G.map(g=>g[0]),xc,st,false);
+    const dataE=MEANH.no/MEANH.yes-1,shownE=(MEANH.no-lo)/(MEANH.yes-lo)-1,L=shownE/dataE;
+    lf=`<span class="vb ${L<1.1?'ok':L<2?'care':'bad'}">Lie factor ${L.toFixed(2)}</span>In the data, the first mean is ${(dataE*100).toFixed(0)}% larger than the second. On the chart, the first bar is ${(shownE*100).toFixed(0)}% taller.`;
+    say=`Counties without a large city cared for ${f1(MEANH.no)}% of their patients at home on average, against ${f1(MEANH.yes)}% in the three counties with one. A bar's length is the whole of its message, so a bar chart's axis has to start at zero. Drag the start up and the gap swells while the data stay the same.`;
+    menu='In the Chart Editor, double-click the Y axis and open the <span class="menu">Scale</span> tab. Make sure <span class="menu">Minimum</span> is 0 for a bar chart, and type 0 in the <span class="menu">Custom</span> box if SPSS picked something else.';}
+  else if(t==='area'){sw.hidden=false;$('#b2sl').textContent='Circle size';r.min=0;r.max=1;r.step=1;r.value=st5.a==='area'?0:1;$('#b2rv').textContent=st5.a==='area'?'by area':'by diameter';
+    const P=spFrame(host,W,H,{l:0,r:0,t:0,b:0},Object.assign({},st,{bg:false}));const A=LUN.find(r=>r.c==='SUFFOLK'),B=LUN.find(r=>r.c==='WORCESTER');const ratio=A.nbr/B.nbr;
+    const rB=Math.min(W,H)*.2,rA=st5.a==='area'?rB*Math.sqrt(ratio):rB*ratio;const cy=H/2;
+    [[A,rA,W*.33],[B,rB,W*.72]].forEach(([c,R,x])=>{el('circle',{cx:x,cy,r:R,fill:SP.bar,stroke:'#000'},P.svg);tx(P.svg,x,cy+4,com(c.nbr),{'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#000'});tx(P.svg,x,cy+R+16,c.c.charAt(0)+c.c.slice(1).toLowerCase(),{'text-anchor':'middle','font-size':11,fill:'#000'});});
+    const shown=(rA*rA)/(rB*rB),L=(shown-1)/(ratio-1);
+    lf=`<span class="vb ${L<1.1?'ok':'bad'}">Lie factor ${L.toFixed(2)}</span>Suffolk had ${((ratio-1)*100).toFixed(0)}% more patients than Worcester, and its circle covers ${((shown-1)*100).toFixed(0)}% more area.`;
+    say='Readers judge a circle by its area rather than its width. Scale the diameter to the data and the area grows with the square of the ratio, so a 30% difference looks like a 70% one. If you must use circles or icons, scale their area, though a pair of bars would be easier to read than either.';
+    menu='SPSS bubble and icon charts are rare in our work, so the fix is usually to use a bar chart instead. The same rule applies to any picture whose size stands for a number.';}
+  else{sw.hidden=false;$('#b2sl').textContent='Right axis top';r.min=80;r.max=300;r.step=10;r.value=st5.r;$('#b2rv').textContent=st5.r+'%';
+    const m={l:46,r:46,t:14,b:96};const P=spFrame(host,W,H+40,m,st);const it=LUN.slice().sort((a,b)=>b.nbr-a.nbr);const n=it.length,slot=(P.x1-P.x0)/n,xc=k=>P.x0+slot*(k+.5);
+    const yl=v=>P.y1-v/500*(P.y1-P.y0),yr=v=>P.y1-v/st5.r*(P.y1-P.y0);
+    const line=(f,c,dash)=>{let d='';it.forEach((r,k)=>{d+=(k?'L':'M')+xc(k)+','+f(r);});el('path',{d,fill:'none',stroke:c,'stroke-width':2,'stroke-dasharray':dash||''},P.svg);it.forEach((r,k)=>el('circle',{cx:xc(k),cy:f(r),r:2.5,fill:c},P.svg));};
+    line(r=>yl(r.nbr),SP.c[0]);line(r=>yr(r.phome),'#B22','5 3');
+    spFrameLine(P,st);spAxes(P,st);yAxis(P,yl,[0,100,200,300,400,500],null,st,null);
+    ticks(0,st5.r,5).forEach(v=>{const y=yr(v);el('line',{x1:P.x1,x2:P.x1+4,y1:y,y2:y,stroke:'#000'},P.svg);tx(P.svg,P.x1+6,y+3.5,v,{'font-size':10,fill:'#000'});});
+    catLabels(P,it.map(r=>r.c),xc,st,true);
+    legendBox(P,[[SP.c[0],'Patients (left axis)'],['#B22','% at home (right axis)']],P.x0+8,P.y0+6);
+    let cross=0;for(let k=1;k<n;k++){const d0=yl(it[k-1].nbr)-yr(it[k-1].phome),d1=yl(it[k].nbr)-yr(it[k].phome);if(d0*d1<0)cross++;}
+    lf=`<span class="vb bad">No honest scale</span>The lines cross ${cross} time${cross===1?'':'s'} at this setting, and the crossings mean nothing, because each axis was set by hand.`;
+    say='A chart with two Y axes lets whoever sets the scales decide where the lines meet and which one looks bigger. Drag the right axis and watch the story change while the data stay put. Show the two variables against each other in a scatterplot instead, as in Part 3, or in two charts that share the X axis.';
+    menu='SPSS draws a dual-axis chart from <span class="menu">Graphs → Chart Builder → Dual Y Axes</span>. It is better left alone.';}
+  $('#b2lf').innerHTML=lf;$('#b2s').innerHTML=say;$('#b2m').innerHTML=menu;}
+$('#b2r').addEventListener('input',e=>{const v=+e.target.value;if(st5.t==='trunc')st5.s=v;else if(st5.t==='area')st5.a=v?'diam':'area';else st5.r=v;renderB2();});
+seg($('#b2t'),[['trunc','Truncated axis'],['area','Area, not length'],['dual','Two Y axes']],st5.t,v=>{st5.t=v;renderB2();});
+
+/* ============ PATH B · 6 paper, poster, journal ============ */
+const VEN={
+ paper:{lab:'Paper',w:6.5,h:4.2,font:'Calibri, Carlito, Arial, sans-serif',tick:10,title:11,lw:1,ms:5,gray:false,labels:true,
+   size:'6.5 × 4.2 in, the text width of a letter page with 1-inch margins',type:'10 to 11 pt, close to the body text of the paper',lines:'1 pt for the fit line, 0.75 pt for axes',color:'Color is fine on screen, but check that it still reads when printed in gray',file:'Paste into Word with right-click <span class="menu">Copy</span>, or export a PNG',
+   how:'<b>For a paper, size the chart to the page.</b> In the Chart Editor, open <span class="menu">Edit → Properties → Chart Size</span> and set the width to 6.5 inches. On <span class="menu">Text Style</span>, pick a font close to your paper and 10 or 11 pt. Then close the editor, right-click the chart in the Output Viewer, choose <span class="menu">Copy</span>, and paste it into your document.'},
+ poster:{lab:'Poster',w:14,h:9.5,font:'Arial, Helvetica, sans-serif',tick:28,title:32,lw:4,ms:16,gray:false,labels:true,
+   size:'About 14 × 9.5 in, one panel of a 48-inch-wide poster',type:'28 pt or more for tick labels and 32 pt for axis titles, since body text on a poster read from 4 to 7 feet should be at least 28 pt',lines:'3 to 4 pt, so lines survive the viewing distance',color:'Strong contrast, and color only where it carries meaning',file:'Export a PNG at 300 dpi at the final size, or an EPS',
+   how:'<b>For a poster, edit the chart up.</b> On <span class="menu">Chart Size</span> set the true printed size, then on <span class="menu">Text Style</span> raise every label to 28 pt or more. Select the markers and raise their size on the <span class="menu">Marker</span> tab, and select the fit line and raise its weight on <span class="menu">Lines</span>. Finally use <span class="menu">File → Export</span> in the Output Viewer, set the document type to <span class="menu">None (Graphics only)</span>, choose PNG, and set the resolution under <span class="menu">Change Options</span>.'},
+ journal:{lab:'Journal',w:3.5,h:2.6,font:'Arial, Helvetica, sans-serif',tick:8,title:8.5,lw:.75,ms:3.2,gray:true,labels:false,
+   size:'One column, here 3.5 in wide',type:'Sans serif such as Arial, at least 8 pt at the final printed size',lines:'At least 0.3 pt, and 0.75 to 1.0 pt for the plotted line',color:'Grayscale, so the figure prints in black and white',file:'TIFF or EPS, with line art at 1200 dpi',
+   how:'<b>For a journal, edit the chart down.</b> Set <span class="menu">Chart Size</span> to the column width the journal gives you, check that no text falls below its minimum at that size, and drop the labels that would turn into specks. SPSS 25 and later ship a <span class="menu">Publication Gray</span> chart template, which you can choose in the Chart Builder on the <span class="menu">Chart Appearance</span> tab. Export with <span class="menu">File → Export</span>, choosing TIFF or EPS.'}};
+const st6={v:'paper'};
+function renderB3(){const V=VEN[st6.v],host=$('#b3c'),pxIn=boxW(host,620)/6.5,W=Math.round(V.w*pxIn),H=Math.round(V.h*pxIn),pt=v=>v/72*pxIn,st={bg:false,frame:false,fill:false,bold:false,font:V.font,fs:1};
+  host.innerHTML='';const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','font-family':V.font,'aria-label':'The scatterplot sized for '+V.lab},host);el('rect',{x:0,y:0,width:W,height:H,fill:'#fff'},svg);
+  const m={l:pt(V.title)*1.6+pt(V.tick)*2.2,r:pt(V.tick)*1.2,t:pt(V.tick)*1,b:pt(V.title)*1.6+pt(V.tick)*1.8};const P={x0:m.l,x1:W-m.r,y0:m.t,y1:H-m.b,svg};
+  const xs=v=>P.x0+(v+10)/510*(P.x1-P.x0),ys=v=>P.y1-(v)/100*(P.y1-P.y0);const f=ols(LUN.map(r=>r.nbr),LUN.map(r=>r.phome));const ink='#000',lc=V.gray?'#000':'#B22';
+  el('line',{x1:P.x0,x2:P.x0,y1:P.y0,y2:P.y1,stroke:ink,'stroke-width':Math.max(.5,pt(V.lw*.75))},svg);el('line',{x1:P.x0,x2:P.x1,y1:P.y1,y2:P.y1,stroke:ink,'stroke-width':Math.max(.5,pt(V.lw*.75))},svg);
+  [0,50,100].forEach(v=>{tx(svg,P.x0-pt(V.tick)*.4,ys(v)+pt(V.tick)*.35,v,{'text-anchor':'end','font-size':pt(V.tick),fill:ink});});
+  [0,250,500].forEach(v=>{tx(svg,xs(v),P.y1+pt(V.tick)*1.2,v,{'text-anchor':'middle','font-size':pt(V.tick),fill:ink});});
+  el('line',{x1:xs(0),x2:xs(480),y1:ys(f.a),y2:ys(f.a+f.b*480),stroke:lc,'stroke-width':pt(V.lw)},svg);
+  LUN.forEach(r=>{el('circle',{cx:xs(r.nbr),cy:ys(r.phome),r:pt(V.ms)/2,fill:V.gray?'#777':'#3E58AC',stroke:'#fff','stroke-width':Math.max(.4,pt(V.ms)/10)},svg);
+    if(V.labels&&['SUFFOLK','NANTUCKET','WORCESTER'].includes(r.c)){const right=r.nbr<300;tx(svg,xs(r.nbr)+(right?1:-1)*pt(V.ms),ys(r.phome)+pt(V.tick)*.35,r.c.charAt(0)+r.c.slice(1).toLowerCase(),{'font-size':pt(V.tick)*.9,fill:'#333','text-anchor':right?'start':'end'});}});
+  tx(svg,(P.x0+P.x1)/2,H-pt(V.title)*.35,'Patients per county',{'text-anchor':'middle','font-size':pt(V.title),fill:ink});
+  tx(svg,0,0,'% cared for at home',{'text-anchor':'middle','font-size':pt(V.title),fill:ink,transform:`translate(${pt(V.title)*1.1},${(P.y0+P.y1)/2}) rotate(-90)`});
+  $('#b3sz').textContent=`Graph · ${V.w} × ${V.h} in, shown at ${Math.round(pxIn/96*100)}% of actual size`;
+  $('#b3n').innerHTML='All three versions are drawn at the same scale, so you can compare them directly. '+(st6.v==='poster'?'The poster version runs off the screen, so scroll sideways to see all of it.':st6.v==='journal'?'At one column wide, the journal version is about half the width of the paper version, and its 8 pt type is the smallest the journal allows.':'The paper version fills the width of a page of text.');
+  $('#b3t').innerHTML='<table><tr><th>Setting</th><th>'+V.lab+'</th></tr>'+[['Size',V.size],['Type',V.type],['Lines',V.lines],['Color',V.color],['File',V.file]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+'</table>';
+  $('#b3h').innerHTML=V.how;
+  const SX={paper:'graph display, xsize(6.5) ysize(4.2)\ngraph export "fig1.png", width(1950)',poster:'graph display, xsize(14) ysize(9.5)\n* 14 in × 300 dpi = 4200 pixels\ngraph export "fig1.png", width(4200)',journal:'twoway (scatter PHOME NBR) (lfit PHOME NBR), scheme(s1mono) xsize(3.5) ysize(2.6)\n* 3.5 in × 1200 dpi = 4200 pixels\ngraph export "fig1.tif", width(4200)'};
+  drw($('#b3d'),{stata:SX[st6.v]});}
+seg($('#b3v'),[['paper','Paper'],['poster','Poster'],['journal','Journal']],st6.v,v=>{st6.v=v;renderB3();});
+
+/* ---------- boot ---------- */
+function renderAll(){renderA1();renderA2();renderA3();chips();renderB1();renderB2();renderB3();}
+let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>4){lw=w;requestAnimationFrame(()=>{renderA1();renderA2();renderA3();renderB1();renderB2();renderB3();});}}).observe($('main'));
+renderAll();
+})();
+</script>
+<script id="presentjs">/* Presentation mode: the same page, one projector-sized slide at a time.
+   Injected into every module page by scripts/present.py. */
+(function () {
+  const SKIP = 'nav.pager, footer.src, details.srcd, script, style, noscript, template';
+  const main = document.querySelector('main');
+  if (!main) return;
+  let slides = [], cur = 0, on = false, bar, btn;
+
+  const kids = el => [...el.children].filter(c => !c.matches(SKIP) && !c.hidden && getComputedStyle(c).display !== 'none');
+  const avail = () => window.innerHeight - (bar ? bar.offsetHeight : 56) - 28;
+
+  function unhideAll() {
+    document.querySelectorAll('.pv-hide').forEach(e => e.classList.remove('pv-hide'));
+    main.style.zoom = '';
+  }
+  const unit = (el, parent, h) => ({el, parent, h, part:el.classList.contains('part'), brk:el.matches('[data-pv="break"]'),
+    glue:!el.classList.contains('part') && (el.matches('[data-pv="prev"], .btnrow, .controls-row') || h < 64),
+    lead:!el.matches('[data-pv="prev"], .btnrow, .controls-row, .part') && h >= 64 && (el.matches('.controls, [data-pv="next"]') || (h < 170 && !!el.querySelector('button, input, select') && !el.querySelector('svg, canvas, table')))});
+  function build() {
+    unhideAll();
+    const H = avail(), units = [];
+    kids(main).forEach(el => {
+      const h = el.getBoundingClientRect().height;
+      if (h <= 1) return;
+      const parts = el.matches('section, div, figure') ? kids(el).filter(c => c.getBoundingClientRect().height > 1) : [];
+      if (h > H * 1.15 && parts.length > 1) parts.forEach(c => units.push(unit(c, el, c.getBoundingClientRect().height + 12)));
+      else units.push(unit(el, null, h + 16));
+    });
+    slides = [];
+    let s = null, used = 0, sticky = null;
+    units.forEach(u => {
+      if (u.part) sticky = null;
+      const led = s && s.units[s.units.length - 1].lead;
+      if (!s || u.part || u.brk || (!u.glue && !led && used + u.h > H)) {
+        s = {units:[], sticky:u.lead ? null : sticky}; slides.push(s); used = s.sticky ? s.sticky.h : 0;
+      }
+      s.units.push(u); used += u.h;
+      if (u.lead) sticky = u;
+    });
+  }
+  function fit() {
+    if (!on) return;
+    main.style.zoom = 1;
+    const H = avail(), r = main.getBoundingClientRect();
+    const zh = H / Math.max(r.height, 1), zw = (window.innerWidth * 0.97) / Math.max(r.width, 1);
+    const z = Math.max(0.78, Math.min(1.8, zh, zw));
+    main.style.zoom = z.toFixed(3);
+    main.classList.toggle('pv-scroll', r.height * z > H + 2);
+  }
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    unhideAll();
+    const s = slides[cur], us = s.sticky ? [s.sticky].concat(s.units) : s.units;
+    const keep = new Set(us.map(u => u.parent || u.el)), inside = new Set(us.map(u => u.el));
+    [...main.children].forEach(el => { if (!keep.has(el)) el.classList.add('pv-hide'); });
+    new Set(us.filter(u => u.parent).map(u => u.parent)).forEach(par => [...par.children].forEach(c => { if (!inside.has(c) && !c.matches('script, style')) c.classList.add('pv-hide'); }));
+    bar.querySelector('.pv-n').textContent = `${cur + 1} / ${slides.length}`;
+    bar.querySelector('.pv-prev').disabled = cur === 0;
+    bar.querySelector('.pv-next').disabled = cur === slides.length - 1;
+    window.scrollTo(0, 0);
+    fit();
+    window.dispatchEvent(new Event('resize'));
+    setTimeout(fit, 60);
+  }
+  function enter(at) {
+    on = true;
+    document.documentElement.classList.add('presenting');
+    build();
+    let i = 0;
+    if (at !== undefined) i = at;
+    else { const y = window.scrollY; slides.forEach((s, k) => { const top = (s.units[0].el).getBoundingClientRect().top + y; if (top <= y + 80) i = k; }); }
+    if (location.hash !== '#present') history.replaceState(null, '', '#present');
+    show(i);
+    bar.querySelector('.pv-next').focus();
+  }
+  function exit() {
+    const target = slides[cur] && slides[cur].units[0].el;
+    on = false;
+    unhideAll();
+    main.classList.remove('pv-scroll');
+    document.documentElement.classList.remove('presenting');
+    if (location.hash === '#present') history.replaceState(null, '', location.pathname + location.search);
+    window.dispatchEvent(new Event('resize'));
+    if (target) setTimeout(() => target.scrollIntoView({block:'start'}), 30);
+    btn && btn.focus();
+  }
+
+  bar = document.createElement('div');
+  bar.className = 'pv-bar';
+  bar.innerHTML = `<button class="pv-prev" aria-label="Previous slide">←</button><span class="pv-n" aria-live="polite"></span><button class="pv-next" aria-label="Next slide">→</button><button class="pv-exit">Exit</button>`;
+  document.body.appendChild(bar);
+  bar.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.classList.contains('pv-prev')) show(cur - 1);
+    else if (b.classList.contains('pv-next')) show(cur + 1);
+    else if (b.classList.contains('pv-exit')) exit();
+  });
+
+  const nav = document.querySelector('nav.topnav');
+  if (nav) {
+    btn = document.createElement('button');
+    btn.className = 'pv-open';
+    btn.type = 'button';
+    btn.textContent = 'Present';
+    btn.title = 'Show this page as slides for the classroom';
+    btn.addEventListener('click', () => enter());
+    const last = nav.lastElementChild;
+    nav.insertBefore(btn, last && last.tagName === 'A' && last !== nav.firstElementChild ? last : null);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!on) return;
+    const t = e.target, tag = t.tagName;
+    const typing = tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && !['button','checkbox','radio','submit'].includes(t.type));
+    if (e.key === 'Escape') { e.preventDefault(); exit(); return; }
+    if (typing) return;
+    const fwd = e.key === 'PageDown' || e.key === 'ArrowRight' || (e.key === ' ' && tag !== 'BUTTON');
+    const back = e.key === 'PageUp' || e.key === 'ArrowLeft';
+    if (fwd) { e.preventDefault(); show(cur + 1); }
+    else if (back) { e.preventDefault(); show(cur - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+  let rt;
+  window.addEventListener('resize', e => { if (!on || !e.isTrusted) return; clearTimeout(rt); rt = setTimeout(() => { const k = cur; build(); show(Math.min(k, slides.length - 1)); }, 200); });
+  main.addEventListener('click', e => {
+    if (!on) return;
+    const t = e.target;
+    setTimeout(() => {
+      main.style.zoom = 1;
+      if (main.getBoundingClientRect().height > avail() * 1.3) {
+        build();
+        const k = slides.findIndex(sl => sl.units.some(u => u.el.contains(t)));
+        show(k >= 0 ? k : cur);
+      } else fit();
+    }, 120);
+  });
+  main.addEventListener('input', () => { if (on) setTimeout(fit, 80); });
+  if (location.hash === '#present') window.addEventListener('load', () => setTimeout(() => enter(0), 300));
+})();
+</script>
+<script id="rvshelf">(()=>{const fit=()=>document.querySelectorAll('.shelf2').forEach(s=>{const h=s.previousElementSibling;s.classList.remove('scroll');const over=s.scrollWidth>s.clientWidth+4;s.classList.toggle('scroll',over);if(h&&h.classList.contains('mhd'))h.classList.toggle('swipe',over);if(!s._w){s._w=1;s.addEventListener('scroll',()=>{if(s.scrollLeft>24&&h)h.classList.add('swiped');},{passive:true});}});let t=0;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(fit,120);});if(document.readyState==='loading')addEventListener('DOMContentLoaded',fit);else fit();addEventListener('load',fit);})();document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button.tapterm');if(!b)return;var n=document.getElementById(b.getAttribute('aria-controls'));if(!n)return;n.hidden=!n.hidden;b.setAttribute('aria-expanded',String(!n.hidden));});
+</script>
+</body>
+</html>
