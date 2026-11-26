@@ -567,6 +567,10 @@ function parseTab(txt,line){
   for(let i=hi+2;i<L.length;i++){const s=L[i];if(/^-+\+/.test(s))continue;const p=s.split('|');if(p.length<3)break;
     const lab=p[0].trim();if(!lab)continue;const vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
   if(!rows.length)return null;
+  if(cols.length!==m[0].length){ /* a label with a space in it ("Small town"): cut the header where each count column ends */
+    const H=L[hi].split('|')[1], R0=L.slice(hi+2).find(s=>!/^-+\+/.test(s)&&s.split('|').length>=3&&s.split('|')[0].trim()).split('|')[1];
+    const ends=[];R0.replace(/\S+/g,(t,o)=>{ends.push(o+t.length);return t;});
+    if(ends.length===m[0].length){cols.length=0;let a=0;ends.forEach((e,j)=>{cols.push(H.slice(a,j===ends.length-1?H.length:e).trim());a=e;});}}
   return {rowVar,colVar,cols,rows,m};
 }
 function lambdas(m){ // as SPSS / PSPP compute them
@@ -1622,6 +1626,12 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 
 
 
+
+
+
+
+
+
   <section class="controls" aria-label="Simulation controls">
     <div class="ctl">
       <label class="lab" for="pop">Population: U.S. counties</label>
@@ -1692,7 +1702,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
           <b>Why votes cast falls short of 95%</b>
           <p>Votes cast in 2026 are extremely skewed. The median county cast 9,189 votes, but the mean is 39,107, and only about 19% of counties are above the mean. A few very large counties pull the mean up, and Los Angeles County alone cast over 3.1 million votes.</p>
           <p>Most samples contain only typical, smaller counties. Their mean lands below μ, and their SD is small too, so the interval is narrow and sits entirely below μ. That's why nearly every miss here is a red line to the left of μ. The few samples that do catch a big county get a huge SD and a very wide interval.</p>
-          <p>So the trouble is the skew rather than the size of the SD. The interval assumes the sample means pile up in a roughly normal shape, and with this much skew they don't until n is very large. Drawing more intervals doesn't fix it, because coverage belongs to the method at a given n. Larger samples help, but slowly. In simulated 95% t intervals at each size, coverage was about 60% at n = 5, 67% at n = 10, 77% at n = 25, 83% at n = 50 and 87% at n = 100.</p>
+          <p>So the trouble is the skew rather than the size of the SD. The interval assumes the sample means pile up in a roughly normal shape, and with this much skew they don't until n is very large. Drawing more intervals doesn't fix it, because coverage belongs to the method at a given n. Larger samples help, but slowly. In 100,000 simulated 95% t intervals at each size, coverage was about 60% at n = 5, 67% at n = 10, 77% at n = 25, 82% at n = 50 and 87% at n = 100.</p>
         </div>
         <div class="votesnote" id="votesNote" hidden>
           <b>Why total votes in 2020 falls short of 95%</b>

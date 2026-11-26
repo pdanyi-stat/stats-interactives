@@ -583,6 +583,10 @@ function parseTab(txt,line){
   for(let i=hi+2;i<L.length;i++){const s=L[i];if(/^-+\+/.test(s))continue;const p=s.split('|');if(p.length<3)break;
     const lab=p[0].trim();if(!lab)continue;const vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
   if(!rows.length)return null;
+  if(cols.length!==m[0].length){ /* a label with a space in it ("Small town"): cut the header where each count column ends */
+    const H=L[hi].split('|')[1], R0=L.slice(hi+2).find(s=>!/^-+\+/.test(s)&&s.split('|').length>=3&&s.split('|')[0].trim()).split('|')[1];
+    const ends=[];R0.replace(/\S+/g,(t,o)=>{ends.push(o+t.length);return t;});
+    if(ends.length===m[0].length){cols.length=0;let a=0;ends.forEach((e,j)=>{cols.push(H.slice(a,j===ends.length-1?H.length:e).trim());a=e;});}}
   return {rowVar,colVar,cols,rows,m};
 }
 function lambdas(m){ // as SPSS / PSPP compute them
@@ -1194,7 +1198,7 @@ function fnum(v){if(!isFinite(v))return '.';let t=String(Number(v.toPrecision(7)
 const pf=p=>p<0.0005?'0.000':p.toFixed(3);
 const hl=(s,c)=>c?`<span class="${c}">${s}</span>`:s;
 function anova(f,cmd){const R=(l,v)=>'  '+rpad(l,16)+'='+pad(v,10),row=(s,ss,df,ms)=>pad(s,12)+' |'+pad(fnum(ss),12)+pad(df,11)+pad(fnum(ms),12),ssm=f.sst-f.sse;
-  return [cmd.split('\n').map(c=>`<span class="cmd">${c}</span>`).join('\n')+(window.SPSSX&&f.beta?SPSSX.meta({beta:f.beta,ss:[f.sst-f.sse,f.sse,f.sst]}):''),'',rpad('      Source |       SS           df       MS',49)+R('Number of obs',f.n),rpad('-------------+----------------------------------',49)+R(`F(${f.k}, ${f.df})`,f.F.toFixed(2)),row('Model',ssm,f.k,ssm/f.k)+R('Prob > F',f.pF<0.00005?'0.0000':f.pF.toFixed(4)),row('Residual',f.sse,f.df,f.sse/f.df)+R('R-squared',f.r2.toFixed(4)),rpad('-------------+----------------------------------',49)+R('Adj R-squared',f.adj.toFixed(4)),row('Total',f.sst,f.n-1,f.sst/(f.n-1))+R('Root MSE',f.rmse.toPrecision(5)),'','-'.repeat(78),'   trump_pct | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]','-------------+'+'-'.repeat(64)];}
+  return [cmd.split('\n').map(c=>`<span class="cmd">${c}</span>`).join('\n')+(window.SPSSX&&f.beta?SPSSX.meta({beta:f.beta,ss:[f.sst-f.sse,f.sse,f.sst]}):''),'',rpad('      Source |       SS           df       MS',49)+R('Number of obs',f.n),rpad('-------------+----------------------------------',49)+R(`F(${f.k}, ${f.df})`,f.F.toFixed(2)),row('Model',ssm,f.k,ssm/f.k)+R('Prob > F',f.pF<0.00005?'0.0000':f.pF.toFixed(4)),row('Residual',f.sse,f.df,f.sse/f.df)+R('R-squared',f.r2.toFixed(4)),rpad('-------------+----------------------------------',49)+R('Adj R-squared',f.adj.toFixed(4)),row('Total',f.sst,f.n-1,f.sst/(f.n-1))+R('Root MSE',f.rmse.toPrecision(5)),'','-'.repeat(78),' '.repeat(Math.max(0,12-RAW.yvar.length))+RAW.yvar+' | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]','-------------+'+'-'.repeat(64)];}
 function crow(name,f,j,cls,mark){const parts=[pad(fnum(f.b[j]),11),pad(fnum(f.se[j]),11),pad(f.t[j].toFixed(2),9),pad(pf(f.p[j]),8)];if(mark){parts[0]=hl(parts[0],'m');parts[1]=hl(parts[1],'m');parts[2]=hl(parts[2],'m');parts[3]=hl(parts[3],'m');}
   return hl(pad(name,12),cls)+' |'+hl(parts[0],cls)+parts.slice(1).join('')+pad(fnum(f.b[j]-f.tc*f.se[j]),13)+pad(fnum(f.b[j]+f.tc*f.se[j]),12);}
 

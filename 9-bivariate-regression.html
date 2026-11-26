@@ -589,6 +589,10 @@ function parseTab(txt,line){
   for(let i=hi+2;i<L.length;i++){const s=L[i];if(/^-+\+/.test(s))continue;const p=s.split('|');if(p.length<3)break;
     const lab=p[0].trim();if(!lab)continue;const vals=p[1].trim().split(/\s+/).map(num);if(lab==='Total'){total=vals;break;}rows.push(lab);m.push(vals);}
   if(!rows.length)return null;
+  if(cols.length!==m[0].length){ /* a label with a space in it ("Small town"): cut the header where each count column ends */
+    const H=L[hi].split('|')[1], R0=L.slice(hi+2).find(s=>!/^-+\+/.test(s)&&s.split('|').length>=3&&s.split('|')[0].trim()).split('|')[1];
+    const ends=[];R0.replace(/\S+/g,(t,o)=>{ends.push(o+t.length);return t;});
+    if(ends.length===m[0].length){cols.length=0;let a=0;ends.forEach((e,j)=>{cols.push(H.slice(a,j===ends.length-1?H.length:e).trim());a=e;});}}
   return {rowVar,colVar,cols,rows,m};
 }
 function lambdas(m){ // as SPSS / PSPP compute them
