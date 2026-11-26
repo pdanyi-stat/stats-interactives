@@ -1566,6 +1566,10 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 
 
 
+
+
+
+
   <section class="controls" aria-label="Simulation controls">
     <div class="ctl">
       <label class="lab" for="pop">Population: 3,112 U.S. counties</label>
@@ -1751,7 +1755,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
   <section class="dcard wwl">
     <ul>
       <li>A confidence interval is a range of plausible values for the population value, built as our estimate plus or minus a margin of error.</li>
-      <li>95% confidence describes the method, not one interval. If we drew many samples, about 95% of their intervals would capture the true value, and about 5% would miss it.</li>
+      <li>95% confidence describes the method rather than any one interval. If we drew many samples, about 95% of their intervals would capture the true value, and about 5% would miss it.</li>
       <li>Intervals get wider with a higher confidence level or a more spread-out variable, and narrower with a larger sample.</li>
     </ul>
   </section>
@@ -1760,7 +1764,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
     Data: 2020 and 2016 county-level presidential returns, compiled by Tony McGovern in
     <a href="https://github.com/tonmcg/US_County_Level_Election_Results_08-24">tonmcg/US_County_Level_Election_Results_08-24</a> (Alaska excluded; N = 3,112).
     2016 polls: FiveThirtyEight's poll collection as packaged in the <i>dslabs</i> R library (Irizarry), via <a href="https://github.com/vincentarelbundock/Rdatasets">Rdatasets</a>; state results from the same package. National result: Clinton 48.2%, Trump 46.1%.
-    Poll intervals use raw (unadjusted) shares; polls without a sample size are omitted.
+    Poll intervals use raw (unadjusted) shares, and polls without a sample size are left out.
   </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="6-sampling-distributions.html"><span class="k">← Previous · Module 6</span><span class="t">Sampling distributions</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="8-difference-in-means.html"><span class="k">Next · Module 8 →</span><span class="t">Difference in means</span></a></nav>
 </main>
