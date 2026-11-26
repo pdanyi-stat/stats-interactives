@@ -456,6 +456,49 @@ input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
 #axl{color:var(--s1-ink);font-weight:600}#ayl{color:var(--s2-ink);font-weight:600}
 @media (max-width:640px){@media (max-width:640px){.hyp{font-style:italic;color:var(--ink);margin:0}
 ul.p{margin:0;padding-left:20px}
+
+/* put the cause first */
+.ord{display:grid;gap:12px;margin:4px 0 6px;padding:14px 15px 15px;border-radius:10px;background:color-mix(in srgb,var(--s1) 5%,var(--surface));border:1px solid color-mix(in srgb,var(--s1-line) 35%,var(--line));border-left:5px solid var(--s1-line)}
+.ord>*{min-width:0}
+.ord>.kick{color:var(--s1-ink)!important;font-weight:700;letter-spacing:.04em;margin:0}
+.ord .lead{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.ocards{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:7px}
+.ocards button{display:grid;gap:2px;align-content:start;text-align:left;padding:7px 22px 8px 9px;min-height:54px;font-size:13.5px!important;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px/1.3 var(--font-body);cursor:pointer;position:relative}
+.ocards button .t{font:600 10.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.ocards button[aria-pressed="true"] .t,.ocards button[aria-pressed="true"].done::after{color:inherit;opacity:.9}
+.ord.dragging,.ord.dragging *{user-select:none;-webkit-user-select:none}
+.ocards button.done::after{content:"✓";position:absolute;top:6px;right:9px;font:700 13px var(--font-body);color:var(--s1-ink)}
+.oprog{margin:0;font-size:13.5px;color:var(--muted)}
+.otag{justify-self:start;font:600 12px var(--font-body);letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--s1);color:#fff;box-shadow:inset 0 0 0 1px var(--s1-edge)}
+.oboard{display:grid;grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr);align-items:stretch;gap:8px}
+.oslot{display:grid;gap:6px;align-content:start;padding:8px;border-radius:12px;border:2px dashed var(--line);min-height:112px;transition:background .15s,border-color .15s}
+.oslot .sl{font:700 11.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase}
+.oslot[data-r="x"] .sl{color:var(--s1-ink)}.oslot[data-r="y"] .sl{color:var(--s2-ink)}
+.oslot.hot{background:color-mix(in srgb,var(--s1) 10%,transparent);border-color:var(--s1-line)}
+.oarr{display:grid;place-items:center;font:700 28px var(--font-body);color:var(--ink-2)}
+.otile{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;display:grid;gap:2px;padding:12px 12px 11px;border-radius:10px;font:600 17px/1.25 var(--font-body);color:var(--ink);min-height:62px;align-content:center;background:var(--surface);border:2px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.otile small{font:500 12.5px/1.3 var(--font-body);color:var(--ink-2)}
+.otile:focus-visible{outline:3px solid var(--s1-line);outline-offset:2px}
+.oslot[data-r="x"] .otile{border-color:var(--s1-line);background:color-mix(in srgb,var(--s1) 12%,var(--surface))}
+.oslot[data-r="y"] .otile{border-color:var(--s2);background:color-mix(in srgb,var(--s2) 13%,var(--surface))}
+.otile.drag{cursor:grabbing;transition:none;z-index:5;position:relative;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+.orow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.oout{display:grid;gap:8px;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.oout p{margin:0}
+.oout .big{font:600 20px/1.35 var(--font-body);color:var(--ink)}
+.oout .formal{font-size:16px;line-height:1.5;color:var(--ink)}
+.oout .plain{font-size:15px;line-height:1.5;color:var(--ink-2)}
+.oout .lab{display:block;font:700 11px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.oout .vx{color:var(--s1-ink);font-weight:700}.oout .vy{color:var(--s2-ink);font-weight:700}
+.oout.flash{animation:oflash .6s ease}
+@keyframes oflash{from{background:color-mix(in srgb,var(--s1) 14%,var(--surface))}to{background:var(--surface)}}
+.overd{padding:10px 13px;border-radius:9px;font-size:15px;line-height:1.5;border-left:5px solid}
+.overd b.k{display:block;font-size:14px;letter-spacing:.02em;margin-bottom:2px}
+.overd.ok{border-color:#2f8f5b;background:color-mix(in srgb,#2f8f5b 11%,var(--surface))}
+.overd.no{border-color:#c2453a;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.overd.both{border-color:var(--s1-line);background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+@media (max-width:560px){.oboard{grid-template-columns:minmax(0,1fr)}.oarr{height:26px;transform:rotate(90deg)}.oslot{min-height:0}.oout .big{font-size:18px}}
+@media (prefers-reduced-motion:reduce){.otile{transition:none}.oout.flash{animation:none}}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -707,6 +750,26 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
   <section class="dcard" id="iv">
     <p class="p">The independent variable (IV, or X) is the one we think does the causing. The dependent variable (DV, or Y) is the outcome. To tell them apart, ask which one could change the other. A cause has to come first in time, so something that happens later can't change something that was already set.</p>
     <p class="p">Sometimes the order isn't obvious, and either variable could plausibly affect the other. Then researchers have to argue for an order, and readers can disagree.</p>
+
+    <div class="ord" id="ord">
+      <p class="kick">Try it · Put the cause first</p>
+      <p class="lead">Each card below holds two variables from data used on this site. Drag one tile onto the other slot, or tap a tile, to swap which one is X and which one is Y. The sentences underneath rewrite themselves for the order you choose, and the box at the bottom says whether that order can work.</p>
+      <div class="ocards" id="ordCards" role="group" aria-label="Examples"></div>
+      <p class="oprog" id="ordProg" aria-live="polite"></p>
+      <span class="otag" id="ordTag"></span>
+      <div class="oboard">
+        <div class="oslot" data-r="x" id="ordX"><span class="sl">X · IV, the cause</span></div>
+        <div class="oarr" aria-hidden="true">→</div>
+        <div class="oslot" data-r="y" id="ordY"><span class="sl">Y · DV, the outcome</span></div>
+      </div>
+      <div class="orow"><button type="button" id="ordSwap">Swap X and Y ⇄</button><button type="button" id="ordNext">Next card →</button></div>
+      <div class="oout" id="ordOut" aria-live="polite">
+        <p class="big" id="ordBig"></p>
+        <p class="formal"><span class="lab">As a hypothesis</span><span id="ordFormal"></span></p>
+        <p class="plain"><span class="lab">In plain words</span><span id="ordPlain"></span></p>
+      </div>
+      <div class="overd" id="ordVerd"></div>
+    </div>
     <div class="act"><p class="kick">Try it · Pick the IV</p><span class="tag" id="h2tag"></span><p class="ctx" id="h2ctx"></p><p class="p" style="font-size:15px;margin:0"><b>Which is the cause?</b></p><div class="chips" id="h2c"></div><div class="fbk" id="h2f"></div><div class="foot"><span id="h2n"></span><button id="h2x">Next →</button></div></div>
   </section>
 
@@ -822,6 +885,131 @@ $('h3k').onclick=()=>{const a=A3[i3],d=a[7];
   else{const ok=x*y===d;say('h3f',ok,(d>0?'Both move the same way, so this is a positive relationship.':'They move in opposite directions, so this is an inverse (negative) relationship.')+(a[3].includes('pclass')?' In plain words, higher classes did better, but with these codes the relationship is inverse.':'')+(a[3].includes('female')?' Because female is coded 1, “more women” is the high end of X.':''));}};
 $('h3x').onclick=()=>{i3=nx(A3.length,i3);d3();};
 d1();d2();d3();
+})();
+/* put the cause first: drag or tap to swap X and Y */
+(()=>{
+const $=i=>document.getElementById(i);
+if(!$('ord')) return;
+/* each example: tag, a and b (t = tile, s = in a short sentence, l = in a long one), how = 'ab' when a must come first or 'both' when either order can be argued,
+   pa/pb = the plain-words version with a as X / b as X, ok = why the working order works, no = why the reverse fails, both = the argument for either order */
+const EX=[
+ {tag:'Titanic passengers',a:{t:'Age',s:'age',l:"a passenger's age"},b:{t:'Survival',s:'survival',l:'whether a passenger survived'},how:'ab',
+  pa:'We would expect younger passengers to have had a better chance of getting into a lifeboat and off the ship alive.',
+  pb:'Getting off the ship alive would change how old a passenger was.',
+  ok:"Each passenger's age was set long before the ship struck the iceberg, so age can come first and survival can depend on it.",
+  no:"Survival was decided on the night of the sinking, after every passenger's age was already set, so surviving can't change anyone's age."},
+ {tag:'Titanic passengers',a:{t:'Ticket class',s:'ticket class',l:"the class of a passenger's ticket"},b:{t:'Survival',s:'survival',l:'whether a passenger survived'},how:'ab',
+  pa:'We would expect first-class passengers to have reached the lifeboats more often than passengers traveling in third class.',
+  pb:'Surviving the sinking would change which class of ticket a passenger had bought.',
+  ok:'Tickets were bought before the voyage began, so ticket class comes first and survival can depend on it.',
+  no:'Tickets were bought before the voyage began, so the sinking came too late to change them.'},
+ {tag:'2024 ANES',a:{t:'Gender',s:'gender',l:"a voter's gender"},b:{t:'Presidential vote',s:'the presidential vote',l:'who a voter chose for president in 2024'},how:'ab',
+  pa:'We would expect women and men to split differently between Harris and Trump.',
+  pb:'Choosing Harris or Trump would change whether a voter was a woman or a man.',
+  ok:"A voter's gender was in place well before the 2024 election, so the vote can depend on it.",
+  no:"A voter's gender was in place well before the 2024 election, so a vote cast in November can't change it."},
+ {tag:'Midterm elections, 1899–2019',a:{t:'Unemployment',s:'unemployment',l:'the unemployment rate going into a midterm'},b:{t:'House seat losses',s:"the president's party's loss of House seats",l:"how many House seats the president's party gains or loses"},how:'ab',
+  pa:"We would expect the president's party to lose more House seats in years when more people are out of work.",
+  pb:"Losing House seats in November would change how many people had been out of work before the election.",
+  ok:'The unemployment rate is measured before the votes are cast, so the election result can depend on it.',
+  no:'The unemployment rate is measured before the votes are cast, so the election result comes too late to change it.'},
+ {tag:'States, 2016',a:{t:'Metro share',s:'the metro share',l:"the share of a state's people living in metro areas"},b:{t:"Trump's vote share",s:"Trump's vote share",l:"Trump's share of a state's 2016 vote"},how:'ab',
+  pa:'We would expect more urban states to have given Trump a smaller share of their vote.',
+  pb:"How a state voted in 2016 would change how many of its people already lived in cities and suburbs.",
+  ok:'Where people live was already in place on Election Day, so the vote can depend on it.',
+  no:'Where people live was already in place on Election Day, so a single election can’t rearrange it.'},
+ {tag:'2026 House races',a:{t:'District lean (PVI)',s:'district lean',l:'how Democratic a district voted in the presidential elections before 2026'},b:{t:'Democratic share',s:'the Democratic share',l:"the Democratic candidate's share of the 2026 vote"},how:'ab',
+  pa:'We would expect Democrats to do better in districts that have voted Democratic for president before.',
+  pb:"The 2026 House result would change how the district had voted for president in 2020 and 2024.",
+  ok:"Cook's PVI is built from the 2020 and 2024 presidential results, which came before 2026, so the 2026 result can depend on it.",
+  no:"Cook's PVI is built from the 2020 and 2024 presidential results, so a 2026 result can't reach back and change them."},
+ {tag:'2026 House races',a:{t:'Republican incumbent',s:'a Republican incumbent',l:'whether a Republican incumbent was on the ballot'},b:{t:'Democratic share',s:'the Democratic share',l:"the Democratic candidate's share of the 2026 vote"},how:'ab',
+  pa:'We would expect Democrats to win a smaller share of the vote when they run against a sitting Republican.',
+  pb:'The Democrat’s share of the 2026 vote would change who held the seat going into the election.',
+  ok:'Who held the seat was settled before anyone voted in 2026, so the Democratic share can depend on it.',
+  no:'Who held the seat was settled before anyone voted in 2026. The 2026 result can change who holds the seat next time, but that would be a different hypothesis about the next election.'},
+ {tag:'2026 counties',a:{t:'College share',s:'the college share',l:"the share of a county's adults with a bachelor's degree"},b:{t:'Turnout',s:'turnout',l:"the share of a county's citizens who voted in 2026"},how:'ab',
+  pa:'We would expect counties with more college graduates to turn out more of their voters.',
+  pb:"Turning out to vote in 2026 would change how many of a county's adults had already finished college.",
+  ok:'The college share comes from Census surveys taken before 2026, so turnout can depend on it.',
+  no:'The college share comes from Census surveys taken before 2026, and a vote in November does not hand out diplomas.'},
+ {tag:'2026 counties',a:{t:'Median age',s:'median age',l:"the median age of a county's residents"},b:{t:'Turnout',s:'turnout',l:"the share of a county's citizens who voted in 2026"},how:'ab',
+  pa:'We would expect older counties to turn out more of their voters, since older people tend to vote more often.',
+  pb:"Turnout in 2026 would change how old a county's residents were.",
+  ok:"A county's age profile was in place before the election, so turnout can depend on it.",
+  no:"A county's age profile was in place before the election, so turnout can't change it."},
+ {tag:'2026 counties',a:{t:'Local news outlets',s:'local news',l:'the number of local news outlets in a county'},b:{t:'Turnout',s:'turnout',l:"the share of a county's citizens who voted"},how:'both',
+  pa:'We would expect counties with a local paper or station to turn out more voters, because people there hear more about the races on their ballot.',
+  pb:'We would expect places where few people vote to have trouble keeping a local paper going, because fewer readers follow local politics.',
+  both:"Local news could bring people to the polls, or a county where few people take part could lose its paper, so a study would need data over many years to tell the two apart."},
+ {tag:'2024 ANES',a:{t:'Party identification',s:'party identification',l:'the party a person identifies with'},b:{t:'Ideology',s:'ideology',l:'how liberal or conservative a person is'},how:'both',
+  pa:'We would expect people to take on the views of the party they already belong to.',
+  pb:'We would expect liberals to drift toward the Democrats and conservatives toward the Republicans.',
+  both:"Political scientists do argue about this. <i>The American Voter</i> (Campbell et al. 1960) treats party as a lasting attachment that shapes how people see politics, while others argue that people choose the party that fits the views they already hold."},
+ {tag:'Countries of the world',a:{t:'Wealth',s:'wealth',l:"a country's wealth per person"},b:{t:'Democracy',s:'democracy',l:'how democratic a country is'},how:'both',
+  pa:'We would expect richer countries to be more likely to become democracies and to stay that way.',
+  pb:'We would expect democracies, with their elections and courts, to grow richer over time.',
+  both:'Comparative politics has debated this for decades. Wealth may help democracy last, democracy may help a country grow, and the answer can differ from one country to the next.'}
+];
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+const st={i:0,flip:EX.map(()=>Math.random()<.5),seen:EX.map(()=>new Set()),done:EX.map(()=>false)};
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* cards */
+const cards=$('ordCards');
+EX.forEach((e,k)=>{const b=document.createElement('button');b.type='button';b.innerHTML=`<span class="t">${e.tag}</span>${e.a.t} · ${e.b.t}`;
+  b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>{st.i=k;render(false);});cards.appendChild(b);});
+/* tiles */
+const tile=(v,role)=>{const d=document.createElement('div');d.className='otile';d.tabIndex=0;d.setAttribute('role','button');
+  d.setAttribute('aria-label',`${v.t}, now ${role==='x'?'X, the cause':'Y, the outcome'}. Press to swap.`);d.innerHTML=`${v.t}<small>${v.l}</small>`;return d;};
+function order(){const e=EX[st.i];return st.flip[st.i]?[e.b,e.a]:[e.a,e.b];}
+function place(){const [X,Y]=order();
+  for(const [id,v,r] of [['ordX',X,'x'],['ordY',Y,'y']]){const sl=$(id);sl.querySelectorAll('.otile').forEach(t=>t.remove());const t=tile(v,r);sl.appendChild(t);hook(t);}}
+function render(flash){
+  const e=EX[st.i], [X,Y]=order(), aFirst=!st.flip[st.i];
+  st.seen[st.i].add(aFirst?'ab':'ba');
+  if(e.how==='ab'?aFirst:st.seen[st.i].size===2) st.done[st.i]=true;
+  cards.querySelectorAll('button').forEach((b,k)=>{b.setAttribute('aria-pressed',String(k===st.i));b.classList.toggle('done',st.done[k]);});
+  const n=st.done.filter(Boolean).length;
+  $('ordProg').textContent=`${n} of ${EX.length} cards worked through. A check appears once you find the order that works, or once you try both orders on a card where either can be argued.`;
+  $('ordTag').textContent=e.tag;
+  place();
+  $('ordBig').innerHTML=`<span class="vx">${cap(X.s)}</span> impacts <span class="vy">${Y.s}</span>.`;
+  $('ordFormal').innerHTML=`The outcome, <span class="vy">${Y.l}</span> (Y), depends upon the impact of <span class="vx">${X.l}</span> (X).`;
+  $('ordPlain').textContent=aFirst?e.pa:e.pb;
+  const v=$('ordVerd');
+  if(e.how==='both'){v.className='overd both';v.innerHTML=`<b class="k">Either order can be argued.</b> ${e.both}`;}
+  else if(aFirst){v.className='overd ok';v.innerHTML=`<b class="k">This order works.</b> ${e.ok}`;}
+  else{v.className='overd no';v.innerHTML=`<b class="k">This order runs backward in time.</b> ${e.no}`;}
+  if(flash&&!reduce){const o=$('ordOut');o.classList.remove('flash');void o.offsetWidth;o.classList.add('flash');}
+}
+/* swap with a short slide so you can see the two tiles trade places */
+function swap(){
+  const tx=$('ordX').querySelector('.otile'), ty=$('ordY').querySelector('.otile');
+  const rx=tx&&tx.getBoundingClientRect(), ry=ty&&ty.getBoundingClientRect();
+  st.flip[st.i]=!st.flip[st.i]; render(true);
+  if(reduce||!rx||!ry) return;
+  const nx=$('ordX').querySelector('.otile'), ny=$('ordY').querySelector('.otile'), ax=nx.getBoundingClientRect(), ay=ny.getBoundingClientRect();
+  for(const [el,from,to] of [[nx,ry,ax],[ny,rx,ay]]){el.style.transition='none';el.style.transform=`translate(${from.left-to.left}px,${from.top-to.top}px)`;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transition='';el.style.transform='';}));}
+}
+/* drag: lift the tile and follow the finger, then swap if it is dropped over the other slot */
+function hook(t){
+  let sx=0,sy=0,moved=false,id=null;
+  const other=()=>t.parentNode.id==='ordX'?$('ordY'):$('ordX');
+  const over=(e,el)=>{const r=el.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;};
+  t.addEventListener('pointerdown',e=>{e.preventDefault();$('ord').classList.add('dragging');id=e.pointerId;sx=e.clientX;sy=e.clientY;moved=false;t.setPointerCapture(id);});
+  t.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const dx=e.clientX-sx,dy=e.clientY-sy;
+    if(!moved&&Math.hypot(dx,dy)<6)return;moved=true;t.classList.add('drag');t.style.transform=`translate(${dx}px,${dy}px)`;other().classList.toggle('hot',over(e,other()));});
+  const end=e=>{if(e.pointerId!==id)return;id=null;$('ord').classList.remove('dragging');const o=other();o.classList.remove('hot');
+    if(!moved){swap();return;}
+    const hit=over(e,o);t.classList.remove('drag');
+    if(hit){t.style.transform='';swap();} else {t.style.transform='';}};
+  t.addEventListener('pointerup',end);t.addEventListener('pointercancel',e=>{if(e.pointerId!==id)return;id=null;t.classList.remove('drag');t.style.transform='';other().classList.remove('hot');});
+  t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const slot=t.parentNode.id;swap();const n=$(slot).querySelector('.otile');if(n)n.focus();}});
+}
+$('ordSwap').addEventListener('click',swap);
+$('ordNext').addEventListener('click',()=>{st.i=(st.i+1)%EX.length;render(false);});
+render(false);
 })();
 </script>
 <script id="presentjs">/* Presentation mode: the same page, one projector-sized slide at a time.
