@@ -462,12 +462,11 @@ ul.p{margin:0;padding-left:20px}
 .ord>*{min-width:0}
 .ord>.kick{color:var(--s1-ink)!important;font-weight:700;letter-spacing:.04em;margin:0}
 .ord .lead{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
-.ocards{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:7px}
-.ocards button{display:grid;gap:2px;align-content:start;text-align:left;padding:7px 22px 8px 9px;min-height:54px;font-size:13.5px!important;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px/1.3 var(--font-body);cursor:pointer;position:relative}
-.ocards button .t{font:600 10.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-.ocards button[aria-pressed="true"] .t,.ocards button[aria-pressed="true"].done::after{color:inherit;opacity:.9}
+.otrack>button{display:grid;gap:2px;align-content:start;min-width:0;text-align:left;padding:7px 22px 8px 9px;min-height:54px;font-size:13.5px!important;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px/1.3 var(--font-body);cursor:pointer;position:relative}
+.otrack>button .t{font:600 10.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.otrack>button[aria-pressed="true"] .t,.otrack>button[aria-pressed="true"].done::after{color:inherit;opacity:.9}
 .ord.dragging,.ord.dragging *{user-select:none;-webkit-user-select:none}
-.ocards button.done::after{content:"✓";position:absolute;top:6px;right:9px;font:700 13px var(--font-body);color:var(--s1-ink)}
+.otrack>button.done::after{content:"✓";position:absolute;top:6px;right:9px;font:700 13px var(--font-body);color:var(--s1-ink)}
 .oprog{margin:0;font-size:13.5px;color:var(--muted)}
 .otag{justify-self:start;font:600 12px var(--font-body);letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--s1);color:#fff;box-shadow:inset 0 0 0 1px var(--s1-edge)}
 .oboard{display:grid;grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr);align-items:stretch;gap:8px}
@@ -475,7 +474,7 @@ ul.p{margin:0;padding-left:20px}
 .oslot .sl{font:700 11.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase}
 .oslot[data-r="x"] .sl{color:var(--s1-ink)}.oslot[data-r="y"] .sl{color:var(--s2-ink)}
 .oslot.hot{background:color-mix(in srgb,var(--s1) 10%,transparent);border-color:var(--s1-line)}
-.oarr{display:grid;place-items:center;font:700 28px var(--font-body);color:var(--ink-2)}
+.oarr{display:grid;place-items:center;font:700 28px var(--font-body);color:var(--ink-2);pointer-events:none}.oarr span{display:inline-block}
 .otile{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;display:grid;gap:2px;padding:12px 12px 11px;border-radius:10px;font:600 17px/1.25 var(--font-body);color:var(--ink);min-height:62px;align-content:center;background:var(--surface);border:2px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .otile small{font:500 12.5px/1.3 var(--font-body);color:var(--ink-2)}
 .otile:focus-visible{outline:3px solid var(--s1-line);outline-offset:2px}
@@ -497,7 +496,31 @@ ul.p{margin:0;padding-left:20px}
 .overd.ok{border-color:#2f8f5b;background:color-mix(in srgb,#2f8f5b 11%,var(--surface))}
 .overd.no{border-color:#c2453a;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
 .overd.both{border-color:var(--s1-line);background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
-@media (max-width:560px){.oboard{grid-template-columns:minmax(0,1fr)}.oarr{height:26px;transform:rotate(90deg)}.oslot{min-height:0}.oout .big{font-size:18px}}
+
+.ocar{display:grid;grid-template-columns:30px minmax(0,1fr) 30px;gap:5px;align-items:stretch}
+.ovp{overflow:hidden;min-width:0;padding:3px 0}
+.otrack{display:flex;gap:7px;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.otrack>button{flex:0 0 calc((100% - 7px)/2)}
+@media (min-width:500px){.otrack>button{flex-basis:calc((100% - 14px)/3)}}
+@media (min-width:760px){.otrack>button{flex-basis:calc((100% - 21px)/4)}}
+.onav{padding:0!important;min-width:0;font:600 22px/1 var(--font-body)!important;border-radius:9px}
+.onav:disabled{opacity:.35}
+.otray{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;padding:8px;border-radius:12px;border:2px dashed var(--line);min-height:70px;transition:background .15s,border-color .15s}
+.otray .sl{flex:1 0 100%;font:700 11.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.otray .otile{flex:1 1 140px}
+.otray.empty{min-height:0;padding:6px 8px}
+.otray.empty .sl::after{content:" · all placed";text-transform:none;letter-spacing:0;font-weight:500}
+.oslot .ph{font-size:14px;color:var(--muted);padding:14px 4px;text-align:center;border-radius:8px}
+.oslot.full .ph{display:none}
+.oslot.target,.otray.target{border-color:var(--s1-line);background:color-mix(in srgb,var(--s1) 6%,transparent)}
+.otile.sel{outline:3px solid var(--s1-line);outline-offset:2px}
+.ohint{margin:0;font-size:14.5px;color:var(--muted)}
+.ovwrap{position:relative}
+.ovwrap .ocount{display:none}
+.ovwrap.wait .overd{display:none}
+.ovwrap.wait .ocount{display:flex;align-items:center;justify-content:center;gap:10px;min-height:92px;padding:12px 14px;border-radius:9px;border:1.5px dashed var(--line);background:color-mix(in srgb,var(--ink) 3%,var(--surface));text-align:left;font:500 14.5px/1.4 var(--font-body);color:var(--ink-2)}
+.ocount .ring{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--s1-line) calc(var(--p)*360deg),color-mix(in srgb,var(--ink) 14%,transparent) 0);transition:background .9s linear;-webkit-mask:radial-gradient(circle,transparent 6px,#000 7px);mask:radial-gradient(circle,transparent 6px,#000 7px)}
+@media (max-width:560px){.oboard{grid-template-columns:minmax(0,1fr)}.oarr{height:26px}.oarr span{transform:rotate(90deg)}.oslot{min-height:0}.oout .big{font-size:18px}}
 @media (prefers-reduced-motion:reduce){.otile{transition:none}.oout.flash{animation:none}}
 </style>
 <style id="toggle-sel">
@@ -753,22 +776,23 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 
     <div class="ord" id="ord">
       <p class="kick">Try it · Put the cause first</p>
-      <p class="lead">Each card below holds two variables from data used on this site. Drag one tile onto the other slot, or tap a tile, to swap which one is X and which one is Y. The sentences underneath rewrite themselves for the order you choose, and the box at the bottom says whether that order can work.</p>
-      <div class="ocards" id="ordCards" role="group" aria-label="Examples"></div>
+      <p class="lead">Each card holds two variables from data used on this site. Drag each variable into the slot where it belongs, with the cause in X and the outcome in Y. You can also tap a variable and then tap a slot. Once both are placed, the sentences below spell out what your order claims, and a few seconds later the box at the bottom says whether that order can work. Drag them back and forth to compare the two orders.</p>
+      <div class="ocar"><button type="button" class="onav" id="ordPrev" aria-label="Previous card">‹</button><div class="ovp"><div class="otrack" id="ordCards" role="group" aria-label="Example cards"></div></div><button type="button" class="onav" id="ordNext2" aria-label="Next card">›</button></div>
       <p class="oprog" id="ordProg" aria-live="polite"></p>
-      <span class="otag" id="ordTag"></span>
+      <div class="otray" id="ordTray" tabindex="0" aria-label="Variables not yet placed"><span class="sl">Variables to place</span></div>
       <div class="oboard">
-        <div class="oslot" data-r="x" id="ordX"><span class="sl">X · IV, the cause</span></div>
-        <div class="oarr" aria-hidden="true">→</div>
-        <div class="oslot" data-r="y" id="ordY"><span class="sl">Y · DV, the outcome</span></div>
+        <div class="oslot" data-r="x" id="ordX" tabindex="0" aria-label="X, the independent variable"><span class="sl">X · IV, the cause</span><span class="ph">Drop the cause here</span></div>
+        <div class="oarr" aria-hidden="true"><span>→</span></div>
+        <div class="oslot" data-r="y" id="ordY" tabindex="0" aria-label="Y, the dependent variable"><span class="sl">Y · DV, the outcome</span><span class="ph">Drop the outcome here</span></div>
       </div>
-      <div class="orow"><button type="button" id="ordSwap">Swap X and Y ⇄</button><button type="button" id="ordNext">Next card →</button></div>
-      <div class="oout" id="ordOut" aria-live="polite">
+      <p class="ohint" id="ordHint">Place both variables to see what your order claims.</p>
+      <div class="oout" id="ordOut" aria-live="polite" hidden>
         <p class="big" id="ordBig"></p>
         <p class="formal"><span class="lab">As a hypothesis</span><span id="ordFormal"></span></p>
         <p class="plain"><span class="lab">In plain words</span><span id="ordPlain"></span></p>
       </div>
-      <div class="overd" id="ordVerd"></div>
+      <div class="ovwrap" id="ordVwrap" hidden><div class="overd" id="ordVerd"></div><div class="ocount" id="ordCount" aria-live="polite"></div></div>
+      <div class="orow"><button type="button" id="ordReset">Start this card over</button><button type="button" id="ordNext">Next card →</button></div>
     </div>
     <div class="act"><p class="kick">Try it · Pick the IV</p><span class="tag" id="h2tag"></span><p class="ctx" id="h2ctx"></p><p class="p" style="font-size:15px;margin:0"><b>Which is the cause?</b></p><div class="chips" id="h2c"></div><div class="fbk" id="h2f"></div><div class="foot"><span id="h2n"></span><button id="h2x">Next →</button></div></div>
   </section>
@@ -886,7 +910,7 @@ $('h3k').onclick=()=>{const a=A3[i3],d=a[7];
 $('h3x').onclick=()=>{i3=nx(A3.length,i3);d3();};
 d1();d2();d3();
 })();
-/* put the cause first: drag or tap to swap X and Y */
+/* put the cause first: drag each variable into X or Y, then the verdict appears after a short wait */
 (()=>{
 const $=i=>document.getElementById(i);
 if(!$('ord')) return;
@@ -952,65 +976,98 @@ const EX=[
   both:'Comparative politics has debated this for decades. Wealth may help democracy last, democracy may help a country grow, and the answer can differ from one country to the next.'}
 ];
 const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
-const st={i:0,flip:EX.map(()=>Math.random()<.5),seen:EX.map(()=>new Set()),done:EX.map(()=>false)};
 const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-/* cards */
-const cards=$('ordCards');
+const WAIT=5;
+/* per card: where each variable sits ('tray', 'x' or 'y'), which orders have been revealed, and whether the card is done */
+const st={i:0,pos:EX.map(()=>({a:'tray',b:'tray'})),tray:EX.map(()=>Math.random()<.5?['a','b']:['b','a']),seen:EX.map(()=>new Set()),done:EX.map(()=>false),sel:null,timer:null,left:0,shown:null};
+/* ---- sliding topic strip ---- */
+const track=$('ordCards'), vp=track.parentNode;
 EX.forEach((e,k)=>{const b=document.createElement('button');b.type='button';b.innerHTML=`<span class="t">${e.tag}</span>${e.a.t} · ${e.b.t}`;
-  b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>{st.i=k;render(false);});cards.appendChild(b);});
-/* tiles */
-const tile=(v,role)=>{const d=document.createElement('div');d.className='otile';d.tabIndex=0;d.setAttribute('role','button');
-  d.setAttribute('aria-label',`${v.t}, now ${role==='x'?'X, the cause':'Y, the outcome'}. Press to swap.`);d.innerHTML=`${v.t}<small>${v.l}</small>`;return d;};
-function order(){const e=EX[st.i];return st.flip[st.i]?[e.b,e.a]:[e.a,e.b];}
-function place(){const [X,Y]=order();
-  for(const [id,v,r] of [['ordX',X,'x'],['ordY',Y,'y']]){const sl=$(id);sl.querySelectorAll('.otile').forEach(t=>t.remove());const t=tile(v,r);sl.appendChild(t);hook(t);}}
-function render(flash){
-  const e=EX[st.i], [X,Y]=order(), aFirst=!st.flip[st.i];
-  st.seen[st.i].add(aFirst?'ab':'ba');
-  if(e.how==='ab'?aFirst:st.seen[st.i].size===2) st.done[st.i]=true;
-  cards.querySelectorAll('button').forEach((b,k)=>{b.setAttribute('aria-pressed',String(k===st.i));b.classList.toggle('done',st.done[k]);});
-  const n=st.done.filter(Boolean).length;
-  $('ordProg').textContent=`${n} of ${EX.length} cards worked through. A check appears once you find the order that works, or once you try both orders on a card where either can be argued.`;
-  $('ordTag').textContent=e.tag;
-  place();
+  b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>go(k));track.appendChild(b);});
+function per(){return vp.clientWidth<420?2:vp.clientWidth<640?3:4;}
+function slide(){const bs=track.children, p=per(), n=EX.length; const L=Math.max(0,Math.min(st.i-(p>2?1:0),n-p));
+  const off=bs[L]?bs[L].offsetLeft-bs[0].offsetLeft:0; track.style.transform=`translateX(${-off}px)`;
+  [...bs].forEach((b,k)=>{const vis=k>=L&&k<L+p; b.tabIndex=vis?0:-1; b.setAttribute('aria-hidden',vis?'false':'true');});
+  $('ordPrev').disabled=st.i===0; $('ordNext2').disabled=st.i===n-1;}
+function go(k){if(k<0||k>=EX.length)return;st.i=k;st.sel=null;stopTimer();render(true);}
+$('ordPrev').addEventListener('click',()=>go(st.i-1));
+$('ordNext2').addEventListener('click',()=>go(st.i+1));
+$('ordNext').addEventListener('click',()=>go((st.i+1)%EX.length));
+$('ordReset').addEventListener('click',()=>{st.pos[st.i]={a:'tray',b:'tray'};st.sel=null;stopTimer();render(true);});
+addEventListener('resize',slide);
+/* ---- tiles ---- */
+const slotEl={tray:$('ordTray'),x:$('ordX'),y:$('ordY')};
+function tile(k){const e=EX[st.i],v=e[k],where=st.pos[st.i][k];const d=document.createElement('div');d.className='otile'+(st.sel===k?' sel':'');d.dataset.k=k;d.tabIndex=0;d.setAttribute('role','button');
+  d.setAttribute('aria-label',`${v.t}, ${where==='tray'?'not placed yet':where==='x'?'placed as X, the cause':'placed as Y, the outcome'}. Press it to pick it up, and then choose a slot.`);
+  d.innerHTML=`${v.t}<small>${v.l}</small>`;hook(d);return d;}
+function rects(){const m={};document.querySelectorAll('#ord .otile').forEach(t=>m[t.dataset.k]=t.getBoundingClientRect());return m;}
+function flip(old){if(reduce)return;document.querySelectorAll('#ord .otile').forEach(t=>{const o=old[t.dataset.k];if(!o)return;const n=t.getBoundingClientRect();const dx=o.left-n.left,dy=o.top-n.top;if(!dx&&!dy)return;
+  t.style.transition='none';t.style.transform=`translate(${dx}px,${dy}px)`;requestAnimationFrame(()=>requestAnimationFrame(()=>{t.style.transition='';t.style.transform='';}));});}
+/* move tile k to place w: a slot that is already full sends its tile back to where k came from */
+function move(k,w){const P=st.pos[st.i],from=P[k];if(from===w){st.sel=null;draw();return;}
+  if(w!=='tray'){const o=k==='a'?'b':'a';if(P[o]===w)P[o]=from;}
+  P[k]=w;st.sel=null;draw();}
+function draw(){const old=rects();const e=EX[st.i],P=st.pos[st.i];
+  for(const w of ['tray','x','y'])slotEl[w].querySelectorAll('.otile').forEach(t=>t.remove());
+  for(const k of st.tray[st.i])slotEl[P[k]].appendChild(tile(k));
+  for(const w of ['x','y']){slotEl[w].classList.toggle('full',P.a===w||P.b===w);slotEl[w].classList.toggle('target',!!st.sel);}
+  slotEl.tray.classList.toggle('empty',P.a!=='tray'&&P.b!=='tray');slotEl.tray.classList.toggle('target',!!st.sel&&P[st.sel]!=='tray');
+  flip(old);words();}
+/* ---- language and the delayed verdict ---- */
+function stopTimer(){if(st.timer){clearInterval(st.timer);st.timer=null;}}
+function words(){const e=EX[st.i],P=st.pos[st.i],out=$('ordOut'),vw=$('ordVwrap');
+  const placed=P.a!=='tray'&&P.b!=='tray';
+  if(!placed){out.hidden=true;vw.hidden=true;stopTimer();st.shown=null;$('ordHint').hidden=false;return;}
+  $('ordHint').hidden=true;
+  const aFirst=P.a==='x', X=aFirst?e.a:e.b, Y=aFirst?e.b:e.a, key=st.i+(aFirst?'ab':'ba');
   $('ordBig').innerHTML=`<span class="vx">${cap(X.s)}</span> impacts <span class="vy">${Y.s}</span>.`;
   $('ordFormal').innerHTML=`The outcome, <span class="vy">${Y.l}</span> (Y), depends upon the impact of <span class="vx">${X.l}</span> (X).`;
   $('ordPlain').textContent=aFirst?e.pa:e.pb;
+  out.hidden=false;if(!reduce){out.classList.remove('flash');void out.offsetWidth;out.classList.add('flash');}
   const v=$('ordVerd');
   if(e.how==='both'){v.className='overd both';v.innerHTML=`<b class="k">Either order can be argued.</b> ${e.both}`;}
   else if(aFirst){v.className='overd ok';v.innerHTML=`<b class="k">This order works.</b> ${e.ok}`;}
   else{v.className='overd no';v.innerHTML=`<b class="k">This order runs backward in time.</b> ${e.no}`;}
-  if(flash&&!reduce){const o=$('ordOut');o.classList.remove('flash');void o.offsetWidth;o.classList.add('flash');}
-}
-/* swap with a short slide so you can see the two tiles trade places */
-function swap(){
-  const tx=$('ordX').querySelector('.otile'), ty=$('ordY').querySelector('.otile');
-  const rx=tx&&tx.getBoundingClientRect(), ry=ty&&ty.getBoundingClientRect();
-  st.flip[st.i]=!st.flip[st.i]; render(true);
-  if(reduce||!rx||!ry) return;
-  const nx=$('ordX').querySelector('.otile'), ny=$('ordY').querySelector('.otile'), ax=nx.getBoundingClientRect(), ay=ny.getBoundingClientRect();
-  for(const [el,from,to] of [[nx,ry,ax],[ny,rx,ay]]){el.style.transition='none';el.style.transform=`translate(${from.left-to.left}px,${from.top-to.top}px)`;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transition='';el.style.transform='';}));}
-}
-/* drag: lift the tile and follow the finger, then swap if it is dropped over the other slot */
+  vw.hidden=false;
+  if(st.shown===key)return;            /* same arrangement as before: nothing new to wait for */
+  stopTimer();st.shown=key;
+  if(st.seen[st.i].has(aFirst?'ab':'ba')){reveal(aFirst);return;}   /* already revealed once for this order */
+  st.left=WAIT;vw.classList.add('wait');$('ordVerd').setAttribute('aria-hidden','true');tick();
+  st.timer=setInterval(()=>{st.left--;if(st.left<=0){stopTimer();reveal(aFirst);}else tick();},1000);}
+function tick(){$('ordCount').innerHTML=`<span class="ring" style="--p:${(WAIT-st.left)/WAIT}"></span>Think it over. The answer appears in ${st.left} second${st.left===1?'':'s'}.`;}
+function reveal(aFirst){const vw=$('ordVwrap');vw.classList.remove('wait');$('ordVerd').removeAttribute('aria-hidden');$('ordCount').textContent='';
+  st.seen[st.i].add(aFirst?'ab':'ba');const e=EX[st.i];
+  if(e.how==='ab'?aFirst:st.seen[st.i].size===2)st.done[st.i]=true;marks();}
+function marks(){[...track.children].forEach((b,k)=>{b.setAttribute('aria-pressed',String(k===st.i));b.classList.toggle('done',st.done[k]);});
+  const n=st.done.filter(Boolean).length;
+  $('ordProg').textContent=`This is card ${st.i+1} of ${EX.length}, and you have worked through ${n} so far. A card gets a check once you place the variables in the order that works, or once you try both orders on a card where either can be argued.`;}
+function render(){marks();slide();draw();}
+/* ---- drag, or tap a variable and then tap where it goes ---- */
 function hook(t){
-  let sx=0,sy=0,moved=false,id=null;
-  const other=()=>t.parentNode.id==='ordX'?$('ordY'):$('ordX');
-  const over=(e,el)=>{const r=el.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;};
+  let sx=0,sy=0,moved=false,id=null,hot=null;
+  const targets=()=>['x','y','tray'].map(w=>[w,slotEl[w]]);
+  const under=e=>{for(const [w,el] of targets()){const r=el.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)return w;}return null;};
   t.addEventListener('pointerdown',e=>{e.preventDefault();$('ord').classList.add('dragging');id=e.pointerId;sx=e.clientX;sy=e.clientY;moved=false;t.setPointerCapture(id);});
-  t.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const dx=e.clientX-sx,dy=e.clientY-sy;
-    if(!moved&&Math.hypot(dx,dy)<6)return;moved=true;t.classList.add('drag');t.style.transform=`translate(${dx}px,${dy}px)`;other().classList.toggle('hot',over(e,other()));});
-  const end=e=>{if(e.pointerId!==id)return;id=null;$('ord').classList.remove('dragging');const o=other();o.classList.remove('hot');
-    if(!moved){swap();return;}
-    const hit=over(e,o);t.classList.remove('drag');
-    if(hit){t.style.transform='';swap();} else {t.style.transform='';}};
-  t.addEventListener('pointerup',end);t.addEventListener('pointercancel',e=>{if(e.pointerId!==id)return;id=null;t.classList.remove('drag');t.style.transform='';other().classList.remove('hot');});
-  t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const slot=t.parentNode.id;swap();const n=$(slot).querySelector('.otile');if(n)n.focus();}});
+  t.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!moved&&Math.hypot(dx,dy)<6)return;
+    moved=true;t.classList.add('drag');t.style.transform=`translate(${dx}px,${dy}px)`;const w=under(e);
+    if(w!==hot){if(hot)slotEl[hot].classList.remove('hot');hot=w;if(hot)slotEl[hot].classList.add('hot');}});
+  const end=e=>{if(e.pointerId!==id)return;id=null;$('ord').classList.remove('dragging');if(hot)slotEl[hot].classList.remove('hot');
+    const k=t.dataset.k;
+    if(!moved){st.sel=st.sel===k?null:k;draw();const n=document.querySelector(`#ord .otile[data-k="${k}"]`);if(n)n.focus({preventScroll:true});return;}
+    const w=under(e);hot=null;
+    if(w){const r=t.getBoundingClientRect();t.style.transition='none';move(k,w);
+      const n=document.querySelector(`#ord .otile[data-k="${k}"]`);   /* start the landing from where the finger let go */
+      if(n&&!reduce){const q=n.getBoundingClientRect();n.style.transform=`translate(${r.left-q.left}px,${r.top-q.top}px)`;requestAnimationFrame(()=>requestAnimationFrame(()=>{n.style.transition='';n.style.transform='';}));}}
+    else{t.classList.remove('drag');t.style.transform='';}};
+  t.addEventListener('pointerup',end);
+  t.addEventListener('pointercancel',e=>{if(e.pointerId!==id)return;id=null;$('ord').classList.remove('dragging');t.classList.remove('drag');t.style.transform='';if(hot)slotEl[hot].classList.remove('hot');hot=null;});
+  t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const k=t.dataset.k;st.sel=st.sel===k?null:k;draw();const n=document.querySelector(`#ord .otile[data-k="${k}"]`);if(n)n.focus();}});
 }
-$('ordSwap').addEventListener('click',swap);
-$('ordNext').addEventListener('click',()=>{st.i=(st.i+1)%EX.length;render(false);});
-render(false);
+for(const w of ['x','y','tray']){const el=slotEl[w];el.addEventListener('click',e=>{if(!st.sel||e.target.closest('.otile'))return;move(st.sel,w);});
+  el.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&st.sel&&!e.target.closest('.otile')){e.preventDefault();move(st.sel,w);}});}
+render();
 })();
+
 </script>
 <script id="presentjs">/* Presentation mode: the same page, one projector-sized slide at a time.
    Injected into every module page by scripts/present.py. */
