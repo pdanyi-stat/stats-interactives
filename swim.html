@@ -36,7 +36,7 @@ main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px
 @keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
 @media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
 </style>
-</head>
+<style id="a11y">.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
 <body>
 <main>
   <a class="back" href="3-skew-and-kurtosis.html#pg">← Back to Module 3</a>
@@ -261,5 +261,20 @@ function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;update(dt);
 requestAnimationFrame(frame);
 })();
 </script>
-</body>
+<script id="a11y">(function(){
+function txt(n){const c=n.cloneNode(true);c.querySelectorAll('select,option,input,button,script,style,svg').forEach(x=>x.remove());return c.textContent.replace(/\s+/g,' ').trim();}
+function named(e){return e.getAttribute('aria-label')||e.getAttribute('aria-labelledby')||(e.labels&&e.labels.length)||e.querySelector&&e.querySelector(':scope > title');}
+function fix(){
+ const d=document.getElementById('drawer');if(d){const h=d.getAttribute('aria-hidden')==='true';if(h)d.setAttribute('inert','');else d.removeAttribute('inert');}
+ document.querySelectorAll('main input:not([type=hidden]),main select,main textarea').forEach(e=>{if(named(e))return;const row=e.closest('li,tr,p,label,dd,.row,.ctl,.q,div');let t=row?txt(row):'';if(!t&&e.placeholder)t=e.placeholder;e.setAttribute('aria-label',(t||'Answer').slice(0,90));});
+ document.querySelectorAll('svg[role=img]').forEach(s=>{if(s.querySelector('a,button,[tabindex]:not([tabindex="-1"])'))s.setAttribute('role','group');if(named(s))return;const box=s.closest('figure,.dcard,section,.card,.ov');const h=box&&box.querySelector('h3,h2,figcaption,.ovh');s.setAttribute('aria-label','Chart'+(h?': '+txt(h).slice(0,80):''));});
+ document.querySelectorAll('div[aria-label]:not([role]),span[aria-label]:not([role])').forEach(e=>e.setAttribute('role','group'));
+ document.querySelectorAll('[tabindex]:not([tabindex="-1"]),[role=button]').forEach(e=>{if(e instanceof SVGElement&&!named(e)&&!e.textContent.trim()){e.setAttribute('aria-label',e.getAttribute('data-label')||e.getAttribute('title')||'Chart segment');}});
+ document.querySelectorAll('[role=tablist]').forEach(t=>{if(!t.querySelector('[role=tab]'))t.setAttribute('role','group');});
+ document.querySelectorAll('main .sp-sheet,main .xt-wrap,main .agewrap,main .ovb,main .specs,main .tbl-wrap').forEach(e=>{if(e.scrollWidth>e.clientWidth+2&&!e.hasAttribute('tabindex')){e.setAttribute('tabindex','0');if(!e.getAttribute('aria-label'))e.setAttribute('aria-label','Scrollable content');}});
+}
+let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
+if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
+window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
+})();</script></body>
 </html>

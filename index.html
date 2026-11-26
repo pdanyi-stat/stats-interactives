@@ -470,7 +470,7 @@ footer.src p{font-size:15px;color:var(--ink-2)}
 }
 
 .home .feat.m1{--mci:#7e6224}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .home .feat.m1{--mci:#e5cfa1}}:root[data-theme="dark"] .home .feat.m1{--mci:#e5cfa1}.home .featbtns{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.home .featbtns .amberpill{text-decoration:none;font-size:15px;padding:9px 18px}</style>
-</head>
+<style id="a11y">.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
 <body>
 <nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html" aria-current="page"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="#contents">Contents</a><a class="pill ghost" href="#g-prac">Practice</a><a class="pill gild" href="exam-prep.html">Exam prep</a></nav>
 <main class="wrap home rv">
@@ -486,5 +486,20 @@ footer.src p{font-size:15px;color:var(--ink-2)}
 </main>
 <script id="rvshelf">(()=>{const fit=()=>document.querySelectorAll('.shelf2').forEach(s=>{const h=s.previousElementSibling;s.classList.remove('scroll');const over=s.scrollWidth>s.clientWidth+4;s.classList.toggle('scroll',over);if(h&&h.classList.contains('mhd'))h.classList.toggle('swipe',over);if(!s._w){s._w=1;s.addEventListener('scroll',()=>{if(s.scrollLeft>24&&h)h.classList.add('swiped');},{passive:true});}});let t=0;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(fit,120);});if(document.readyState==='loading')addEventListener('DOMContentLoaded',fit);else fit();addEventListener('load',fit);})();document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button.tapterm');if(!b)return;var n=document.getElementById(b.getAttribute('aria-controls'));if(!n)return;n.hidden=!n.hidden;b.setAttribute('aria-expanded',String(!n.hidden));});
 </script>
-</body>
+<script id="a11y">(function(){
+function txt(n){const c=n.cloneNode(true);c.querySelectorAll('select,option,input,button,script,style,svg').forEach(x=>x.remove());return c.textContent.replace(/\s+/g,' ').trim();}
+function named(e){return e.getAttribute('aria-label')||e.getAttribute('aria-labelledby')||(e.labels&&e.labels.length)||e.querySelector&&e.querySelector(':scope > title');}
+function fix(){
+ const d=document.getElementById('drawer');if(d){const h=d.getAttribute('aria-hidden')==='true';if(h)d.setAttribute('inert','');else d.removeAttribute('inert');}
+ document.querySelectorAll('main input:not([type=hidden]),main select,main textarea').forEach(e=>{if(named(e))return;const row=e.closest('li,tr,p,label,dd,.row,.ctl,.q,div');let t=row?txt(row):'';if(!t&&e.placeholder)t=e.placeholder;e.setAttribute('aria-label',(t||'Answer').slice(0,90));});
+ document.querySelectorAll('svg[role=img]').forEach(s=>{if(s.querySelector('a,button,[tabindex]:not([tabindex="-1"])'))s.setAttribute('role','group');if(named(s))return;const box=s.closest('figure,.dcard,section,.card,.ov');const h=box&&box.querySelector('h3,h2,figcaption,.ovh');s.setAttribute('aria-label','Chart'+(h?': '+txt(h).slice(0,80):''));});
+ document.querySelectorAll('div[aria-label]:not([role]),span[aria-label]:not([role])').forEach(e=>e.setAttribute('role','group'));
+ document.querySelectorAll('[tabindex]:not([tabindex="-1"]),[role=button]').forEach(e=>{if(e instanceof SVGElement&&!named(e)&&!e.textContent.trim()){e.setAttribute('aria-label',e.getAttribute('data-label')||e.getAttribute('title')||'Chart segment');}});
+ document.querySelectorAll('[role=tablist]').forEach(t=>{if(!t.querySelector('[role=tab]'))t.setAttribute('role','group');});
+ document.querySelectorAll('main .sp-sheet,main .xt-wrap,main .agewrap,main .ovb,main .specs,main .tbl-wrap').forEach(e=>{if(e.scrollWidth>e.clientWidth+2&&!e.hasAttribute('tabindex')){e.setAttribute('tabindex','0');if(!e.getAttribute('aria-label'))e.setAttribute('aria-label','Scrollable content');}});
+}
+let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
+if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
+window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
+})();</script></body>
 </html>
