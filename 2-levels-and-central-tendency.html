@@ -877,7 +877,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 
 
   <section class="part" id="sec-practice-finding-the-mode"><p class="kick">Part 6</p><h2>Practice finding the mode</h2>
-    <p>Here is one more frequency distribution for practice. This time each observation is a country rather than a person.</p></section>
+    <p>Here are two more frequency distributions for practice. In the first, each observation is a country rather than a person, and in the second, each observation is an event.</p></section>
   <section class="dcard" id="rg" data-ds="World.sav">
     <h3>Regime type in 168 countries (regime_type3)</h3>
     <p class="p">Each observation is a country. In a <b>dictatorship</b>, leaders do not come to power through competitive elections. In a <b>parliamentary democracy</b> the legislature chooses the head of government, and in a <b>presidential democracy</b> voters elect the head of government separately. The three types have no order, so regime_type3 is nominal.</p>
@@ -885,6 +885,15 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div id="rgChart"></div>
     <div class="fbk" id="rgFb" aria-live="polite"></div>
     <div id="rgOut"></div>
+  </section>
+  <section class="dcard" id="cp" data-ds="cline_coups.sav">
+    <h3>How coups turn out, 1945–2024 (outcome)</h3>
+    <p class="p">Each observation here is a coup event. The Cline Center's Coup d'État Project records 1,094 of them in 140 countries, and it codes each one as a <b>realized</b> coup that took power, an <b>attempt</b> that failed, or a <b>conspiracy</b> that was uncovered before anyone acted.</p>
+    <p class="p">Tap the bar for the mode.</p>
+    <div id="cpChart"></div>
+    <div class="fbk" id="cpFb" aria-live="polite"></div>
+    <div id="cpOut"></div>
+    <p class="src">Data: Buddy Peyton, Joseph Bajjalieh, Michael Martin and Andrea Gerald, Cline Center Coup d'État Project Dataset, v2.2.0, Cline Center for Advanced Social Research, University of Illinois Urbana-Champaign, <a href="https://doi.org/10.13012/B2IDB-9651987_V8">doi.org/10.13012/B2IDB-9651987_V8</a>. These counts come from v2.2.0, and the newer v2.2.2 (February 2026) adds 67 events, most of them older ones, for 1,161 in all.</p>
   </section>
 
   <div class="phase" role="note"><p class="phk">Step 2 of 4</p><p class="pht">Levels of measurement</p><p class="phd">Next we look at the three kinds of variables we apply those measures to.</p></div>
@@ -1247,9 +1256,9 @@ return {spTable,spStats,spFreq,stSum,stTab,drawers,STNOTE,W:D_W,$,$$,S,H,sum,mea
 })();
 
 /* dataset download buttons */
-(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav','ANES_2020_Issues_F26.sav','house2026.sav','newsdeserts_turnout2026.sav'];
+(function(){const HOSTED=['titanic.sav','LunaticData.sav','World.sav','NES2004.sav','NES_2024_Party_Placement_and_Ideology_F26.sav','Gallup_Reconstructed_2024_F26.sav','2014ElectionSurvey_F26.sav','StateVote_1980_1984.sav','ANES_2020_Issues_F26.sav','house2026.sav','newsdeserts_turnout2026.sav','cline_coups.sav','drone_group_months.sav','airports1920.sav'];
 const INSTR=[];
-const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote','ANES_2020_Issues_F26.sav':'ANES 2020','house2026.sav':'House 2026','newsdeserts_turnout2026.sav':'News deserts 2026'};
+const NICE={'titanic.sav':'Titanic','LunaticData.sav':'Lunatics','World.sav':'World','NES2004.sav':'ANES 2004','NES_2024_Party_Placement_and_Ideology_F26.sav':'ANES 2024','Gallup_Reconstructed_2024_F26.sav':'Gallup 2024','2014ElectionSurvey_F26.sav':'Pew 2014','StateVote_1980_1984.sav':'1980 and 1984 state vote','ANES_2020_Issues_F26.sav':'ANES 2020','house2026.sav':'House 2026','newsdeserts_turnout2026.sav':'News deserts 2026','cline_coups.sav':'Coups','drone_group_months.sav':'Drone strikes','airports1920.sav':'Airports 1920'};
 function run(){
   document.querySelectorAll('.dcard[data-ds]').forEach(card=>{if(card.querySelector('.dsbtns'))return;const h=card.querySelector(':scope > h3');
     const row=document.createElement('div');row.className='dshead';if(h){h.before(row);row.appendChild(h);}else card.prepend(row);
@@ -1548,6 +1557,8 @@ $('#btCheck').addEventListener('click',()=>{const r=picks.map(judge),n2=r.filter
 upd();
 })();
 (function(){const RG=Object.entries(DATA.world.regime);D.drawers($('#rgOut'),{spss:D.spFreq('Regime types',RG.map(r=>({label:r[0],n:r[1]})),[{label:'System',n:191-D.sum(RG.map(r=>r[1]))}]),spssNote:'Analyze → Descriptive Statistics → Frequencies, regime_type3. The mode is the row with the largest Frequency.',stata:D.stTab('regime_type3','Regime types',RG.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#rgChart'),{ylab:'↑ Countries',cats:RG.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#rgFb'),'ok',`The mode is “Dictatorship” (${RG[0][1]} of ${D.sum(RG.map(r=>r[1]))} countries). Note that if you combined the two kinds of democracy (${RG[1][1]+RG[2][1]}), they'd outnumber dictatorships, which is why it matters how categories are drawn.`):D.fb($('#rgFb'),'no',`That bar has ${RG[i][1]} countries. The mode is the tallest bar.`);},aria:'Regime types'});})();
+
+(function(){const CP=[['Realized',458],['Attempted but failed',374],['Conspiracy uncovered',262]];D.drawers($('#cpOut'),{spss:D.spFreq('Coup outcome',CP.map(r=>({label:r[0],n:r[1]})),[]),spssNote:'Analyze → Descriptive Statistics → Frequencies, outcome. The mode is the row with the largest Frequency.',stata:D.stTab('outcome','Coup outcome',CP.map(r=>({label:r[0],n:r[1]}))),stataNote:false});D.hist($('#cpChart'),{ylab:'↑ Coup events',cats:CP.map(r=>({label:r[0],n:r[1]})),h:190,barTap:i=>{i===0?D.fb($('#cpFb'),'ok',`The mode is “Realized” (${CP[0][1]} of 1,094 events, or 41.9%). As with regime type, the way the categories are drawn matters, because failed attempts and uncovered plots together (${CP[1][1]+CP[2][1]}) outnumber the coups that took power.`):D.fb($('#cpFb'),'no',`That bar has ${CP[i][1]} events. The mode is the tallest bar.`);},aria:'Coup outcomes'});})();
 
 /* ---------- Part 8: median in a frequency table ---------- */
 (function(){const miss=true,WFA=DATA.welfare;

@@ -465,6 +465,15 @@ ul.p,ol.p{padding-left:20px;display:grid;gap:6px}
 .vz text{font-family:var(--font-body)}
 .say2{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2)}
 .say2 b{color:var(--ink)}
+.drbars{display:grid;gap:8px;margin:4px 0 2px}
+.drbars .r{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 4.2em;gap:8px;align-items:center;font-size:14px;color:var(--ink-2)}
+.drbars .tr{height:18px;border-radius:4px;background:color-mix(in srgb,var(--line) 70%,var(--surface));position:relative;overflow:hidden}
+.drbars .b{position:absolute;left:0;top:0;bottom:0;border-radius:4px;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.drbars .b.hit{background:var(--s1)}.drbars .b.miss{background:var(--s2)}
+.drbars .v{text-align:right;font-weight:600;color:var(--ink)}
+.drbars .cap{font-size:12.5px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:reduce){.drbars .b{transition:none}}
+#dr .rvd .in{min-width:0;max-width:100%}#dr .rvd pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 10px;font-size:13.5px}#dr .rvd p{margin:0 0 8px}
 .kk{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2)}
 .kk span{display:inline-flex;align-items:center;gap:6px}
 .kk i{display:inline-block;width:12px;height:12px;border-radius:50%}
@@ -841,6 +850,16 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div class="dgwrap" id="wlDgW" hidden><svg class="dg" id="wlDg" role="img" aria-label="Diagram: effective government drives both GDP per capita and civil liberties"></svg></div>
     <p class="say2" id="wlSay2"></p>
   </section>
+  <section class="dcard" id="dr">
+    <h3>Does killing a militant group's leader reduce its attacks?</h3>
+    <p class="p">From 2004 to 2015, U.S. drones fired on the leaders of 13 militant groups in Pakistan 45 times. Fifteen of those strikes killed the leader, and the other 30 missed. Anouk Rigterink (2021) matched each strike to the attacks the group carried out month by month, and the buttons below step through the comparisons.</p>
+    <div class="row" style="border:0;padding:0;justify-content:flex-start;flex-wrap:wrap"><div class="seg" id="drSeg" role="radiogroup" aria-label="Show a comparison"></div></div>
+    <div class="drbars" id="drBars"></div>
+    <p class="say2" id="drSay"></p>
+    <details class="rvd"><summary>Try it in statistical software</summary><div class="in"><p>Open drone_group_months.sav. The variable status is 1 for a month within six months after a hit, 2 for a month within six months after a miss only, and 3 for a month with no recent strike.</p><p><b>SPSS</b></p><pre><code>MEANS TABLES=attacks BY status
+  /CELLS=MEAN COUNT STDDEV.</code></pre><p><b>Stata</b></p><pre><code>tabstat attacks if status &lt; 3, by(status) statistics(mean n sd)</code></pre><p>For the six months before each strike, open drone_leader_strikes.sav and compare attacks_before by leader_killed the same way.</p></div></details>
+    <p class="src">Data: Rigterink (2021), from the replication files on <a href="https://doi.org/10.7910/DVN/MNRIEP">Harvard Dataverse</a> (<a href="data/drone_group_months.sav" download>drone_group_months.sav</a>, <a href="data/drone_leader_strikes.sav" download>drone_leader_strikes.sav</a>). Attacks come from the Global Terrorism Database, and strikes come from the Bureau of Investigative Journalism and New America.</p>
+  </section>
 
   <!-- 4 ENDOGENEITY -->
   <section class="part" id="p7"><p class="kick">Part 5</p><h2>Reverse causation (Y → X)</h2>
@@ -956,7 +975,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
   </section>
 
   <details class="srcd" id="refs">
-    <summary><span class="sp-badge">Sources</span><span>Show all 28 sources</span></summary>
+    <summary><span class="sp-badge">Sources</span><span>Show all 29 sources</span></summary>
     <ol class="refs">
       <li>Bartels, Larry M. 2002. "Beyond the Running Tally: Partisan Bias in Political Perceptions." <i>Political Behavior</i> 24 (2): 117–50.</li>
       <li>Brady, Henry E., and David Collier, eds. 2010. <i>Rethinking Social Inquiry: Diverse Tools, Shared Standards</i>. 2nd ed. Lanham, MD: Rowman &amp; Littlefield.</li>
@@ -979,6 +998,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <li>National Institute of Mental Health. 2020. "Brief Suicide Safety Assessment (Adult Outpatient)." <i>Ask Suicide-Screening Questions (ASQ) Toolkit</i>. <a href="https://www.nimh.nih.gov/research/research-conducted-at-nimh/asq-toolkit-materials">nimh.nih.gov</a></li>
       <li>Niederkrotenthaler, Thomas, et al. 2020. "Association between Suicide Reporting in the Media and Suicide: Systematic Review and Meta-Analysis." <i>BMJ</i> 368: m575.</li>
       <li>Phillips, David P. 1974. "The Influence of Suggestion on Suicide: Substantive and Theoretical Implications of the Werther Effect." <i>American Sociological Review</i> 39 (3): 340–54.</li>
+      <li>Rigterink, Anouk S. 2021. "The Wane of Command: Evidence on Drone Strikes and Control within Terrorist Organizations." <i>American Political Science Review</i> 115 (1): 31–50. <a href="https://doi.org/10.1017/S0003055420000908">doi.org/10.1017/S0003055420000908</a></li>
       <li>Ross, Michael L. 2001. "Does Oil Hinder Democracy?" <i>World Politics</i> 53 (3): 325–61.</li>
       <li>Sen, Amartya. 1999. <i>Development as Freedom</i>. New York: Knopf.</li>
       <li>Teorell, Jan, Michael Coppedge, Staffan Lindberg, and Svend-Erik Skaaning. 2019. "Measuring Polyarchy Across the Globe, 1900–2017." <i>Studies in Comparative International Development</i> 54 (1): 71–95.</li>
@@ -1150,6 +1170,19 @@ D_seg($('omSeg'),[['all','All months together'],['split','Split by the weather']
 diagram($('omDg'),'omit',{z:'Cold weather (cocoa season)',x:'Gas bill',y:'Marshmallow size'});
 omDraw();
 function D_seg(host,opts,cb,init){host.innerHTML=opts.map(o=>`<button type="button" data-v="${o[0]}" aria-pressed="${o[0]===init}">${o[1]}</button>`).join('');host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;host.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});}
+
+/* ========== Part 4: drone strikes on group leaders ========== */
+(function(){const S={
+ raw:{cap:'Mean attacks per group-month',max:20,rows:[['After a hit',17.0,'hit','17.0'],['After a miss',8.2,'miss','8.2']],
+  say:'Group-months within six months after a hit averaged <b>17.0 attacks</b>, compared with <b>8.2</b> after a miss (77 and 79 group-months). Taken at face value, losing a leader seems to double a group\'s attacks. Before we believe that, we should ask what else differs between the groups that were hit and the groups that were missed.'},
+ before:{cap:'Attacks in the 6 months before the strike',max:110,rows:[['Leader was hit',103.5,'hit','103.5'],['Leader was missed',54.7,'miss','54.7']],
+  say:'The groups that lost a leader were <b>already more active</b>. In the six months before the strike, they carried out 103.5 attacks on average, compared with 54.7 for groups whose leader survived. A group\'s activity is a Z that drives both X and Y, since busy groups draw more strikes and also keep attacking afterward. The raw comparison mixes the strike\'s effect with that difference.'},
+ design:{cap:'How much higher attacks ran after a hit than after a miss',max:80,rows:[['2 months after',47.8,'hit','+47.8%'],['3 months after',70.4,'hit','+70.4%']],
+  say:'Rigterink treats the misses as a control group for the hits, since whether a missile kills its target is close to chance. She also compares each group with its own record over time, which holds the group\'s usual level of activity constant. Even with both checks, a group\'s attacks ran <b>47.8% higher</b> two months after a hit than after a miss, and 70.4% higher three months after. The raw comparison overstated the effect, but the effect did not go away.'}};
+ const host=$('drBars');
+ function draw(k){const s=S[k];host.innerHTML=`<p class="cap">${s.cap}</p>`+s.rows.map(r=>`<div class="r"><span>${r[0]}</span><span class="tr"><span class="b ${r[2]}" style="width:0"></span></span><span class="v">${r[3]}</span></div>`).join('');
+  requestAnimationFrame(()=>host.querySelectorAll('.b').forEach((b,i)=>b.style.width=(100*s.rows[i][1]/s.max)+'%'));$('drSay').innerHTML=s.say;}
+ D_seg($('drSeg'),[['raw','1 · The raw comparison'],['before','2 · Before the strikes'],['design','3 · Hits vs. misses over time']],draw,'raw');draw('raw');})();
 
 /* ========== Part 3b: wealth and liberty, split by government effectiveness ========== */
 const WL=WORLD.W.filter(r=>r[4]!=null).map(r=>({c:r[0],g:r[1],f:r[2],e:r[4],j:(rng(r[0].length*97+r[1])()-.5)*.36}));
