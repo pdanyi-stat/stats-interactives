@@ -952,7 +952,8 @@ details.rvd .in p{margin:0}
 details.rvd .in b{color:var(--ink)}
 details.rvd .in a{color:var(--mci);font-weight:600}
 footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
-details.srcdrawer .in{font-size:14px;color:var(--ink-2)}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2);display:block}
+.srcdrawer .in>p+p,.srcdrawer .in>p+ul,.srcdrawer .in>ul+p,.srcdrawer .in>div+p,.srcdrawer .in>p+div{margin-top:9px}
 details.srcdrawer .in ul{margin:0;padding-left:18px}
 .jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
 .jumpto a{color:var(--mci);font-weight:600}
@@ -1280,7 +1281,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
   </div>
 
   <footer class="src"><details class="rvd srcdrawer"><summary>Sources and data</summary><div class="in">
-    Data: the 1,309-passenger Titanic list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables age5, female, trav_alone, the_freeriders and the_one_percent computed for the course labs. Crew are not included. This list holds nearly every passenger rather than a random sample, but like the labs, the page treats it as a sample to practice inference. Step 3 draws passengers at random with replacement. Confidence intervals use z, as in class, and with groups this large t gives nearly identical intervals. Regression models in Steps 6–8 drop passengers with unknown age.
+    Data: the 1,309-passenger Titanic list (“titanic3”), compiled by Thomas Cason from Encyclopedia Titanica and distributed by Vanderbilt University's Department of Biostatistics, with the variables age5, female, trav_alone, the_freeriders and the_one_percent computed for the course labs. Crew are not included. This list holds nearly every passenger rather than a random sample, but like the labs, the page treats it as a sample to practice inference. Step 3 draws passengers at random with replacement. Confidence intervals use z, as in class, and with groups this large t gives nearly identical intervals. Regression models in Steps 6–8 drop passengers with unknown age. Studies comparing linear and logistic regression find the two usually agree on the direction and significance of effects when the outcome's probabilities stay roughly between 20% and 80%, and agree less when the outcome is rare (Hellevik 2009; von Hippel 2017; Gomila 2021).<br><br>References: Hellevik, Ottar. 2009. “Linear versus Logistic Regression When the Dependent Variable Is a Dichotomy.” <i>Quality &amp; Quantity</i> 43 (1): 59–74. <a href="https://doi.org/10.1007/s11135-007-9077-3">doi.org/10.1007/s11135-007-9077-3</a>. von Hippel, Paul. 2017. “When Can You Fit a Linear Probability Model? More Often Than You Think.” <i>Statistical Horizons</i> (blog), March 8. <a href="https://statisticalhorizons.com/when-can-you-fit">statisticalhorizons.com/when-can-you-fit</a>. Gomila, Robin. 2021. “Logistic or Linear? Estimating Causal Effects of Experimental Treatments on Binary Outcomes Using Regression Analysis.” <i>Journal of Experimental Psychology: General</i> 150 (4): 700–709. <a href="https://doi.org/10.1037/xge0000920">doi.org/10.1037/xge0000920</a>.
   </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="practice-airports.html"><span class="k">← Previous · Practice</span><span class="t">Don't Get Left Behind: Who Got America's First Airports?</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="practice-waiting.html"><span class="k">Next · Practice →</span><span class="t">Who waited in line to vote?</span></a></nav>
 </main>
