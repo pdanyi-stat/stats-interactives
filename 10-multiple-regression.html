@@ -285,6 +285,45 @@ section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;ba
 .splitp h5{margin:2px 4px 0;font-size:13px;font-weight:600}
 .pvabox{margin-top:14px}
 #cSplitWrap[hidden],#cOne[hidden]{display:none}
+/* Try it puzzle */
+details.tryit{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;margin:18px 0 6px;box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 18%,transparent)}
+details.tryit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;font-weight:600}
+details.tryit>summary::-webkit-details-marker{display:none}
+details.tryit>summary::after{content:'+';margin-left:auto;font:600 20px/1 var(--font-mono,monospace);color:var(--amber-ink)}
+details.tryit[open]>summary::after{content:'−'}
+details.tryit .tag{background:var(--tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+details.tryit .tt{font-size:17px;color:var(--ink)}
+details.tryit .hint{font-size:13px;font-weight:400;color:var(--ink-2)}
+.pzin{padding:0 16px 16px}
+.pzgoal{margin:0 0 8px;color:var(--ink);font-size:15px}
+.pzchart{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pzchart svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzchart circle.cty{cursor:grab}
+.pzchart circle.cty:focus{outline:none;stroke:var(--ink);stroke-width:3}
+.pzkey{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.pzkey i{display:inline-block;vertical-align:middle;margin-right:6px}
+.pzkey i.dot{width:11px;height:11px;border-radius:50%}
+.pzkey i.dot.gv{background:var(--s1)}.pzkey i.dot.sn{background:var(--s2)}
+.pzkey i.ln{width:22px;height:0}
+.pzkey i.ln.pool{border-top:2px dashed var(--muted)}.pzkey i.ln.ctl{border-top:3px solid var(--ink-2)}
+.pzstats{display:flex;flex-wrap:wrap;gap:8px}
+.pzstat{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.pzstat .lab{font-size:13px;color:var(--ink-2)}
+.pzstat .num{font:600 22px/1.3 var(--font-mono,monospace);color:var(--ink)}
+.pzstat .goal{font-size:13px;color:var(--ink-2)}
+.pzstat .goal.met{color:var(--ok-ink,#2e6b2b);font-weight:600}
+.pzinfo{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.pzmsg{margin:4px 0 0;font-size:14.5px;min-height:22px;color:var(--ink)}
+.pzbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pzex{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--amber) 45%,transparent)}
+.pzex h4{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.pzex p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink);max-width:75ch}
+.pzex p.st{font-size:13px;font-weight:600;color:var(--amber-ink);margin:0 0 2px}
+.pzlock{color:var(--ink-2)!important}
+.pzbody{opacity:.28;pointer-events:none;transition:opacity .5s}
+.pzbody.open{opacity:1;pointer-events:auto}
+.pzfoot{font-size:13px!important;color:var(--ink-2)!important}
+@media (prefers-reduced-motion:reduce){.pzbody{transition:none}}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -932,6 +971,39 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <figcaption id="aCap"></figcaption>
   </figure>
 
+  <!-- A2: Try it, make the slope flip -->
+  <details class="tryit" id="flip">
+    <summary><span class="tag">Try it</span><span class="tt">Make the slope flip</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzgoal">Drag the counties so turnout rises with college education overall, but falls once race type is held constant.</p>
+      <div class="pzchart" id="pzChart"></div>
+      <div class="pzkey"><span><i class="dot gv"></i>Governor race</span><span><i class="dot sn"></i>Senate race only</span><span><i class="ln pool"></i>All counties together</span><span><i class="ln ctl"></i>Holding race type constant</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Slope, all counties together</div><div class="num" id="pzSp"></div><div class="goal" id="pzCp"></div></div>
+        <div class="pzstat"><div class="lab">Slope, holding race type constant</div><div class="num" id="pzSc"></div><div class="goal" id="pzCc"></div></div>
+      </div>
+      <p class="pzinfo" id="pzInfo" aria-live="polite">Tap near a county and drag it.</p>
+      <p class="pzmsg" id="pzMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="pzShow">Show me</button><button type="button" id="pzReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="pzLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="pzBody" aria-hidden="true">
+          <p class="st">1 · Two things hide in the dashed line</p>
+          <p>The dashed line mixes two comparisons. One is the gap between the two kinds of counties, and in your version the <span id="pzHi"></span> counties sit higher and further right as a group. The other is the trend inside each group, as you go from less-educated to more-educated counties of the same kind.</p>
+          <p><button type="button" class="linkish" id="pzAvg">Mark each group's average</button></p>
+          <p class="st">2 · Here they point in opposite directions</p>
+          <p>The line joining the two group averages climbs, so the gap between the groups pulls the combined slope up, to <b id="pzT1"></b>. Inside each group, turnout falls as college rises. Holding race type constant keeps only that inside comparison, which gives <b id="pzT2"></b>.</p>
+          <p class="st">3 · Why a control can do this</p>
+          <p>A control asks a narrower question. Among counties with the same kind of race on the ballot, does more college go with more turnout? When the control is tied to both X and Y, the narrow answer can differ from the broad one in size, and even in sign. Leaving the control out is the omitted-variable problem from <a href="1-problems-of-causation.html">Problems of causation</a>.</p>
+          <p class="st">4 · Back to the lesson</p>
+          <p>The real counties you started with don't flip, since both of their slopes are positive. Flips are possible but not common. In panel A the control runs along a scale instead of forming two groups, but the logic is the same, because the controlled slope compares counties that are alike on the control.</p>
+          <p class="pzfoot">The starting points are eight real counties from the 2026 news-desert file (newsdeserts_turnout2026.sav), and its 2026 votes are still unofficial counts. A point you move becomes your own version and is no longer real data.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <!-- B -->
   <section class="card" id="sec-why-the-slope-changed">
     <h3><span class="step">B</span>Why the slope changed (omitted variable bias)</h3>
@@ -1488,6 +1560,72 @@ new MutationObserver(redraw).observe(document.documentElement,{attributes:true,a
 sStory.value=DAT.start.story; st.x1=DAT.start.x1; st.x2=DAT.start.x2; applyVars();
 })();
 </script>
+<script id="pzjs">(()=>{
+const box=document.getElementById('flip');if(!box)return;
+const D=[["Osceola County, IA",1,15.4,53.0],["Baldwin County, GA",1,24.1,43.2],["Desha County, AR",1,13.0,35.8],["Franklin County, NE",1,20.0,53.9],["Caldwell Parish, LA",0,10.7,42.4],["Union County, MS",0,17.1,44.2],["Claiborne Parish, LA",0,11.0,41.9],["Watauga County, NC",0,47.7,51.7]];
+const NM={1:'governor-race',0:'Senate-only'}, $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+let keep=false,P=D.map(d=>({n:d[0],g:d[1],x:d[2],y:d[3],m:false})),opened=false,avgOn=false,anim=false,G=null,drag=null,off=[0,0];
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v)), fmt=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
+function mk(t,a,par,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;if(par)par.appendChild(e);return e;}
+function fit(Q){Q=Q||P;const n=Q.length,mx=Q.reduce((a,p)=>a+p.x,0)/n,my=Q.reduce((a,p)=>a+p.y,0)/n;let sxy=0,sxx=0;Q.forEach(p=>{sxy+=(p.x-mx)*(p.y-my);sxx+=(p.x-mx)**2;});
+  let wxy=0,wxx=0;const M={};[0,1].forEach(k=>{const q=Q.filter(p=>p.g==k);M[k]={x:q.reduce((a,p)=>a+p.x,0)/q.length,y:q.reduce((a,p)=>a+p.y,0)/q.length};q.forEach(p=>{wxy+=(p.x-M[k].x)*(p.y-M[k].y);wxx+=(p.x-M[k].x)**2;});});
+  return {bp:sxx?sxy/sxx:0,bc:wxx?wxy/wxx:0,mx,my,M};}
+function build(){
+  const host=$('pzChart');host.innerHTML='';const W=Math.max(300,host.clientWidth||600),H=Math.round(Math.min(390,Math.max(280,W*0.58))),m={l:40,r:12,t:28,b:40};
+  const sx=v=>m.l+v/60*(W-m.l-m.r), sy=v=>H-m.b-(v-30)/35*(H-m.t-m.b), ix=p=>(p-m.l)/(W-m.l-m.r)*60, iy=p=>30+(H-m.b-p)/(H-m.t-m.b)*35;
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'img','aria-label':'Eight counties, with the college degree share on the horizontal axis and 2026 turnout on the vertical axis. Drag a county to move it.'},host);
+  const gg=mk('g',{},svg);
+  for(let v=0;v<=60;v+=10){mk('line',{x1:sx(v),x2:sx(v),y1:m.t,y2:H-m.b,stroke:css('--grid')||css('--line')},gg);mk('text',{x:sx(v),y:H-m.b+16,'text-anchor':'middle','font-size':12,fill:css('--ink-2')},gg,v);}
+  for(let v=30;v<=65;v+=5){mk('line',{x1:m.l,x2:W-m.r,y1:sy(v),y2:sy(v),stroke:css('--grid')||css('--line')},gg);mk('text',{x:m.l-7,y:sy(v)+4,'text-anchor':'end','font-size':12,fill:css('--ink-2')},gg,v);}
+  mk('text',{x:W-m.r,y:H-6,'text-anchor':'end','font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,'Adults with a college degree (%) →');
+  mk('text',{x:4,y:14,'font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,'↑ Turnout, 2026 (%)');
+  const cid='pzclip';mk('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},mk('clipPath',{id:cid},mk('defs',{},svg)));const lg=mk('g',{'clip-path':`url(#${cid})`},svg);
+  const pool=mk('line',{stroke:css('--muted'),'stroke-width':2,'stroke-dasharray':'6 5'},lg), l1=mk('line',{stroke:css('--s1'),'stroke-width':2.5},lg), l0=mk('line',{stroke:css('--s2'),'stroke-width':2.5},lg);
+  const avg=mk('g',{opacity:avgOn?1:0,style:'transition:opacity .4s'},svg), bw=mk('line',{stroke:css('--amber'),'stroke-width':2,'stroke-dasharray':'2 4'},avg), bwt=mk('text',{'text-anchor':'middle','font-size':12,'font-weight':600,fill:css('--amber-ink')},avg,'gap between the groups');
+  const dg=mk('g',{},svg);
+  const C=P.map((p,i)=>{const c=mk('circle',{class:'cty',r:11,fill:p.g?css('--s1'):css('--s2'),stroke:css('--surface'),'stroke-width':2,tabindex:0,role:'button','aria-label':p.n},dg);
+    c.addEventListener('keydown',e=>{const k={ArrowLeft:[-.5,0],ArrowRight:[.5,0],ArrowUp:[0,.5],ArrowDown:[0,-.5]}[e.key];if(!k||anim)return;e.preventDefault();keep=false;const q=P[i];q.x=cl(q.x+k[0],0,60);q.y=cl(q.y+k[1],30,65);q.m=true;draw();info(q);});
+    c.addEventListener('focus',()=>info(P[i]));return c;});
+  const am=mk('g',{opacity:avgOn?1:0,style:'transition:opacity .4s'},svg), A=[0,1].map(k=>{const g=mk('g',{},am);mk('rect',{x:-8,y:-8,width:16,height:16,fill:'none',stroke:k?css('--s1'):css('--s2'),'stroke-width':3,transform:'rotate(45)'},g);mk('text',{x:14,y:4,'font-size':12,'font-weight':600,fill:css('--amber-ink')},g,(k?'governor-race':'Senate-only')+' average');return g;});
+  G={svg,W,H,m,sx,sy,ix,iy,pool,l1,l0,avg,am,bw,bwt,C,A};
+  svg.addEventListener('pointerdown',e=>{if(anim)return;const [a,b]=pt(e);let best=-1,bd=30;P.forEach((p,i)=>{const d=Math.hypot(sx(p.x)-a,sy(p.y)-b);if(d<bd){bd=d;best=i;}});if(best<0)return;
+    keep=false;drag=best;off=[sx(P[best].x)-a,sy(P[best].y)-b];svg.setPointerCapture(e.pointerId);C[best].setAttribute('r',14);C[best].style.cursor='grabbing';info(P[best]);e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(drag===null)return;const [a,b]=pt(e),p=P[drag];p.x=cl(Math.round(ix(a+off[0])*2)/2,0,60);p.y=cl(Math.round(iy(b+off[1])*2)/2,30,65);p.m=true;draw();info(p);});
+  const up=()=>{if(drag!==null){C[drag].setAttribute('r',11);C[drag].style.cursor='';}drag=null;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  draw();}
+function pt(e){const r=G.svg.getBoundingClientRect(),k=G.W/r.width;return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];}
+function seg(el,b,cx,cy){const {sx,sy}=G;el.setAttribute('x1',sx(2));el.setAttribute('y1',sy(cy+b*(2-cx)));el.setAttribute('x2',sx(58));el.setAttribute('y2',sy(cy+b*(58-cx)));}
+function info(p){$('pzInfo').textContent=(p.m?'Your county (moved from '+p.n+')':p.n)+': college '+p.x.toFixed(1)+'%, turnout '+p.y.toFixed(1)+'%';}
+function draw(){if(!G)return;const {sx,sy,C,A}=G;P.forEach((p,i)=>{C[i].setAttribute('cx',sx(p.x));C[i].setAttribute('cy',sy(p.y));});
+  const f=fit();seg(G.pool,f.bp,f.mx,f.my);seg(G.l1,f.bc,f.M[1].x,f.M[1].y);seg(G.l0,f.bc,f.M[0].x,f.M[0].y);
+  [0,1].forEach(k=>{const ax=sx(f.M[k].x),ay=sy(f.M[k].y),right=ax>G.W*0.68;A[k].setAttribute('transform',`translate(${ax},${ay})`);const t=A[k].lastChild;t.setAttribute('text-anchor',right?'end':'start');t.setAttribute('x',right?-14:14);});
+  const x1=sx(f.M[0].x),y1=sy(f.M[0].y),x2=sx(f.M[1].x),y2=sy(f.M[1].y);G.bw.setAttribute('x1',x1);G.bw.setAttribute('y1',y1);G.bw.setAttribute('x2',x2);G.bw.setAttribute('y2',y2);G.bwt.setAttribute('x',(x1+x2)/2);G.bwt.setAttribute('y',(y1+y2)/2-10);
+  $('pzSp').textContent=fmt(f.bp);$('pzSc').textContent=fmt(f.bc);$('pzT1').textContent=fmt(f.bp);$('pzT2').textContent=fmt(f.bc);
+  const okp=f.bp>0,okc=f.bc<0,cp=$('pzCp'),cc=$('pzCc');cp.textContent=okp?'Goal: positive. Met.':'Goal: positive. Not yet.';cc.textContent=okc?'Goal: negative. Met.':'Goal: negative. Not yet.';cp.classList.toggle('met',okp);cc.classList.toggle('met',okc);
+  $('pzHi').textContent=NM[f.M[1].y>=f.M[0].y?1:0];
+  if(!anim&&!keep){const ms=$('pzMsg');ms.textContent=okp&&okc?'Both goals are met, so read what just happened below.':'';}
+  if(okp&&okc)openEx();}
+function openEx(){if(opened)return;opened=true;$('pzLock').style.display='none';const b=$('pzBody');b.classList.add('open');b.setAttribute('aria-hidden','false');}
+function near(){const Q=P.map(p=>({...p})),f=fit(Q);const R=f.M[1].x>=f.M[0].x?1:0;
+  [0,1].forEach(k=>{const q=Q.filter(p=>p.g==k),xs=q.map(p=>p.x);if(Math.max(...xs)-Math.min(...xs)<6){const c=f.M[k].x;q.sort((a,b)=>a.x-b.x).forEach((p,j)=>p.x=c-9+j*6);}});
+  let f2=fit(Q);if(Math.abs(f2.M[1].x-f2.M[0].x)<10){Q.filter(p=>p.g==R).forEach(p=>p.x+=8);Q.filter(p=>p.g!=R).forEach(p=>p.x-=8);}
+  Q.forEach(p=>p.x=cl(Math.round(p.x),2,58));f2=fit(Q);const mid=(f2.M[0].x+f2.M[1].x)/2;
+  Q.forEach(p=>{p.y=cl(Math.round(47+0.6*(f2.M[p.g].x-mid)-0.5*(p.x-f2.M[p.g].x)),31,64);});const f3=fit(Q);return f3.bp>0&&f3.bc<0?Q:null;}
+function setAvg(on){avgOn=on;if(G){G.avg.setAttribute('opacity',on?1:0);G.am.setAttribute('opacity',on?1:0);}$('pzAvg').textContent=on?'Hide the group averages':"Mark each group's average";}
+$('pzAvg').addEventListener('click',()=>setAvg(!avgOn));
+$('pzReset').addEventListener('click',()=>{if(anim)return;keep=false;P=D.map(d=>({n:d[0],g:d[1],x:d[2],y:d[3],m:false}));setAvg(false);$('pzInfo').textContent='Tap near a county and drag it.';$('pzMsg').textContent='';draw();});
+$('pzShow').addEventListener('click',()=>{if(anim)return;const f=fit(),ms=$('pzMsg');
+  if(f.bp>0&&f.bc<0){ms.textContent='Your version already works, so nothing moves. Read what just happened below.';openEx();return;}
+  const T=near();if(!T)return;openEx();ms.textContent='One answer close to yours. Each county keeps its group and stays near where you left it.';
+  const s=P.map(p=>[p.x,p.y]);const fin=()=>{P.forEach((p,i)=>{p.x=T[i].x;p.y=T[i].y;p.m=true;});anim=false;keep=true;draw();};
+  if(reduce()){anim=true;fin();return;}
+  anim=true;const t0=performance.now();(function step(t){const u=Math.min(1,(t-t0)/900),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;P.forEach((p,i)=>{p.x=s[i][0]+(T[i].x-s[i][0])*e;p.y=s[i][1]+(T[i].y-s[i][1])*e;p.m=true;});draw();if(u<1)requestAnimationFrame(step);else fin();})(t0);});
+let built=false;box.addEventListener('toggle',()=>{if(box.open&&!built){built=true;build();}});
+let rt=0;addEventListener('resize',()=>{if(!built)return;clearTimeout(rt);rt=setTimeout(build,150);});
+const rb=()=>{if(built)build();};if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',rb);new MutationObserver(rb).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
 <script id="presentjs">/* Presentation mode: the same page, one projector-sized slide at a time.
    Injected into every module page by scripts/present.py. */
 (function () {
