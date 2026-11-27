@@ -884,6 +884,14 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <p class="src">These data are simulated for illustration. Each dot is one member of a 435-member House in a single year, and the dots are spread sideways so they don't hide each other. The gap between the groups is set to match Figlio's (1995) estimate of about 8 points.</p>
     <p class="say2" id="tlSay2"></p>
   </section>
+  <section class="dcard" id="ag">
+    <h3>Did airports make cities grow?</h3>
+    <p class="p">In the 1920s, city boosters promised that a municipal airport would bring growth, and 167 U.S. counties had one built or under way by 1927. Those counties did grow faster over the decade. The buttons below step through what that comparison can and can't tell us.</p>
+    <div class="row" style="border:0;padding:0;justify-content:flex-start;flex-wrap:wrap"><div class="seg" id="agSeg" role="radiogroup" aria-label="Show a comparison"></div></div>
+    <div class="drbars" id="agBars"></div>
+    <p class="say2" id="agSay"></p>
+    <p class="src">Data: Paul Janssen Danyi, "'Don't Get Left Behind': Elites, Urban Regimes, and the Building of America's First Airport Network" (doctoral qualifying paper in public policy, Purdue University, 2011). County measures come from the 1920 U.S. Census (county files from NHGIS, nhgis.org), and church membership comes from the 1926 Census of Religious Bodies. Airports are the 167 "principal" municipal airports built or under way in 1927, as listed in the <i>New York Times</i> ("4,000 Airports Built, But New York City Owns None of Them," pp. 1, 27), with each one coded to its 1920 county. The <a href="practice-airports.html">first-airports practice set</a> works through these data step by step (<a href="data/airports1920.sav" download>airports1920.sav</a>).</p>
+  </section>
 
   <!-- 8 REVERSION -->
   <section class="part" id="p4"><p class="kick">Part 6</p><h2>Endogeneity (X ⇄ Y)</h2>
@@ -1170,6 +1178,19 @@ D_seg($('omSeg'),[['all','All months together'],['split','Split by the weather']
 diagram($('omDg'),'omit',{z:'Cold weather (cocoa season)',x:'Gas bill',y:'Marshmallow size'});
 omDraw();
 function D_seg(host,opts,cb,init){host.innerHTML=opts.map(o=>`<button type="button" data-v="${o[0]}" aria-pressed="${o[0]===init}">${o[1]}</button>`).join('');host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;host.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});}
+
+/* ========== Part 5: airports and growth ========== */
+(function(){const S={
+ gap:{cap:'Median population growth, 1920–30',max:30,rows:[['Airport counties',22.3,'hit','22.3%'],['Other counties',4.4,'miss','4.4%']],
+  say:'Counties with an airport by 1927 grew a median <b>22.3%</b> in the 1920s, compared with <b>4.4%</b> for the other counties. Taken at face value, the airports seem to have paid off. Before we believe that, we should ask which came first.'},
+ start:{cap:'Average population in 1920',max:200,rows:[['Airport counties',186.7,'hit','187,000'],['Other counties',40.5,'miss','40,000']],
+  say:'The airport counties were already <b>far bigger and more urban</b> before any airport opened. In 1920 they averaged 187,000 people and were 66% urban, against 40,000 people and 34% urban for the rest. Big, booming cities had the money and the boosters to build airports, so growth may have brought the airports rather than the other way around.'},
+ order:{cap:'',max:1,rows:[],
+  say:'Two stories fit these numbers at least as well as "airports cause growth." In <b>reverse causation</b>, growth comes first, and growing cities build airports. With an <b>omitted variable</b>, urbanization drives both, since cities both grow and build airports. The timing does not settle it either, because the airports opened partway through the decade we measure growth in. To learn what an airport itself did, we would compare counties that were alike in 1920, where only some built one.'}};
+ const host=$('agBars');
+ function draw(k){const s=S[k];host.innerHTML=s.rows.length?`<p class="cap">${s.cap}</p>`+s.rows.map(r=>`<div class="r"><span>${r[0]}</span><span class="tr"><span class="b ${r[2]}" style="width:0"></span></span><span class="v">${r[3]}</span></div>`).join(''):'';
+  requestAnimationFrame(()=>host.querySelectorAll('.b').forEach((b,i)=>{const r=s.rows[i];b.style.width=(100*r[1]/s.max)+'%';}));$('agSay').innerHTML=s.say;}
+ D_seg($('agSeg'),[['gap','1 · The growth gap'],['start','2 · Where they started'],['order','3 · Which way does it run?']],draw,'gap');draw('gap');})();
 
 /* ========== Part 4: drone strikes on group leaders ========== */
 (function(){const S={
