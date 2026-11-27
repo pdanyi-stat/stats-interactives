@@ -972,6 +972,20 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
 .pzkey i.lmmode{width:16px;height:12px;border:2px solid var(--s1-ink,var(--ink));border-radius:3px;background:color-mix(in srgb,var(--s1) 9%,transparent)}
 @media (prefers-reduced-motion:reduce){.lmsq{transition:none!important}}
 .pzkey i.ln.r2l{border-top:2.5px solid var(--s2)}
+.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:8px;margin:6px 0 10px}
+.cscard{display:grid;gap:2px;text-align:left;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .35s,box-shadow .35s,background-color .35s}
+.cscard.on{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1.5px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.cscard:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.csn{font-weight:700;font-size:15px;margin-bottom:2px}
+@media (max-width:480px){.cscard{padding:7px 8px}.csr{font-size:12px}.csr>span{min-width:0;width:100%}}
+.csr{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;font-size:12.5px;color:var(--ink-2);border-radius:4px;padding:0 3px;margin:0 -3px}
+.csr>span{min-width:78px}.csr b{color:var(--ink);font-weight:600}.csr i{font-style:normal;font-size:11.5px;color:var(--muted)}
+.csr.cst{background:color-mix(in srgb,var(--pz-a) 18%,transparent)}
+.csr.bad{background:color-mix(in srgb,var(--bad,#B3261E) 14%,transparent)}
+.csr.bad b{color:var(--badink,var(--ink))}
+.csr.csturn{display:none}.csgrid.turn .csr.csturn{display:flex}
+.pzstat .num.cssm{font-size:17px;line-height:1.4;white-space:normal}
+@media (prefers-reduced-motion:reduce){.cscard{transition:none}}
 </style>
 </head>
 <body>
