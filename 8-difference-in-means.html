@@ -954,6 +954,23 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
 .pzchart text{font-family:inherit}
 .pzkey i.ovsw{width:14px;height:11px;background:color-mix(in srgb,var(--pz-a) 35%,transparent);border:1px solid var(--pz-a)}
 .ovzsay{font-size:13.5px!important;color:var(--ink-2)!important}
+.lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.lmh{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:0 2px}
+.lmcell{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.lmcell.mode{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.lmlab{font-size:13px;color:var(--ink-2);margin-bottom:6px;min-height:18px}
+.lmlab b{color:var(--ink)}
+.lmtag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--s1-ink,var(--ink))}
+.lmtag.tie{color:var(--ink-2)}
+.lmsqs{display:grid;grid-template-columns:repeat(5,minmax(0,28px));gap:4px;min-height:60px;align-content:start}
+.lmsq{width:100%;aspect-ratio:1;min-width:24px;padding:0;border-radius:5px;border:1.5px solid;font:700 12px/1 var(--font-mono,monospace);color:#0b0d10;cursor:pointer;display:grid;place-items:center;transition:opacity .3s}
+.lmsq.d{background:var(--dem);border-color:var(--dem-ink,var(--dem))}
+.lmsq.r{background:var(--rep);border-color:var(--rep-ink,var(--rep))}
+.lmsq.wrong{opacity:.3}
+.lmsq:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.pzkey i.lmsq{display:inline-grid;width:16px;height:16px;min-width:0;font-size:10px;aspect-ratio:auto;cursor:default}
+.pzkey i.lmmode{width:16px;height:12px;border:2px solid var(--s1-ink,var(--ink));border-radius:3px;background:color-mix(in srgb,var(--s1) 9%,transparent)}
+@media (prefers-reduced-motion:reduce){.lmsq{transition:none!important}}
 </style>
 </head>
 <body>

@@ -991,7 +991,73 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 .tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
 .tapnote a{color:var(--mci);font-weight:600}
 </style>
-<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
+<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style><style id="tryit">
+/* Try it puzzles (shared). Injected by scripts/tryit.py on pages that hold a details.tryit box. */
+:root{--pz-a:#B07A12;--pz-abg:#FFF1D6;--pz-aink:#6B4A00;--pz-tag:#f5c400;--pz-ok:#2c6b1f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}}
+:root[data-theme="dark"]{--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}
+details.tryit{border:2px solid var(--pz-a);background:var(--pz-abg);border-radius:10px;margin:18px 0 6px;box-shadow:0 0 0 4px color-mix(in srgb,var(--pz-a) 18%,transparent)}
+details.tryit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;font-weight:600}
+details.tryit>summary::-webkit-details-marker{display:none}
+details.tryit>summary::after{content:'+';margin-left:auto;font:600 20px/1 var(--font-mono,monospace);color:var(--pz-aink)}
+details.tryit[open]>summary::after{content:'−'}
+details.tryit .tag{background:var(--pz-tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+details.tryit .tt{font-size:17px;color:var(--ink)}
+details.tryit .hint{font-size:13px;font-weight:400;color:var(--ink-2)}
+.pzin{padding:0 16px 16px}
+.pzgoal{margin:0 0 8px;color:var(--ink);font-size:15px}
+.pzchart{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pzchart svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzchart circle.cty{cursor:grab}
+.pzchart circle.cty:focus{outline:none;stroke:var(--ink);stroke-width:3}
+.pzkey{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.pzkey i{display:inline-block;vertical-align:middle;margin-right:6px}
+.pzkey i.dot{width:11px;height:11px;border-radius:50%}
+.pzkey i.dot.gv{background:var(--s1)}.pzkey i.dot.sn{background:var(--s2)}
+.pzkey i.ln{width:22px;height:0}
+.pzkey i.ln.pool{border-top:2px dashed var(--muted)}.pzkey i.ln.ctl{border-top:3px solid var(--ink-2)}
+.pzstats{display:flex;flex-wrap:wrap;gap:8px}
+.pzstat{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.pzstat .lab{font-size:13px;color:var(--ink-2)}
+.pzstat .num{font:600 22px/1.3 var(--font-mono,monospace);color:var(--ink)}
+.pzstat .goal{font-size:13px;color:var(--ink-2)}
+.pzstat .goal.met{color:var(--pz-ok);font-weight:600}
+.pzinfo{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.pzmsg{margin:4px 0 0;font-size:14.5px;min-height:22px;color:var(--ink)}
+.pzbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pzex{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--pz-a) 45%,transparent)}
+.pzex h4{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.pzex p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink);max-width:75ch}
+.pzex p.st{font-size:13px;font-weight:600;color:var(--pz-aink);margin:0 0 2px}
+.pzlock{color:var(--ink-2)!important}
+.pzbody{opacity:.28;pointer-events:none;transition:opacity .5s}
+.pzbody.open{opacity:1;pointer-events:auto}
+.pzfoot{font-size:13px!important;color:var(--ink-2)!important}
+@media (prefers-reduced-motion:reduce){.pzbody{transition:none}}
+details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var(--ink));text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+.pzset{margin:0 0 6px;color:var(--ink-2);font-size:14.5px;line-height:1.55}
+.pzchart text{font-family:inherit}
+.pzkey i.ovsw{width:14px;height:11px;background:color-mix(in srgb,var(--pz-a) 35%,transparent);border:1px solid var(--pz-a)}
+.ovzsay{font-size:13.5px!important;color:var(--ink-2)!important}
+.lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.lmh{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:0 2px}
+.lmcell{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.lmcell.mode{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.lmlab{font-size:13px;color:var(--ink-2);margin-bottom:6px;min-height:18px}
+.lmlab b{color:var(--ink)}
+.lmtag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--s1-ink,var(--ink))}
+.lmtag.tie{color:var(--ink-2)}
+.lmsqs{display:grid;grid-template-columns:repeat(5,minmax(0,28px));gap:4px;min-height:60px;align-content:start}
+.lmsq{width:100%;aspect-ratio:1;min-width:24px;padding:0;border-radius:5px;border:1.5px solid;font:700 12px/1 var(--font-mono,monospace);color:#0b0d10;cursor:pointer;display:grid;place-items:center;transition:opacity .3s}
+.lmsq.d{background:var(--dem);border-color:var(--dem-ink,var(--dem))}
+.lmsq.r{background:var(--rep);border-color:var(--rep-ink,var(--rep))}
+.lmsq.wrong{opacity:.3}
+.lmsq:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.pzkey i.lmsq{display:inline-grid;width:16px;height:16px;min-width:0;font-size:10px;aspect-ratio:auto;cursor:default}
+.pzkey i.lmmode{width:16px;height:12px;border:2px solid var(--s1-ink,var(--ink));border-radius:3px;background:color-mix(in srgb,var(--s1) 9%,transparent)}
+@media (prefers-reduced-motion:reduce){.lmsq{transition:none!important}}
+</style>
+</head>
 <body>
 <nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="6-sampling-distributions.html" aria-label="Next: Sampling distributions">Next →</a></nav>
 <header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Module 5 of 11</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion"><span>4</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²" aria-current="page"><span>5 · PRE measures</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means"><span>8</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables"><span>11</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-airports.html" style="--c:#183951;--k:#f8f5ec" title="Don&#x27;t Get Left Behind: Who Got America&#x27;s First Airports?"><span>P2</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P3</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P4</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P5</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P6</span></a><a class="tab" href="practice-news-deserts.html" style="--c:#a2472b;--k:#f8f5ec" title="Do news deserts vote less?"><span>P7</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P8</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data"><span>Viz</span></a></nav><div class="mtitle"><div><p class="kicker">● Module 5 · How much does knowing X help?</p><h1>Proportional reduction in <em>error.</em></h1></div><p class="dek">Lambda, gamma and r² look like three unrelated statistics, but each one answers the same question. Once you know the independent variable (X), how many fewer mistakes do you make when you guess the dependent variable (Y)? We will play that guessing game three times, once for each level of measurement.</p></div><div class="mhd sh"><span>In this module · tap a book to open it</span><span class="rt"><span class="cnt">10 sections</span><span class="swipehint" aria-hidden="true">Swipe →</span></span></div><nav class="shelf2" aria-label="Sections on this page"><div class="gbox" style="min-width:138px"><p class="gl">Lambda</p><div class="gbooks"><a class="bk cloth lean-r" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:86%;--w:76px;--fs:16px;--rot:3.1deg;margin-right:calc(var(--bh) * 0.0473 - 2px)" href="#lambda" aria-label="Part 1: Guess the vote"><span class="bands t"></span><span class="plate">1</span><span class="ti">Guess the vote<br><small>lambda</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#7795ba;--k:#1b1813;--band:#405b7d;--h:96%;--w:72px;--fs:16px" href="#sec-lambda-with-real-survey-tabl" aria-label="Part 1b: Lambda, real tables"><span class="bands t"></span><span class="plate">1b</span><span class="ti">Lambda, real tables</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:284px"><p class="gl">Gamma</p><div class="gbooks"><a class="bk face" style="--c:#b58734;--k:#1b1813;--ink:#1b1813;--h:100%;flex-basis:196px" href="#gamma" aria-label="Part 2: Do pairs line up?"><span class="fn">PART 2</span><span class="ft">Do pairs line up?</span><span class="fs2">gamma</span><svg class="cov" viewBox="0 0 170 124" aria-hidden="true"><g fill="var(--ink)" opacity=".88"><circle cx="37.0" cy="86.0" r="2.6"/><circle cx="45.5" cy="86.0" r="2.6"/><circle cx="54.0" cy="86.0" r="2.6"/><circle cx="62.5" cy="86.0" r="2.6"/><circle cx="37.0" cy="94.5" r="2.6"/><circle cx="45.5" cy="94.5" r="2.6"/><circle cx="54.0" cy="94.5" r="2.6"/><circle cx="62.5" cy="94.5" r="2.6"/><circle cx="37.0" cy="103.0" r="2.6"/><circle cx="81.0" cy="86.0" r="2.6"/><circle cx="89.5" cy="86.0" r="2.6"/><circle cx="98.0" cy="86.0" r="2.6"/><circle cx="125.0" cy="86.0" r="2.6"/><circle cx="37.0" cy="52.0" r="2.6"/><circle cx="45.5" cy="52.0" r="2.6"/><circle cx="54.0" cy="52.0" r="2.6"/><circle cx="81.0" cy="52.0" r="2.6"/><circle cx="89.5" cy="52.0" r="2.6"/><circle cx="98.0" cy="52.0" r="2.6"/><circle cx="106.5" cy="52.0" r="2.6"/><circle cx="81.0" cy="60.5" r="2.6"/><circle cx="89.5" cy="60.5" r="2.6"/><circle cx="98.0" cy="60.5" r="2.6"/><circle cx="106.5" cy="60.5" r="2.6"/><circle cx="125.0" cy="52.0" r="2.6"/><circle cx="133.5" cy="52.0" r="2.6"/><circle cx="142.0" cy="52.0" r="2.6"/><circle cx="37.0" cy="18.0" r="2.6"/><circle cx="81.0" cy="18.0" r="2.6"/><circle cx="89.5" cy="18.0" r="2.6"/><circle cx="98.0" cy="18.0" r="2.6"/><circle cx="125.0" cy="18.0" r="2.6"/><circle cx="133.5" cy="18.0" r="2.6"/><circle cx="142.0" cy="18.0" r="2.6"/><circle cx="150.5" cy="18.0" r="2.6"/><circle cx="125.0" cy="26.5" r="2.6"/><circle cx="133.5" cy="26.5" r="2.6"/><circle cx="142.0" cy="26.5" r="2.6"/><circle cx="150.5" cy="26.5" r="2.6"/><circle cx="125.0" cy="35.0" r="2.6"/><line x1="28.0" y1="10.0" x2="160.0" y2="10.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="28.0" y1="10.0" x2="28.0" y2="112.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="28.0" y1="44.0" x2="160.0" y2="44.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="72.0" y1="10.0" x2="72.0" y2="112.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="28.0" y1="78.0" x2="160.0" y2="78.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="116.0" y1="10.0" x2="116.0" y2="112.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="28.0" y1="112.0" x2="160.0" y2="112.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><line x1="160.0" y1="10.0" x2="160.0" y2="112.0" stroke="var(--ink)" stroke-width="0.8" opacity="0.45"/><text x="94.0" y="123" text-anchor="middle" font-family="RvMono,ui-monospace,monospace" font-size="8.5" letter-spacing=".06em" fill="var(--ink)">X LOW → HIGH</text></g></svg></a><a class="bk cloth" style="--c:#8da6c5;--k:#1b1813;--band:#47658b;--h:86%;--w:72px;--fs:14px" href="#sec-gamma-with-real-survey-table" aria-label="Part 2b: Gamma, real tables"><span class="bands t"></span><span class="plate">2b</span><span class="ti">Gamma, real tables</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#dcb246;--k:#1b1813;--band:#97751d;--h:86%;--w:76px;--fs:14px" href="#gwalk" aria-label="Part 2c: Count every pair"><span class="bands t"></span><span class="plate">2c</span><span class="ti">Count every pair<br><small>cell by cell</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:116px"><p class="gl">R-squared</p><div class="gbooks"><a class="bk cloth din" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:86%;--w:84px;--fs:13px" href="#rsq" aria-label="Part 3: Mean or the line?"><span class="bands t"></span><span class="plate">3</span><span class="ti">Mean or the line?<br><small>r²</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#6385b0;--k:#1b1813;--band:#395271;--h:86%;--w:76px;--fs:14px" href="#sec-with-real-county-data" aria-label="Part 3b: r², real counties"><span class="bands t"></span><span class="plate">3b</span><span class="ti">r², real counties</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:138px"><p class="gl">Practice</p><div class="gbooks"><a class="bk cloth" style="--c:#819dbf;--k:#1b1813;--band:#436084;--h:100%;--w:80px;--fs:17px" href="#sec-try-this" aria-label="Try this"><span class="bands t"></span><span class="plate">Try</span><span class="ti">Try this</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth lean-l" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:100%;--w:76px;--fs:17px;--rot:-5.3deg;margin-left:calc(var(--bh) * 0.0935 - 2px);--pfs:8.5px" href="#sec-check-yourself" aria-label="Check yourself"><span class="bands t"></span><span class="plate">Check</span><span class="ti">Check yourself</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:61px"><p class="gl">Wrap-up</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:100%;--w:76px;--fs:17px" href="#wwl" aria-label="Part ✓: What we learned"><span class="bands t"></span><span class="plate">✓</span><span class="ti">What we learned<br><small>the main ideas</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div></nav><div class="board" aria-hidden="true"></div></div></header>
@@ -1074,6 +1140,39 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <pre class="stata" id="lstata"></pre>
   </section>
 
+<!-- pz:m5 -->
+  <details class="tryit" id="pzLam">
+    <summary><span class="tag">Try it</span><span class="tt">Make lambda zero</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">We start from the 20 voters the example above opens with. Seven of the ten city people are Democrats, and three of the ten country people are, so λ = .40. Tap a voter to move them to the other party in their group.</p>
+      <p class="pzgoal">Move voters so lambda is 0 but the share of Democrats among city people and among country people still differs by at least 15 points.</p>
+      <div class="lmgrid" id="lmGrid"></div>
+      <div class="pzkey"><span><i class="lmsq d">D</i>Democrat</span><span><i class="lmsq r">R</i>Republican</span><span><i class="lmmode"></i>The group's most common party (its mode)</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Lambda</div><div class="num" id="lmL"></div><div class="goal" id="lmGa"></div></div>
+        <div class="pzstat"><div class="lab">Gap in % Democrat, city minus country</div><div class="num" id="lmG"></div><div class="goal" id="lmGb"></div></div>
+      </div>
+      <p class="pzinfo" id="lmInfo" aria-live="polite"></p>
+      <p class="pzmsg" id="lmMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="lmShow">Show me</button><button type="button" id="lmReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="lmLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="lmBody" aria-hidden="true">
+          <p class="st">1 · Lambda only counts guesses that change</p>
+          <p>Without knowing the group, we guess the most common party for all 20 voters, which in your version is <b id="lmAll"></b>. Knowing the group, we guess each group's most common party, and in your version <span id="lmBoth"></span> Since knowing the group changes no guess, it saves no errors, and λ = 0.</p>
+          <p><button type="button" class="linkish" id="lmWrong">Fade the wrong guesses</button></p>
+          <p class="st">2 · The groups still differ</p>
+          <p>City people in your version are <b id="lmPc"></b> Democrats and country people are <b id="lmPr"></b>, which is a gap of <b id="lmPg"></b> points. The two groups lean differently, but not far enough to change either group's most common party, so the gap never reaches lambda.</p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>A lambda of 0 means that knowing X never changes our best guess about Y, and it doesn't mean that X and Y are unrelated. It happens most often when one category of Y is the most common in every group, so when you see λ = 0, read the column percentages before you conclude that X doesn't matter.</p>
+          <p class="pzfoot">The starting table is the set of 20 voters the example above opens with, Democratic and Republican identifiers from the 2024 American National Election Studies. A voter you move becomes your own version and is no longer real data.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+<!-- /pz:m5 -->
   <!-- ================= GAMMA ================= -->
   <section class="part" id="gamma" aria-labelledby="gh">
     <p class="kick">Part 2 · Gamma (ordinal)</p>
@@ -2068,5 +2167,100 @@ function fix(){
 let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
 if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
-})();</script></body>
+})();</script><script id="pzlib">
+window.PZ=window.PZ||(()=>{
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mk(t,a,par,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;if(par)par.appendChild(e);return e;}
+/* Eased move, only on a press. Reduced motion jumps straight to the end. */
+function tween(ms,f,done){if(reduce()){f(1);if(done)done();return;}const t0=performance.now();(function s(t){const u=Math.min(1,(t-t0)/ms),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;f(e);if(u<1)requestAnimationFrame(s);else if(done)done();})(t0);}
+/* Build the chart the first time the box opens, and again when the width or theme changes. */
+function lazy(box,build){let built=false,w=innerWidth;box.addEventListener('toggle',()=>{if(box.open&&!built){built=true;build();}});
+  let rt=0;addEventListener('resize',()=>{if(!built||innerWidth===w)return;w=innerWidth;clearTimeout(rt);rt=setTimeout(build,150);});
+  const rb=()=>{if(built)build();};const mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',rb);
+  new MutationObserver(rb).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}
+/* The explanation stays faded until the goal is met or Show me is pressed. */
+function opener(lock,body){let o=false;const f=()=>{if(o)return;o=true;lock.style.display='none';body.classList.add('open');body.setAttribute('aria-hidden','false');};f.isOpen=()=>o;return f;}
+function goal(el,ok,label){el.textContent='Goal: '+label+'. '+(ok?'Met.':'Not yet.');el.classList.toggle('met',!!ok);}
+/* Pointer dragging: grab the nearest handle within 30 px, keep the grab offset. */
+function drag(svg,o){const R=o.radius||30;let cur=null,off=[0,0];
+  const pt=e=>{const r=svg.getBoundingClientRect(),k=(+svg.getAttribute('width'))/r.width;return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  svg.addEventListener('pointerdown',e=>{if(o.busy&&o.busy())return;const [a,b]=pt(e),H=o.handles();let best=-1,bd=R;H.forEach((h,i)=>{if(!h)return;const d=Math.hypot(h[0]-a,h[1]-b);if(d<bd){bd=d;best=i;}});
+    if(best<0)return;cur=best;off=[H[best][0]-a,H[best][1]-b];svg.setPointerCapture(e.pointerId);if(o.start)o.start(best);e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(cur===null)return;const [a,b]=pt(e);o.move(cur,a+off[0],b+off[1]);});
+  const up=()=>{if(cur!==null&&o.end)o.end(cur);cur=null;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  return {active:()=>cur};}
+/* Student's t distribution */
+function lgam(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(const k of c)s+=k/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function bcf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;let h=d;for(let m=1;m<=200;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgam(a+b)-lgam(a)-lgam(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*bcf(a,b,x)/a:1-bt*bcf(b,a,1-x)/b;}
+function p2(t,df){return ibeta(df/(df+t*t),df/2,.5);}           /* two-sided p */
+function tcrit(df,conf){conf=conf||.95;let lo=0,hi=50;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(p2(m,df)>1-conf)lo=m;else hi=m;}return (lo+hi)/2;}
+function fp(p){return p<.001?'p < .001':'p = '+p.toFixed(3).replace(/^0/,'');}
+const sgn=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
+return {$,css,cl,reduce,mk,tween,lazy,opener,goal,drag,p2,tcrit,fp,sgn};
+})();
+</script>
+<!-- pz:m5js --><script id="pz-m5">
+(()=>{
+const box=document.getElementById('pzLam');if(!box||!window.PZ)return;
+const {$,reduce,opener,goal}=PZ;
+const GR=['City people','Country people'], start=[7,3];   // Democrats among the 10 city and the 10 country people
+let P=[], built=false, keep=false, anim=false, wrongOn=false, cells=null;
+const openEx=opener($('lmLock'),$('lmBody'));
+const party=d=>d?'Democrat':'Republican';
+function fresh(){P=[];[0,1].forEach(c=>{for(let i=0;i<10;i++)P.push({c,d:i<start[c]?1:0,el:null});});}
+function calc(Q){Q=Q||P.map(p=>[p.c,p.d]);const dc=[0,1].map(c=>Q.filter(q=>q[0]===c&&q[1]).length),D=dc[0]+dc[1];
+  const E1=Math.min(D,20-D),E2=dc.reduce((a,v)=>a+Math.min(v,10-v),0),lam=E1?(E1-E2)/E1:NaN,gap=(dc[0]-dc[1])*10;
+  return {dc,D,E1,E2,lam,gap,okL:E1>0&&E1===E2,okG:Math.abs(gap)>=15};}
+function build(){const g=$('lmGrid');g.innerHTML='';cells=[[null,null],[null,null]];
+  GR.forEach((n,c)=>{const h=document.createElement('div');h.className='lmh';h.style.gridColumn=c+1;h.style.gridRow=1;h.textContent=n+' (10)';g.appendChild(h);});
+  [1,0].forEach((d,r)=>[0,1].forEach(c=>{const el=document.createElement('div');el.className='lmcell';el.style.gridColumn=c+1;el.style.gridRow=r+2;
+    el.innerHTML='<div class="lmlab"></div><div class="lmsqs"></div>';g.appendChild(el);cells[c][d]=el;}));
+  P.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.addEventListener('click',()=>{if(anim)return;keep=false;move([i]);});p.el=b;});
+  P.forEach(p=>place(p));draw();built=true;}
+function place(p){const b=p.el;b.className='lmsq '+(p.d?'d':'r');b.textContent=p.d?'D':'R';
+  b.setAttribute('aria-label',GR[p.c].slice(0,-7)+' person, '+party(p.d)+'. Move to '+party(1-p.d)+'.');cells[p.c][p.d].querySelector('.lmsqs').appendChild(b);}
+/* Only the tapped voters move: first, last, invert, play. */
+function move(ix,ms,done){const first=ix.map(i=>P[i].el.getBoundingClientRect());ix.forEach(i=>{P[i].d=1-P[i].d;place(P[i]);});
+  if(!reduce()){ix.forEach((i,k)=>{const b=P[i].el,l=b.getBoundingClientRect();b.style.transition='none';b.style.transform=`translate(${first[k].left-l.left}px,${first[k].top-l.top}px)`;});
+    requestAnimationFrame(()=>requestAnimationFrame(()=>ix.forEach(i=>{const b=P[i].el;b.style.transition=`transform ${ms||450}ms cubic-bezier(.45,0,.55,1)`;b.style.transform='';})));}
+  draw();if(done)setTimeout(done,reduce()?0:(ms||450));}
+function draw(){if(!cells)return;const c=calc(),pc=c.dc.map(v=>v*10);
+  [0,1].forEach(col=>[1,0].forEach(d=>{const n=d?c.dc[col]:10-c.dc[col],el=cells[col][d],mode=n>10-n;el.classList.toggle('mode',mode);
+    el.querySelector('.lmlab').innerHTML=(d?'Democrats':'Republicans')+' · <b>'+n+'</b> ('+n*10+'%)'+(mode?' <span class="lmtag">mode</span>':n===5?' <span class="lmtag tie">tie</span>':'');}));
+  P.forEach(p=>{const g=c.dc[p.c]>=5?1:0;p.el.classList.toggle('wrong',wrongOn&&p.d!==g);});
+  $('lmL').textContent=isNaN(c.lam)?'λ = —':'λ = '+(c.lam===0?'0':c.lam.toFixed(2).replace(/^0/,''));
+  $('lmG').textContent=(c.gap>0?'+':c.gap<0?'−':'')+Math.abs(c.gap)+' points';
+  goal($('lmGa'),c.okL,'0');goal($('lmGb'),c.okG,'at least 15 points either way');
+  $('lmInfo').textContent='Wrong guesses without the group, E₁ = '+c.E1+', and knowing the group, E₂ = '+c.E2+'.';
+  const all=c.D>=10?1:0;$('lmAll').textContent=party(all);
+  const ties=[0,1].filter(k=>c.dc[k]===5);
+  $('lmBoth').textContent=!c.okL?'the two groups have different most common parties right now.':ties.length===0?'that is '+party(all)+' for both groups as well.':
+    ties.length===2?'both groups split 5 to 5, so either guess makes the same number of errors.':
+    GR[1-ties[0]].toLowerCase()+' lean '+party(c.dc[1-ties[0]]>5?1:0)+', and '+GR[ties[0]].toLowerCase()+' split 5 to 5, so either guess for them makes five errors.';
+  $('lmPc').textContent=pc[0]+'%';$('lmPr').textContent=pc[1]+'%';$('lmPg').textContent=Math.abs(c.gap);
+  if(!anim&&!keep)$('lmMsg').textContent=c.okL&&c.okG?'Both goals are met, so read what just happened below.':'';
+  if(c.okL&&c.okG)openEx();}
+/* The solution that needs the fewest moves from the student's table, avoiding 5-to-5 ties when it can. */
+function near(){const c=calc();let best=null;
+  for(let a=0;a<=10;a++)for(let b=0;b<=10;b++){const Q=[];for(let i=0;i<10;i++)Q.push([0,i<a?1:0]);for(let i=0;i<10;i++)Q.push([1,i<b?1:0]);const f=calc(Q);if(!(f.okL&&f.okG))continue;
+    const cost=Math.abs(a-c.dc[0])+Math.abs(b-c.dc[1])+(a===5||b===5?10:0)-Math.abs(f.gap)/1000;if(!best||cost<best.cost)best={a,b,cost};}
+  if(!best)return null;const ix=[];[[0,best.a],[1,best.b]].forEach(([col,t])=>{let k=t-c.dc[col];const want=k>0?0:1;
+    for(let i=P.length-1;i>=0&&k!==0;i--){if(P[i].c===col&&P[i].d===want){ix.push(i);k+=k>0?-1:1;}}});return ix;}
+function setWrong(on){wrongOn=on;$('lmWrong').textContent=on?'Show every guess again':'Fade the wrong guesses';draw();}
+$('lmWrong').addEventListener('click',()=>setWrong(!wrongOn));
+$('lmReset').addEventListener('click',()=>{if(anim)return;keep=false;wrongOn=false;$('lmWrong').textContent='Fade the wrong guesses';fresh();build();$('lmMsg').textContent='';});
+$('lmShow').addEventListener('click',()=>{if(anim)return;const c=calc(),ms=$('lmMsg');
+  if(c.okL&&c.okG){ms.textContent='Your version already works, so nothing moves. Read what just happened below.';openEx();return;}
+  const ix=near();if(!ix)return;openEx();ms.textContent='One answer close to yours. It moves the fewest voters it can from your table, and here that is '+ix.length+'.';
+  anim=true;move(ix,900,()=>{anim=false;keep=true;draw();});});
+fresh();
+box.addEventListener('toggle',()=>{if(box.open&&!built)build();});
+})();
+</script><!-- /pz:m5js -->
+</body>
 </html>
