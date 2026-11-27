@@ -1466,7 +1466,7 @@ let rz=0; if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const 
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',redraw);
 new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-load(0);
+{ const i0=Math.max(0,DS.findIndex(d=>d.id==='income')); sel.value=String(i0); load(i0); }
 for(let i=0;i<300;i++){ const s=shuffleSlope(); st.shuf.push(s.b); st.shufLines.push(s.b); } renderD();
 })();
 </script>
