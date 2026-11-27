@@ -373,6 +373,42 @@ body.nocodes .ctabs{display:none}
 @media (max-width:520px){.paper table.codes td{display:block;padding:0 0 8px}}
 .fin{text-align:center;margin-top:30px;font-weight:700}
 @media (max-width:520px){.paper{font-size:16.5px;padding:24px 14px 30px}.desk{padding:12px 4px}.qq .acts,.qq .fb{margin-left:0}.bl{width:5.2em}}
+
+/* lined notebook paper: every line of text sits on a rule 28px apart */
+.desk .paper{--pl:clamp(40px,6vw,64px);--ml:calc(var(--pl) - 14px);
+  background-color:#fdfdfb;
+  background-image:linear-gradient(90deg,transparent calc(var(--ml) - 1px),rgba(205,58,66,.8) calc(var(--ml) - 1px),rgba(205,58,66,.8) calc(var(--ml) + 1px),transparent calc(var(--ml) + 1px)),
+    repeating-linear-gradient(180deg,transparent 0 22px,rgba(88,136,206,.55) 22px 23px,transparent 23px 28px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:auto,auto,240px 240px;
+  border:1px solid #d9d6cc;font-size:17px;line-height:28px;padding:56px clamp(16px,5vw,56px) 56px var(--pl)}
+.desk .paper p,.desk .paper .scen,.desk .paper .hyp,.desk .paper .inst,.desk .paper .fin{margin:0 0 28px;line-height:28px}
+.desk .paper .scale,.desk .paper table.codes,.desk .paper table.codes td{line-height:28px;margin:0;padding-top:0;padding-bottom:0}
+.desk .paper .ptop{margin:0 0 28px;line-height:28px}
+.desk .paper h3.sec{font-size:19px;line-height:28px;margin:56px 0 0;padding:0;border:0}
+.desk .paper h3.sec:first-of-type{margin-top:28px}
+.desk .paper .lead{margin:0 0 28px;padding:0 10px;background:rgba(0,76,151,.05);line-height:28px}
+.desk .paper .qq{margin:0 0 28px;padding:0;display:flow-root}
+.desk .paper .qq .qb{display:flow-root}
+.desk .paper .qq .opts{margin:0}
+.desk .paper .qq .opts li{margin:0;padding:0}
+.desk .paper .qq .opts label{padding:0;line-height:28px;align-items:baseline}
+.desk .paper .qq .opts input{transform:translateY(3px);margin:0}
+.desk .paper .bl{height:23px;min-height:0;box-sizing:border-box;vertical-align:top;margin:0 3px;padding:0 4px;line-height:21px;background:rgba(0,76,151,.06);border:0;border-bottom:1.5px solid #1E1B16;font-size:16px}
+.desk .paper textarea.bl{height:84px;min-height:84px;line-height:28px;padding:0 8px;background:transparent;border:0;border-left:2px solid rgba(0,76,151,.35);margin:0;display:block}
+.desk .paper .qq .acts{margin:0;gap:0 8px;min-height:28px;align-items:center}
+.desk .paper .qq .acts button{min-height:0;height:24px;margin:2px 0;padding:0 11px;line-height:22px;background:#fff}
+.desk .paper .secscore{margin:0;min-height:28px;gap:0 10px;line-height:28px}
+.desk .paper .secscore button{min-height:0;height:24px;margin:2px 0;padding:0 13px;line-height:24px}
+.desk .paper .qq .fb{margin:0;line-height:28px;padding:0 13px}
+.desk .paper .steps{margin:0;line-height:28px}
+.desk .paper .steps > summary{min-height:28px;padding:0 12px}
+.desk .paper .steps > div{padding:0 14px}
+.desk .paper .ctabs{margin:0;gap:0 14px}
+.desk .paper .ctab{padding:0 10px;line-height:28px}
+.desk .paper .ctab dl{line-height:28px}
+.desk .paper .ctab .cl{margin:0}
+@media (max-width:520px){.desk .paper{--pl:34px;padding:28px 12px 28px var(--pl);font-size:16.5px}}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -1206,6 +1242,17 @@ const h0=location.hash.slice(1).toUpperCase();
 setCode(CODES.includes(h0)?h0:randomCode(),!CODES.includes(h0));
 })();
 </script>
+<script id="linedjs">(()=>{const P=document.getElementById('paper');if(!P)return;const L=28;
+const SEL='.ptop,h3.sec,p,.qq,.qq .qh,.qq .opts li,.qq .acts,.qq .fb.show,.qq textarea.bl,details.steps,.ctabs,.secscore,.fin,.scale,table.codes';
+let busy=false,t=0;
+function snap(){if(busy)return;busy=true;const els=[...P.querySelectorAll(SEL)];els.forEach(e=>{e.style.marginTop='';e.style.minHeight='';});
+  const top0=()=>P.getBoundingClientRect().top+P.clientTop;
+  for(const e of els){if(!e.offsetParent&&getComputedStyle(e).display==='none')continue;const r=((e.getBoundingClientRect().top-top0())%L+L)%L;if(r>0.5&&L-r>0.5){const mt=parseFloat(getComputedStyle(e).marginTop)||0;e.style.marginTop=(mt+L-r)+'px';}
+    if(e.matches('.qq .fb.show,details.steps,.ctabs,.qq .acts,.secscore')){const h=e.getBoundingClientRect().height,want=Math.ceil((h-0.5)/L)*L;if(want-h>0.5)e.style.minHeight=want+'px';}}
+  busy=false;}
+const go=()=>{clearTimeout(t);t=setTimeout(snap,40);};
+new MutationObserver(m=>{if(!busy)go();}).observe(P,{subtree:true,childList:true,attributes:true,attributeFilter:['class','open','hidden','style'].filter(a=>a!=='style')});
+addEventListener('resize',go);addEventListener('load',go);if(document.fonts)document.fonts.ready.then(go);go();})();</script>
 <script id="a11y">(function(){
 function txt(n){const c=n.cloneNode(true);c.querySelectorAll('select,option,input,button,script,style,svg').forEach(x=>x.remove());return c.textContent.replace(/\s+/g,' ').trim();}
 function named(e){return e.getAttribute('aria-label')||e.getAttribute('aria-labelledby')||(e.labels&&e.labels.length)||e.querySelector&&e.querySelector(':scope > title');}
