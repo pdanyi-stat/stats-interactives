@@ -1191,7 +1191,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 
   <figure class="tfig" id="t13" data-tech="regression" aria-labelledby="t13h">
     <header class="thead"><p class="tkick">Table 11 · Modules 11 and 1 · Journal style · Three models</p><h2 id="t13h">Which counties got America's first airports?</h2>
-      <p class="sub">By 1927, 167 cities had a principal municipal airport built or under way. These three models use measures from the 1920 Census to ask which U.S. counties had one. Airport is coded 1 for a county with one of those airports and 0 for the rest, which makes each model a linear probability model. The IVs are rescaled so that each coefficient is per 10 points urban, per 10,000 residents and so on, as the row labels say, and all three models use the same 1,505 counties. Model 3 restates the model from Danyi (2011) as a linear probability model.</p>
+      <p class="sub">By 1927, 167 cities had a principal municipal airport built or under way. These three models use measures from the 1920 Census to ask which U.S. counties had one. Airport is coded 1 for a county with one of those airports and 0 for the rest, which makes each model a linear probability model. The IVs are rescaled so that each coefficient is per 10 points urban, per 10,000 residents and so on, as the row labels say, and all three models use the same 1,505 counties. Model 3 restates the model from my 2011 paper as a linear probability model.</p>
     <p class="jumpto tjump">Not sure how or when to use this technique? Jump to <a href="practice-titanic.html#lpm">the Titanic practice, starting with Regression on a 0/1 outcome →</a></p></header>
     <div class="desk"><div class="paper wide" id="t13paper"></div></div>
     <div class="tbody">
@@ -1976,7 +1976,7 @@ function wireRowStata(id,outFor,nameFor){
     exclTxt:`The data have ${nfmt(F[0].N0)} counties. Every model keeps the ${nfmt(F[2].n)} that have no missing values on any variable in Model 3, so the columns can be compared.`,
     colTxt:['Model 1 has one IV, the percent of the county\'s people living in towns and cities.',
       'Model 2 adds population and the number of residents aged 18 to 20 who were in school.',
-      'Model 3 adds the church ratio, manufacturing, land area and density. It is the model from Danyi (2011), restated as a linear probability model, and you can see it as SPSS and Stata output below the table.'],
+      'Model 3 adds the church ratio, manufacturing, land area and density. It is the model from my 2011 paper, restated as a linear probability model, and you can see it as SPSS and Stata output below the table.'],
     consTxt:['That is a county with no urban population at all, and its predicted probability is below 0, which is impossible. A linear probability model draws a straight line, so at the edges of the data it can predict below 0 or above 1. Read this constant as an anchor for the line rather than as a prediction.',
       'That is a wholly rural county with no residents and no students, which lies far outside the data.',
       'Setting every IV to 0 describes a county that cannot exist, so the constant is only an anchor.'],
