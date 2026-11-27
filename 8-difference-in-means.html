@@ -281,6 +281,10 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 .enow{padding:8px 10px;border-radius:8px;background:var(--page);color:var(--ink)!important}
 section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
 .wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+
+.arow{display:flex;align-items:center;gap:8px;margin-top:6px}.arow input{flex:1 1 160px;min-width:120px}.arow b{font:600 14px var(--font-mono);min-width:3.6em}
+#shSay b{color:var(--ink)}
+#eChart{touch-action:pan-y}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -1027,6 +1031,19 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </ul>
   </section>
 
+  <figure id="shuf">
+    <div class="fighead"><h2><span class="step">C2</span>Shuffle the labels to get a p-value</h2></div>
+    <p class="sub">Here is a way to get a p-value with no formula. If H₀ is true, it doesn't matter which group each case belongs to, so we can shuffle the group labels and see how large a difference chance alone produces. Draw a sample of real cases from the comparison above, and then shuffle the labels.</p>
+    <div class="ctlrow">
+      <div class="ctl"><span class="lab" id="shnl">Cases per group</span><div class="seg" role="radiogroup" aria-labelledby="shnl" id="shN"></div></div>
+      <div class="ctl"><span class="lab">Shuffle</span><div class="btns"><button id="shNew">New sample</button><button class="primary" id="sh1">Shuffle once</button><button id="sh100">+100</button><button id="sh1000">+1,000</button></div></div>
+    </div>
+    <div class="key" id="shKey"></div>
+    <div class="chart" id="shDots"></div>
+    <div class="chart" id="shHist" style="margin-top:6px"></div>
+    <p class="say" id="shSay" aria-live="polite"></p>
+  </figure>
+
   <figure id="errors">
     <div class="fighead"><h2 id="type-errors" style="scroll-margin-top:70px"><span class="step">D</span>Type I and Type II errors</h2></div>
     <p class="sub">A test ends in one of two decisions about H₀, and the world is in one of two states. Two of the four combinations are mistakes.</p>
@@ -1036,7 +1053,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <tr><th>Fail to reject H₀</th><td class="ok"><b>✓ Correct</b><span>There is no difference, and we don't claim one. Its rate is 1 − α, which is the middle of the orange curve.</span></td><td class="t2"><b><i class="sq b"></i>Type II error: a false negative</b><span>Like telling a pregnant woman “You're not pregnant!” A real difference slips by. Its rate is β, which is the shaded blue area between the dashed lines.</span></td></tr>
     </table></div>
     <div class="ctlrow" style="margin-top:14px">
-      <div class="ctl"><span class="lab" id="eal">Significance level <span style="text-transform:none">α</span></span><div class="seg" role="radiogroup" aria-labelledby="eal" id="eA"></div></div>
+      <div class="ctl"><span class="lab" id="eal">Significance level <span style="text-transform:none">α</span></span><div class="seg" role="radiogroup" aria-labelledby="eal" id="eA"></div><div class="arow"><input type="range" id="eAr" min="0" max="100" step="1" aria-label="Significance level alpha, from .001 to .20"><b id="eAv"></b></div></div>
       <div class="ctl"><span class="lab" id="enl">n per group</span><div class="seg" role="radiogroup" aria-labelledby="enl" id="eN"></div></div>
       <div class="ctl"><span class="lab" id="edl">True difference</span><div class="seg" role="radiogroup" aria-labelledby="edl" id="eD"></div></div>
     </div>
@@ -1550,6 +1567,7 @@ $('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run
     for(const [mu,col,w] of [[0,css('--s2'),2.5],[d,css('--s1'),2.5]]){let p='';for(let k=0;k<=200;k++){const v=lo+(hi-lo)*k/200;p+=(k?'L':'M')+xs(v).toFixed(1)+','+ys(npd(v,mu,se)).toFixed(1);}mk('path',{d:p,fill:'none',stroke:col,'stroke-width':w},svg);}
     mk('line',{x1:m.l,x2:W-m.r,y1:ys(0),y2:ys(0),stroke:css('--axis')},svg);
     for(const v of [-c,c]){mk('line',{x1:xs(v),x2:xs(v),y1:m.t-6,y2:ys(0),stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);}
+    E.geo={lo,hi,W,m,se,c,xs};for(const v of [-c,c])mk('rect',{x:xs(v)-14,y:m.t-6,width:28,height:ys(0)-m.t+6,fill:'transparent',style:'cursor:ew-resize'},svg);
     const T=(x,y,t,col,an)=>{const e=mk('text',{x,y,'text-anchor':an||'middle',class:'mlab',fill:col,style:'paint-order:stroke;stroke:var(--surface);stroke-width:4px'},svg);e.textContent=t;};
     T(xs(c),m.t-9,'reject H₀ beyond the dashed lines',css('--ink'),xs(c)>W*0.6?'end':'middle');
     T(xs(0),ys(pk)-8,'H₀ true',css('--s2-ink')); T(xs(d),ys(npd(d,d,se))+(Math.abs(xs(d)-xs(0))<70?14:-8),'real difference',css('--s1-ink'));
@@ -1563,14 +1581,80 @@ $('#run').addEventListener('click',()=>{ if(st.timer){stopRun();return;} $('#run
 <p><i class="ln b"></i><b>The blue curve</b> shows the differences we would get if there really is a difference of ${d} SD between the groups. A sample that lands between the dashed lines fails to reject H₀, so the real difference slips by. That shaded blue area is the Type II error rate, β = ${pc(beta)}. The rest of the blue curve, beyond the dashed lines, is the power (${pc(power)}), which is the chance the test catches the difference.</p>
 <p class="enow">Right now, at α = ${A} with ${E.n} people per group, a real difference of ${d} SD goes undetected <b>${pc(beta)}</b> of the time.</p>
 <p><b>Try the three controls.</b></p>
-<ul><li><b>Make α stricter</b> (move toward .001). The dashed lines move outward, so the orange tails shrink, but more of the blue curve falls between the lines and β grows. Fewer false positives cost us more missed differences.</li>
+<ul><li><b>Make α stricter</b> (slide toward .001, or drag a dashed line outward). The dashed lines move outward, so the orange tails shrink, but more of the blue curve falls between the lines and β grows. Fewer false positives cost us more missed differences.</li>
 <li><b>Raise n per group.</b> Both curves get narrower, because larger samples give more precise means, so they overlap less. α stays where you set it, but β falls. More data is the only way to cut missed differences without accepting more false positives.</li>
 <li><b>Switch to a medium difference.</b> The blue curve moves farther from 0, so less of it sits between the dashed lines and β falls. Bigger real differences are easier to detect.</li></ul>`;
   }
-  seg2('eA',[[0.10,'.10'],[0.05,'.05'],[0.01,'.01'],[0.001,'.001']],E.a,v=>{E.a=+v;draw();});
+  const aFromV=v=>Math.round(Math.pow(10,-3+v/100*Math.log10(200))*1000)/1000, vFromA=a=>Math.round((Math.log10(a)+3)/Math.log10(200)*100);
+  function setA(a,from){E.a=Math.max(0.001,Math.min(0.2,a));const r=document.getElementById('eAr');if(from!=='slider')r.value=vFromA(E.a);document.getElementById('eAv').textContent=String(E.a.toFixed(3)).replace(/0+$/,'').replace(/\.$/,'').replace(/^0/,'');
+    document.querySelectorAll('#eA input').forEach(i=>{i.checked=Math.abs(+i.value-E.a)<1e-9;});draw();}
+  seg2('eA',[[0.10,'.10'],[0.05,'.05'],[0.01,'.01'],[0.001,'.001']],E.a,v=>{setA(+v);});
+  document.getElementById('eAr').addEventListener('input',e=>setA(aFromV(+e.target.value),'slider'));
   seg2('eN',[[25,'25'],[50,'50'],[100,'100'],[250,'250']],E.n,v=>{E.n=+v;draw();});
   seg2('eD',[[0.3,'small (0.3 SD)'],[0.6,'medium (0.6 SD)']],E.d,v=>{E.d=+v;draw();});
-  draw(); if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;draw();}}).observe(document.getElementById('eChart'));}
+  { const box=document.getElementById('eChart'); let drag=false;
+    const toA=ev=>{const G=E.geo,R=box.getBoundingClientRect();const x=G.lo+(ev.clientX-R.left-G.m.l)/(G.W-G.m.l-G.m.r)*(G.hi-G.lo);return 2*(1-Ph(Math.max(0.05*G.se,Math.abs(x))/G.se));};
+    box.addEventListener('pointerdown',ev=>{const G=E.geo;if(!G)return;const R=box.getBoundingClientRect(),px=ev.clientX-R.left;if(Math.min(Math.abs(px-G.xs(G.c)),Math.abs(px-G.xs(-G.c)))>18)return;drag=true;box.setPointerCapture(ev.pointerId);box.style.touchAction='none';ev.preventDefault();});
+    box.addEventListener('pointermove',ev=>{if(drag)setA(toA(ev));});
+    const end=()=>{drag=false;box.style.touchAction='';};box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end); }
+  setA(E.a); if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;draw();}}).observe(document.getElementById('eChart'));}
+})();
+
+/* ---- C2: shuffle the labels ---- */
+(function(){
+  const NSV='http://www.w3.org/2000/svg', mk=(tg,at,p)=>{const e=document.createElementNS(NSV,tg);for(const k in at)e.setAttribute(k,at[k]);if(p)p.appendChild(e);return e;};
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const SH={n:25,vals:[],lab:[],obs:0,diffs:[],anim:0,cid:null};
+  const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+  const fmt=v=>{const a=Math.abs(v);return (v<0?'−':'')+(a>=100?a.toFixed(0):a>=10?a.toFixed(1):a.toFixed(2));};
+  function pick(arr,n){const o=[];for(let i=0;i<n;i++)o.push(arr[Math.floor(Math.random()*arr.length)]);return o;}
+  function diffOf(lab){let s0=0,s1=0,n0=0,n1=0;SH.vals.forEach((v,i)=>{if(lab[i]){s1+=v;n1++;}else{s0+=v;n0++;}});return s1/n1-s0/n0;}
+  function newSample(){const c=comp();SH.cid=c.id;const A=pick(c.a,SH.n),B=pick(c.b,SH.n);SH.vals=A.concat(B);SH.lab=A.map(()=>0).concat(B.map(()=>1));SH.orig=SH.lab.slice();SH.obs=diffOf(SH.lab);SH.diffs=[];SH.shuf=false;render(false);}
+  function shuffled(){const l=SH.orig.slice();for(let i=l.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[l[i],l[j]]=[l[j],l[i]];}return l;}
+  function tstat(){const a=[],b=[];SH.vals.forEach((v,i)=>(SH.orig[i]?b:a).push(v));const n=SH.n,ma=mean(a),mb=mean(b),va=a.reduce((s,x)=>s+(x-ma)**2,0)/(n-1),vb=b.reduce((s,x)=>s+(x-mb)**2,0)/(n-1);const se=Math.sqrt(((va+vb)/2)*(2/n)),tt=(mb-ma)/se,df=2*n-2;return 2*(1-tcdf(Math.abs(tt),df));}
+  function render(animate){
+    const c=comp(), box=$('#shDots'); box.innerHTML='';
+    const W=Math.max(290,box.clientWidth), H=150, m={l:12,r:12,t:16,b:30};
+    const lo=Math.min(...SH.vals), hi=Math.max(...SH.vals), pad=(hi-lo)*0.04||1, xs=v=>m.l+(v-lo+pad)/(hi-lo+2*pad)*(W-m.l-m.r);
+    const yr=[m.t+28,m.t+82];
+    const svg=mk('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'The sample, one dot per case, in two rows by group label'},box);
+    const col=[css('--s1'),css('--s2')];
+    [0,1].forEach(g=>{const lab=mk('text',{x:m.l,y:yr[g]-14,class:'mlab',fill:g?css('--s2-ink'):css('--s1-ink')},svg);lab.textContent=SH.shuf?c.gl[g]+', after shuffling':c.gl[g];});
+    const jit=i=>((Math.sin(i*12.9898)*43758.5453)%1)*8;
+    const dots=SH.vals.map((v,i)=>mk('circle',{cx:xs(v).toFixed(1),cy:yr[SH.lab[i]]+jit(i),r:4,fill:col[SH.lab[i]],'fill-opacity':.75,stroke:css('--surface'),'stroke-width':1},svg));
+    [0,1].forEach(g=>{const vv=SH.vals.filter((v,i)=>SH.lab[i]===g),mm=mean(vv);mk('line',{x1:xs(mm),x2:xs(mm),y1:yr[g]-10,y2:yr[g]+18,stroke:css('--ink'),'stroke-width':2.5},svg);});
+    const ax=mk('text',{x:W-m.r,y:H-6,'text-anchor':'end',class:'axlab'},svg);ax.textContent=c.scale+' →';
+    $('#shKey').innerHTML=`<span><i class="sw" style="background:var(--s1);border-radius:50%"></i>${c.gl[0]}</span><span><i class="sw" style="background:var(--s2);border-radius:50%"></i>${c.gl[1]}</span><span><i class="sw" style="background:var(--ink);width:3px"></i>group mean</span>`;
+    if(animate&&SH.prev&&!RM){const from=SH.prev;cancelAnimationFrame(SH.anim);const t0=performance.now();
+      const stp=now=>{const p=Math.min(1,(now-t0)/600),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;dots.forEach((d,i)=>{d.setAttribute('cy',(yr[from[i]]+(yr[SH.lab[i]]-yr[from[i]])*e+jit(i)).toFixed(1));if(p>0.5)d.setAttribute('fill',col[SH.lab[i]]);else d.setAttribute('fill',col[from[i]]);});if(p<1)SH.anim=requestAnimationFrame(stp);};SH.anim=requestAnimationFrame(stp);}
+    hist();
+  }
+  function hist(){
+    const box=$('#shHist'); box.innerHTML=''; const W=Math.max(290,box.clientWidth), H=184, m={l:34,r:12,t:22,b:42};
+    const D=SH.diffs, ob=Math.abs(SH.obs), span=Math.max(ob*1.25,...D.map(Math.abs),1e-9), lo=-span, hi=span, xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+    const svg=mk('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Differences in means from the shuffles, with the real difference marked'},box);
+    const nb=30,bw=(hi-lo)/nb,cnt=new Array(nb).fill(0);D.forEach(d=>{let k=Math.floor((d-lo)/bw);k=Math.max(0,Math.min(nb-1,k));cnt[k]++;});
+    const mx=Math.max(1,...cnt), ys=v=>H-m.b-v/mx*(H-m.t-m.b);
+    cnt.forEach((cn,k)=>{if(!cn)return;const a=lo+k*bw,out=Math.abs(a+bw/2)>=ob;mk('rect',{x:xs(a)+0.5,width:Math.max(1,xs(a+bw)-xs(a)-1),y:ys(cn),height:H-m.b-ys(cn),fill:out?css('--s2'):css('--line'),'fill-opacity':out?.85:1,rx:1.5},svg);});
+    mk('line',{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:css('--axis')},svg);
+    for(const v of [-ob,ob]){mk('line',{x1:xs(v),x2:xs(v),y1:m.t-8,y2:H-m.b,stroke:css('--ink'),'stroke-width':2,'stroke-dasharray':v<0?'4 4':''},svg);}
+    const tl=mk('text',{x:xs(ob),y:m.t-10,'text-anchor':xs(ob)>W*0.7?'end':'middle',class:'mlab',fill:css('--ink'),style:'paint-order:stroke;stroke:var(--surface);stroke-width:4px'},svg);tl.textContent='real difference '+fmt(SH.obs);
+    const zl=mk('text',{x:xs(0),y:H-m.b+15,'text-anchor':'middle',class:'tick'},svg);zl.textContent='0';
+    const ax=mk('text',{x:W-m.r,y:H-4,'text-anchor':'end',class:'axlab'},svg);ax.textContent='difference after shuffling →';
+    if(!D.length){const e=mk('text',{x:(m.l+W-m.r)/2,y:(m.t+H-m.b)/2,'text-anchor':'middle',class:'mlab',fill:css('--muted')},svg);e.textContent='Press Shuffle once';}
+    const k=D.filter(d=>Math.abs(d)>=ob).length, pt=tstat();
+    const c=comp(), lc=s=>/^Southern/.test(s)?s:s.charAt(0).toLowerCase()+s.slice(1);
+    $('#shSay').innerHTML=D.length?`In this sample, ${lc(c.gl[1])} average <b>${fmt(Math.abs(SH.obs))}</b> ${SH.obs<0?'less':'more'} than ${lc(c.gl[0])}. After <b>${com(D.length)}</b> shuffles, <b>${com(k)}</b> of the shuffled differences were at least that far from 0 in either direction, which is <b>${(100*k/D.length).toFixed(1)}%</b>. That share is the shuffle p-value. The t test on the same sample gives p = ${pt<0.001?'&lt; .001':pt.toFixed(3).replace(/^0/,'')}, and with a few thousand shuffles the two usually land close together.`
+      :`In this sample, ${lc(c.gl[1])} average <b>${fmt(Math.abs(SH.obs))}</b> ${SH.obs<0?'less':'more'} than ${lc(c.gl[0])}. Shuffle the labels to see how big a difference chance alone makes when the groups are mixed at random.`;
+  }
+  const com=v=>v.toLocaleString('en-US');
+  function shuffleN(k){for(let r=0;r<k;r++){const l=shuffled();if(r===k-1){SH.prev=SH.lab;SH.lab=l;SH.shuf=true;}SH.diffs.push(diffOf(l));}render(k===1);}
+  const box=document.getElementById('shN');[[10,'10'],[25,'25'],[50,'50']].forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name='shN';i.id='shN_'+v;i.value=v;if(v===SH.n)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;box.append(i,lb);i.addEventListener('change',()=>{SH.n=v;newSample();});});
+  $('#shNew').addEventListener('click',newSample);$('#sh1').addEventListener('click',()=>shuffleN(1));$('#sh100').addEventListener('click',()=>shuffleN(100));$('#sh1000').addEventListener('click',()=>shuffleN(1000));
+  $('#comp').addEventListener('change',()=>setTimeout(newSample,0));$('#dsTog').addEventListener('click',()=>setTimeout(newSample,0));
+  newSample();
+  if('ResizeObserver' in window){let lw=0;new ResizeObserver(en=>{const w=en[0].contentRect.width;if(Math.abs(w-lw)>2){lw=w;render(false);}}).observe($('#shDots'));}
 })();
 
 const drawer=$('#drawer');let lastFocus=null;
