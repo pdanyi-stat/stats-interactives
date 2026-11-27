@@ -285,6 +285,11 @@ section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;ba
 .arow{display:flex;align-items:center;gap:8px;margin-top:6px}.arow input{flex:1 1 160px;min-width:120px}.arow b{font:600 14px var(--font-mono);min-width:3.6em}
 #shSay b{color:var(--ink)}
 #eChart{touch-action:pan-y}
+.zoomrow{display:flex;justify-content:flex-end;min-height:0}
+.zoombtn{font-size:14px;font-weight:600;padding:6px 2px;outline-offset:3px}
+.zoombtn[hidden]{display:none}
+.zsay{margin:4px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.zsay:empty{display:none}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -1013,6 +1018,8 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       
       <div class="status" id="cStatus"></div>
       <div class="chart" id="cChart"></div>
+      <div class="zoomrow"><button type="button" class="linkish zoombtn" id="cZoom" hidden>Zoom in to see the gap</button></div>
+      <p class="zsay" id="cZoomSay" aria-live="polite"></p>
     </figure>
     <section style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0">
       <h2 style="margin:0 0 8px;font-size:17px;font-weight:600">Output for the latest sample</h2>
@@ -1409,37 +1416,78 @@ $('#bChart').addEventListener('pointerleave',hideTip);
 let cShownT=null,cRaf=0;
 function drawC(R){
   cancelAnimationFrame(cRaf);
+  if(R!==ZC.R){ ZC.R=R; ZC.z=0; ZC.to=0; cancelAnimationFrame(ZC.raf); zoomUI(); }
   if(R&&cShownT!=null&&st.slideT&&!reduce&&Math.abs(R.t-cShownT)>1e-6){ const f=cShownT,t0=performance.now(),D=520;
     const stp=now=>{const u=Math.min(1,(now-t0)/D),e=1-Math.pow(1-u,3),tv=f+(R.t-f)*e;cShownT=tv;drawC0(u<1?Object.assign({},R,{t:tv}):R);if(u<1)cRaf=requestAnimationFrame(stp);};
     st.slideT=false; cRaf=requestAnimationFrame(stp); return; }
   st.slideT=false; cShownT=R?R.t:null; drawC0(R);
 }
+/* panel C zoom: for p < .01, stretch the axes until the gap under the tail and the shaded area beyond t can be seen */
+const ZC={R:null,z:0,to:0,raf:0};
+const ezc=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+function bigNum(v){if(v<1e4)return Math.round(v).toLocaleString('en-US');const e=Math.floor(Math.log10(v));if(e<9)return (Math.round(v/Math.pow(10,e-1))*Math.pow(10,e-1)).toLocaleString('en-US');const w=['billion','trillion','quadrillion','quintillion'];const g=Math.min(w.length-1,Math.floor((e-9)/3));const d=v/Math.pow(10,9+3*g);return d<1000?(d<10?d.toFixed(1):Math.round(d))+' '+w[g]:'10'+supN(e);}
+const SUPD={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+function supN(n){return String(n).split('').map(c=>SUPD[c]||c).join('');}
+function tiny(v){if(v>=1e-12){const s=v.toPrecision(2);return Number(s).toFixed(Math.max(0,-Math.floor(Math.log10(v))+1)).replace(/^0/,'0');}const e=Math.floor(Math.log10(v));return (v/Math.pow(10,e)).toFixed(1)+' × 10'+supN(e);}
+function zoomTarget(R){ if(!R||!(R.p<0.01)) return null; const at=Math.abs(R.t), df=R.df, h=tpdf(at,df); if(!(h>1e-280)) return null;
+  const top=h*5; let a=0,b=at; for(let i=0;i<80;i++){const mid=(a+b)/2; if(tpdf(mid,df)>top)a=mid; else b=mid;} const u0=(a+b)/2, w=Math.max(0.05,at-u0);
+  const inner=Math.max(0,u0-0.5*w), outer=at+1.6*w; return {lo:R.t<0?-outer:inner,hi:R.t<0?-inner:outer,top,h}; }
+function zoomFrame(R,span,pk){ const full={lo:-span,hi:span,top:pk/0.92,p1:0,p2:0}; const Zt=ZC.z>0&&R===ZC.R?zoomTarget(R):null; if(!Zt) return full;
+  const z=ZC.z, p1=ezc(Math.min(1,z/0.42)), p2=ezc(Math.max(0,Math.min(1,(z-0.5)/0.5)));
+  return {lo:full.lo+(Zt.lo-full.lo)*p1,hi:full.hi+(Zt.hi-full.hi)*p1,top:Math.exp(Math.log(full.top)+(Math.log(Zt.top)-Math.log(full.top))*p2),p1,p2}; }
+function zoomUI(){ const b=$('#cZoom'), say=$('#cZoomSay'); if(!b) return; const Zt=zoomTarget(ZC.R);
+  b.hidden=!Zt; b.textContent=ZC.to?'Zoom back out':'Zoom in to see the gap'; b.setAttribute('aria-pressed',ZC.to?'true':'false');
+  if(!Zt||ZC.z<1){ say.innerHTML=''; return; }
+  const R=ZC.R, df=R.df, mult=(tpdf(0,df)/0.92)/Zt.top;
+  say.innerHTML=`The vertical scale is now stretched about <b>${bigNum(mult)} times</b>. Even out at t = ${R.t.toFixed(2)}, the curve sits ${tiny(Zt.h)} above the axis, so it never quite touches it. The shaded sliver beyond t holds ${tiny(R.p/2)} of the total area, and the matching tail on the other side holds the same, so together they make p.`; }
+function zoomGo(to){ ZC.to=to; cancelAnimationFrame(ZC.raf); zoomUI();
+  if(reduce){ ZC.z=to; drawC0(ZC.R); zoomUI(); return; }
+  const z0=ZC.z, D=2600*Math.abs(to-z0), t0=performance.now();
+  const stp=now=>{ const u=D?Math.min(1,(now-t0)/D):1; ZC.z=z0+(to-z0)*u; drawC0(ZC.R); if(u<1) ZC.raf=requestAnimationFrame(stp); else zoomUI(); };
+  ZC.raf=requestAnimationFrame(stp); }
+document.addEventListener('click',e=>{ if(e.target&&e.target.id==='cZoom'&&ZC.R) zoomGo(ZC.to?0:1); });
 function drawC0(R){
   const box=$('#cChart'); const H=220; const {ctx,W}=canvasIn(box,H);
   const m={l:14,r:14,t:30,b:30}, yb=H-m.b;
   if(!R){ $('#cStatus').innerHTML=''; return; }
-  const df=R.df, span=Math.min(9,Math.max(4.2,Math.abs(R.t)+1)), lo=-span, hi=span;
-  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r); const pk=tpdf(0,df); const ys=v=>yb-v/pk*(yb-m.t)*0.92;
+  const df=R.df, span=Math.min(9,Math.max(4.2,Math.abs(R.t)+1)), pk=tpdf(0,df);
+  const V=zoomFrame(R,span,pk), lo=V.lo, hi=V.hi, zoomed=V.p1>0;
+  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r); const ys=v=>Math.max(m.t-60,yb-v/V.top*(yb-m.t));
   const at=Math.abs(R.t);
+  ctx.save(); ctx.beginPath(); ctx.rect(m.l-2,m.t-6,W-m.l-m.r+4,yb-m.t+7); ctx.clip();
   // tails
   ctx.fillStyle=rgba(COL['--s2'],0.45);
   for(const side of [-1,1]){ const a=side<0?lo:Math.min(hi,at), b=side<0?Math.max(lo,-at):hi; if(b<=a) continue;
     ctx.beginPath();ctx.moveTo(xs(a),yb);for(let i=0;i<=120;i++){const x=a+(b-a)*i/120;ctx.lineTo(xs(x),ys(tpdf(x,df)));}ctx.lineTo(xs(b),yb);ctx.closePath();ctx.fill(); }
   // curve
-  ctx.beginPath();for(let i=0;i<=300;i++){const x=lo+(hi-lo)*i/300;const y=ys(tpdf(x,df));i?ctx.lineTo(xs(x),y):ctx.moveTo(xs(x),y);}ctx.strokeStyle=COL['--ink'];ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();for(let i=0;i<=400;i++){const x=lo+(hi-lo)*i/400;const y=ys(tpdf(x,df));i?ctx.lineTo(xs(x),y):ctx.moveTo(xs(x),y);}ctx.strokeStyle=COL['--ink'];ctx.lineWidth=2;ctx.stroke();
   // critical values
   ctx.strokeStyle=COL['--ink-2'];ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
-  for(const s of [-1,1]){const x=Math.round(xs(s*R.tc))+.5;ctx.beginPath();ctx.moveTo(x,m.t-4);ctx.lineTo(x,yb);ctx.stroke();}
+  for(const s of [-1,1]){const v=s*R.tc;if(v<lo||v>hi)continue;const x=Math.round(xs(v))+.5;ctx.beginPath();ctx.moveTo(x,m.t-4);ctx.lineTo(x,yb);ctx.stroke();}
   ctx.setLineDash([]);
-  if(R.t<0) text(ctx,`critical t = ±${R.tc.toFixed(2)}`,xs(R.tc)+4,m.t-10,{align:'left',size:11.5,color:COL['--ink-2']});
-  else text(ctx,`critical t = ±${R.tc.toFixed(2)}`,xs(-R.tc)-4,m.t-10,{align:'right',size:11.5,color:COL['--ink-2']});
   // observed t
   const tx=xs(Math.max(lo,Math.min(hi,R.t)));ctx.strokeStyle=COL['--s2'];ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(tx,m.t-4);ctx.lineTo(tx,yb);ctx.stroke();
+  ctx.restore();
+  if(!zoomed){
+    if(R.t<0) text(ctx,`critical t = ±${R.tc.toFixed(2)}`,xs(R.tc)+4,m.t-10,{align:'left',size:11.5,color:COL['--ink-2']});
+    else text(ctx,`critical t = ±${R.tc.toFixed(2)}`,xs(-R.tc)-4,m.t-10,{align:'right',size:11.5,color:COL['--ink-2']});
+  }
   const al=tx>W-90?'right':tx<90?'left':'center';
-  text(ctx,`t = ${R.t.toFixed(2)}${Math.abs(R.t)>hi?' →':''}`,tx+(al==='left'?4:al==='right'?-4:0),m.t-10,{align:al,w:600,size:12.5,color:COL['--s2-ink']});
+  text(ctx,`t = ${R.t.toFixed(2)}${R.t>hi?' →':R.t<lo?' ←':''}`,tx+(al==='left'?4:al==='right'?-4:0),m.t-10,{align:al,w:600,size:12.5,color:COL['--s2-ink']});
   xAxis(ctx,xs,lo,hi,yb,W,m.l,m.r);
+  if(zoomed){
+    // live stretch factor, on the empty outer side
+    const mult=(pk/0.92)/V.top, outer=R.t<0?'left':'right';
+    if(mult>1.5) text(ctx,`vertical scale × ${bigNum(mult)}`,outer==='left'?m.l+4:W-m.r-4,m.t+14,{align:outer,size:12,w:600,color:COL['--ink']});
+    if(V.p2>0.97){ // the gap: axis to curve at t
+      const a=Math.min(1,(V.p2-0.97)/0.03), hy=ys(tpdf(at,df)), gx=tx+(R.t<0?-12:12);
+      ctx.globalAlpha=a; ctx.strokeStyle=COL['--ink']; ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(gx,yb);ctx.lineTo(gx,hy);ctx.moveTo(gx-5,yb);ctx.lineTo(gx+5,yb);ctx.moveTo(gx-5,hy);ctx.lineTo(gx+5,hy);ctx.stroke();
+      text(ctx,'the gap',gx,hy-9,{align:'center',size:12.5,w:600,color:COL['--ink']});
+      ctx.globalAlpha=1; }
+  }
   const a=String(st.alpha).replace(/^0/,'');
-  $('#cStatus').innerHTML=`<span class="chip">t = ${R.t.toFixed(3)}, df = ${st.equal?R.df:R.df.toFixed(1)}</span><span class="chip ${R.reject?'strong':''}">p = ${pfmt(R.p)} ${R.reject?'<':'≥'} α = ${a}</span>`;
+  $('#cStatus').innerHTML=`<span class="chip">t = ${R.t.toFixed(3)}, df = ${st.equal?R.df:R.df.toFixed(1)}</span><span class="chip ${R.reject?'strong':''}">p ${R.p<0.0001?'':'= '}${pfmt(R.p)} ${R.reject?'<':'≥'} α = ${a}</span>`;
   { const p=R.p, rd=p<0.001?'fewer than 1 time in 1,000':p<0.01?'about '+Math.round(p*1000)+' times in 1,000':'about '+(p*100).toFixed(1).replace(/\.0$/,'')+' times in 100';
     const pl=document.getElementById('pLive'); if(pl) pl.innerHTML=`<b>Your latest sample:</b> p ${R.p<0.0001?'&lt; .0001':'= '+pfmt(R.p)}. If H₀ were true, a difference this large or larger would turn up <b>${rd}</b>. That's ${R.reject?'below':'not below'} α = ${a}, so we <b>${R.reject?'reject H₀':'fail to reject H₀'}</b>.`; }
 }
