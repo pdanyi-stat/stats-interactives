@@ -277,6 +277,14 @@ svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-wid
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
 .wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+
+/* split panels and predicted vs. actual */
+.splitp{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:760px){.splitp{grid-template-columns:repeat(3,1fr)}}
+.splitp .pan{border:1px solid var(--line);border-radius:10px;padding:6px 6px 2px;min-width:0}
+.splitp h5{margin:2px 4px 0;font-size:13px;font-weight:600}
+.pvabox{margin-top:14px}
+#cSplitWrap[hidden],#cOne[hidden]{display:none}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -940,8 +948,15 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div class="terms" id="terms"></div>
     <div class="grid2" style="margin-top:12px">
       <div>
+        <div class="seg" role="radiogroup" aria-label="Chart layout" id="cLay" style="margin-bottom:8px"></div>
+        <div id="cOne">
         <div class="key"><span><span class="ramp"></span>states, shaded by X₂</span><span><i class="sw ols"></i>prediction line at your X₂</span><span><i class="sw ghost"></i>lines at low, average, high X₂</span></div>
         <div class="chart" id="cChart"></div>
+        </div>
+        <div id="cSplitWrap" hidden>
+          <p class="say" id="cSplitSay" style="margin:0 0 8px;font-size:14px"></p>
+          <div class="splitp" id="cSplit"></div>
+        </div>
       </div>
       <div class="side">
         <div class="box">
@@ -976,6 +991,12 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <div class="side">
         <div class="box"><h4>Fit</h4><div class="fitbars" id="fit"></div><p class="say" id="fitSay" style="font-size:13.5px"></p></div>
       </div>
+    </div>
+    <div class="box pvabox">
+      <h4>Predicted vs. actual</h4>
+      <p class="say" style="font-size:13.5px;margin:0 0 6px">Each dot is one <span id="pvaUnit">case</span>, placed by what the model predicts (across) and what really happened (up). Dots on the diagonal line are predicted exactly. Tap a dot to name it.</p>
+      <div class="chart" id="pva"></div>
+      <p class="say" id="pvaSay" style="font-size:13.5px"></p>
     </div>
   </figure>
 
@@ -1267,8 +1288,30 @@ function renderC(animate){
   const target={x1:get(st.from),x2:get(st.to)};
   if(animate&&st.tri&&!reduce){const from={...st.tri},t0=performance.now();cancelAnimationFrame(st.triAnim);const stp=now=>{const p=Math.min(1,(now-t0)/550),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;st.tri={x1:from.x1+(target.x1-from.x1)*e,x2:from.x2+(target.x2-from.x2)*e};drawTri();if(p<1)st.triAnim=requestAnimationFrame(stp);};st.triAnim=requestAnimationFrame(stp);}
   else{st.tri=target;drawTri();}
-  drawPred(); textC();
+  drawPred(); textC(); renderSplit();
 }
+st.lay='one';
+function renderSplit(){ if(st.lay!=='split')return; const c=core(),f=c.ctl,b1=f.b[0],b2=f.b[1],b0=f.b[2],X1=c.X1,X2=c.X2,box=$('#cSplit');box.innerHTML='';
+  const idx=[...Array(N).keys()].sort((a,b)=>X2[a]-X2[b]),cut=[0,Math.round(N/3),Math.round(2*N/3),N];
+  let xlo=Math.min(...X1),xhi=Math.max(...X1),ylo=Math.min(...Y),yhi=Math.max(...Y);const ppx=(xhi-xlo)*.05,ppy=(yhi-ylo)*.08;xlo-=ppx;xhi+=ppx;ylo-=ppy;yhi+=ppy;
+  const x2lo=Math.min(...X2),x2hi=Math.max(...X2),nm=['Lowest third','Middle third','Highest third'];
+  for(let g=0;g<3;g++){const ids=idx.slice(cut[g],cut[g+1]),pan=document.createElement('div');pan.className='pan';box.appendChild(pan);
+    const v2=mean(ids.map(i=>X2[i])),lo2=X2[ids[0]],hi2=X2[ids[ids.length-1]];
+    const h=document.createElement('h5');h.textContent=`${nm[g]} of ${VK[st.x2].short}, ${fx(st.x2,lo2)} to ${fx(st.x2,hi2)} (${ids.length.toLocaleString()}\u00a0${DAT.units})`;pan.appendChild(h);
+    const host=document.createElement('div');pan.appendChild(host);
+    const W=Math.max(240,host.clientWidth||pan.clientWidth-12),H=Math.round(Math.min(260,Math.max(200,W*0.62))),m={l:42,r:20,t:10,b:38};
+    const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+    const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`${nm[g]} of ${VK[st.x2].short}, with the model's line at that third's average`},host);
+    axes(svg,{W,H,m,xs,ys,xlo,xhi,ylo,yhi,xt:xtick(st.x1),xl:VK[st.x1].short+' (X₁) →',yl:'↑ '+DAT.yshort});
+    const pg=el('g',{},svg);ids.forEach(i=>{const ci=el('circle',{cx:xs(X1[i]),cy:ys(Y[i]),r:N>1000?1.8:4,fill:colorFor(X2[i],x2lo,x2hi),'fill-opacity':N>1000?.5:.8},pg);bindTip(ci,()=>`<b>${DAT.states[i]}</b><br>${VK[st.x1].short}: ${fx(st.x1,X1[i])} · ${VK[st.x2].short}: ${fx(st.x2,X2[i])}<br>${DAT.ytip} ${Y[i].toFixed(1)}%`);});
+    const id='sclip'+g,cp=el('clipPath',{id},el('defs',{},svg));el('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},cp);
+    const lg=el('g',{'clip-path':`url(#${id})`},svg);
+    for(let o=0;o<3;o++){if(o===g)continue;const vv=mean(idx.slice(cut[o],cut[o+1]).map(i=>X2[i]));el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(b0+b2*vv+b1*xlo),y2:ys(b0+b2*vv+b1*xhi),stroke:css('--muted'),'stroke-width':1.25,'stroke-dasharray':'5 4'},lg);}
+    el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(b0+b2*v2+b1*xlo),y2:ys(b0+b2*v2+b1*xhi),stroke:css('--s2'),'stroke-width':3},lg);
+  }
+  $('#cSplitSay').innerHTML=`Here the ${DAT.units} are split into thirds by ${VK[st.x2].short}. In each panel the orange line is the model's prediction at that third's average ${VK[st.x2].short}, and the dashed gray lines are the other two thirds' lines. All three lines share one slope, <b>β₁ = ${sgn(b1)}</b>, so a higher ${VK[st.x2].short} moves the line ${b2<0?'down':'up'} from panel to panel without tilting it. Within any one panel, ${VK[st.x2].short} is roughly held constant.`;
+}
+(()=>{const s=$('#cLay');[['one','One chart'],['split','Split into thirds of X₂']].forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name='cLay';i.id='cl'+v;i.value=v;if(v===st.lay)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;s.append(i,lb);i.addEventListener('change',()=>{st.lay=v;$('#cOne').hidden=v!=='one';$('#cSplitWrap').hidden=v!=='split';if(v==='split')renderSplit();else renderC(false);});});})();
 function drawTri(){ if(!Cg) return; const {xs,ys,triG,b0,b1,b2}=Cg; triG.innerHTML=''; const {x1,x2}=st.tri; const yv=x=>b0+b1*x+b2*st.v2;
   const X1=xs(x1),X2=xs(x2),Y1=ys(yv(x1)),Y2=ys(yv(x2));
   el('path',{d:`M${X1},${Y1}L${X2},${Y1}L${X2},${Y2}Z`,fill:css('--s2'),'fill-opacity':.14},triG);
@@ -1340,8 +1383,23 @@ function renderD(){
     const hit=el('rect',{x:0,y:y-rh/2,width:W,height:rh,fill:'transparent'},svg);
     bindTip(hit,()=>`<b>${nameOf(r.k)}</b><br>${st.units==='sd'?'β* (per SD)':'β'} = ${sgn(r.b)}<br>95% CI ${sgn(r.lo)} to ${sgn(r.hi)}<br>p = ${r.p<0.001?'< .001':r.p.toFixed(3)}`);});
   $('#coefNote').textContent='Filled dots have p < .05, so their interval excludes 0. Hollow gray dots have a 95% interval that crosses 0, so we can’t rule out no effect, holding the other IVs constant.';
+  renderPva(f,ks);
 }
 
+function renderPva(f,ks){const box=$('#pva');box.innerHTML='';$('#pvaUnit').textContent=DAT.unit;if(!f){$('#pvaSay').textContent='';return;}
+  const P=Y.map((y,i)=>y-f.res[i]),W=Math.max(280,box.clientWidth),H=Math.round(Math.min(420,Math.max(280,W*0.72))),m={l:46,r:14,t:12,b:42};
+  let lo=Math.min(...Y,...P),hi=Math.max(...Y,...P);const pd=(hi-lo)*.05;lo-=pd;hi+=pd;
+  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r), ys=v=>H-m.b-(v-lo)/(hi-lo)*(H-m.t-m.b);
+  const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Predicted against actual values'},box);
+  const pct=v=>v+'%';axes(svg,{W,H,m,xs,ys,xlo:lo,xhi:hi,ylo:lo,yhi:hi,xt:pct,xl:'Predicted '+DAT.yshort+' (ŷ) →',yl:'↑ Actual '+DAT.yshort+' (Y)'});
+  el('line',{x1:xs(lo),y1:ys(lo),x2:xs(hi),y2:ys(hi),stroke:css('--ink-2'),'stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  const g=el('g',{},svg);let hiI=0,loI=0;
+  Y.forEach((y,i)=>{if(f.res[i]>f.res[hiI])hiI=i;if(f.res[i]<f.res[loI])loI=i;const c=el('circle',{cx:xs(P[i]),cy:ys(y),r:N>1000?2:4.5,fill:css('--s1-line')||css('--s1'),'fill-opacity':N>1000?.45:.7},g);
+    bindTip(c,()=>`<b>${DAT.states[i]}</b><br>Predicted ${P[i].toFixed(1)}% · actual ${y.toFixed(1)}%<br>The prediction was ${Math.abs(f.res[i]).toFixed(1)} points too ${f.res[i]>=0?'low':'high'}.`);});
+  [[hiI,-1],[loI,1]].forEach(([i,dir])=>{const x=xs(P[i]),y=ys(Y[i]);el('circle',{cx:x,cy:y,r:5.5,fill:'none',stroke:css('--s2'),'stroke-width':2},svg);
+    const right=x<W*0.6,t=el('text',{x:x+(right?9:-9),y:y+(dir<0&&y>m.t+30?-6:dir<0?18:(y>H-m.b-14?-8:14)),'text-anchor':right?'start':'end',class:'mlab halo',fill:css('--ink')},svg);t.textContent=DAT.states[i];});
+  const rm=f.rmse;
+  $('#pvaSay').innerHTML=`Dots above the line had higher ${DAT.yshort} than the model predicted, and dots below had lower. The typical miss (the root mean squared error) is <b>${rm.toFixed(1)} points</b>. The biggest misses are ${DAT.states[hiI]}, ${Math.abs(f.res[hiI]).toFixed(1)} points above its prediction, and ${DAT.states[loI]}, ${Math.abs(f.res[loI]).toFixed(1)} points below. The tighter the dots hug the line, the higher R² is, and adding a useful IV pulls them in.`;}
 /* ---------- Stata ---------- */
 function pad(s,w){s=String(s);return s.length>=w?s:' '.repeat(w-s.length)+s;}
 function rpad(s,w){s=String(s);return s.length>=w?s:s+' '.repeat(w-s.length);}

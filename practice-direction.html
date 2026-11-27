@@ -279,6 +279,14 @@ svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-wid
 section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
 .wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
 
+/* split panels and predicted vs. actual */
+.splitp{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:760px){.splitp{grid-template-columns:repeat(3,1fr)}}
+.splitp .pan{border:1px solid var(--line);border-radius:10px;padding:6px 6px 2px;min-width:0}
+.splitp h5{margin:2px 4px 0;font-size:13px;font-weight:600}
+.pvabox{margin-top:14px}
+#cSplitWrap[hidden],#cOne[hidden]{display:none}
+
 </style>
 <style>
 [hidden]{display:none!important}

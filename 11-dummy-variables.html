@@ -289,6 +289,12 @@ svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-wid
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
 .wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+
+.splitp2{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:640px){.splitp2{grid-template-columns:1fr 1fr}}
+.splitp2[hidden]{display:none}
+.splitp2 .pan{border:1px solid var(--line);border-radius:10px;padding:6px 6px 2px;min-width:0}
+.splitp2 h5{margin:2px 4px 0;font-size:13px;font-weight:600}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -982,7 +988,9 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div class="grid2" style="margin-top:8px">
       <div>
         <div class="key"><span><i class="sw ns"></i><span data-t="one0"></span></span><span><i class="sw so"></i><span data-t="one1"></span></span><span><i class="sw lns"></i><span data-t="lab0"></span> line</span><span><i class="sw lso"></i><span data-t="lab1"></span> line</span></div>
+        <div class="seg" role="radiogroup" aria-label="Chart layout" id="bLay" style="margin:4px 0 8px"></div>
         <div class="chart" id="bChart"></div>
+        <div class="splitp2" id="bSplit" hidden></div>
         <p class="say" id="bSay"></p>
       </div>
       <div class="side">
@@ -1280,6 +1288,28 @@ function renderA(){
 /* ============ B ============ */
 function fitB(){ const d=data(); return {d,f:ols([d.x,d.south],d.y),f1:ols([d.south],d.y)}; }
 let B_PRED=null;
+let bLay='one';
+function renderBSplit(){ if(bLay!=='split')return; const F=fitB(),d=F.d,f=F.f,box=$('#bSplit');box.innerHTML='';
+  const b1=f.b[0],b2=f.b[1],c=f.b[2],xlo=RAW.xlo,xhi=RAW.xhi,ylo=Math.min(...d.y)-3,yhi=Math.max(...d.y)+4;
+  const say=document.createElement('p');say.className='say';say.style.cssText='grid-column:1/-1;margin:0;font-size:14px';say.innerHTML=`Each panel shows one group's cases with that group's line. The dashed gray line is the other group's line. The two lines have the same slope, and the ${RAW.lab1} line sits <b>${Math.abs(b2).toFixed(1)} points</b> ${b2<0?'below':'above'} the ${/^Other/.test(RAW.lab0)?RAW.lab0.toLowerCase():RAW.lab0} line at every value of ${RAW.xshort}, which is what β₂ = ${sgn(b2)} means.`;box.appendChild(say);
+  [[0,RAW.lab0,c,'--s1','--s1-ink'],[1,RAW.lab1,c+b2,'--s2','--s2-ink']].forEach(([g,lab,a,col,ink])=>{
+    const pan=document.createElement('div');pan.className='pan';box.appendChild(pan);const ids=d.y.map((_,i)=>i).filter(i=>d.south[i]===g);
+    const h=document.createElement('h5');h.textContent=`${lab} (${RAW.dname} = ${g}, ${ids.length.toLocaleString()} ${ids.length===1?'case':'cases'})`;pan.appendChild(h);
+    const host=document.createElement('div');pan.appendChild(host);
+    const W=Math.max(240,host.clientWidth||pan.clientWidth-12),H=Math.round(Math.min(300,Math.max(220,W*0.66))),m={l:44,r:16,t:28,b:40};
+    const xs=v=>m.l+(v-xlo)/(xhi-xlo)*(W-m.l-m.r), ys=v=>H-m.b-(v-ylo)/(yhi-ylo)*(H-m.t-m.b);
+    const svg=el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`${lab} only, with both lines`},host);
+    axes(svg,{W,H,m,ys,ylo,yhi});
+    const gx=el('g',{class:'tick'},svg);RAW.xt.filter((_,k,a2)=>k%2===(a2.length%2?0:1)).forEach(tv=>{el('line',{x1:xs(tv),x2:xs(tv),y1:H-m.b,y2:H-m.b+4,stroke:css('--axis')},gx);const tx=el('text',{x:xs(tv),y:H-m.b+17,'text-anchor':'middle'},gx);tx.textContent=RAW.xpct?tv+'%':XF(tv);});
+    const xl=el('text',{x:W-m.r,y:H-5,'text-anchor':'end',class:'axlab'},svg);xl.textContent=RAW.xshort+' (X) →';
+    const id='bsc'+g,cp=el('clipPath',{id},el('defs',{},svg));el('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},cp);
+    const pg=el('g',{},svg);ids.forEach(i=>{const ci=el('circle',{cx:xs(d.x[i]),cy:ys(d.y[i]),r:d.y.length>100?3:4.5,fill:css(col),'fill-opacity':.75,stroke:css('--surface'),'stroke-width':.8},pg);bindTip(ci,()=>`<b>${d.name[i]}</b><br>${RAW.xtip} ${XF(d.x[i])} · ${RAW.ytip} ${d.y[i].toFixed(1)}%`);});
+    const lg=el('g',{'clip-path':`url(#${id})`},svg),oa=g?c:c+b2;
+    el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(oa+b1*xlo),y2:ys(oa+b1*xhi),stroke:css('--muted'),'stroke-width':1.5,'stroke-dasharray':'6 4'},lg);
+    el('line',{x1:xs(xlo),x2:xs(xhi),y1:ys(a+b1*xlo),y2:ys(a+b1*xhi),stroke:css(col),'stroke-width':3},lg);
+  });
+}
+(()=>{const s=$('#bLay');[['one','One chart'],['split','One panel per group']].forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name='bLay';i.id='bl'+v;i.value=v;if(v===bLay)i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;s.append(i,lb);i.addEventListener('change',()=>{bLay=v;$('#bChart').hidden=v!=='one';$('#bSplit').hidden=v!=='split';v==='split'?renderBSplit():renderB();});});})();
 function renderB(){
   const F=fitB(), d=F.d, f=F.f, box=$('#bChart'); const was=GL.snap(box); if(was) queueMicrotask(()=>GL.run(box,was)); box.innerHTML='';
   const W=Math.max(300,box.clientWidth),H=Math.round(Math.min(440,Math.max(300,W*0.62))),m={l:46,r:16,t:W<520?30:16,b:44};
@@ -1309,6 +1339,7 @@ function renderB(){
     lab.textContent='ŷ = '+y.toFixed(1)+'%'; };
   B_PRED();
   renderBText(F);
+  renderBSplit();
 }
 function renderBText(F){
   const {f,f1}=F, b1=f.b[0],b2=f.b[1],c=f.b[2];
