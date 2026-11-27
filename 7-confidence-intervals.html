@@ -951,12 +951,12 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <p class="cbcap" id="cbCap" aria-live="polite"></p>
     <div class="cbnote" id="cbNote" hidden></div>
   </figure>
-  <p class="cbt">Small handfuls give wide intervals, because with only a few beans the mean could land almost anywhere, so the interval has to be wide to have a chance. Large handfuls give narrow intervals. That's the same contrast as the piles in Module 6, now turned into estimates. The next section does it with 3,112 U.S. counties.</p>
+  <p class="cbt">Small handfuls give wide intervals, because with only a few beans the mean could land almost anywhere, so the interval has to be wide to have a chance. Large handfuls give narrow intervals. That's the same contrast as the piles in Module 6, now turned into estimates. The next section does it with real U.S. counties.</p>
 </section>
-<section class="part" style="margin-bottom:14px"><p class="kick">Part 2 · Real counties</p><h2>The same idea with 3,112 counties</h2></section>
+<section class="part" style="margin-bottom:14px"><p class="kick">Part 2 · Real counties</p><h2>The same idea with real counties</h2></section>
 <!-- county map: start -->
 <figure class="cmap" id="cmap" aria-labelledby="cmapH">
-  <div class="fighead"><h2 id="cmapH">The population: 3,112 counties</h2></div>
+  <div class="fighead"><h2 id="cmapH">The population of U.S. counties</h2></div>
   <div class="cmapwrap"><svg id="cmapSvg" viewBox="0 0 585 366" role="img" aria-labelledby="cmapH"></svg><div class="cmaptip" id="cmapTip" hidden></div></div>
   <div class="cmapkey" id="cmapKey" aria-hidden="true"></div>
   <figcaption>Each sample below draws counties from this map at random. Tap a county to see its value.</figcaption>
@@ -981,31 +981,38 @@ html[data-theme=dark] .cmap{--dem:#6FA6E0;--rep:#E87570}
 function cmapInit(){
 const D=JSON.parse(document.getElementById('cmapData').textContent);
 const C=JSON.parse(document.getElementById('data').textContent);
+const C26=JSON.parse(document.getElementById('data26').textContent);
 const NS='http://www.w3.org/2000/svg',svg=document.getElementById('cmapSvg'),tip=document.getElementById('cmapTip'),sel=document.getElementById('pop');
 const mix=(v,p)=>`color-mix(in srgb, var(${v}) ${p}%, var(--surface))`;
 const nf=v=>v.toLocaleString('en-US');
 /* each indicator: title, bins [lo, hi, label, fill], how to read one county */
+const NA=mix('--ink',6);
+const on26=k=>{const a=new Array(C.name.length).fill(null);C26.mi.forEach((m,i)=>{if(m>=0)a[m]=C26[k][i];});return a;};
 const M={
+ turn:{y:26,t:'turnout in 2026',bins:[[-1,40,'under 40%',mix('--mc',24)],[40,50,'40–50%',mix('--mc',36)],[50,60,'50–60%',mix('--mc',62)],[60,101,'60% or more',mix('--mc',100)]],say:v=>`turnout ${v.toFixed(1)}%`},
+ drop:{y:26,t:'the drop in turnout from 2024 to 2026',bins:[[-99,10,'under 10 pts',mix('--mc',24)],[10,15,'10–15 pts',mix('--mc',36)],[15,20,'15–20 pts',mix('--mc',62)],[20,99,'20 pts or more',mix('--mc',100)]],say:v=>`turnout fell ${v.toFixed(1)} pts`},
+ votes26:{y:26,t:'votes cast in 2026',bins:[[0,5000,'under 5,000',mix('--mc',12)],[5000,20000,'5,000–20,000',mix('--mc',30)],[20000,100000,'20,000–100,000',mix('--mc',52)],[100000,500000,'100,000–500,000',mix('--mc',76)],[500000,Infinity,'500,000 or more',mix('--mc',100)]],say:v=>`${nf(v)} votes`},
+ desert:{y:26,t:'news deserts',bins:[[-1,0.5,'Has local news (0)',mix('--mc',22)],[0.5,2,'News desert (1)',mix('--rep',90)]],say:v=>v?'news desert (1)':'has local news (0)'},
  dem:{t:'Biden vote share in 2020',bins:[[-1,20,'under 20%',mix('--rep',100)],[20,35,'20–35%',mix('--rep',70)],[35,50,'35–50%',mix('--rep',40)],[50,65,'50–65%',mix('--dem',40)],[65,80,'65–80%',mix('--dem',70)],[80,101,'80% or more',mix('--dem',100)]],say:i=>`Biden ${C.dem[i].toFixed(1)}%`},
  swing:{t:'the swing to Democrats from 2016 to 2020',bins:[[-99,-3,'R by 3+ pts',mix('--rep',100)],[-3,-1,'R by 1–3',mix('--rep',50)],[-1,1,'within 1 pt',mix('--ink',12)],[1,3,'D by 1–3',mix('--dem',50)],[3,99,'D by 3+ pts',mix('--dem',100)]],say:i=>{const v=C.swing[i];return Math.abs(v)<0.05?'no swing':`${Math.abs(v).toFixed(1)} pts toward ${v>0?'Democrats':'Republicans'}`;}},
  votes:{t:'total votes cast in 2020',bins:[[0,5000,'under 5,000',mix('--mc',12)],[5000,20000,'5,000–20,000',mix('--mc',30)],[20000,100000,'20,000–100,000',mix('--mc',52)],[100000,500000,'100,000–500,000',mix('--mc',76)],[500000,Infinity,'500,000 or more',mix('--mc',100)]],say:i=>`${nf(C.votes[i])} votes`},
  won:{t:'who carried the county in 2020',bins:[[-1,0.5,'Trump carried (0)',mix('--rep',80)],[0.5,2,'Biden carried (1)',mix('--dem',80)]],say:i=>C.won[i]?'Biden carried it (1)':'Trump carried it (0)'}
 };
-let cur='votes';
+let cur='votes';const V26={};['turn','drop','votes26','desert'].forEach(k=>V26[k]=on26(k));
 const frag=document.createDocumentFragment(),P=[];
 D.p.forEach((d,i)=>{const e=document.createElementNS(NS,'path');e.setAttribute('d',d);e.setAttribute('class','c');e.dataset.i=i;P.push(e);frag.appendChild(e);});
 svg.appendChild(frag);
 const st=document.createElementNS(NS,'path');st.setAttribute('d',D.s);st.setAttribute('class','st');svg.appendChild(st);
-function paint(k){cur=M[k]?k:'votes';const m=M[cur],vals=C[cur];
-  P.forEach((e,i)=>{const v=vals[i];const b=m.bins.find(b=>v>=b[0]&&v<b[1])||m.bins[m.bins.length-1];e.style.fill=b[3];});
-  document.getElementById('cmapH').textContent=`The population: 3,112 counties, shaded by ${m.t}`;
-  document.getElementById('cmapKey').innerHTML=m.bins.map(b=>`<span><i style="background:${b[3]}"></i>${b[2]}</span>`).join('');
+function paint(k){cur=M[k]?k:'votes';const m=M[cur],vals=m.y?V26[cur]:C[cur];
+  P.forEach((e,i)=>{const v=vals[i];if(v==null){e.style.fill=NA;return;}const b=m.bins.find(b=>v>=b[0]&&v<b[1])||m.bins[m.bins.length-1];e.style.fill=b[3];});
+  document.getElementById('cmapH').textContent=m.y?`The population is ${C26.name.length.toLocaleString('en-US')} counties in 38 states, shaded by ${m.t}`:`The population is ${C.name.length.toLocaleString('en-US')} counties, shaded by ${m.t}`;
+  document.getElementById('cmapKey').innerHTML=m.bins.map(b=>`<span><i style="background:${b[3]}"></i>${b[2]}</span>`).join('')+(m.y?`<span><i style="background:${NA}"></i>not in the 2026 data</span>`:'');
   if(on)show(lastEv);}
 let on=null,lastEv=null;
 function show(e){if(!e)return;lastEv=e;const t=e.target.closest&&e.target.closest('path.c');if(!t){hide();return;}
   if(on&&on!==t)on.classList.remove('on');on=t;t.classList.add('on');t.parentNode.insertBefore(t,st);
   const i=+t.dataset.i,w=svg.parentNode.getBoundingClientRect();
-  tip.textContent=`${C.name[i]} · ${M[cur].say(i)}`;tip.hidden=false;
+  {const m=M[cur];if(m.y){const v=V26[cur][i];tip.textContent=`${C.name[i]} · ${v==null?'not in the 2026 data':m.say(v)}`;}else tip.textContent=`${C.name[i]} · ${m.say(i)}`;}tip.hidden=false;
   let x=e.clientX-w.left,y=e.clientY-w.top;x=Math.max(80,Math.min(w.width-80,x));tip.style.left=x+'px';tip.style.top=y+'px';}
 function hide(){if(on)on.classList.remove('on');on=null;tip.hidden=true;}
 svg.addEventListener('pointermove',show);svg.addEventListener('pointerdown',show);svg.addEventListener('pointerleave',hide);
@@ -1059,6 +1066,18 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
 </script>
 
 <!-- jelly bean intervals: end -->
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1725,7 +1744,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
   </div>
 
   <section style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0">
-        <h2 style="margin:0 0 8px;font-size:17px;font-weight:600">Output: the latest sample</h2>
+        <h2 style="margin:0 0 8px;font-size:17px;font-weight:600">Output for the latest sample</h2>
         <pre class="stata" id="stata"></pre>
       </section>
 

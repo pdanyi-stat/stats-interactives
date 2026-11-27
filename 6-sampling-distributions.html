@@ -956,7 +956,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 <section class="part" style="margin-bottom:14px"><p class="kick">Part 2 · Real counties</p><h2>The same idea with real counties</h2></section>
 <!-- county map: start -->
 <figure class="cmap" id="cmap" aria-labelledby="cmapH">
-  <div class="fighead"><h2 id="cmapH">The population: U.S. counties</h2></div>
+  <div class="fighead"><h2 id="cmapH">The population of U.S. counties</h2></div>
   <div class="cmapwrap"><svg id="cmapSvg" viewBox="0 0 585 366" role="img" aria-labelledby="cmapH"></svg><div class="cmaptip" id="cmapTip" hidden></div></div>
   <div class="cmapkey" id="cmapKey" aria-hidden="true"></div>
   <figcaption>Each sample below draws counties from this map at random. Tap a county to see its value.</figcaption>
@@ -989,8 +989,8 @@ const nf=v=>v.toLocaleString('en-US');
 const NA=mix('--ink',6);
 const on26=k=>{const a=new Array(C.name.length).fill(null);C26.mi.forEach((m,i)=>{if(m>=0)a[m]=C26[k][i];});return a;};
 const M={
- turn:{y:26,t:'turnout in 2026',bins:[[-1,40,'under 40%',mix('--mc',14)],[40,50,'40–50%',mix('--mc',36)],[50,60,'50–60%',mix('--mc',62)],[60,101,'60% or more',mix('--mc',100)]],say:v=>`turnout ${v.toFixed(1)}%`},
- drop:{y:26,t:'the drop in turnout from 2024 to 2026',bins:[[-99,10,'under 10 pts',mix('--mc',14)],[10,15,'10–15 pts',mix('--mc',36)],[15,20,'15–20 pts',mix('--mc',62)],[20,99,'20 pts or more',mix('--mc',100)]],say:v=>`turnout fell ${v.toFixed(1)} pts`},
+ turn:{y:26,t:'turnout in 2026',bins:[[-1,40,'under 40%',mix('--mc',24)],[40,50,'40–50%',mix('--mc',36)],[50,60,'50–60%',mix('--mc',62)],[60,101,'60% or more',mix('--mc',100)]],say:v=>`turnout ${v.toFixed(1)}%`},
+ drop:{y:26,t:'the drop in turnout from 2024 to 2026',bins:[[-99,10,'under 10 pts',mix('--mc',24)],[10,15,'10–15 pts',mix('--mc',36)],[15,20,'15–20 pts',mix('--mc',62)],[20,99,'20 pts or more',mix('--mc',100)]],say:v=>`turnout fell ${v.toFixed(1)} pts`},
  votes26:{y:26,t:'votes cast in 2026',bins:[[0,5000,'under 5,000',mix('--mc',12)],[5000,20000,'5,000–20,000',mix('--mc',30)],[20000,100000,'20,000–100,000',mix('--mc',52)],[100000,500000,'100,000–500,000',mix('--mc',76)],[500000,Infinity,'500,000 or more',mix('--mc',100)]],say:v=>`${nf(v)} votes`},
  desert:{y:26,t:'news deserts',bins:[[-1,0.5,'Has local news (0)',mix('--mc',22)],[0.5,2,'News desert (1)',mix('--rep',90)]],say:v=>v?'news desert (1)':'has local news (0)'},
  dem:{t:'Biden vote share in 2020',bins:[[-1,20,'under 20%',mix('--rep',100)],[20,35,'20–35%',mix('--rep',70)],[35,50,'35–50%',mix('--rep',40)],[50,65,'50–65%',mix('--dem',40)],[65,80,'65–80%',mix('--dem',70)],[80,101,'80% or more',mix('--dem',100)]],say:i=>`Biden ${C.dem[i].toFixed(1)}%`},
@@ -1005,7 +1005,7 @@ svg.appendChild(frag);
 const st=document.createElementNS(NS,'path');st.setAttribute('d',D.s);st.setAttribute('class','st');svg.appendChild(st);
 function paint(k){cur=M[k]?k:'votes';const m=M[cur],vals=m.y?V26[cur]:C[cur];
   P.forEach((e,i)=>{const v=vals[i];if(v==null){e.style.fill=NA;return;}const b=m.bins.find(b=>v>=b[0]&&v<b[1])||m.bins[m.bins.length-1];e.style.fill=b[3];});
-  document.getElementById('cmapH').textContent=m.y?`The population: ${C26.name.length.toLocaleString('en-US')} counties in 38 states, shaded by ${m.t}`:`The population: ${C.name.length.toLocaleString('en-US')} counties, shaded by ${m.t}`;
+  document.getElementById('cmapH').textContent=m.y?`The population is ${C26.name.length.toLocaleString('en-US')} counties in 38 states, shaded by ${m.t}`:`The population is ${C.name.length.toLocaleString('en-US')} counties, shaded by ${m.t}`;
   document.getElementById('cmapKey').innerHTML=m.bins.map(b=>`<span><i style="background:${b[3]}"></i>${b[2]}</span>`).join('')+(m.y?`<span><i style="background:${NA}"></i>not in the 2026 data</span>`:'');
   if(on)show(lastEv);}
 let on=null,lastEv=null;
@@ -1360,7 +1360,7 @@ fill();popChart();makeQs();pileChart(false);
     2020 and 2016 county-level presidential returns, compiled by Tony McGovern in the public repository
     <a href="https://github.com/tonmcg/US_County_Level_Election_Results_08-24">tonmcg/US_County_Level_Election_Results_08-24</a>.
     N = 3,112 counties and county-equivalents in 49 states and D.C. Alaska is left out because it reports results by state house district rather than by borough.
-    Samples are drawn without replacement. Swing is Biden's 2020 share minus Clinton's 2016 share, in percentage points.
+    Samples are drawn without replacement. Swing is Biden's 2020 share minus Clinton's 2016 share, and it is measured in percentage points.
   </div></details></footer>
 <nav class="pager" aria-label="Previous and next"><a href="5-pre-measures.html"><span class="k">← Previous · Module 5</span><span class="t">PRE measures: lambda, gamma, r²</span></a><a class="home" href="index.html">All modules</a><a class="nx" href="7-confidence-intervals.html"><span class="k">Next · Module 7 →</span><span class="t">Confidence intervals</span></a></nav>
 </main>
@@ -1429,7 +1429,7 @@ const POPS = {
           note:'The distribution is <b>roughly symmetric</b>, and 95% of counties fall between 30% and 70%.'},
   drop:  {key:'drop', set:26, var:'turn_drop', title:'Drop in turnout, 2024→2026', unit:' pts', lo:-8, hi:40, w:1, floor:false,
           tick:v=>v, val:v=>v.toFixed(1), mean:v=>v.toFixed(2)+' pts', dec:2,
-          sub:'This is 2024 presidential turnout minus 2026 turnout, in percentage points.', fsd:v=>v.toFixed(1),
+          sub:'This is 2024 presidential turnout minus 2026 turnout, and it is measured in percentage points.', fsd:v=>v.toFixed(1),
           note:'The distribution is <b>roughly bell-shaped</b>. Turnout fell almost everywhere, and only Culberson County, Texas, turned out more voters in 2026 than in 2024.'},
   votes26:{key:'votes26', set:26, var:'votes26', title:'Votes cast, 2026', unit:'', lo:0, hi:300000, w:10000, floor:true, overflow:true, count:true,
           tick:fmtK, val:v=>Math.round(v).toLocaleString('en-US'), mean:v=>Math.round(v).toLocaleString('en-US'), dec:0,
@@ -1445,7 +1445,7 @@ const POPS = {
           note:'The distribution is <b>right-skewed</b>. Most counties are small, rural and lopsidedly Republican, and a long tail of urban counties runs to the right.'},
   swing: {key:'swing', var:'swing', title:'Swing to Democrats, 2016→2020', unit:' pts', lo:-28, hi:14, w:1, floor:false,
           tick:v=>(v>0?'+':'')+v, val:v=>(v>0?'+':'')+v.toFixed(1), mean:v=>(v>0?'+':'')+v.toFixed(2)+' pts', dec:2,
-          sub:'This is the 2020 Biden share minus the 2016 Clinton share, measured in percentage points.', fsd:v=>v.toFixed(1),
+          sub:'This is the 2020 Biden share minus the 2016 Clinton share, and it is measured in percentage points.', fsd:v=>v.toFixed(1),
           note:'The distribution is <b>roughly bell-shaped</b>, with a thin left tail of counties that swung sharply Republican (mostly in South Texas along the border).'},
   votes: {key:'votes', var:'votes', title:'Total votes cast, 2020', unit:'', lo:0, hi:300000, w:10000, floor:true, overflow:true, count:true,
           tick:fmtK, val:v=>Math.round(v).toLocaleString('en-US'), mean:v=>Math.round(v).toLocaleString('en-US'), dec:0,

@@ -1439,7 +1439,7 @@ function renderDesc(){
   if(V.lev!=='nom')rows.push(['Skewness',sgnf(D.sk,3)],['Kurtosis',sgnf(D.ku,3)]);
   $('#kv1').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
   let s='';
-  if(V.lev==='nom'){s=`<b>For a nominal variable, use the mode.</b> The categories have no order, so a median or a mean of the codes would mean nothing. The most common category is ${catLab(D.mode)}, with ${pc(D.mc/D.n)} of respondents.`;}
+  if(V.lev==='nom'){s=`<b>For a nominal variable, use the mode.</b> The categories have no order, so a median or a mean of the codes would mean nothing. The most common category is ${catLab(D.mode)}, which holds ${pc(D.mc/D.n)} of respondents.`;}
   else if(V.lev==='ord'){s=`<b>For an ordinal variable, use the median (and the mode).</b> The categories are ordered, but the distance between codes isn't meaningful, so the mean of the codes isn't either. Skew here is computed on the codes, and it shows ${skewWord(D.sk)}.`;}
   else if(V.lev==='int7'){s=`<b>We treat this seven-point scale as interval-level, so the mean is allowed.</b> The mean (${f2(D.m)}) sits just below the median (${fmtv(D.med)}). The skewness statistic of ${sgnf(D.sk,2)} says the scale is close to symmetric, with a slightly longer tail toward “fewer services.” The SD of ${f2(D.s)} says a typical respondent sits almost two scale points from the mean, so opinion is spread across the whole scale.`;}
   else{const gap=D.m-D.med, big=Math.abs(D.sk)>=1;

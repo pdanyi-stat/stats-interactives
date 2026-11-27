@@ -986,7 +986,7 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
       <div class="chart" id="cChart"></div>
     </figure>
     <section style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0">
-      <h2 style="margin:0 0 8px;font-size:17px;font-weight:600">Output: the latest sample</h2>
+      <h2 style="margin:0 0 8px;font-size:17px;font-weight:600">Output for the latest sample</h2>
       <pre class="stata" id="stata"></pre>
     </section>
   </div>
@@ -1480,7 +1480,7 @@ function popInfo(){
   $('#k1').textContent=c.gl[0]; $('#k2').textContent=c.gl[1];
   $('#popInfo').innerHTML = st.h0
     ? `<b>H₀ made true.</b> Both groups are drawn from the same pool of ${c.pool.length.toLocaleString('en-US')} ${c.unit||'respondents'} (${c.src}), so the true difference is 0. Scale: ${c.scale}.`
-    : `<b>Population (${(c.a.length+c.b.length).toLocaleString('en-US')} ${c.unit||'respondents'}, ${c.src}):</b> ${c.gl[0]} μ = ${f3(c.A.m)} (N = ${c.a.length.toLocaleString('en-US')}), ${c.gl[1]} μ = ${f3(c.B.m)} (N = ${c.b.length.toLocaleString('en-US')}). True difference ${f3(c.A.m-c.B.m)}, Cohen's d = ${c.d.toFixed(2)}. Scale: ${c.scale}.`;
+    : `<b>Population (${(c.a.length+c.b.length).toLocaleString('en-US')} ${c.unit||'respondents'}, ${c.src}):</b> ${c.gl[0]} μ = ${f3(c.A.m)} (N = ${c.a.length.toLocaleString('en-US')}), ${c.gl[1]} μ = ${f3(c.B.m)} (N = ${c.b.length.toLocaleString('en-US')}). The true difference is ${f3(c.A.m-c.B.m)}, and Cohen's d is ${c.d.toFixed(2)}. Scale: ${c.scale}.`;
 }
 function reset(){ stopRun(); st.S=[]; st.landed=0; st.anims=[]; st.tw=null; st.disp=null; popInfo(); addSamples(1,false); }
 function stopRun(){ if(st.timer){clearInterval(st.timer);st.timer=null;} $('#run').setAttribute('aria-pressed','false'); $('#run').textContent='Run'; }
