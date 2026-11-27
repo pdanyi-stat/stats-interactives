@@ -906,7 +906,56 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 .tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
 .tapnote a{color:var(--mci);font-weight:600}
 </style>
-<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
+<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style><style id="tryit">
+/* Try it puzzles (shared). Injected by scripts/tryit.py on pages that hold a details.tryit box. */
+:root{--pz-a:#B07A12;--pz-abg:#FFF1D6;--pz-aink:#6B4A00;--pz-tag:#f5c400;--pz-ok:#2c6b1f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}}
+:root[data-theme="dark"]{--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}
+details.tryit{border:2px solid var(--pz-a);background:var(--pz-abg);border-radius:10px;margin:18px 0 6px;box-shadow:0 0 0 4px color-mix(in srgb,var(--pz-a) 18%,transparent)}
+details.tryit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;font-weight:600}
+details.tryit>summary::-webkit-details-marker{display:none}
+details.tryit>summary::after{content:'+';margin-left:auto;font:600 20px/1 var(--font-mono,monospace);color:var(--pz-aink)}
+details.tryit[open]>summary::after{content:'−'}
+details.tryit .tag{background:var(--pz-tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+details.tryit .tt{font-size:17px;color:var(--ink)}
+details.tryit .hint{font-size:13px;font-weight:400;color:var(--ink-2)}
+.pzin{padding:0 16px 16px}
+.pzgoal{margin:0 0 8px;color:var(--ink);font-size:15px}
+.pzchart{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pzchart svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzchart circle.cty{cursor:grab}
+.pzchart circle.cty:focus{outline:none;stroke:var(--ink);stroke-width:3}
+.pzkey{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.pzkey i{display:inline-block;vertical-align:middle;margin-right:6px}
+.pzkey i.dot{width:11px;height:11px;border-radius:50%}
+.pzkey i.dot.gv{background:var(--s1)}.pzkey i.dot.sn{background:var(--s2)}
+.pzkey i.ln{width:22px;height:0}
+.pzkey i.ln.pool{border-top:2px dashed var(--muted)}.pzkey i.ln.ctl{border-top:3px solid var(--ink-2)}
+.pzstats{display:flex;flex-wrap:wrap;gap:8px}
+.pzstat{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.pzstat .lab{font-size:13px;color:var(--ink-2)}
+.pzstat .num{font:600 22px/1.3 var(--font-mono,monospace);color:var(--ink)}
+.pzstat .goal{font-size:13px;color:var(--ink-2)}
+.pzstat .goal.met{color:var(--pz-ok);font-weight:600}
+.pzinfo{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.pzmsg{margin:4px 0 0;font-size:14.5px;min-height:22px;color:var(--ink)}
+.pzbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pzex{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--pz-a) 45%,transparent)}
+.pzex h4{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.pzex p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink);max-width:75ch}
+.pzex p.st{font-size:13px;font-weight:600;color:var(--pz-aink);margin:0 0 2px}
+.pzlock{color:var(--ink-2)!important}
+.pzbody{opacity:.28;pointer-events:none;transition:opacity .5s}
+.pzbody.open{opacity:1;pointer-events:auto}
+.pzfoot{font-size:13px!important;color:var(--ink-2)!important}
+@media (prefers-reduced-motion:reduce){.pzbody{transition:none}}
+details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var(--ink));text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+.pzset{margin:0 0 6px;color:var(--ink-2);font-size:14.5px;line-height:1.55}
+.pzchart text{font-family:inherit}
+.pzkey i.ovsw{width:14px;height:11px;background:color-mix(in srgb,var(--pz-a) 35%,transparent);border:1px solid var(--pz-a)}
+.ovzsay{font-size:13.5px!important;color:var(--ink-2)!important}
+</style>
+</head>
 <body>
 <nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="9-bivariate-regression.html" aria-label="Next: Bivariate regression">Next →</a></nav>
 <header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Module 8 of 11</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion"><span>4</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²"><span>5</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means" aria-current="page"><span>8 · Difference in means</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables"><span>11</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-airports.html" style="--c:#183951;--k:#f8f5ec" title="Don&#x27;t Get Left Behind: Who Got America&#x27;s First Airports?"><span>P2</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P3</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P4</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P5</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P6</span></a><a class="tab" href="practice-news-deserts.html" style="--c:#a2472b;--k:#f8f5ec" title="Do news deserts vote less?"><span>P7</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P8</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data"><span>Viz</span></a></nav><div class="mtitle"><div><p class="kicker">● Module 8 · From samples to populations</p><h1>Difference in <em>means.</em></h1></div><p class="dek">Do two groups really differ, or is the gap in our sample just the luck of the draw? On this page you will draw samples from real data and compare the two group means on one axis. Then you will repeat the sampling until the distribution of the difference shows whether zero is a plausible value.</p></div><div class="mhd sh"><span>In this module · tap a book to open it</span><span class="rt"><span class="cnt">9 sections</span><span class="swipehint" aria-hidden="true">Swipe →</span></span></div><nav class="shelf2" aria-label="Sections on this page"><div class="gbox" style="min-width:342px"><p class="gl">The test</p><div class="gbooks"><a class="bk cloth" style="--c:#dcb246;--k:#1b1813;--band:#97751d;--h:96%;--w:76px;--fs:14px" href="#hyp" aria-label="Section H₀: What are we testing?"><span class="bands t"></span><span class="plate">H₀</span><span class="ti">What are we testing?<br><small>H₀ and H₁</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk face" style="--c:#a2472b;--k:#f8f5ec;--ink:#f8f5ec;--h:100%;flex-basis:196px" href="#sec-two-group-means-from-this-sa" aria-label="Section A: Two group means"><span class="fn">SECTION A</span><span class="ft">Two group means</span><span class="fs2">one sample</span><svg class="cov" viewBox="0 0 170 124" aria-hidden="true"><g fill="var(--ink)" opacity=".88"><circle cx="93.0" cy="103.8" r="2.5"/><circle cx="51.0" cy="103.8" r="2.5"/><circle cx="65.0" cy="103.8" r="2.5"/><circle cx="58.0" cy="103.8" r="2.5"/><circle cx="72.0" cy="103.8" r="2.5"/><circle cx="37.0" cy="103.8" r="2.5"/><circle cx="51.0" cy="97.6" r="2.5"/><circle cx="44.0" cy="103.8" r="2.5"/><circle cx="44.0" cy="97.6" r="2.5"/><circle cx="44.0" cy="91.4" r="2.5"/><circle cx="51.0" cy="91.4" r="2.5"/><circle cx="51.0" cy="85.2" r="2.5"/><circle cx="44.0" cy="85.2" r="2.5"/><circle cx="65.0" cy="97.6" r="2.5"/><circle cx="51.0" cy="79.0" r="2.5"/><circle cx="16.0" cy="103.8" r="2.5"/><circle cx="72.0" cy="97.6" r="2.5"/><circle cx="51.0" cy="72.8" r="2.5"/><circle cx="51.0" cy="66.6" r="2.5"/><circle cx="65.0" cy="91.4" r="2.5"/><circle cx="58.0" cy="97.6" r="2.5"/><circle cx="58.0" cy="91.4" r="2.5"/><circle cx="44.0" cy="79.0" r="2.5"/><circle cx="58.0" cy="85.2" r="2.5"/><circle cx="37.0" cy="97.6" r="2.5"/><circle cx="79.0" cy="103.8" r="2.5"/><circle cx="37.0" cy="91.4" r="2.5"/><circle cx="58.0" cy="79.0" r="2.5"/><circle cx="58.0" cy="72.8" r="2.5"/><circle cx="58.0" cy="66.6" r="2.5"/><circle cx="58.0" cy="60.4" r="2.5"/><circle cx="65.0" cy="85.2" r="2.5"/><circle cx="9.0" cy="103.8" r="2.5"/><circle cx="58.0" cy="54.2" r="2.5"/><circle cx="51.0" cy="60.4" r="2.5"/><circle cx="51.0" cy="54.2" r="2.5"/><circle cx="79.0" cy="97.6" r="2.5"/><circle cx="44.0" cy="72.8" r="2.5"/><circle cx="58.0" cy="48.0" r="2.5"/><circle cx="30.0" cy="103.8" r="2.5"/><circle cx="58.0" cy="41.8" r="2.5"/><circle cx="30.0" cy="97.6" r="2.5"/><line x1="58.0" y1="34.0" x2="58.0" y2="114.0" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 3" opacity="1"/><circle cx="98.0" cy="103.8" r="2.5"/><circle cx="98.0" cy="97.6" r="2.5"/><circle cx="119.0" cy="103.8" r="2.5"/><circle cx="77.0" cy="103.8" r="2.5"/><circle cx="112.0" cy="103.8" r="2.5"/><circle cx="77.0" cy="97.6" r="2.5"/><circle cx="126.0" cy="103.8" r="2.5"/><circle cx="112.0" cy="97.6" r="2.5"/><circle cx="133.0" cy="103.8" r="2.5"/><circle cx="105.0" cy="103.8" r="2.5"/><circle cx="119.0" cy="97.6" r="2.5"/><circle cx="105.0" cy="97.6" r="2.5"/><circle cx="105.0" cy="91.4" r="2.5"/><circle cx="112.0" cy="91.4" r="2.5"/><circle cx="91.0" cy="103.8" r="2.5"/><circle cx="105.0" cy="85.2" r="2.5"/><circle cx="119.0" cy="91.4" r="2.5"/><circle cx="112.0" cy="85.2" r="2.5"/><circle cx="105.0" cy="79.0" r="2.5"/><circle cx="140.0" cy="103.8" r="2.5"/><circle cx="112.0" cy="79.0" r="2.5"/><circle cx="105.0" cy="72.8" r="2.5"/><circle cx="112.0" cy="72.8" r="2.5"/><circle cx="105.0" cy="66.6" r="2.5"/><circle cx="105.0" cy="60.4" r="2.5"/><circle cx="105.0" cy="54.2" r="2.5"/><circle cx="140.0" cy="97.6" r="2.5"/><circle cx="112.0" cy="66.6" r="2.5"/><circle cx="112.0" cy="60.4" r="2.5"/><circle cx="119.0" cy="85.2" r="2.5"/><circle cx="140.0" cy="91.4" r="2.5"/><circle cx="112.0" cy="54.2" r="2.5"/><circle cx="105.0" cy="48.0" r="2.5"/><circle cx="147.0" cy="103.8" r="2.5"/><circle cx="91.0" cy="97.6" r="2.5"/><circle cx="105.0" cy="41.8" r="2.5"/><circle cx="119.0" cy="79.0" r="2.5"/><circle cx="147.0" cy="97.6" r="2.5"/><circle cx="98.0" cy="91.4" r="2.5"/><circle cx="77.0" cy="91.4" r="2.5"/><circle cx="119.0" cy="72.8" r="2.5"/><circle cx="105.0" cy="35.6" r="2.5"/><line x1="112.0" y1="34.0" x2="112.0" y2="114.0" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 3" opacity="1"/><line x1="4.0" y1="114.0" x2="166.0" y2="114.0" stroke="var(--ink)" stroke-width="1.4" opacity="1"/><circle cx="66.0" cy="26.0" r="1.7"/><circle cx="72.0" cy="26.0" r="1.7"/><circle cx="78.0" cy="26.0" r="1.7"/><circle cx="84.0" cy="26.0" r="1.7"/><circle cx="90.0" cy="26.0" r="1.7"/><circle cx="96.0" cy="26.0" r="1.7"/><circle cx="102.0" cy="26.0" r="1.7"/><circle cx="98.0" cy="31.0" r="1.7"/><circle cx="98.0" cy="21.0" r="1.7"/><circle cx="92.0" cy="36.0" r="1.7"/><circle cx="92.0" cy="16.0" r="1.7"/><circle cx="104.0" cy="26.0" r="1.7"/><circle cx="72.0" cy="21.0" r="1.7"/><circle cx="72.0" cy="31.0" r="1.7"/><circle cx="78.0" cy="16.0" r="1.7"/><circle cx="78.0" cy="36.0" r="1.7"/></g></svg></a><a class="bk cloth din" style="--c:#149a9f;--k:#1b1813;--band:#0c5f63;--h:100%;--w:72px;--fs:11px" href="#sec-the-sampling-distribution-of" aria-label="Section B: Distribution of the difference"><span class="bands t"></span><span class="plate">B</span><span class="ti">Distribution of the difference</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#25dde4;--k:#1b1813;--band:#128d92;--h:93%;--w:72px;--fs:17px" href="#sec-the-t-test-for-this-sample" aria-label="Section C: The t test"><span class="bands t"></span><span class="plate">C</span><span class="ti">The t test</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:138px"><p class="gl">Reading results</p><div class="gbooks"><a class="bk cloth lean-r" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:90%;--w:80px;--fs:14px;--rot:3.3deg;margin-right:calc(var(--bh) * 0.0523 - 2px)" href="#pvalue" aria-label="Section C: Reading a p-value"><span class="bands t"></span><span class="plate">C</span><span class="ti">Reading a p-value<br><small>part of C</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:90%;--w:80px;--fs:13px" href="#errors" aria-label="Section D: Type I and II errors"><span class="bands t"></span><span class="plate">D</span><span class="ti">Type I and II errors</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:138px"><p class="gl">Practice</p><div class="gbooks"><a class="bk cloth" style="--c:#149a9e;--k:#1b1813;--band:#0c5f62;--h:100%;--w:84px;--fs:17px" href="#sec-try-this" aria-label="Try this"><span class="bands t"></span><span class="plate">Try</span><span class="ti">Try this</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth lean-l" style="--c:#1bcdd4;--k:#1b1813;--band:#117f83;--h:93%;--w:76px;--fs:17px;--rot:-4.9deg;margin-left:calc(var(--bh) * 0.0801 - 2px);--pfs:8.5px" href="#sec-check-yourself" aria-label="Check yourself"><span class="bands t"></span><span class="plate">Check</span><span class="ti">Check yourself</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:61px"><p class="gl">Wrap-up</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:90%;--w:80px;--fs:16px" href="#wwl" aria-label="Section ✓: What we learned"><span class="bands t"></span><span class="plate">✓</span><span class="ti">What we learned<br><small>the main ideas</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div></nav><div class="board" aria-hidden="true"></div></div></header>
@@ -1048,7 +1097,40 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     </ul>
   </section>
 
-  <figure id="shuf">
+  <!-- pz:m8 -->
+<details class="tryit" id="pzOv">
+  <summary><span class="tag">Try it</span><span class="tt">Make the intervals overlap</span><span class="hint">Optional puzzle</span></summary>
+  <div class="pzin">
+    <p class="pzset">We start from one real sample of 50 petitions from each group, which is the same kind of draw panel A makes with n = 50. In this sample, women's petitions averaged 126.0 signatures and the other petitions averaged 78.0.</p>
+    <p class="pzgoal">Drag the two means so their 95% intervals overlap while the difference between them stays significant at α = .05.</p>
+    <div class="pzchart" id="ovChart"></div>
+    <div class="pzkey"><span><i class="dot gv"></i>Other petitions</span><span><i class="dot sn"></i>Women's petitions</span><span><i class="ovsw"></i>Where the intervals overlap</span></div>
+    <div class="pzstats">
+      <div class="pzstat"><div class="lab">Do the 95% intervals overlap?</div><div class="num" id="ovA"></div><div class="goal" id="ovGa"></div></div>
+      <div class="pzstat"><div class="lab">p-value for the difference</div><div class="num" id="ovP"></div><div class="goal" id="ovGb"></div></div>
+    </div>
+    <p class="pzinfo" id="ovInfo" aria-live="polite">Tap near a mean and drag it left or right.</p>
+    <p class="pzmsg" id="ovMsg" aria-live="polite"></p>
+    <div class="pzbtns"><button type="button" id="ovShow">Show me</button><button type="button" id="ovReset">Start over</button></div>
+    <div class="pzex">
+      <h4>What just happened</h4>
+      <p class="pzlock" id="ovLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+      <div class="pzbody" id="ovBody" aria-hidden="true">
+        <p class="st">1 · Two different bars to clear</p>
+        <p>The overlap check sets the gap between the two means against both margins of error added together, which come to <b id="ovO"></b> signatures here. The t test sets the same gap against a lower bar, about 1.98 times the standard error of the difference, which comes to <b id="ovS"></b> signatures.</p>
+        <p><button type="button" class="linkish" id="ovZone">Mark where each mean works</button></p>
+        <p class="ovzsay" id="ovZsay" hidden>Each amber strip shows where that group's mean could sit, with the other mean left where it is, so that both goals are met.</p>
+        <p class="st">2 · Why the two bars differ</p>
+        <p>The errors in two separate samples partly cancel, since one sample is rarely off in the worst direction at the same moment as the other. That is why the standard error of the difference is √(SE₁² + SE₂²), which works like the long side of a right triangle, rather than SE₁ + SE₂, which would lay the two short sides end to end. In your version the gap between the means is <b id="ovD"></b> signatures, <span id="ovDsay"></span></p>
+        <p class="st">3 · Back to the lesson</p>
+        <p>When two 95% intervals don't overlap, the difference is significant, so a visible gap is a safe sign. When they do overlap, the picture can't settle the question, and we run the t test from panel C instead.</p>
+        <p class="pzfoot">The starting values come from one random sample of 50 petitions per group, drawn from Carpenter and Moore's antislavery petitions file. The test assumes equal variances, as panel C does by default. A mean you move becomes your own version and is no longer real data.</p>
+      </div>
+    </div>
+  </div>
+</details>
+<!-- /pz:m8 -->
+<figure id="shuf">
     <div class="fighead"><h2><span class="step">C2</span>Shuffle the labels to get a p-value</h2></div>
     <p class="sub">Here is a way to get a p-value with no formula. If H₀ is true, it doesn't matter which group each case belongs to, so we can shuffle the group labels and see how large a difference chance alone produces. Draw a sample of real cases from the comparison above, and then shuffle the labels.</p>
     <div class="ctlrow">
@@ -1892,5 +1974,95 @@ function fix(){
 let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
 if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
-})();</script></body>
+})();</script><script id="pzlib">
+window.PZ=window.PZ||(()=>{
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mk(t,a,par,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;if(par)par.appendChild(e);return e;}
+/* Eased move, only on a press. Reduced motion jumps straight to the end. */
+function tween(ms,f,done){if(reduce()){f(1);if(done)done();return;}const t0=performance.now();(function s(t){const u=Math.min(1,(t-t0)/ms),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;f(e);if(u<1)requestAnimationFrame(s);else if(done)done();})(t0);}
+/* Build the chart the first time the box opens, and again when the width or theme changes. */
+function lazy(box,build){let built=false,w=innerWidth;box.addEventListener('toggle',()=>{if(box.open&&!built){built=true;build();}});
+  let rt=0;addEventListener('resize',()=>{if(!built||innerWidth===w)return;w=innerWidth;clearTimeout(rt);rt=setTimeout(build,150);});
+  const rb=()=>{if(built)build();};const mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',rb);
+  new MutationObserver(rb).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}
+/* The explanation stays faded until the goal is met or Show me is pressed. */
+function opener(lock,body){let o=false;const f=()=>{if(o)return;o=true;lock.style.display='none';body.classList.add('open');body.setAttribute('aria-hidden','false');};f.isOpen=()=>o;return f;}
+function goal(el,ok,label){el.textContent='Goal: '+label+'. '+(ok?'Met.':'Not yet.');el.classList.toggle('met',!!ok);}
+/* Pointer dragging: grab the nearest handle within 30 px, keep the grab offset. */
+function drag(svg,o){const R=o.radius||30;let cur=null,off=[0,0];
+  const pt=e=>{const r=svg.getBoundingClientRect(),k=(+svg.getAttribute('width'))/r.width;return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  svg.addEventListener('pointerdown',e=>{if(o.busy&&o.busy())return;const [a,b]=pt(e),H=o.handles();let best=-1,bd=R;H.forEach((h,i)=>{if(!h)return;const d=Math.hypot(h[0]-a,h[1]-b);if(d<bd){bd=d;best=i;}});
+    if(best<0)return;cur=best;off=[H[best][0]-a,H[best][1]-b];svg.setPointerCapture(e.pointerId);if(o.start)o.start(best);e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(cur===null)return;const [a,b]=pt(e);o.move(cur,a+off[0],b+off[1]);});
+  const up=()=>{if(cur!==null&&o.end)o.end(cur);cur=null;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  return {active:()=>cur};}
+/* Student's t distribution */
+function lgam(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(const k of c)s+=k/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function bcf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;let h=d;for(let m=1;m<=200;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgam(a+b)-lgam(a)-lgam(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*bcf(a,b,x)/a:1-bt*bcf(b,a,1-x)/b;}
+function p2(t,df){return ibeta(df/(df+t*t),df/2,.5);}           /* two-sided p */
+function tcrit(df,conf){conf=conf||.95;let lo=0,hi=50;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(p2(m,df)>1-conf)lo=m;else hi=m;}return (lo+hi)/2;}
+function fp(p){return p<.001?'p < .001':'p = '+p.toFixed(3).replace(/^0/,'');}
+const sgn=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
+return {$,css,cl,reduce,mk,tween,lazy,opener,goal,drag,p2,tcrit,fp,sgn};
+})();
+</script>
+<!-- pz:m8js --><script id="pz-m8">
+(()=>{
+const box=document.getElementById('pzOv');if(!box||!window.PZ)return;
+const {$,css,cl,mk,tween,lazy,opener,goal,drag,p2,tcrit,fp}=PZ;
+const N=50, S0=[66.077,88.864], M0=[78.04,125.96], NM=['Other petitions',"Women's petitions"];
+const LO=40,HI=170, TC1=tcrit(N-1), TC2=tcrit(2*N-2);
+let M=M0.slice(), moved=[false,false], anim=false, keep=false, zoneOn=false, G=null;
+const openEx=opener($('ovLock'),$('ovBody'));
+function calc(Q){Q=Q||M;const se=S0.map(s=>s/Math.sqrt(N)), mg=se.map(v=>TC1*v), lo=Q.map((m,k)=>m-mg[k]), hi=Q.map((m,k)=>m+mg[k]);
+  const sed=Math.sqrt((S0[0]**2+S0[1]**2)/2*2/N), d=Q[1]-Q[0], t=d/sed, p=p2(Math.abs(t),2*N-2);
+  return {mg,lo,hi,ov:Math.max(lo[0],lo[1])<=Math.min(hi[0],hi[1]),p,sig:p<.05,d,sigBar:TC2*sed,ovBar:mg[0]+mg[1]};}
+function build(){
+  const host=$('ovChart');host.innerHTML='';const W=Math.max(300,host.clientWidth||600),H=210,m={l:14,r:14,t:18,b:44},Y=[70,138];
+  const sx=v=>m.l+(v-LO)/(HI-LO)*(W-m.l-m.r), ix=p=>LO+(p-m.l)/(W-m.l-m.r)*(HI-LO);
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'img','aria-label':'Two 95% confidence intervals for mean signatures, one for other petitions and one for women\'s petitions. Drag a mean to move it.'},host);
+  const gg=mk('g',{},svg);
+  for(let v=40;v<=160;v+=20){mk('line',{x1:sx(v),x2:sx(v),y1:m.t,y2:H-m.b,stroke:css('--grid')||css('--line')},gg);mk('text',{x:sx(v),y:H-m.b+16,'text-anchor':'middle','font-size':12,fill:css('--ink-2')},gg,v);}
+  mk('text',{x:W-m.r,y:H-6,'text-anchor':'end','font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,'Mean signatures per petition →');
+  const band=mk('rect',{y:m.t,height:H-m.t-m.b,fill:css('--pz-a'),'fill-opacity':.22},svg), bandT=mk('text',{y:m.t+12,'text-anchor':'middle','font-size':11.5,'font-weight':600,fill:css('--pz-aink')},svg,'overlap');
+  const zone=mk('g',{opacity:zoneOn?1:0,style:'transition:opacity .4s'},svg), Z=[0,1].map(k=>[0,1].map(()=>mk('rect',{height:8,rx:4,fill:css('--pz-a'),'fill-opacity':.55,stroke:css('--pz-a'),'stroke-dasharray':'3 3',y:Y[k]+18},zone)));
+  const col=[css('--s1'),css('--s2')];
+  const R=[0,1].map(k=>{const g=mk('g',{},svg);mk('text',{x:m.l,y:Y[k]-24,'font-size':12.5,'font-weight':600,fill:css('--ink-2')},g,NM[k]);
+    const bar=mk('line',{y1:Y[k],y2:Y[k],stroke:col[k],'stroke-width':8,'stroke-opacity':.45,'stroke-linecap':'round'},g);
+    const c1=mk('line',{y1:Y[k]-10,y2:Y[k]+10,stroke:col[k],'stroke-width':2.5},g), c2=mk('line',{y1:Y[k]-10,y2:Y[k]+10,stroke:col[k],'stroke-width':2.5},g);
+    const dot=mk('circle',{class:'cty',r:11,cy:Y[k],fill:col[k],stroke:css('--surface'),'stroke-width':2,tabindex:0,role:'button','aria-label':NM[k]+' mean. Use the left and right arrow keys to move it.'},g);
+    dot.addEventListener('keydown',e=>{const s={ArrowLeft:-.5,ArrowRight:.5}[e.key];if(s==null||anim)return;e.preventDefault();set(k,M[k]+s);});
+    dot.addEventListener('focus',()=>info(k));return {bar,c1,c2,dot};});
+  G={svg,sx,ix,band,bandT,zone,Z,R,Y};
+  drag(svg,{busy:()=>anim,handles:()=>M.map((v,k)=>[sx(v),Y[k]]),start:k=>{R[k].dot.setAttribute('r',14);info(k);},move:(k,x)=>set(k,ix(x)),end:k=>R[k].dot.setAttribute('r',11)});
+  draw();}
+function set(k,v){keep=false;M[k]=cl(Math.round(v*2)/2,LO+5,HI-5);moved[k]=true;draw();info(k);}
+function info(k){const c=calc();$('ovInfo').textContent=(moved[k]?'Your version of '+NM[k].toLowerCase():NM[k])+': mean '+M[k].toFixed(1)+', 95% interval '+c.lo[k].toFixed(1)+' to '+c.hi[k].toFixed(1)+'.';}
+function draw(){if(!G)return;const c=calc(),{sx,R,Y}=G;
+  M.forEach((v,k)=>{R[k].bar.setAttribute('x1',sx(c.lo[k]));R[k].bar.setAttribute('x2',sx(c.hi[k]));['c1','c2'].forEach((n,j)=>{const x=sx(j?c.hi[k]:c.lo[k]);R[k][n].setAttribute('x1',x);R[k][n].setAttribute('x2',x);});R[k].dot.setAttribute('cx',sx(v));});
+  const a=Math.max(c.lo[0],c.lo[1]),b=Math.min(c.hi[0],c.hi[1]);G.band.setAttribute('opacity',c.ov?1:0);G.bandT.setAttribute('opacity',c.ov?1:0);if(c.ov){G.band.setAttribute('x',sx(a));G.band.setAttribute('width',Math.max(1,sx(b)-sx(a)));G.bandT.setAttribute('x',(sx(a)+sx(b))/2);}
+  [0,1].forEach(k=>{const o=M[1-k];[[o-c.ovBar,o-c.sigBar],[o+c.sigBar,o+c.ovBar]].forEach(([u,v],j)=>{const r=G.Z[k][j],x1=sx(cl(u,LO,HI)),x2=sx(cl(v,LO,HI));r.setAttribute('x',x1);r.setAttribute('width',Math.max(0,x2-x1));});});
+  $('ovA').textContent=c.ov?'Yes':'No';$('ovP').textContent=fp(c.p);goal($('ovGa'),c.ov,'overlap');goal($('ovGb'),c.sig,'significant');
+  $('ovO').textContent=c.ovBar.toFixed(1);$('ovS').textContent=c.sigBar.toFixed(1);$('ovD').textContent=Math.abs(c.d).toFixed(1);
+  $('ovDsay').textContent=c.ov&&c.sig?'which clears the t test’s bar but is too small to pull the intervals apart.':'which right now does not sit between those two bars.';
+  if(!anim&&!keep)$('ovMsg').textContent=c.ov&&c.sig?'Both goals are met, so read what just happened below.':'';
+  if(c.ov&&c.sig)openEx();}
+function setZone(on){zoneOn=on;if(G)G.zone.setAttribute('opacity',on?1:0);$('ovZone').textContent=on?'Hide the strips':'Mark where each mean works';$('ovZsay').hidden=!on;}
+function near(){const c=calc(),s=Math.sign(M[1]-M[0])||1,D=(c.sigBar+c.ovBar)/2;let mid=(M[0]+M[1])/2;mid=cl(mid,LO+5+D/2,HI-5-D/2);
+  const T=[mid-s*D/2,mid+s*D/2].map(v=>Math.round(v*2)/2),f=calc(T);return f.ov&&f.sig?T:null;}
+$('ovZone').addEventListener('click',()=>setZone(!zoneOn));
+$('ovReset').addEventListener('click',()=>{if(anim)return;keep=false;M=M0.slice();moved=[false,false];setZone(false);$('ovInfo').textContent='Tap near a mean and drag it left or right.';$('ovMsg').textContent='';draw();});
+$('ovShow').addEventListener('click',()=>{if(anim)return;const c=calc(),ms=$('ovMsg');
+  if(c.ov&&c.sig){ms.textContent='Your version already works, so nothing moves. Read what just happened below.';openEx();return;}
+  const T=near();if(!T)return;openEx();ms.textContent='One answer close to yours. The two groups keep their order, and the point halfway between them stays where you left it.';
+  const s=M.slice();anim=true;tween(900,e=>{M=s.map((v,k)=>v+(T[k]-v)*e);moved=[true,true];draw();},()=>{M=T;anim=false;keep=true;draw();});});
+lazy(box,build);
+})();
+</script><!-- /pz:m8js -->
+</body>
 </html>
