@@ -1361,6 +1361,66 @@ function frame(box,hRatio,minH,maxH,label){box.innerHTML='';const W=Math.max(290
 function yGrid(svg,W,m,ys,ts,fmt){const g=el('g',{class:'tick'},svg);for(const t of ts){el('line',{x1:m.l,x2:W-m.r,y1:ys(t),y2:ys(t),stroke:css('--grid')},g);txt(g,m.l-6,ys(t)+4,fmt(t),{'text-anchor':'end'});}}
 function xTicks(svg,H,m,xs,ts,fmt){const g=el('g',{class:'tick'},svg);for(const t of ts){el('line',{x1:xs(t),x2:xs(t),y1:H-m.b,y2:H-m.b+4,stroke:css('--axis')},g);txt(g,xs(t),H-m.b+17,fmt(t),{'text-anchor':'middle'});}}
 function baseLine(svg,W,H,m){el('line',{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:css('--axis')},svg);}
+/* Step 5 difference chart, with a zoom into the tail at 0 when p < .01 */
+const DZE=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+function dzBig(v){if(v<1e4)return Math.round(v).toLocaleString('en-US');const e=Math.floor(Math.log10(v));if(e<9)return (Math.round(v/Math.pow(10,e-1))*Math.pow(10,e-1)).toLocaleString('en-US');const w=['billion','trillion','quadrillion','quintillion'];const g=Math.min(w.length-1,Math.floor((e-9)/3));const d=v/Math.pow(10,9+3*g);return d<1000?(d<10?d.toFixed(1):Math.round(d))+' '+w[g]:'10'+dzSup(e);}
+const DZS={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+const dzSup=n=>String(n).split('').map(c=>DZS[c]||c).join('');
+function dzTinyLog(l10){ if(l10>=-12){const v=Math.pow(10,l10);return v.toFixed(Math.max(0,-Math.floor(l10)+1));} const e=Math.floor(l10), mnt=Math.pow(10,l10-e); return mnt.toFixed(1)+' × 10'+dzSup(e); }
+function dzHalfP(T){ if(T.p>0&&T.p/2>=1e-300) return Math.log10(T.p/2); const z=Math.abs(T.d)/T.se; return (-z*z/2-Math.log(z)-0.5*Math.log(2*Math.PI))/Math.LN10; }
+function dzTarget(T){ if(!T||!(T.p<0.01)||!(T.se>0)) return null; const at=Math.abs(T.d)/T.se, ph=u=>Math.exp(-.5*u*u); const h=ph(at); if(!(h>1e-280)) return null;
+  const top=h*5; let a=0,b=at; for(let i=0;i<80;i++){const mid=(a+b)/2; if(ph(mid)>top)a=mid; else b=mid;} const u0=(a+b)/2, w=Math.max(0.05,at-u0);
+  const inner=Math.max(0,u0-0.5*w)*T.se, outer=(at+1.6*w)*T.se, s=T.d>0?1:-1;  /* distances from d, toward 0 */
+  const p1=T.d-s*inner, p2=T.d-s*outer; return {lo:Math.min(p1,p2),hi:Math.max(p1,p2),top,at}; }
+function diffChart(host,T,axl){
+  const key=[T.d,T.se,T.p].join('|'); let Z=host._dz; if(!Z||Z.key!==key){ if(Z) cancelAnimationFrame(Z.raf); Z=host._dz={key,z:0,to:0,raf:0}; }
+  Z.T=T; Z.axl=axl; dzDraw(host); dzUI(host);
+}
+function dzDraw(host){
+  const Z=host._dz, T=Z.T, axl=Z.axl;
+  const {svg,W,H}=frame(host,0.3,160,210,'Sampling distribution of the difference'), m={l:14,r:14,t:22,b:30};
+  const flo=Math.min(-1,T.d-4.2*T.se), fhi=Math.max(1,T.d+4.2*T.se), Zt=Z.z>0?dzTarget(T):null;
+  const p1=Zt?DZE(Math.min(1,Z.z/0.42)):0, p2=Zt?DZE(Math.max(0,Math.min(1,(Z.z-0.5)/0.5))):0;
+  const lo=Zt?flo+(Zt.lo-flo)*p1:flo, hi=Zt?fhi+(Zt.hi-fhi)*p1:fhi, topv=Zt?Math.exp(Math.log(1)+(Math.log(Zt.top)-Math.log(1))*p2):1;
+  const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r), base=H-m.b, top=m.t;
+  const dens=v=>Math.exp(-.5*((v-T.d)/T.se)**2);   /* relative to the peak */
+  const yv=v=>Math.max(top-40,base-(dens(v)/topv)*(base-top-6));
+  const tt=ticks(lo,hi,Math.max(3,Math.floor((W-m.l-m.r)/80)));const gx=el('g',{class:'tick'},svg);const st=tt.length>1?tt[1]-tt[0]:1,dg=st>=1?0:Math.min(4,Math.ceil(-Math.log10(st)));
+  for(const t of tt){el('line',{x1:xs(t),x2:xs(t),y1:top,y2:base,stroke:css('--grid')},gx);txt(gx,xs(t),base+16,(t>0?'+':t<0?'−':'')+Math.abs(t).toFixed(dg),{'text-anchor':'middle'});}
+  const cid='dzc'+Math.random().toString(36).slice(2,7), cp=el('clipPath',{id:cid},el('defs',{},svg)); el('rect',{x:m.l-2,y:top-8,width:W-m.l-m.r+4,height:base-top+9},cp);
+  const g=el('g',{'clip-path':`url(#${cid})`},svg);
+  const seg=(a,b,n)=>{let s='';for(let j=0;j<=n;j++){const v=a+(b-a)*j/n;s+=(j?'L':'M')+xs(v).toFixed(1)+','+yv(v).toFixed(1);}return s;};
+  const clo=Math.max(lo,T.lo), chi=Math.min(hi,T.hi);
+  if(chi>clo) el('path',{d:seg(clo,chi,80)+`L${xs(chi).toFixed(1)},${base}L${xs(clo).toFixed(1)},${base}Z`,fill:css('--s1'),'fill-opacity':.2},g);
+  if(Zt){ const a=T.d>0?lo:0, b=T.d>0?0:hi; if(b>a) el('path',{d:seg(a,b,120)+`L${xs(b).toFixed(1)},${base}L${xs(a).toFixed(1)},${base}Z`,fill:css('--s2'),'fill-opacity':.45*Math.min(1,p1*2)},g); }
+  el('path',{d:seg(lo,hi,300),fill:'none',stroke:css('--s1'),'stroke-width':2},g);
+  if(!Zt){ el('line',{x1:xs(T.lo),x2:xs(T.hi),y1:base-8,y2:base-8,stroke:css('--s1-ink'),'stroke-width':2.5},g);
+    for(const v of [T.lo,T.hi])el('line',{x1:xs(v),x2:xs(v),y1:base-13,y2:base-3,stroke:css('--s1-ink'),'stroke-width':2},g); }
+  if(0>=lo&&0<=hi) el('line',{x1:xs(0),x2:xs(0),y1:top-6,y2:base,stroke:css('--ink'),'stroke-width':2},svg);
+  const out=T.lo>0||T.hi<0, zr=xs(0)>W/2;
+  if(0>=lo&&0<=hi) txt(svg,xs(0)+(zr?-6:6),top+2,'H₀: 0',{class:'mlab',fill:css('--ink'),'text-anchor':zr?'end':'start'});
+  if(!Zt) txt(svg,xs(T.d),top+2+(Math.abs(xs(T.d)-xs(0))<70?14:0),'diff '+(T.d>=0?'+':'−')+Math.abs(T.d).toFixed(1),{class:'mlab halo',fill:css('--s1-ink'),'text-anchor':'middle'});
+  baseLine(svg,W,H,m); txt(svg,W-m.r,H-2,axl,{class:'axlab','text-anchor':'end'});
+  if(!Zt) txt(svg,W<480?W-m.r:m.l,W<480?11:H-2,out?'0 outside the 95% CI':'0 inside the 95% CI',{class:'axlab',fill:out?css('--ink'):css('--muted'),'text-anchor':W<480?'end':'start'});
+  if(Zt){ const mult=1/topv, far=T.d>0?'start':'end';
+    if(mult>1.5) txt(svg,T.d>0?m.l+4:W-m.r-4,top+14,'vertical scale × '+dzBig(mult),{class:'mlab halo',fill:css('--ink'),'text-anchor':far});
+    if(p2>0.97){ const a=Math.min(1,(p2-0.97)/0.03), hy=yv(0), gx2=xs(0)+(T.d>0?-12:12), gg=el('g',{opacity:a.toFixed(2)},svg);
+      el('path',{d:`M${gx2},${base}L${gx2},${hy}M${gx2-5},${base}L${gx2+5},${base}M${gx2-5},${hy}L${gx2+5},${hy}`,stroke:css('--ink'),'stroke-width':2,fill:'none'},gg);
+      txt(gg,gx2,hy-8,'the gap',{class:'mlab halo',fill:css('--ink'),'text-anchor':'middle'}); } }
+}
+function dzUI(host){
+  let row=host._dzrow; if(!row){ row=document.createElement('div'); row.className='zoomrow'; row.innerHTML='<button type="button" class="linkish zoombtn"></button>'; const say=document.createElement('p'); say.className='zsay'; say.setAttribute('aria-live','polite'); host.after(row); row.after(say); host._dzrow=row; host._dzsay=say;
+    row.firstChild.addEventListener('click',()=>dzGo(host,host._dz.to?0:1));
+    if(!document.getElementById('dzcss')){const s=document.createElement('style');s.id='dzcss';s.textContent='.zoomrow{display:flex;justify-content:flex-end}.zoombtn{font-size:14px;font-weight:600;padding:6px 2px}.zoomrow[hidden]{display:none}.zsay{margin:4px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2)}.zsay:empty{display:none}';document.head.appendChild(s);} }
+  const Z=host._dz, Zt=dzTarget(Z.T), b=row.firstChild; row.hidden=!Zt; b.textContent=Z.to?'Zoom back out':'Zoom in to see the gap'; b.setAttribute('aria-pressed',Z.to?'true':'false');
+  if(!Zt||Z.z<1){ host._dzsay.innerHTML=''; return; }
+  host._dzsay.innerHTML=`The vertical scale is now stretched about <b>${dzBig(1/Zt.top)} times</b>${1/Zt.top>=1e21?` (a 1 followed by ${Math.floor(Math.log10(1/Zt.top))} zeros)`:''}. At 0, the curve still sits just above the axis, so it never quite touches it. The shaded sliver past 0 holds about ${dzTinyLog(dzHalfP(Z.T))} of the area. The curve is symmetric, so that sliver matches the chance of a difference this large in one direction if H₀ were true, which is half of the p-value.`;
+}
+function dzGo(host,to){ const Z=host._dz; Z.to=to; cancelAnimationFrame(Z.raf); dzUI(host);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ Z.z=to; dzDraw(host); dzUI(host); return; }
+  const z0=Z.z, D=2600*Math.abs(to-z0), t0=performance.now();
+  const stp=now=>{ const u=D?Math.min(1,(now-t0)/D):1; Z.z=z0+(to-z0)*u; dzDraw(host); if(u<1) Z.raf=requestAnimationFrame(stp); else dzUI(host); };
+  Z.raf=requestAnimationFrame(stp); }
 function seg(id,opts,cur,on){const box=$(id);box.innerHTML='';opts.forEach(([v,l])=>{const i=document.createElement('input');i.type='radio';i.name=id.slice(1);i.id=id.slice(1)+'_'+v;i.value=v;if(String(v)===String(cur))i.checked=true;const lb=document.createElement('label');lb.htmlFor=i.id;lb.textContent=l;box.append(i,lb);i.addEventListener('change',()=>on(v));});}
 function selb(id,opts,cur,on){const s=$(id);s.innerHTML='';opts.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(String(v)===String(cur))o.selected=true;s.appendChild(o);});s.addEventListener('change',()=>on(s.value));}
 const term=(t,cls,n)=>`<div class="term"><span class="t ${cls}">${t}</span>${n?`<span class="n">${n}</span>`:''}</div>`,op=s=>`<div class="term"><span class="t op">${s}</span></div>`;
@@ -1589,23 +1649,7 @@ function renderTest(){
       txt(svg,xs(mu)+(right?6:-6),top+12,f2(mu),{class:'mlab',fill:ink,'text-anchor':right?'start':'end'});});
     baseLine(svg,W,H,m); txt(svg,W-m.r,H-2,'mean services →',{class:'axlab','text-anchor':'end'});
   }
-  { const {svg,W,H}=frame($('#c5b'),0.3,160,210,'Sampling distribution of the difference'), m={l:14,r:14,t:22,b:30};
-    const lo=Math.min(-0.2,T.d-4.2*T.se), hi=Math.max(0.2,T.d+4.2*T.se);
-    const xs=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r), base=H-m.b, top=m.t;
-    const tt=ticks(lo,hi,Math.max(3,Math.floor((W-m.l-m.r)/80)));const gx=el('g',{class:'tick'},svg);for(const t of tt){el('line',{x1:xs(t),x2:xs(t),y1:top,y2:base,stroke:css('--grid')},gx);txt(gx,xs(t),base+16,(t>0?'+':t<0?'−':'')+Math.abs(t),{'text-anchor':'middle'});}
-    const pk=npdf(T.d,T.d,T.se), yv=v=>base-(npdf(v,T.d,T.se)/pk)*(base-top-6);
-    let d='',sh='';for(let j=0;j<=160;j++){const v=lo+(hi-lo)*j/160;d+=(j?'L':'M')+xs(v).toFixed(1)+','+yv(v).toFixed(1);}
-    for(let j=0;j<=60;j++){const v=T.lo+(T.hi-T.lo)*j/60;sh+=(j?'L':'M')+xs(v).toFixed(1)+','+yv(v).toFixed(1);}sh+=`L${xs(T.hi).toFixed(1)},${base}L${xs(T.lo).toFixed(1)},${base}Z`;
-    el('path',{d:sh,fill:css('--s1'),'fill-opacity':.2},svg);el('path',{d,fill:'none',stroke:css('--s1'),'stroke-width':2},svg);
-    el('line',{x1:xs(T.lo),x2:xs(T.hi),y1:base-8,y2:base-8,stroke:css('--s1-ink'),'stroke-width':2.5},svg);
-    for(const v of [T.lo,T.hi])el('line',{x1:xs(v),x2:xs(v),y1:base-13,y2:base-3,stroke:css('--s1-ink'),'stroke-width':2},svg);
-    el('line',{x1:xs(0),x2:xs(0),y1:top-6,y2:base,stroke:css('--ink'),'stroke-width':2},svg);
-    const out=T.lo>0||T.hi<0, zr=xs(0)>W/2;
-    txt(svg,xs(0)+(zr?-6:6),top+2,'H₀: 0',{class:'mlab',fill:css('--ink'),'text-anchor':zr?'end':'start'});
-    txt(svg,xs(T.d),top+2+(Math.abs(xs(T.d)-xs(0))<70?14:0),'diff '+(T.d>=0?'+':'−')+Math.abs(T.d).toFixed(2),{class:'mlab halo',fill:css('--s1-ink'),'text-anchor':'middle'});
-    baseLine(svg,W,H,m); txt(svg,W-m.r,H-2,'mean 1 − mean 2, scale points →',{class:'axlab','text-anchor':'end'});
-    txt(svg,W<480?W-m.r:m.l,W<480?11:H-2,out?'0 outside the 95% CI':'0 inside the 95% CI',{class:'axlab',fill:out?css('--ink'):css('--muted'),'text-anchor':W<480?'end':'start'});
-  }
+  diffChart($('#c5b'),T,'mean 1 − mean 2, scale points →');
   $('#lab5').innerHTML=`<dt>Mean 1 for ${lc1(q.g1[0])} (n = ${com(T.n1)})</dt><dd>${T.m1.toFixed(3)}</dd><dt>Mean 2 for ${lc1(q.g2[0])} (n = ${com(T.n2)})</dt><dd>${T.m2.toFixed(3)}</dd><dt>Difference (1 − 2)</dt><dd>${sgnf(T.d,3)}</dd><dt>Sig. (2-tailed)</dt><dd>${sig(T.p)}</dd><dt>95% CI for the difference</dt><dd>${sgnf(T.lo,3)} to ${sgnf(T.hi,3)}</dd>`;
   const rej=T.p<0.05;
   $('#dec5').innerHTML=`<span class="verdict2 ${rej?'rej':'ftr'}">${rej?'Reject H₀':'Fail to reject H₀'}</span><span class="say">${rej?'Sig. is below .05, and the CI excludes 0.':'Sig. is .05 or above, and the CI includes 0.'}</span>`;
