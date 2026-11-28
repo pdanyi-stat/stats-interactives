@@ -911,7 +911,94 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 .tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
 .tapnote a{color:var(--mci);font-weight:600}
 </style>
-<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
+<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style><style id="tryit">
+/* Try it puzzles (shared). Injected by scripts/tryit.py on pages that hold a details.tryit box. */
+:root{--pz-a:#B07A12;--pz-abg:#FFF1D6;--pz-aink:#6B4A00;--pz-tag:#f5c400;--pz-ok:#2c6b1f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}}
+:root[data-theme="dark"]{--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}
+details.tryit{border:2px solid var(--pz-a);background:var(--pz-abg);border-radius:10px;margin:18px 0 6px;box-shadow:0 0 0 4px color-mix(in srgb,var(--pz-a) 18%,transparent)}
+details.tryit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;font-weight:600}
+details.tryit>summary::-webkit-details-marker{display:none}
+details.tryit>summary::after{content:'+';margin-left:auto;font:600 20px/1 var(--font-mono,monospace);color:var(--pz-aink)}
+details.tryit[open]>summary::after{content:'−'}
+details.tryit .tag{background:var(--pz-tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+details.tryit .tt{font-size:17px;color:var(--ink)}
+details.tryit .hint{font-size:13px;font-weight:400;color:var(--ink-2)}
+.pzin{padding:0 16px 16px}
+.pzgoal{margin:0 0 8px;color:var(--ink);font-size:15px}
+.pzchart{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pzchart svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzchart circle.cty{cursor:grab}
+.pzchart circle.cty:focus{outline:none;stroke:var(--ink);stroke-width:3}
+.pzkey{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.pzkey i{display:inline-block;vertical-align:middle;margin-right:6px}
+.pzkey i.dot{width:11px;height:11px;border-radius:50%}
+.pzkey i.dot.gv{background:var(--s1)}.pzkey i.dot.sn{background:var(--s2)}
+.pzkey i.ln{width:22px;height:0}
+.pzkey i.ln.pool{border-top:2px dashed var(--muted)}.pzkey i.ln.ctl{border-top:3px solid var(--ink-2)}
+.pzstats{display:flex;flex-wrap:wrap;gap:8px}
+.pzstat{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.pzstat .lab{font-size:13px;color:var(--ink-2)}
+.pzstat .num{font:600 22px/1.3 var(--font-mono,monospace);color:var(--ink)}
+.pzstat .goal{font-size:13px;color:var(--ink-2)}
+.pzstat .goal.met{color:var(--pz-ok);font-weight:600}
+.pzinfo{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.pzmsg{margin:4px 0 0;font-size:14.5px;min-height:22px;color:var(--ink)}
+.pzbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pzex{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--pz-a) 45%,transparent)}
+.pzex h4{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.pzex p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink);max-width:75ch}
+.pzex p.st{font-size:13px;font-weight:600;color:var(--pz-aink);margin:0 0 2px}
+.pzlock{color:var(--ink-2)!important}
+.pzbody{opacity:.28;pointer-events:none;transition:opacity .5s}
+.pzbody.open{opacity:1;pointer-events:auto}
+.pzfoot{font-size:13px!important;color:var(--ink-2)!important}
+@media (prefers-reduced-motion:reduce){.pzbody{transition:none}}
+details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var(--ink));text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+.pzset{margin:0 0 6px;color:var(--ink-2);font-size:14.5px;line-height:1.55}
+.pzchart text{font-family:inherit}
+.pzkey i.ovsw{width:14px;height:11px;background:color-mix(in srgb,var(--pz-a) 35%,transparent);border:1px solid var(--pz-a)}
+.ovzsay{font-size:13.5px!important;color:var(--ink-2)!important}
+.lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.lmh{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:0 2px}
+.lmcell{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.lmcell.mode{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.lmlab{font-size:13px;color:var(--ink-2);margin-bottom:6px;min-height:18px}
+.lmlab b{color:var(--ink)}
+.lmtag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--s1-ink,var(--ink))}
+.lmtag.tie{color:var(--ink-2)}
+.lmsqs{display:grid;grid-template-columns:repeat(5,minmax(0,28px));gap:4px;min-height:60px;align-content:start}
+.lmsq{width:100%;aspect-ratio:1;min-width:24px;padding:0;border-radius:5px;border:1.5px solid;font:700 12px/1 var(--font-mono,monospace);color:#0b0d10;cursor:pointer;display:grid;place-items:center;transition:opacity .3s}
+.lmsq.d{background:var(--dem);border-color:var(--dem-ink,var(--dem))}
+.lmsq.r{background:var(--rep);border-color:var(--rep-ink,var(--rep))}
+.lmsq.wrong{opacity:.3}
+.lmsq:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.pzkey i.lmsq{display:inline-grid;width:16px;height:16px;min-width:0;font-size:10px;aspect-ratio:auto;cursor:default}
+.pzkey i.lmmode{width:16px;height:12px;border:2px solid var(--s1-ink,var(--ink));border-radius:3px;background:color-mix(in srgb,var(--s1) 9%,transparent)}
+@media (prefers-reduced-motion:reduce){.lmsq{transition:none!important}}
+.pzkey i.ln.r2l{border-top:2.5px solid var(--s2)}
+.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:8px;margin:6px 0 10px}
+.cscard{display:grid;gap:2px;text-align:left;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .35s,box-shadow .35s,background-color .35s}
+.cscard.on{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1.5px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.cscard:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.csn{font-weight:700;font-size:15px;margin-bottom:2px}
+@media (max-width:480px){.cscard{padding:7px 8px}.csr{font-size:12px}.csr>span{min-width:0;width:100%}}
+.csr{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;font-size:12.5px;color:var(--ink-2);border-radius:4px;padding:0 3px;margin:0 -3px}
+.csr>span{min-width:78px}.csr b{color:var(--ink);font-weight:600}.csr i{font-style:normal;font-size:11.5px;color:var(--muted)}
+.csr.cst{background:color-mix(in srgb,var(--pz-a) 18%,transparent)}
+.csr.bad{background:color-mix(in srgb,var(--bad,#B3261E) 14%,transparent)}
+.csr.bad b{color:var(--badink,var(--ink))}
+.csr.csturn{display:none}.csgrid.turn .csr.csturn{display:flex}
+.pzstat .num.cssm{font-size:17px;line-height:1.4;white-space:normal}
+@media (prefers-reduced-motion:reduce){.cscard{transition:none}}
+.pzkey i.sdsw{width:16px;height:11px;background:color-mix(in srgb,var(--s1) 22%,transparent)}
+.pzkey i.skbar{width:12px;height:12px;background:color-mix(in srgb,var(--pop,var(--muted)) 55%,transparent)}
+.pzkey i.ln.skmd{border-top:2.5px dashed var(--s1-line,var(--ink))}
+.pzkey i.ln.dmref{border-top:2px dashed var(--ink)}
+.pzkey i.dmbar{width:10px;height:14px;background:var(--s2);opacity:.75}
+.pzkey i.dot.dmdot{background:var(--ink)}
+</style>
+</head>
 <body>
 <nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="practice-direction.html" aria-label="Next: Which way does it run?">Next →</a></nav>
 <header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Module 11 of 11</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion"><span>4</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²"><span>5</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means"><span>8</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables" aria-current="page"><span>11 · Dummy variables</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-airports.html" style="--c:#183951;--k:#f8f5ec" title="Don&#x27;t Get Left Behind: Who Got America&#x27;s First Airports?"><span>P2</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P3</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P4</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P5</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P6</span></a><a class="tab" href="practice-news-deserts.html" style="--c:#a2472b;--k:#f8f5ec" title="Do news deserts vote less?"><span>P7</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P8</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data"><span>Viz</span></a></nav><div class="mtitle"><div><p class="kicker">● Module 11 · Regression</p><h1>Dummy <em>variables.</em></h1></div><p class="dek">Regression needs numbers, but region, party and gender are categories. A dummy variable turns a category into a 0/1 switch. Its coefficient is a difference between groups, and in a regression with other IVs it shifts the line up or down.</p></div><div class="mhd sh"><span>In this module · tap a book to open it</span><span class="rt"><span class="cnt">8 sections</span><span class="swipehint" aria-hidden="true">Swipe →</span></span></div><nav class="shelf2" aria-label="Sections on this page"><div class="gbox" style="min-width:92px"><p class="gl">Already met</p><div class="gbooks"><a class="bk cloth dout" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:96%;--w:80px;--fs:14px" href="#met" aria-label="Part 1: Dummies you have met"><span class="bands t"></span><span class="plate">1</span><span class="ti">Dummies you have met<br><small>a look back</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:284px"><p class="gl">One dummy</p><div class="gbooks"><a class="bk face" style="--c:#534584;--k:#f8f5ec;--ink:#f8f5ec;--h:100%;flex-basis:196px" href="#sec-a-dummy-is-a-0-1-switch" aria-label="Part 2: One dummy"><span class="fn">PART 2</span><span class="ft">One dummy</span><span class="fs2">0/1 switch</span><svg class="cov" viewBox="0 0 170 124" aria-hidden="true"><g fill="var(--ink)" opacity=".88"><rect x="30" y="38" width="110" height="46" rx="23" fill="none" stroke="var(--ink)" stroke-width="1.6"/><circle cx="117.0" cy="61.0" r="17"/><circle cx="46.0" cy="61.0" r="2.2" opacity=".45"/><circle cx="55.0" cy="61.0" r="2.2" opacity=".45"/><circle cx="64.0" cy="61.0" r="2.2" opacity=".45"/><circle cx="73.0" cy="61.0" r="2.2" opacity=".45"/><circle cx="82.0" cy="61.0" r="2.2" opacity=".45"/><circle cx="91.0" cy="61.0" r="2.2" opacity=".45"/><text x="30" y="108" text-anchor="middle" font-family="RvMono,ui-monospace,monospace" font-size="13" letter-spacing=".06em" fill="var(--ink)">0</text><text x="140" y="108" text-anchor="middle" font-family="RvMono,ui-monospace,monospace" font-size="13" letter-spacing=".06em" fill="var(--ink)">1</text><text x="85" y="24" text-anchor="middle" font-family="RvMono,ui-monospace,monospace" font-size="9.5" letter-spacing=".06em" fill="var(--ink)" opacity=".8">OFF → ON</text></g></svg></a><a class="bk cloth" style="--c:#808f3e;--k:#1b1813;--band:#4f5926;--h:93%;--w:80px;--fs:16px" href="#sec-a-dummy-shifts-the-line" aria-label="Part 3: Dummy plus an IV"><span class="bands t"></span><span class="plate">3</span><span class="ti">Dummy plus an IV<br><small>parallel lines</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:100%;--w:76px;--fs:14px" href="#firstlady" aria-label="Part Ex: First Lady and gender"><span class="bands t"></span><span class="plate">Ex</span><span class="ti">First Lady and gender<br><small>worked example</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:123px"><p class="gl">Several dummies</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:100%;--w:84px;--fs:13px" href="#sec-more-than-two-categories-nee" aria-label="Part 4: More than two categories"><span class="bands t"></span><span class="plate">4</span><span class="ti">More than two categories</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:138px"><p class="gl">Practice</p><div class="gbooks"><a class="bk cloth" style="--c:#8a9a43;--k:#1b1813;--band:#565f2a;--h:96%;--w:84px;--fs:17px" href="#sec-try-this" aria-label="Try this"><span class="bands t"></span><span class="plate">Try</span><span class="ti">Try this</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth lean-l" style="--c:#7e8d3d;--k:#1b1813;--band:#4e5726;--h:96%;--w:80px;--fs:17px;--rot:-4.8deg;margin-left:calc(var(--bh) * 0.0800 - 2px);--pfs:8.5px" href="#sec-check-yourself" aria-label="Check yourself"><span class="bands t"></span><span class="plate">Check</span><span class="ti">Check yourself</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:61px"><p class="gl">Wrap-up</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:96%;--w:72px;--fs:17px" href="#wwl" aria-label="Part ✓: What we learned"><span class="bands t"></span><span class="plate">✓</span><span class="ti">What we learned<br><small>the main ideas</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div></nav><div class="board" aria-hidden="true"></div></div></header>
@@ -1065,7 +1152,39 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 
 
 
-  <p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="8-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="8-difference-in-means.html#errors">Type I and II errors →</a></p>
+  <!-- pz:m11 -->
+<details class="tryit" id="pzDum">
+  <summary><span class="tag">Try it</span><span class="tt">Set the coefficients</span><span class="hint">Optional puzzle</span></summary>
+  <div class="pzin">
+    <p class="pzset">We start from the 2026 House races in Part 4, with each region's average Democratic share of the two-party vote and the Northeast as the reference. Right now the Midwest coefficient is −8.2 and the West coefficient is −0.7. Drag a region's dot up or down to change its average.</p>
+    <p class="pzgoal">Move the region averages so the Midwest coefficient is exactly 0 and the West coefficient is exactly +5.</p>
+    <div class="pzchart" id="dmChart"></div>
+    <div class="pzkey"><span><i class="ln dmref"></i>Reference level (the constant)</span><span><i class="dmbar"></i>Coefficient, the gap from the reference</span><span><i class="dot dmdot"></i>Region average</span></div>
+    <div class="pzstats">
+      <div class="pzstat"><div class="lab">Midwest coefficient</div><div class="num" id="dmA"></div><div class="goal" id="dmGa"></div></div>
+      <div class="pzstat"><div class="lab">West coefficient</div><div class="num" id="dmB"></div><div class="goal" id="dmGb"></div></div>
+    </div>
+    <p class="pzinfo" id="dmInfo" aria-live="polite">Tap near a region's dot and drag it up or down. The gaps move in steps of half a point.</p>
+    <p class="pzmsg" id="dmMsg" aria-live="polite"></p>
+    <div class="pzbtns"><button type="button" id="dmShow">Show me</button><button type="button" id="dmReset">Start over</button></div>
+    <div class="pzex">
+      <h4>What just happened</h4>
+      <p class="pzlock" id="dmLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+      <div class="pzbody" id="dmBody" aria-hidden="true">
+        <p class="st">1 · A coefficient is a gap, not a level</p>
+        <p>With the Northeast as the reference, the constant is the Northeast's average, which is <b id="dmR"></b>% in your version, and each coefficient is how far a region's average sits above or below it. Your Midwest averages <b id="dmM"></b>% and your West averages <b id="dmW"></b>%, so their coefficients are 0 and +5 even though neither region's own average is anywhere near 0 or 5.</p>
+        <p><button type="button" class="linkish" id="dmLv">Label each region's own average</button></p>
+        <p class="st">2 · Two ways to reach the goal</p>
+        <p>Moving the Midwest or the West changes only that region's coefficient. Moving the Northeast moves the baseline itself, so it changes every coefficient at once while the other regions' averages stay put. <span id="dmHow"></span></p>
+        <p class="st">3 · Back to the lesson</p>
+        <p>When you read a dummy coefficient in output, say what it is a gap from. A Midwest coefficient of 0 means Midwestern races average the same Democratic share as Northeastern ones, and it doesn't mean Democrats drew no votes in the Midwest.</p>
+        <p class="pzfoot">The starting averages come from the 417 House races in Part 4's default data, which use AP results that are unofficial as of Nov. 25, 2026. An average you move becomes your own version and is no longer real data.</p>
+      </div>
+    </div>
+  </div>
+</details>
+<!-- /pz:m11 -->
+<p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="8-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="8-difference-in-means.html#errors">Type I and II errors →</a></p>
 
   <div class="learn">
     <section id="sec-try-this">
@@ -1716,5 +1835,91 @@ function fix(){
 let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
 if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
-})();</script></body>
+})();</script><script id="pzlib">
+window.PZ=window.PZ||(()=>{
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mk(t,a,par,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;if(par)par.appendChild(e);return e;}
+/* Eased move, only on a press. Reduced motion jumps straight to the end. */
+function tween(ms,f,done){if(reduce()){f(1);if(done)done();return;}const t0=performance.now();(function s(t){const u=Math.min(1,(t-t0)/ms),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;f(e);if(u<1)requestAnimationFrame(s);else if(done)done();})(t0);}
+/* Build the chart the first time the box opens, and again when the width or theme changes. */
+function lazy(box,build){let built=false,w=innerWidth;box.addEventListener('toggle',()=>{if(box.open&&!built){built=true;build();}});
+  let rt=0;addEventListener('resize',()=>{if(!built||innerWidth===w)return;w=innerWidth;clearTimeout(rt);rt=setTimeout(build,150);});
+  const rb=()=>{if(built)build();};const mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',rb);
+  new MutationObserver(rb).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}
+/* The explanation stays faded until the goal is met or Show me is pressed. */
+function opener(lock,body){let o=false;const f=()=>{if(o)return;o=true;lock.style.display='none';body.classList.add('open');body.setAttribute('aria-hidden','false');};f.isOpen=()=>o;return f;}
+function goal(el,ok,label){el.textContent='Goal: '+label+'. '+(ok?'Met.':'Not yet.');el.classList.toggle('met',!!ok);}
+/* Pointer dragging: grab the nearest handle within 30 px, keep the grab offset. */
+function drag(svg,o){const R=o.radius||30;let cur=null,off=[0,0];
+  const pt=e=>{const r=svg.getBoundingClientRect(),k=(+svg.getAttribute('width'))/r.width;return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  svg.addEventListener('pointerdown',e=>{if(o.busy&&o.busy())return;const [a,b]=pt(e),H=o.handles();let best=-1,bd=R;H.forEach((h,i)=>{if(!h)return;const d=Math.hypot(h[0]-a,h[1]-b);if(d<bd){bd=d;best=i;}});
+    if(best<0)return;cur=best;off=[H[best][0]-a,H[best][1]-b];svg.setPointerCapture(e.pointerId);if(o.start)o.start(best);e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(cur===null)return;const [a,b]=pt(e);o.move(cur,a+off[0],b+off[1]);});
+  const up=()=>{if(cur!==null&&o.end)o.end(cur);cur=null;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  return {active:()=>cur};}
+/* Student's t distribution */
+function lgam(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(const k of c)s+=k/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function bcf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;let h=d;for(let m=1;m<=200;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgam(a+b)-lgam(a)-lgam(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*bcf(a,b,x)/a:1-bt*bcf(b,a,1-x)/b;}
+function p2(t,df){return ibeta(df/(df+t*t),df/2,.5);}           /* two-sided p */
+function tcrit(df,conf){conf=conf||.95;let lo=0,hi=50;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(p2(m,df)>1-conf)lo=m;else hi=m;}return (lo+hi)/2;}
+function fp(p){return p<.001?'p < .001':'p = '+p.toFixed(3).replace(/^0/,'');}
+const sgn=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
+return {$,css,cl,reduce,mk,tween,lazy,opener,goal,drag,p2,tcrit,fp,sgn};
+})();
+</script>
+<!-- pz:m11js --><script id="pz-m11">
+(()=>{
+const box=document.getElementById('pzDum');if(!box||!window.PZ)return;
+const {$,css,cl,mk,tween,lazy,opener,goal,drag}=PZ;
+const R=['Northeast','Midwest','South','West'], M0=[62.34,54.17,52.38,61.62], LO=35, HI=85;
+let M=M0.slice(), movedRef=false, anim=false, keep=false, lvOn=false, G=null, cur=-1;
+const openEx=opener($('dmLock'),$('dmBody'));
+const co=(Q,k)=>(Q||M)[k]-(Q||M)[0], f1=v=>(Math.abs(v)<.05?'0.0':(v>0?'+':'−')+Math.abs(v).toFixed(1));
+function ev(Q){return {a:co(Q,1),b:co(Q,3),okA:Math.abs(co(Q,1))<.01,okB:Math.abs(co(Q,3)-5)<.01};}
+function build(){
+  const host=$('dmChart');host.innerHTML='';const W=Math.max(300,host.clientWidth||600),H=Math.round(Math.min(380,Math.max(290,W*.6))),m={l:40,r:12,t:28,b:46};
+  const cw=(W-m.l-m.r)/4, cx=k=>m.l+cw*(k+.5), sy=v=>H-m.b-(v-LO)/(HI-LO)*(H-m.t-m.b), iy=p=>LO+(H-m.b-p)/(H-m.t-m.b)*(HI-LO);
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'img','aria-label':'The chart shows the average Democratic share of the 2026 House vote in four Census regions, and the Northeast is the reference. Drag a region to move its average.'},host);
+  const gg=mk('g',{},svg),grid=css('--grid')||css('--line');
+  for(let v=40;v<=80;v+=10){mk('line',{x1:m.l,x2:W-m.r,y1:sy(v),y2:sy(v),stroke:grid},gg);mk('text',{x:m.l-7,y:sy(v)+4,'text-anchor':'end','font-size':12,fill:css('--ink-2')},gg,v);}
+  mk('text',{x:4,y:14,'font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,'↑ Democratic share, 2026 (%)');
+  R.forEach((r,k)=>{mk('text',{x:cx(k),y:H-24,'text-anchor':'middle','font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,r);if(!k)mk('text',{x:cx(k),y:H-8,'text-anchor':'middle','font-size':11.5,fill:css('--ink-2')},svg,'reference');});
+  const ref=mk('line',{x1:m.l,x2:W-m.r,stroke:css('--ink'),'stroke-width':2,'stroke-dasharray':'6 4'},svg);
+  const B=R.map((r,k)=>k?mk('rect',{x:cx(k)-cw*.18,width:cw*.36,fill:css('--s2'),'fill-opacity':.75},svg):null);
+  const T=R.map((r,k)=>mk('text',{x:cx(k),'text-anchor':'middle','font-size':12.5,'font-weight':700,fill:css('--ink')},svg));
+  const Lv=R.map((r,k)=>mk('text',{x:k===3?cx(k)-15:cx(k)+15,'text-anchor':k===3?'end':'start','font-size':11.5,'font-weight':600,fill:css('--ink'),stroke:css('--surface'),'stroke-width':3,'paint-order':'stroke',opacity:lvOn?1:0},svg));
+  const C=R.map((r,k)=>{const c=mk('circle',{cx:cx(k),r:11,fill:css('--ink'),stroke:css('--surface'),'stroke-width':2,tabindex:0,role:'button','aria-label':r+' average. Use the up and down arrow keys to move it.'},svg);
+    c.addEventListener('keydown',e=>{const s={ArrowUp:.5,ArrowDown:-.5}[e.key];if(s==null||anim)return;e.preventDefault();set(k,M[k]+s);});c.addEventListener('focus',()=>info(k));return c;});
+  G={sy,iy,ref,B,T,Lv,C,cx,cw};
+  drag(svg,{busy:()=>anim,handles:()=>M.map((v,k)=>[cx(k),sy(v)]),start:k=>{cur=k;C[k].setAttribute('r',14);info(k);},move:(k,x,y)=>set(k,iy(y)),end:k=>{C[k].setAttribute('r',11);cur=-1;}});
+  draw();}
+/* Gaps from the reference move in half-point steps, so exact targets are reachable. The reference itself moves in half points. */
+function set(k,v){keep=false;v=cl(v,LO+1,HI-1);if(k===0){M[0]=Math.round(v*2)/2;movedRef=true;}else M[k]=M[0]+Math.round((v-M[0])*2)/2;draw();info(k);}
+function info(k){$('dmInfo').textContent=R[k]+(k?': average '+M[k].toFixed(1)+'%, coefficient '+f1(co(null,k))+'.':': average '+M[0].toFixed(1)+'%, which is the constant.');}
+function draw(){if(!G)return;const e=ev(),{sy,ref,B,T,Lv,C}=G,r=sy(M[0]);ref.setAttribute('y1',r);ref.setAttribute('y2',r);
+  M.forEach((v,k)=>{C[k].setAttribute('cy',sy(v));if(k){const y=sy(v);B[k].setAttribute('y',Math.min(y,r));B[k].setAttribute('height',Math.max(1,Math.abs(y-r)));}
+    const up=k===0||v>=M[0];T[k].setAttribute('y',up?sy(v)-18:sy(v)+28);T[k].textContent=k?f1(co(null,k)):'constant '+M[0].toFixed(1);Lv[k].setAttribute('y',sy(v)-14);Lv[k].textContent=k?v.toFixed(1)+'%':'';});
+  $('dmA').textContent=f1(e.a);$('dmB').textContent=f1(e.b);goal($('dmGa'),e.okA,'0');goal($('dmGb'),e.okB,'+5');
+  $('dmR').textContent=M[0].toFixed(1);$('dmM').textContent=M[1].toFixed(1);$('dmW').textContent=M[3].toFixed(1);
+  $('dmHow').textContent=movedRef?'Your version moved the Northeast, so the baseline changed as well.':'Your version left the Northeast where it was, so only the Midwest and the West moved.';
+  if(!anim&&!keep)$('dmMsg').textContent=e.okA&&e.okB?'Both goals are met, so read what just happened below.':'';
+  if(e.okA&&e.okB)openEx();}
+/* Move the three regions involved as little as possible in total. If the student never touched the reference, keep it fixed. */
+function near(){const T=M.slice();if(movedRef){const r=Math.round(((M[0]+M[1]+(M[3]-5))/3)*2)/2;T[0]=r;}T[1]=T[0];T[3]=T[0]+5;return ev(T).okA&&ev(T).okB?T:null;}
+function setLv(on){lvOn=on;if(G)G.Lv.forEach(t=>t.setAttribute('opacity',on?1:0));$('dmLv').textContent=on?'Hide the labels':'Label each region’s own average';}
+$('dmLv').addEventListener('click',()=>setLv(!lvOn));
+$('dmReset').addEventListener('click',()=>{if(anim)return;keep=false;M=M0.slice();movedRef=false;setLv(false);$('dmInfo').textContent='Tap near a region’s dot and drag it up or down. The gaps move in steps of half a point.';$('dmMsg').textContent='';draw();});
+$('dmShow').addEventListener('click',()=>{if(anim)return;const e=ev(),ms=$('dmMsg');
+  if(e.okA&&e.okB){ms.textContent='Your version already works, so nothing moves. Read what just happened below.';openEx();return;}
+  const T=near();if(!T)return;openEx();ms.textContent=movedRef?'One answer close to yours. It splits the change among the Northeast, the Midwest and the West so that none of them moves far.':'One answer close to yours. It keeps the Northeast where it is and moves only the Midwest and the West.';
+  const s=M.slice();anim=true;tween(900,t=>{M=s.map((v,k)=>v+(T[k]-v)*t);draw();},()=>{M=T.slice();anim=false;keep=true;draw();});});
+lazy(box,build);
+})();
+</script><!-- /pz:m11js -->
+</body>
 </html>
