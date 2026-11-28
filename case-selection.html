@@ -1547,12 +1547,12 @@ const SCEN = [
   {id:'hi', design:'MDS', oval:'70% or more', title:'Very high turnout', k:3, vars:SV, pool:CONTIG,
    q:'Why did some states reach very high turnout in 2024?',
    unit:'the state (the 48 contiguous states)', out:'t70', ctl:['reg','cold','sdrv'], tray:['close','win','gov'],
-   setup:'Thirteen of the contiguous states had 2024 turnout of 70% or more. Choose three of them that differ on region, cold Novembers and same-day registration. Three further attributes (a close race, who won the state, and a governor race on the ballot) stay hidden in a tray until you have chosen.',
+   setup:'Thirteen of the contiguous states had 2024 turnout of 70% or more. Choose three of them that differ on region, cold Novembers and same-day registration. The deck holds all 48 contiguous states, so read each card\'s turnout, or pick one high-turnout state first and then use the filters to narrow the deck. Three further attributes (a close race, who won the state, and a governor race on the ballot) stay hidden in a tray until you have chosen.',
    after:'Notice that the tray only holds the attributes we thought to put in it. An MDS design points to plausible explanations among the things we look at, so a careful researcher keeps looking for other attributes the cases might share.'},
   {id:'lo', design:'MDS', oval:'Under 60%', title:'Very low turnout', k:3, vars:SV, pool:CONTIG,
    q:'Why did some states have very low turnout in 2024?',
    unit:'the state (the 48 contiguous states)', out:'t60', ctl:['reg','sdrv','big'], tray:['close','win','gov'],
-   setup:'Ten of the contiguous states had 2024 turnout under 60%, and they range from Oklahoma at 53.3% to New Mexico at 59.6%. Choose three of them that differ on region, same-day registration and the number of cities of 250,000 or more. A close race, who won the state and a governor race on the ballot stay hidden in the tray until you have chosen.',
+   setup:'Ten of the contiguous states had 2024 turnout under 60%, and they range from Oklahoma at 53.3% to New Mexico at 59.6%. Choose three of them that differ on region, same-day registration and the number of cities of 250,000 or more. The deck holds all 48 contiguous states, so read each card\'s turnout, or pick one low-turnout state first and then use the filters to narrow the deck. A close race, who won the state and a governor race on the ballot stay hidden in the tray until you have chosen.',
    after:'Notice that every low-turnout state is also warm in November, which is why a cold November could not serve here as a variable that differs. A variable that never varies among the cases we can choose cannot be ruled out by this design, and an honest write-up would say so.'},
   {id:'med', design:'MSS', title:'Citizen initiatives and Medicaid expansion', k:3, vars:SV, pool:STPOOL,
    q:'Does the citizen initiative help explain which states expanded Medicaid?',
@@ -1761,7 +1761,7 @@ function renderReadout(root, s, p, ev) {
   const nm = i => p[i].name, val = (i, k) => fmt(s, k, p[i].v[k]);
   let h = '';
   if (p.length < s.k) {
-    h = `<p>Choose ${NUMW[s.k - p.length]} more ${s.k - p.length === 1 ? 'case' : 'cases'} by tapping cards in the deck.${p.length >= 2 ? ' The strip and the board already show how the cases you have chosen compare.' : ''}</p>`;
+    h = `<p>Choose ${NUMW[s.k - p.length]}${p.length ? ' more' : ''} ${s.k - p.length === 1 ? 'case' : 'cases'} by tapping cards in the deck.${p.length >= 2 ? ' The strip and the board already show how the cases you have chosen compare.' : ''}</p>`;
     el.className = 'cs-call wait'; el.innerHTML = h; return;
   }
   if (!mds) {
@@ -2198,7 +2198,7 @@ function diyBuilder() {
     const el = q('#dyK'), wait = q('#dyW');
     const miss = [];
     if (!D.design) { el.hidden = true; wait.innerHTML = ''; return; }
-    D.vars.forEach(v => { if (!v.name.trim()) miss.push(`name the ${roleOf(v.role)} that is still blank`); else if (v.vals.length < 2) miss.push(`give ${v.name.trim()} at least two values`); });
+    D.vars.forEach(v => { if (!v.name.trim()) miss.push(`name the ${v.role === 'dif' ? '“should differ” attribute' : roleOf(v.role)} that is still blank`); else if (v.vals.length < 2) miss.push(`give ${v.name.trim()} at least two values`); });
     if (D.cases.length < 2) miss.push(`add ${D.cases.length ? 'one more case' : 'at least two cases'}`);
     D.cases.forEach((c, i) => { const nm = c.name.trim() || 'Case ' + (i + 1); if (!c.name.trim()) miss.push(`name Case ${i + 1}`); const un = D.vars.filter(v => v.name.trim() && !c.v[v.id]).map(vname); if (un.length) miss.push(`choose ${nm}'s value on ${listAnd(un)}`); });
     if (D.design === 'MSS' && (!D.ex.tv || !D.ex.ov)) miss.push('finish the sentence on your expected direction in step 4');
