@@ -1181,39 +1181,6 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     <pre class="stata" id="lstata"></pre>
   </section>
 
-<!-- pz:m5 -->
-  <details class="tryit" id="pzLam">
-    <summary><span class="tag">Try it</span><span class="tt">Make lambda zero</span><span class="hint">Optional puzzle</span></summary>
-    <div class="pzin">
-      <p class="pzset">We start from the 20 voters the example above opens with. Seven of the ten city people are Democrats, and three of the ten country people are, so λ = .40. Tap a voter to move them to the other party in their group.</p>
-      <p class="pzgoal">Move voters so lambda is 0 but the share of Democrats among city people and among country people still differs by at least 15 points.</p>
-      <div class="lmgrid" id="lmGrid"></div>
-      <div class="pzkey"><span><i class="lmsq d">D</i>Democrat</span><span><i class="lmsq r">R</i>Republican</span><span><i class="lmmode"></i>The group's most common party (its mode)</span></div>
-      <div class="pzstats">
-        <div class="pzstat"><div class="lab">Lambda</div><div class="num" id="lmL"></div><div class="goal" id="lmGa"></div></div>
-        <div class="pzstat"><div class="lab">Gap in % Democrat, city minus country</div><div class="num" id="lmG"></div><div class="goal" id="lmGb"></div></div>
-      </div>
-      <p class="pzinfo" id="lmInfo" aria-live="polite"></p>
-      <p class="pzmsg" id="lmMsg" aria-live="polite"></p>
-      <div class="pzbtns"><button type="button" id="lmShow">Show me</button><button type="button" id="lmReset">Start over</button></div>
-      <div class="pzex">
-        <h4>What just happened</h4>
-        <p class="pzlock" id="lmLock">Solve the puzzle, or press Show me, to open the explanation.</p>
-        <div class="pzbody" id="lmBody" aria-hidden="true">
-          <p class="st">1 · Lambda only counts guesses that change</p>
-          <p>Without knowing the group, we guess the most common party for all 20 voters, which in your version is <b id="lmAll"></b>. Knowing the group, we guess each group's most common party, and in your version <span id="lmBoth"></span> Since knowing the group changes no guess, it saves no errors, and λ = 0.</p>
-          <p><button type="button" class="linkish" id="lmWrong">Fade the wrong guesses</button></p>
-          <p class="st">2 · The groups still differ</p>
-          <p>City people in your version are <b id="lmPc"></b> Democrats and country people are <b id="lmPr"></b>, which is a gap of <b id="lmPg"></b> points. The two groups lean differently, but not far enough to change either group's most common party, so the gap never reaches lambda.</p>
-          <p class="st">3 · Back to the lesson</p>
-          <p>A lambda of 0 means that knowing X never changes our best guess about Y, and it doesn't mean that X and Y are unrelated. It happens most often when one category of Y is the most common in every group, so when you see λ = 0, read the column percentages before you conclude that X doesn't matter.</p>
-          <p class="pzfoot">The starting table is the set of 20 voters the example above opens with, Democratic and Republican identifiers from the 2024 American National Election Studies. A voter you move becomes your own version and is no longer real data.</p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-<!-- /pz:m5 -->
   <!-- ================= GAMMA ================= -->
   <section class="part" id="gamma" aria-labelledby="gh">
     <p class="kick">Part 2 · Gamma (ordinal)</p>
@@ -1365,6 +1332,39 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
   <div class="learn">
     <section id="sec-try-this">
       <h2>Try this</h2>
+<!-- pz:m5 -->
+  <details class="tryit" id="pzLam">
+    <summary><span class="tag">Try it</span><span class="tt">Make lambda zero</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">We start from the 20 voters the example above opens with. Seven of the ten city people are Democrats, and three of the ten country people are, so λ = .40. Tap a voter to move them to the other party in their group.</p>
+      <p class="pzgoal">Move voters so lambda is 0 but the share of Democrats among city people and among country people still differs by at least 15 points.</p>
+      <div class="lmgrid" id="lmGrid"></div>
+      <div class="pzkey"><span><i class="lmsq d">D</i>Democrat</span><span><i class="lmsq r">R</i>Republican</span><span><i class="lmmode"></i>The group's most common party (its mode)</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Lambda</div><div class="num" id="lmL"></div><div class="goal" id="lmGa"></div></div>
+        <div class="pzstat"><div class="lab">Gap in % Democrat, city minus country</div><div class="num" id="lmG"></div><div class="goal" id="lmGb"></div></div>
+      </div>
+      <p class="pzinfo" id="lmInfo" aria-live="polite"></p>
+      <p class="pzmsg" id="lmMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="lmShow">Show me</button><button type="button" id="lmReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="lmLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="lmBody" aria-hidden="true">
+          <p class="st">1 · Lambda only counts guesses that change</p>
+          <p>Without knowing the group, we guess the most common party for all 20 voters, which in your version is <b id="lmAll"></b>. Knowing the group, we guess each group's most common party, and in your version <span id="lmBoth"></span> Since knowing the group changes no guess, it saves no errors, and λ = 0.</p>
+          <p><button type="button" class="linkish" id="lmWrong">Fade the wrong guesses</button></p>
+          <p class="st">2 · The groups still differ</p>
+          <p>City people in your version are <b id="lmPc"></b> Democrats and country people are <b id="lmPr"></b>, which is a gap of <b id="lmPg"></b> points. The two groups lean differently, but not far enough to change either group's most common party, so the gap never reaches lambda.</p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>A lambda of 0 means that knowing X never changes our best guess about Y, and it doesn't mean that X and Y are unrelated. It happens most often when one category of Y is the most common in every group, so when you see λ = 0, read the column percentages before you conclude that X doesn't matter.</p>
+          <p class="pzfoot">The starting table is the set of 20 voters the example above opens with, Democratic and Republican identifiers from the 2024 American National Election Studies. A voter you move becomes your own version and is no longer real data.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+<!-- /pz:m5 -->
       <ol>
         <li>Open <b>2024 presidential vote by gender</b>. Women and men voted differently, since 60% of the women and 51% of the men in this table chose Harris, yet λ = 0. Harris is the most common answer in both columns, so knowing gender never changes your guess. Click <b>Edit the counts</b> and move about 15 men from Harris to Trump. The moment Trump becomes the men's mode, λ moves off zero.</li>
         <li>Compare <b>2024 presidential vote by religious tradition</b> with <b>2024 presidential vote by party ID</b>. Which X would you rather know?</li>

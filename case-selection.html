@@ -1183,39 +1183,7 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     <div class="cs-call"><p>All four controls are green because the two countries share them, so their arrows are cut. Switzerland has robust direct-democracy opportunities and significantly intense insider lobbying, while Germany has fewer opportunities and moderate insider lobbying at best. Direct democracy is the only difference left in the design, which makes it the leading explanation for the difference in lobbying, and tracing would then look for evidence of how referendums push Swiss groups toward the inside track.</p></div>
   </section>
 
-  <!-- pz:cs -->
-  <details class="tryit" id="pzCs">
-    <summary><span class="tag">Try it</span><span class="tt">Pick three that differ on one thing</span><span class="hint">Optional puzzle</span></summary>
-    <div class="pzin">
-      <p class="pzset">These eight cards come from the same-day registration card in Part 2's deck, and their values are real figures for 2024. The test variable is same-day registration, and the controls are Census region, a cold November (a typical November below 35°F) and a close race (a 2024 presidential margin under 5 points). Turnout stays hidden until your design is sound.</p>
-      <p class="pzgoal">Pick three states that are the same on all three controls but don't all share the same answer on same-day registration.</p>
-      <div class="csgrid" id="csGrid"></div>
-      <div class="pzstats">
-        <div class="pzstat"><div class="lab">Controls that differ among your picks</div><div class="num cssm" id="csC"></div><div class="goal" id="csGa"></div></div>
-        <div class="pzstat"><div class="lab">Same-day registration in your picks</div><div class="num cssm" id="csT"></div><div class="goal" id="csGb"></div></div>
-      </div>
-      <p class="pzinfo" id="csInfo" aria-live="polite"></p>
-      <p class="pzmsg" id="csMsg" aria-live="polite"></p>
-      <div class="pzbtns"><button type="button" id="csShow">Show me</button><button type="button" id="csReset">Start over</button></div>
-      <div class="pzex">
-        <h4>What just happened</h4>
-        <p class="pzlock" id="csLock">Solve the puzzle, or press Show me, to open the explanation.</p>
-        <div class="pzbody" id="csBody" aria-hidden="true">
-          <p class="st">1 · The controls are cut</p>
-          <p>Your three states are all in the Midwest, none has a cold November and none had a close race, so none of those can explain a difference in turnout among them. Same-day registration is the one variable left that differs, which is exactly what a most similar systems design needs.</p>
-          <p><button type="button" class="linkish" id="csTurn">Show turnout on the cards</button></p>
-          <p class="st">2 · What the outcome says</p>
-          <p id="csOut"></p>
-          <p class="st">3 · Back to the lesson</p>
-          <p>The cards that tempt most are the ones where same-day registration stands out, such as Minnesota, Wisconsin and Michigan. All three have cold Novembers and had close races, so pairing one of them with Ohio or Missouri changes the weather and the race along with the registration rule, and any gap in turnout would then have three possible explanations instead of one. Pennsylvania brings a different region and a close race along with its rule.</p>
-          <p class="pzfoot">The values come from the page's state data. Same-day registration follows Ballotpedia's list based on NCSL, cold Novembers follow NOAA's statewide averages for 1901–2000, and turnout is ballots counted as a share of eligible voters in 2024.</p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-<!-- /pz:cs -->
-<section class="dcard" id="b2"></section>
+  <section class="dcard" id="b2"></section>
 
   <section class="part" id="p3"><p class="kick">Part 3</p><h2>Most different systems for building theory</h2>
     <p class="lede">A most different systems (MDS) design starts from an outcome rather than a hypothesis, so we use it to build theory. We take cases that are different in as many ways as we can determine but share a common outcome, and then we search deeper for attributes the cases might have in common. Those shared attributes become plausible explanations for the outcome. We may suspect some similarity going in, but we do not choose the cases already knowing what it is (Janssen Danyi and Janssen Danyi 2024).</p></section>
@@ -1398,7 +1366,39 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
 
 
   <!-- WHAT WE LEARNED -->
-  <section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
+  <!-- pz:cs -->
+  <details class="tryit" id="pzCs">
+    <summary><span class="tag">Try it</span><span class="tt">Pick three that differ on one thing</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">These eight cards come from the same-day registration card in Part 2's deck, and their values are real figures for 2024. The test variable is same-day registration, and the controls are Census region, a cold November (a typical November below 35°F) and a close race (a 2024 presidential margin under 5 points). Turnout stays hidden until your design is sound.</p>
+      <p class="pzgoal">Pick three states that are the same on all three controls but don't all share the same answer on same-day registration.</p>
+      <div class="csgrid" id="csGrid"></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Controls that differ among your picks</div><div class="num cssm" id="csC"></div><div class="goal" id="csGa"></div></div>
+        <div class="pzstat"><div class="lab">Same-day registration in your picks</div><div class="num cssm" id="csT"></div><div class="goal" id="csGb"></div></div>
+      </div>
+      <p class="pzinfo" id="csInfo" aria-live="polite"></p>
+      <p class="pzmsg" id="csMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="csShow">Show me</button><button type="button" id="csReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="csLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="csBody" aria-hidden="true">
+          <p class="st">1 · The controls are cut</p>
+          <p>Your three states are all in the Midwest, none has a cold November and none had a close race, so none of those can explain a difference in turnout among them. Same-day registration is the one variable left that differs, which is exactly what a most similar systems design needs.</p>
+          <p><button type="button" class="linkish" id="csTurn">Show turnout on the cards</button></p>
+          <p class="st">2 · What the outcome says</p>
+          <p id="csOut"></p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>The cards that tempt most are the ones where same-day registration stands out, such as Minnesota, Wisconsin and Michigan. All three have cold Novembers and had close races, so pairing one of them with Ohio or Missouri changes the weather and the race along with the registration rule, and any gap in turnout would then have three possible explanations instead of one. Pennsylvania brings a different region and a close race along with its rule.</p>
+          <p class="pzfoot">The values come from the page's state data. Same-day registration follows Ballotpedia's list based on NCSL, cold Novembers follow NOAA's statewide averages for 1901–2000, and turnout is ballots counted as a share of eligible voters in 2024.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+<!-- /pz:cs -->
+<section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
   <section class="dcard wwl">
     <ul>
       <li>With only a few cases and many possible causes, we cannot hold rivals constant statistically, so we hold them constant by how we choose the cases.</li>

@@ -1300,45 +1300,7 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
   </div>
   <p style="margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;padding:10px 14px"><b style="color:var(--ink)">Confidence and errors.</b> A 95% interval goes with a test at <button type="button" class="tapterm" aria-expanded="false" aria-controls="alphaNote" title="What is α?">α</button> = .05.<span class="tapnote" id="alphaNote" hidden>α (alpha) is the cutoff we set ahead of time for calling a result statistically significant. Module 8 introduces it along with hypothesis tests, so for now read α = .05 as a 5% risk of a false positive. <a href="8-difference-in-means.html#hyp">Go to hypothesis tests in Module 8 →</a></span> Choosing the confidence level is choosing how often you'll risk a Type I error, a false positive, when nothing is really going on. 95% is a convention rather than a law. <a href="8-difference-in-means.html#errors" style="color:var(--s1-ink);font-weight:600">Type I and II errors →</a></p>
 
-  <!-- pz:m7 -->
-<details class="tryit" id="pzCw">
-  <summary><span class="tag">Try it</span><span class="tt">Under 4 points with 30 cases</span><span class="hint">Optional puzzle</span></summary>
-  <div class="pzin">
-    <p class="pzset">We start from the spread widget above, which uses 2026 county turnout. A 95% interval from 25 counties drawn from the whole country is 8.1 points wide. Three things can change here, which are the places we sample from, the confidence level and the number of counties.</p>
-    <p class="pzgoal">Get the interval under 4 points wide while using no more than 30 counties.</p>
-    <div class="pzchart" id="cwChart"></div>
-    <div class="pzkey"><span><i class="cwdot"></i>One county in the population</span><span><i class="cwbar"></i>Your interval</span><span><i class="cwtgt"></i>4 points wide</span></div>
-    <div class="cwctl">
-      <div><span class="lab" id="cwPl">Sample from</span><div class="seg cwseg" role="radiogroup" aria-labelledby="cwPl" id="cwP"></div></div>
-      <div><span class="lab" id="cwLl">Confidence</span><div class="seg cwseg" role="radiogroup" aria-labelledby="cwLl" id="cwL"></div></div>
-      <label class="cwn"><span>Counties in the sample, n = <b id="cwNv"></b></span><input type="range" id="cwN" min="5" max="150" step="1" value="25"></label>
-    </div>
-    <div class="pzstats">
-      <div class="pzstat"><div class="lab">Interval width</div><div class="num" id="cwW"></div><div class="goal" id="cwGa"></div></div>
-      <div class="pzstat"><div class="lab">Counties in the sample</div><div class="num" id="cwNn"></div><div class="goal" id="cwGb"></div></div>
-    </div>
-    <p class="pzinfo" id="cwInfo" aria-live="polite"></p>
-    <p class="pzmsg" id="cwMsg" aria-live="polite"></p>
-    <div class="pzbtns"><button type="button" id="cwShow">Show me</button><button type="button" id="cwReset">Start over</button></div>
-    <div class="pzex">
-      <h4>What just happened</h4>
-      <p class="pzlock" id="cwLock">Solve the puzzle, or press Show me, to open the explanation.</p>
-      <div class="pzbody" id="cwBody" aria-hidden="true">
-        <p class="st">1 · Three levers set the width</p>
-        <p>The width is 2 × z × SD ÷ √n. We can shrink it by adding cases, by sampling places that are more alike, which lowers the SD, or by settling for a lower confidence level, which lowers z. In your version the SD is <b id="cwS"></b>, z is <b id="cwZ"></b> and n is <b id="cwN2"></b>, which gives <b id="cwW2"></b> points.</p>
-        <p><button type="button" class="linkish" id="cwTab">Show how many counties each choice needs</button></p>
-        <div class="cwtab" id="cwTabBox" hidden></div>
-        <p class="st">2 · Each lever has a price</p>
-        <p>Every added case costs time and money. Switching to Iowa's counties narrows the question, since an interval for Iowa says nothing about turnout in the rest of the country. Dropping to 90% confidence means that about one interval in ten misses the true mean, where at 95% only one in twenty does.</p>
-        <p class="st">3 · Back to the lesson</p>
-        <p>When you read a margin of error, ask what set it. A small margin can come from a big sample, a narrow population or a lower confidence level, and those mean very different things for how far we can trust it.</p>
-        <p class="pzfoot">The counties come from the 2026 turnout data used throughout this module, which use AP results that are unofficial as of Nov. 25, 2026. The puzzle uses z rather than t, as the widget above does.</p>
-      </div>
-    </div>
-  </div>
-</details>
-<!-- /pz:m7 -->
-<section class="part" aria-labelledby="p2h" id="sec-did-the-final-2016-polls">
+  <section class="part" aria-labelledby="p2h" id="sec-did-the-final-2016-polls">
     <p class="kick">Part 4 · Real data</p>
     <h2 id="p2h">Did the final 2016 polls capture the result?</h2>
     <p class="lede">Each poll reports a margin of error, which is half the width of a 95% confidence interval. If sampling error were the only error, about 95% of these intervals would contain the actual Clinton-minus-Trump margin. Pick a race.</p>
@@ -1376,6 +1338,44 @@ let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);}
   <div class="learn">
     <section id="sec-try-this">
       <h2>Try this</h2>
+<!-- pz:m7 -->
+<details class="tryit" id="pzCw">
+  <summary><span class="tag">Try it</span><span class="tt">Under 4 points with 30 cases</span><span class="hint">Optional puzzle</span></summary>
+  <div class="pzin">
+    <p class="pzset">We start from the spread widget above, which uses 2026 county turnout. A 95% interval from 25 counties drawn from the whole country is 8.1 points wide. Three things can change here, which are the places we sample from, the confidence level and the number of counties.</p>
+    <p class="pzgoal">Get the interval under 4 points wide while using no more than 30 counties.</p>
+    <div class="pzchart" id="cwChart"></div>
+    <div class="pzkey"><span><i class="cwdot"></i>One county in the population</span><span><i class="cwbar"></i>Your interval</span><span><i class="cwtgt"></i>4 points wide</span></div>
+    <div class="cwctl">
+      <div><span class="lab" id="cwPl">Sample from</span><div class="seg cwseg" role="radiogroup" aria-labelledby="cwPl" id="cwP"></div></div>
+      <div><span class="lab" id="cwLl">Confidence</span><div class="seg cwseg" role="radiogroup" aria-labelledby="cwLl" id="cwL"></div></div>
+      <label class="cwn"><span>Counties in the sample, n = <b id="cwNv"></b></span><input type="range" id="cwN" min="5" max="150" step="1" value="25"></label>
+    </div>
+    <div class="pzstats">
+      <div class="pzstat"><div class="lab">Interval width</div><div class="num" id="cwW"></div><div class="goal" id="cwGa"></div></div>
+      <div class="pzstat"><div class="lab">Counties in the sample</div><div class="num" id="cwNn"></div><div class="goal" id="cwGb"></div></div>
+    </div>
+    <p class="pzinfo" id="cwInfo" aria-live="polite"></p>
+    <p class="pzmsg" id="cwMsg" aria-live="polite"></p>
+    <div class="pzbtns"><button type="button" id="cwShow">Show me</button><button type="button" id="cwReset">Start over</button></div>
+    <div class="pzex">
+      <h4>What just happened</h4>
+      <p class="pzlock" id="cwLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+      <div class="pzbody" id="cwBody" aria-hidden="true">
+        <p class="st">1 · Three levers set the width</p>
+        <p>The width is 2 × z × SD ÷ √n. We can shrink it by adding cases, by sampling places that are more alike, which lowers the SD, or by settling for a lower confidence level, which lowers z. In your version the SD is <b id="cwS"></b>, z is <b id="cwZ"></b> and n is <b id="cwN2"></b>, which gives <b id="cwW2"></b> points.</p>
+        <p><button type="button" class="linkish" id="cwTab">Show how many counties each choice needs</button></p>
+        <div class="cwtab" id="cwTabBox" hidden></div>
+        <p class="st">2 · Each lever has a price</p>
+        <p>Every added case costs time and money. Switching to Iowa's counties narrows the question, since an interval for Iowa says nothing about turnout in the rest of the country. Dropping to 90% confidence means that about one interval in ten misses the true mean, where at 95% only one in twenty does.</p>
+        <p class="st">3 · Back to the lesson</p>
+        <p>When you read a margin of error, ask what set it. A small margin can come from a big sample, a narrow population or a lower confidence level, and those mean very different things for how far we can trust it.</p>
+        <p class="pzfoot">The counties come from the 2026 turnout data used throughout this module, which use AP results that are unofficial as of Nov. 25, 2026. The puzzle uses z rather than t, as the widget above does.</p>
+      </div>
+    </div>
+  </div>
+</details>
+<!-- /pz:m7 -->
       <ol>
         <li>Click <b>+100</b> a few times at 95%. Then switch to <b>80%</b>. The samples stay the same, so watch the intervals shrink and the coverage fall to about 80%.</li>
         <li>Set n = <b>5</b> and switch between <b>t</b> and <b>z</b>. With <b>Turnout, 2026</b>, z intervals capture μ only about 88% of the time, while t intervals come close to 95%.</li>

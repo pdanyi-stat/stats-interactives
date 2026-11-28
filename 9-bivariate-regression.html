@@ -1045,39 +1045,6 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     <figcaption id="aCap"></figcaption>
   </figure>
 
-<!-- pz:m9 -->
-  <details class="tryit" id="pzR2">
-    <summary><span class="tag">Try it</span><span class="tt">Cut r² in half</span><span class="hint">Optional puzzle</span></summary>
-    <div class="pzin">
-      <p class="pzset">We start from the states example that opens this module, with median household income across and Trump's 2016 vote share up. The line slopes down at −0.77 points per $1,000, and r² = .36.</p>
-      <p class="pzgoal">Move one state so r² falls to half of where it started or lower, while the slope stays negative.</p>
-      <div class="pzchart" id="r2Chart"></div>
-      <div class="pzkey"><span><i class="dot gv"></i>State</span><span><i class="ln r2l"></i>Least-squares line</span><span id="r2OldKey" hidden><i class="ln pool"></i>The line before you moved anything</span></div>
-      <div class="pzstats">
-        <div class="pzstat"><div class="lab">Share of the variation the line explains</div><div class="num" id="r2R"></div><div class="goal" id="r2Ga"></div></div>
-        <div class="pzstat"><div class="lab">Slope, points per $1,000</div><div class="num" id="r2B"></div><div class="goal" id="r2Gb"></div></div>
-      </div>
-      <p class="pzinfo" id="r2Info" aria-live="polite">Tap near a state and drag it. Only one state can be away from its real spot at a time.</p>
-      <p class="pzmsg" id="r2Msg" aria-live="polite"></p>
-      <div class="pzbtns"><button type="button" id="r2Show">Show me</button><button type="button" id="r2Reset">Start over</button></div>
-      <div class="pzex">
-        <h4>What just happened</h4>
-        <p class="pzlock" id="r2Lock">Solve the puzzle, or press Show me, to open the explanation.</p>
-        <div class="pzbody" id="r2Body" aria-hidden="true">
-          <p class="st">1 · One case can carry a lot of weight</p>
-          <p>Recall that r² is the share of the variation in Trump's vote share that the line accounts for. Your version of <span id="r2Name"></span> sits far from where the line would put it, so it adds one very large miss, and r² fell from .36 to <b id="r2T1"></b>. The slope went from −0.77 to <b id="r2T2"></b>.</p>
-          <p><button type="button" class="linkish" id="r2Old">Show the line before you moved anything</button></p>
-          <p class="st">2 · Where a case sits along X decides its pull</p>
-          <p>A state near the average income can move a long way up or down without tilting the line much, and on its own it can't cut r² in half here. A state at an extreme income works like a long lever, since the line pivots around the average of X, so moving it both tilts the line and adds a big miss. Move it too far and the slope flips sign, which is why the second goal is there.</p>
-          <p class="st">3 · Back to the lesson</p>
-          <p>The slope and r² answer different questions. The slope says how much Trump's share changes with each $1,000 of income, and r² says how closely the states hug the line. A steep slope can sit on top of a weak fit, and one unusual case can change either number, so check the scatterplot for cases like yours before you trust them.</p>
-          <p class="pzfoot">The starting points are the 50 states and the District of Columbia from the income example in panel A, and Trump's 2016 vote shares come from 538's compilation. A state you move becomes your own version and is no longer real data.</p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-<!-- /pz:m9 -->
   <!-- B: equation -->
   <section class="card" aria-labelledby="eqh" id="sec-reading-the-equation">
     <h3 id="eqh"><span class="step">B</span>Reading the equation</h3>
@@ -1158,6 +1125,39 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
   <div class="learn">
     <section id="sec-try-this">
       <h2>Try this</h2>
+<!-- pz:m9 -->
+  <details class="tryit" id="pzR2">
+    <summary><span class="tag">Try it</span><span class="tt">Cut r² in half</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">We start from the states example that opens this module, with median household income across and Trump's 2016 vote share up. The line slopes down at −0.77 points per $1,000, and r² = .36.</p>
+      <p class="pzgoal">Move one state so r² falls to half of where it started or lower, while the slope stays negative.</p>
+      <div class="pzchart" id="r2Chart"></div>
+      <div class="pzkey"><span><i class="dot gv"></i>State</span><span><i class="ln r2l"></i>Least-squares line</span><span id="r2OldKey" hidden><i class="ln pool"></i>The line before you moved anything</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Share of the variation the line explains</div><div class="num" id="r2R"></div><div class="goal" id="r2Ga"></div></div>
+        <div class="pzstat"><div class="lab">Slope, points per $1,000</div><div class="num" id="r2B"></div><div class="goal" id="r2Gb"></div></div>
+      </div>
+      <p class="pzinfo" id="r2Info" aria-live="polite">Tap near a state and drag it. Only one state can be away from its real spot at a time.</p>
+      <p class="pzmsg" id="r2Msg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="r2Show">Show me</button><button type="button" id="r2Reset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="r2Lock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="r2Body" aria-hidden="true">
+          <p class="st">1 · One case can carry a lot of weight</p>
+          <p>Recall that r² is the share of the variation in Trump's vote share that the line accounts for. Your version of <span id="r2Name"></span> sits far from where the line would put it, so it adds one very large miss, and r² fell from .36 to <b id="r2T1"></b>. The slope went from −0.77 to <b id="r2T2"></b>.</p>
+          <p><button type="button" class="linkish" id="r2Old">Show the line before you moved anything</button></p>
+          <p class="st">2 · Where a case sits along X decides its pull</p>
+          <p>A state near the average income can move a long way up or down without tilting the line much, and on its own it can't cut r² in half here. A state at an extreme income works like a long lever, since the line pivots around the average of X, so moving it both tilts the line and adds a big miss. Move it too far and the slope flips sign, which is why the second goal is there.</p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>The slope and r² answer different questions. The slope says how much Trump's share changes with each $1,000 of income, and r² says how closely the states hug the line. A steep slope can sit on top of a weak fit, and one unusual case can change either number, so check the scatterplot for cases like yours before you trust them.</p>
+          <p class="pzfoot">The starting points are the 50 states and the District of Columbia from the income example in panel A, and Trump's 2016 vote shares come from 538's compilation. A state you move becomes your own version and is no longer real data.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+<!-- /pz:m9 -->
       <ol>
         <li>Drag a point near the middle of X up and down, then do the same with a point at the far right. Points far from x̄ have more <b>leverage</b>, meaning they pull the slope much harder.</li>
         <li>Turn on <b>Try to beat it with your own line</b> and drag the handles. Your sum of squared errors can match the orange line's, but it can never beat it.</li>

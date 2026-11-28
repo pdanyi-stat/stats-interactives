@@ -1155,40 +1155,7 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     </ul>
   </section>
 
-  <!-- pz:m8 -->
-<details class="tryit" id="pzOv">
-  <summary><span class="tag">Try it</span><span class="tt">Make the intervals overlap</span><span class="hint">Optional puzzle</span></summary>
-  <div class="pzin">
-    <p class="pzset">We start from one real sample of 50 petitions from each group, which is the same kind of draw panel A makes with n = 50. In this sample, women's petitions averaged 126.0 signatures and the other petitions averaged 78.0.</p>
-    <p class="pzgoal">Drag the two means so their 95% intervals overlap while the difference between them stays significant at α = .05.</p>
-    <div class="pzchart" id="ovChart"></div>
-    <div class="pzkey"><span><i class="dot gv"></i>Other petitions</span><span><i class="dot sn"></i>Women's petitions</span><span><i class="ovsw"></i>Where the intervals overlap</span></div>
-    <div class="pzstats">
-      <div class="pzstat"><div class="lab">Do the 95% intervals overlap?</div><div class="num" id="ovA"></div><div class="goal" id="ovGa"></div></div>
-      <div class="pzstat"><div class="lab">p-value for the difference</div><div class="num" id="ovP"></div><div class="goal" id="ovGb"></div></div>
-    </div>
-    <p class="pzinfo" id="ovInfo" aria-live="polite">Tap near a mean and drag it left or right.</p>
-    <p class="pzmsg" id="ovMsg" aria-live="polite"></p>
-    <div class="pzbtns"><button type="button" id="ovShow">Show me</button><button type="button" id="ovReset">Start over</button></div>
-    <div class="pzex">
-      <h4>What just happened</h4>
-      <p class="pzlock" id="ovLock">Solve the puzzle, or press Show me, to open the explanation.</p>
-      <div class="pzbody" id="ovBody" aria-hidden="true">
-        <p class="st">1 · Two different bars to clear</p>
-        <p>The overlap check sets the gap between the two means against both margins of error added together, which come to <b id="ovO"></b> signatures here. The t test sets the same gap against a lower bar, about 1.98 times the standard error of the difference, which comes to <b id="ovS"></b> signatures.</p>
-        <p><button type="button" class="linkish" id="ovZone">Mark where each mean works</button></p>
-        <p class="ovzsay" id="ovZsay" hidden>Each amber strip shows where that group's mean could sit, with the other mean left where it is, so that both goals are met.</p>
-        <p class="st">2 · Why the two bars differ</p>
-        <p>The errors in two separate samples partly cancel, since one sample is rarely off in the worst direction at the same moment as the other. That is why the standard error of the difference is √(SE₁² + SE₂²), which works like the long side of a right triangle, rather than SE₁ + SE₂, which would lay the two short sides end to end. In your version the gap between the means is <b id="ovD"></b> signatures, <span id="ovDsay"></span></p>
-        <p class="st">3 · Back to the lesson</p>
-        <p>When two 95% intervals don't overlap, the difference is significant, so a visible gap is a safe sign. When they do overlap, the picture can't settle the question, and we run the t test from panel C instead.</p>
-        <p class="pzfoot">The starting values come from one random sample of 50 petitions per group, drawn from Carpenter and Moore's antislavery petitions file. The test assumes equal variances, as panel C does by default. A mean you move becomes your own version and is no longer real data.</p>
-      </div>
-    </div>
-  </div>
-</details>
-<!-- /pz:m8 -->
-<figure id="shuf">
+  <figure id="shuf">
     <div class="fighead"><h2><span class="step">C2</span>Shuffle the labels to get a p-value</h2></div>
     <p class="sub">Here is a way to get a p-value with no formula. If H₀ is true, it doesn't matter which group each case belongs to, so we can shuffle the group labels and see how large a difference chance alone produces. Draw a sample of real cases from the comparison above, and then shuffle the labels.</p>
     <div class="ctlrow">
@@ -1245,6 +1212,39 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
   <div class="learn">
     <section id="sec-try-this">
       <h2>Try this</h2>
+<!-- pz:m8 -->
+<details class="tryit" id="pzOv">
+  <summary><span class="tag">Try it</span><span class="tt">Make the intervals overlap</span><span class="hint">Optional puzzle</span></summary>
+  <div class="pzin">
+    <p class="pzset">We start from one real sample of 50 petitions from each group, which is the same kind of draw panel A makes with n = 50. In this sample, women's petitions averaged 126.0 signatures and the other petitions averaged 78.0.</p>
+    <p class="pzgoal">Drag the two means so their 95% intervals overlap while the difference between them stays significant at α = .05.</p>
+    <div class="pzchart" id="ovChart"></div>
+    <div class="pzkey"><span><i class="dot gv"></i>Other petitions</span><span><i class="dot sn"></i>Women's petitions</span><span><i class="ovsw"></i>Where the intervals overlap</span></div>
+    <div class="pzstats">
+      <div class="pzstat"><div class="lab">Do the 95% intervals overlap?</div><div class="num" id="ovA"></div><div class="goal" id="ovGa"></div></div>
+      <div class="pzstat"><div class="lab">p-value for the difference</div><div class="num" id="ovP"></div><div class="goal" id="ovGb"></div></div>
+    </div>
+    <p class="pzinfo" id="ovInfo" aria-live="polite">Tap near a mean and drag it left or right.</p>
+    <p class="pzmsg" id="ovMsg" aria-live="polite"></p>
+    <div class="pzbtns"><button type="button" id="ovShow">Show me</button><button type="button" id="ovReset">Start over</button></div>
+    <div class="pzex">
+      <h4>What just happened</h4>
+      <p class="pzlock" id="ovLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+      <div class="pzbody" id="ovBody" aria-hidden="true">
+        <p class="st">1 · Two different bars to clear</p>
+        <p>The overlap check sets the gap between the two means against both margins of error added together, which come to <b id="ovO"></b> signatures here. The t test sets the same gap against a lower bar, about 1.98 times the standard error of the difference, which comes to <b id="ovS"></b> signatures.</p>
+        <p><button type="button" class="linkish" id="ovZone">Mark where each mean works</button></p>
+        <p class="ovzsay" id="ovZsay" hidden>Each amber strip shows where that group's mean could sit, with the other mean left where it is, so that both goals are met.</p>
+        <p class="st">2 · Why the two bars differ</p>
+        <p>The errors in two separate samples partly cancel, since one sample is rarely off in the worst direction at the same moment as the other. That is why the standard error of the difference is √(SE₁² + SE₂²), which works like the long side of a right triangle, rather than SE₁ + SE₂, which would lay the two short sides end to end. In your version the gap between the means is <b id="ovD"></b> signatures, <span id="ovDsay"></span></p>
+        <p class="st">3 · Back to the lesson</p>
+        <p>When two 95% intervals don't overlap, the difference is significant, so a visible gap is a safe sign. When they do overlap, the picture can't settle the question, and we run the t test from panel C instead.</p>
+        <p class="pzfoot">The starting values come from one random sample of 50 petitions per group, drawn from Carpenter and Moore's antislavery petitions file. The test assumes equal variances, as panel C does by default. A mean you move becomes your own version and is no longer real data.</p>
+      </div>
+    </div>
+  </div>
+</details>
+<!-- /pz:m8 -->
       <ol>
         <li data-ds="pet">Start with the petitions at n = 10 and press <b>Run</b>. The differences pile up away from zero. Then try n = 5 and see whether zero creeps into the band.</li>
         <li data-ds="pet">Raise n to 100. Women's petitions differ from the others in spread as well as in mean, so uncheck <b>Assume equal variances</b> and compare the two versions of t.</li>

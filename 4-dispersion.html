@@ -888,41 +888,7 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     <div class="stat"><div class="mean"><span>Mean</span><b id="clM"></b></div><div><span>Variance</span><b id="clV"></b></div><div><span>SD</span><b id="clS"></b></div></div>
   </section>
 
-  <!-- pz:m4 -->
-<section class="dcard" style="padding:0;border:0;background:none;box-shadow:none">
-  <details class="tryit" id="pzSd">
-    <summary><span class="tag">Try it</span><span class="tt">Twice the spread with the same mean</span><span class="hint">Optional puzzle</span></summary>
-    <div class="pzin">
-      <p class="pzset">Two classes start with the same eleven example ages from Part 2, so both have a mean of 21.73 and an SD of 2.00. Drag a dot to change that person's age, which moves in whole years.</p>
-      <p class="pzgoal">Make the two classes keep exactly the same mean while one class's SD becomes at least twice the other's.</p>
-      <div class="pzchart" id="sdChart"></div>
-      <div class="pzkey"><span><i class="dot gv"></i>One person</span><span><i class="ln r2l"></i>The class mean</span><span id="sdBandKey" hidden><i class="sdsw"></i>One SD on each side of the mean</span></div>
-      <div class="pzstats">
-        <div class="pzstat"><div class="lab">Means, class A and class B</div><div class="num cssm" id="sdM"></div><div class="goal" id="sdGa"></div></div>
-        <div class="pzstat"><div class="lab">SDs, class A and class B</div><div class="num cssm" id="sdS"></div><div class="goal" id="sdGb"></div></div>
-      </div>
-      <p class="pzinfo" id="sdInfo" aria-live="polite">Tap near a dot and drag it left or right.</p>
-      <p class="pzmsg" id="sdMsg" aria-live="polite"></p>
-      <div class="pzbtns"><button type="button" id="sdShow">Show me</button><button type="button" id="sdReset">Start over</button></div>
-      <div class="pzex">
-        <h4>What just happened</h4>
-        <p class="pzlock" id="sdLock">Solve the puzzle, or press Show me, to open the explanation.</p>
-        <div class="pzbody" id="sdBody" aria-hidden="true">
-          <p class="st">1 · The mean only sees the total</p>
-          <p>Both classes add up to the same total, <b id="sdTot"></b> years spread over 11 people, so both have a mean of <b id="sdMn"></b>. The mean doesn't care whether those years come from people bunched close together or from people spread out between <span id="sdRg"></span>.</p>
-          <p><button type="button" class="linkish" id="sdBand">Mark one SD on each side of each mean</button></p>
-          <p class="st">2 · The SD sees the spread</p>
-          <p>In your version the SD of class <span id="sdW"></span> is <b id="sdS1"></b> and the SD of class <span id="sdN"></span> is <b id="sdS2"></b>, so the wider class's SD is <b id="sdX"></b> times as large. Two groups with the same average can be very different groups, and the SD is the number that tells them apart.</p>
-          <p class="st">3 · Back to the lesson</p>
-          <p>Whenever we compare groups by their means, as we will with t tests in Module 8, we report the SDs too. The means tell us where each group's center sits, and the SDs tell us how far the people in each group typically are from that center.</p>
-          <p class="pzfoot">The starting ages are the example ages from Part 2. An age you move becomes your own version, so it no longer matches the example.</p>
-        </div>
-      </div>
-    </div>
-  </details>
-</section>
-<!-- /pz:m4 -->
-<!-- 3 68/95 -->
+  <!-- 3 68/95 -->
   <section class="part" id="sec-what-the-sd-tells-you-about-"><p class="kick">Part 3</p><h2>What the SD tells you about where observations fall</h2>
     <p>If a variable is roughly normal, about 68% of observations fall within one SD of the mean and about 95% within two. The SD is in the same units as the variable, which is what makes this useful.</p></section>
   <section class="dcard" id="nr" data-ds="titanic.sav">
@@ -1034,7 +1000,41 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
   </section>
 
   <!-- WHAT WE LEARNED -->
-  <section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
+  <!-- pz:m4 -->
+<section class="dcard" style="padding:0;border:0;background:none;box-shadow:none">
+  <details class="tryit" id="pzSd">
+    <summary><span class="tag">Try it</span><span class="tt">Twice the spread with the same mean</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">Two classes start with the same eleven example ages from Part 2, so both have a mean of 21.73 and an SD of 2.00. Drag a dot to change that person's age, which moves in whole years.</p>
+      <p class="pzgoal">Make the two classes keep exactly the same mean while one class's SD becomes at least twice the other's.</p>
+      <div class="pzchart" id="sdChart"></div>
+      <div class="pzkey"><span><i class="dot gv"></i>One person</span><span><i class="ln r2l"></i>The class mean</span><span id="sdBandKey" hidden><i class="sdsw"></i>One SD on each side of the mean</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Means, class A and class B</div><div class="num cssm" id="sdM"></div><div class="goal" id="sdGa"></div></div>
+        <div class="pzstat"><div class="lab">SDs, class A and class B</div><div class="num cssm" id="sdS"></div><div class="goal" id="sdGb"></div></div>
+      </div>
+      <p class="pzinfo" id="sdInfo" aria-live="polite">Tap near a dot and drag it left or right.</p>
+      <p class="pzmsg" id="sdMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="sdShow">Show me</button><button type="button" id="sdReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="sdLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="sdBody" aria-hidden="true">
+          <p class="st">1 · The mean only sees the total</p>
+          <p>Both classes add up to the same total, <b id="sdTot"></b> years spread over 11 people, so both have a mean of <b id="sdMn"></b>. The mean doesn't care whether those years come from people bunched close together or from people spread out between <span id="sdRg"></span>.</p>
+          <p><button type="button" class="linkish" id="sdBand">Mark one SD on each side of each mean</button></p>
+          <p class="st">2 · The SD sees the spread</p>
+          <p>In your version the SD of class <span id="sdW"></span> is <b id="sdS1"></b> and the SD of class <span id="sdN"></span> is <b id="sdS2"></b>, so the wider class's SD is <b id="sdX"></b> times as large. Two groups with the same average can be very different groups, and the SD is the number that tells them apart.</p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>Whenever we compare groups by their means, as we will with t tests in Module 8, we report the SDs too. The means tell us where each group's center sits, and the SDs tell us how far the people in each group typically are from that center.</p>
+          <p class="pzfoot">The starting ages are the example ages from Part 2. An age you move becomes your own version, so it no longer matches the example.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+<!-- /pz:m4 -->
+<section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
   <section class="dcard wwl">
     <ul>
       <li>Dispersion describes how spread out the cases are around the center, and two variables with the same mean can have very different spreads.</li>

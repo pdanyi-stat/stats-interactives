@@ -900,41 +900,7 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     <p class="src" style="margin:0">Each answer is checked as soon as you leave the box or tap a choice.</p>
   </section>
 
-  <!-- pz:m3 -->
-<section class="dcard" style="padding:0;border:0;background:none;box-shadow:none">
-  <details class="tryit" id="pzSk">
-    <summary><span class="tag">Try it</span><span class="tt">Turn the tail around</span><span class="hint">Optional puzzle</span></summary>
-    <div class="pzin">
-      <p class="pzset">We start from the 13 Massachusetts counties in the PHOME example above. Suffolk (6%) and Nantucket (25%) make a tail to the left, so the skewness is −1.39, and the median is 68%. Drag a county's dot to change its percentage.</p>
-      <p class="pzgoal">Move no more than three counties so the tail points right, with a positive skewness, while the median stays at 68%.</p>
-      <div class="pzchart" id="skPz"></div>
-      <div class="pzkey"><span><i class="skbar"></i>Counties in each 10-point range</span><span><i class="dot gv"></i>One county</span><span id="skLineKey" hidden><i class="ln r2l"></i>Mean</span><span id="skLineKey2" hidden><i class="ln skmd"></i>Median</span></div>
-      <div class="pzstats">
-        <div class="pzstat"><div class="lab">Skewness</div><div class="num" id="skS"></div><div class="goal" id="skGa"></div></div>
-        <div class="pzstat"><div class="lab">Median</div><div class="num" id="skM"></div><div class="goal" id="skGb"></div></div>
-      </div>
-      <p class="pzinfo" id="skInfo" aria-live="polite">Tap near a county and drag it left or right.</p>
-      <p class="pzmsg" id="skMsg" aria-live="polite"></p>
-      <div class="pzbtns"><button type="button" id="skShow">Show me</button><button type="button" id="skReset">Start over</button></div>
-      <div class="pzex">
-        <h4>What just happened</h4>
-        <p class="pzlock" id="skLock">Solve the puzzle, or press Show me, to open the explanation.</p>
-        <div class="pzbody" id="skBody" aria-hidden="true">
-          <p class="st">1 · The skew follows the tail, not the hump</p>
-          <p>In your version the hump of the histogram still sits to the right of the middle of the 0 to 100 scale, where most counties are. The skewness is positive anyway, because the long thin stretch now points to the right, out toward <span id="skTail"></span>.</p>
-          <p><button type="button" class="linkish" id="skLines">Mark the mean and the median</button></p>
-          <p class="st">2 · The median holds still</p>
-          <p>The median is the 7th of the 13 counties in order, so a county can move anywhere on its own side of the median without changing it. The mean is a balance point, so it moved from 59.5% to <b id="skMn"></b>, toward the new tail.<span id="skMM"></span></p>
-          <p class="st">3 · Back to the lesson</p>
-          <p>We name a skew by the direction its tail points, and we check that against the mean and the median, since a tail to the right usually pulls the mean above the median and a tail to the left pulls it below. A distribution can have its hump far to one side of the scale and still be skewed toward the other side, as the real PHOME counties show.</p>
-          <p class="pzfoot">The starting values are the PHOME percentages for the 13 Massachusetts counties in 1854, which come from LunaticData.sav. “Lunatics” is the dataset's term, which comes from the era. A county you move becomes your own version and is no longer real data.</p>
-        </div>
-      </div>
-    </div>
-  </details>
-</section>
-<!-- /pz:m3 -->
-<!-- 6 CLASS AGES -->
+  <!-- 6 CLASS AGES -->
   <section class="dcard" id="ca">
     <h3>A second example · Two older students join the class</h3>
     <p class="p">The ages in a class are usually bunched together. Add two non-traditional students, aged 90 and 95, and watch what happens to the mean and the median.</p>
@@ -999,7 +965,41 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
 
 
   <!-- WHAT WE LEARNED -->
-  <section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
+  <!-- pz:m3 -->
+<section class="dcard" style="padding:0;border:0;background:none;box-shadow:none">
+  <details class="tryit" id="pzSk">
+    <summary><span class="tag">Try it</span><span class="tt">Turn the tail around</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">We start from the 13 Massachusetts counties in the PHOME example above. Suffolk (6%) and Nantucket (25%) make a tail to the left, so the skewness is −1.39, and the median is 68%. Drag a county's dot to change its percentage.</p>
+      <p class="pzgoal">Move no more than three counties so the tail points right, with a positive skewness, while the median stays at 68%.</p>
+      <div class="pzchart" id="skPz"></div>
+      <div class="pzkey"><span><i class="skbar"></i>Counties in each 10-point range</span><span><i class="dot gv"></i>One county</span><span id="skLineKey" hidden><i class="ln r2l"></i>Mean</span><span id="skLineKey2" hidden><i class="ln skmd"></i>Median</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Skewness</div><div class="num" id="skS"></div><div class="goal" id="skGa"></div></div>
+        <div class="pzstat"><div class="lab">Median</div><div class="num" id="skM"></div><div class="goal" id="skGb"></div></div>
+      </div>
+      <p class="pzinfo" id="skInfo" aria-live="polite">Tap near a county and drag it left or right.</p>
+      <p class="pzmsg" id="skMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="skShow">Show me</button><button type="button" id="skReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="skLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="skBody" aria-hidden="true">
+          <p class="st">1 · The skew follows the tail, not the hump</p>
+          <p>In your version the hump of the histogram still sits to the right of the middle of the 0 to 100 scale, where most counties are. The skewness is positive anyway, because the long thin stretch now points to the right, out toward <span id="skTail"></span>.</p>
+          <p><button type="button" class="linkish" id="skLines">Mark the mean and the median</button></p>
+          <p class="st">2 · The median holds still</p>
+          <p>The median is the 7th of the 13 counties in order, so a county can move anywhere on its own side of the median without changing it. The mean is a balance point, so it moved from 59.5% to <b id="skMn"></b>, toward the new tail.<span id="skMM"></span></p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>We name a skew by the direction its tail points, and we check that against the mean and the median, since a tail to the right usually pulls the mean above the median and a tail to the left pulls it below. A distribution can have its hump far to one side of the scale and still be skewed toward the other side, as the real PHOME counties show.</p>
+          <p class="pzfoot">The starting values are the PHOME percentages for the 13 Massachusetts counties in 1854, which come from LunaticData.sav. “Lunatics” is the dataset's term, which comes from the era. A county you move becomes your own version and is no longer real data.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+<!-- /pz:m3 -->
+<section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
   <section class="dcard wwl">
     <ul>
       <li>Skew describes which way the long tail points. A tail toward high values is positive skew, and a tail toward low values is negative skew.</li>

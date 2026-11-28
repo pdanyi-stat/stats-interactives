@@ -1172,7 +1172,12 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
 
 
 
-  <!-- pz:m11 -->
+  <p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="8-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="8-difference-in-means.html#errors">Type I and II errors →</a></p>
+
+  <div class="learn">
+    <section id="sec-try-this">
+      <h2>Try this</h2>
+<!-- pz:m11 -->
 <details class="tryit" id="pzDum">
   <summary><span class="tag">Try it</span><span class="tt">Set the coefficients</span><span class="hint">Optional puzzle</span></summary>
   <div class="pzin">
@@ -1204,11 +1209,6 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
   </div>
 </details>
 <!-- /pz:m11 -->
-<p class="pnote"><b>Reading p for a coefficient.</b> H₀ says the coefficient is 0, and p is how often a coefficient at least this far from 0 would turn up by chance if H₀ were true. So p = .03 means about 3 times in 100, and Stata's 0.000 (SPSS prints .000) means p &lt; .001, or fewer than 1 time in 1,000. If p &lt; .05 we reject H₀, and otherwise we fail to reject it. The .05 cutoff is a convention we choose, and it sets our risk of a Type I error (a false positive). <a href="8-difference-in-means.html#pvalue">Reading p-values →</a> · <a href="8-difference-in-means.html#errors">Type I and II errors →</a></p>
-
-  <div class="learn">
-    <section id="sec-try-this">
-      <h2>Try this</h2>
       <ol>
         <li>In Part 2, switch the reference group. The slope changes sign, the constant becomes the other group's mean, and t and p stay the same.</li>
         <li data-ds="house">In Part 2, find AK-AL, Alaska's at-large seat. The Democrat drew only 7.9% of the vote there, so it sits far below the other seats with a Republican incumbent.</li>
