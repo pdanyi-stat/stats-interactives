@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anatomy of a research paper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+
+/* Layout idea: a lean "working paper" page. Red hairline masthead, controls in one row,
+   population + sample side by side, the sampling distribution full width beneath,
+   Stata-style output under the charts. */
+:root{
+  color-scheme: light;
+  --page:#F4F5F6;
+  --surface:#FFFFFF;
+  --ink:#16191C;
+  --ink-2:#4A4F55;
+  --muted:#5F6266;
+  --grid:#E3E5E8;
+  --axis:#B9BCC0;
+  --line:rgba(22,25,28,.12);
+  --accent:#004C97;          /* masthead rule, kicker */
+  --pop:#75787B;             /* population bars */
+  --s1:#004C97;--s1-edge:transparent;--s1-line:#004C97;--accent-ink:#004C97;              /* sample means (blue) */
+  --s1-ink:#004C97;
+  --s2:#C25E00;              /* the current sample (orange) */
+  --s2-ink:#9A4A00;
+  --code-bg:#EDEFF1;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+    --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+    --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0E1012; --surface:#171A1D; --ink:#EEF0F2; --ink-2:#BFC3C8; --muted:#8C9095;
+  --grid:#2A2E33; --axis:#474C52; --line:rgba(255,255,255,.12); --accent:#6FA8E8;
+  --pop:#8C9095; --s1:#004C97;--s1-edge:#6AD1E3;--s1-line:#6FA8E8;--accent-ink:#86B6EF; --s1-ink:#86B6EF; --s2:#D2702A; --s2-ink:#F0A06A; --code-bg:#22262A;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+@media (max-width:420px){.wrap{padding:0 16px}}
+
+/* masthead */
+.rule{height:4px;background:var(--accent)}
+header.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+header.mast .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:6px}
+.kicker{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+h1{margin:0;font-size:clamp(28px,4.4vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dek{margin:4px 0 0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.modnav{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.modnav li{white-space:nowrap}
+.modnav li[aria-current="page"]{color:var(--ink);font-weight:600}
+.modnav li[aria-current="page"]::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+
+main{padding:20px 0 48px;display:grid;gap:22px}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;gap:5px}
+.ctl > .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+select{font:500 15px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 30px 7px 10px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:6px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 11px;font:500 14px var(--font-body);font-variant-numeric:tabular-nums;cursor:pointer;border-left:1px solid var(--axis);color:var(--ink-2);background:var(--page)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--ink);color:var(--surface)}
+.seg input:focus-visible + label{outline:2px solid var(--s1-line);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:500 14px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+button.primary{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);border-color:var(--s1-ink);color:#fff}
+@media (hover:hover){button.primary:hover{filter:brightness(1.1)}}
+button.primary:active{filter:brightness(.92)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.toggles label{display:inline-flex;gap:7px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.figs .wide{grid-column:1 / -1}
+@media (max-width:860px){.figs{grid-template-columns:1fr}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 10px;min-width:0}
+.fighead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+figure h2{margin:0;font-size:17px;font-weight:600;line-height:1.3}
+.step{font:600 12px var(--font-mono);color:var(--muted);margin-right:6px}
+.sub{margin:2px 0 8px;font-size:14px;color:var(--ink-2)}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2);margin:0 0 4px}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.sw.line{height:0;width:18px;border-top:2px dashed var(--ink-2);border-radius:0}
+.sw.mu{height:14px;width:0;border-left:2px solid var(--ink);border-radius:0}
+.sw.xbar{height:14px;width:0;border-left:2px solid var(--s2);border-radius:0}
+figcaption,.note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:75ch}
+.note b{color:var(--ink);font-weight:600}
+.drawn{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.drawn span{background:var(--code-bg);border-radius:4px;padding:1px 6px;color:var(--ink-2);white-space:nowrap}
+.outside{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:1em}
+
+.tick text,.axlab{font:400 11.5px var(--font-body);fill:var(--muted);font-variant-numeric:tabular-nums}
+.axlab{font:600 12.5px var(--font-body);fill:var(--ink-2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mlab{font:600 12px var(--font-body);font-variant-numeric:tabular-nums}
+
+/* Stata-style output */
+.out{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.out{grid-template-columns:1fr}}
+.out > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.out h2,.learn h2{margin:0 0 8px;font-size:17px;font-weight:600}
+pre.stata{margin:0;overflow-x:auto;font:400 12.5px/1.5 var(--font-mono);background:var(--code-bg);border-radius:6px;padding:12px 14px;color:var(--ink)}
+@media (max-width:520px){pre.stata{font-size:10.5px;padding:10px}}
+pre.stata .cmd{color:var(--ink);font-weight:500}
+pre.stata .dim{color:var(--muted)}
+pre.stata .hl{color:var(--s1-ink);font-weight:500}
+.compare{display:grid;gap:10px;font-size:15px}
+.compare .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.compare .row:last-child{border-bottom:0}
+.compare .v{font-weight:600}
+.verdict{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+
+/* try / check */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.learn{grid-template-columns:1fr}}
+.learn > section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.learn ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.learn ol li::marker{color:var(--muted);font-weight:600}
+details{border-top:1px solid var(--line);padding:9px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500;font-size:15px;list-style-position:outside}
+summary::marker{color:var(--muted)}
+details p{margin:6px 0 0;font-size:14.5px;color:var(--ink-2)}
+.linkish{background:none;border:0;padding:0;color:var(--s1-ink);text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+
+footer.src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+footer.src a{color:var(--ink-2)}
+
+/* tooltip */
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--surface);font:500 12.5px/1.4 var(--font-body);font-variant-numeric:tabular-nums;padding:6px 9px;border-radius:5px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:240px}
+.tip.on{opacity:1;transform:none}
+
+/* formula drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;padding:18px 20px 40px;box-shadow:-8px 0 24px rgba(0,0,0,.12)}
+body.formulas-open .scrim{opacity:1;pointer-events:auto}
+body.formulas-open .drawer{transform:none}
+.drawer h2{margin:0;font-size:20px}
+.drawer .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.fx{border-top:1px solid var(--line);padding:12px 0}
+.fx h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.fx math{font-size:20px;margin:6px 0 8px;color:var(--ink);font-family:math,"STIX Two Math","Cambria Math","Latin Modern Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.fx p{margin:0;font-size:14px;color:var(--ink-2)}
+.fxbtn{display:inline-flex;gap:6px;align-items:center}
+.fxbtn i{font-style:normal;font-family:var(--font-mono);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  .drawer,.scrim,.tip{transition:none}
+}
+
+/* ---- module 6 additions ---- */
+:root{ --miss:#d03b3b; --miss-ink:#b02a2a; --q1:#cde2fb; --q2:#86b6ef; --q3:#3987e5; --q4:#1c5cab; --q5:#0d366b; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; } }
+:root[data-theme="dark"]{ --miss:#e66767; --miss-ink:#f08f8f; --q1:#184f95; --q2:#256abf; --q3:#3987e5; --q4:#6da7ec; --q5:#b7d3f6; }
+.ctl .seg{justify-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin:6px 0 8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--page);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.strong{background:var(--ink);color:var(--surface);border-color:var(--ink)} .chip.strong b{color:var(--surface)}
+.k-b1{color:var(--s2-ink);font-weight:600}
+.k-b2{color:var(--s1-ink);font-weight:600}
+.k-cons{color:var(--ink-2);font-weight:600}
+.chart svg{display:block}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;color:var(--ink-2);max-width:92ch}
+.steps b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+.side{display:grid;gap:12px}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--page)}
+.box h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--ink-2)}
+input[type=number]{font:500 15px var(--font-body);width:92px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{flex:1 1 140px;accent-color:var(--s1-ink)}
+.calc{font-family:var(--font-mono);font-size:13px;margin:8px 0 4px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.say{font-size:14.5px;color:var(--ink-2);margin:4px 0 0}
+.say b{color:var(--ink)}
+.big{font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ramp{display:inline-block;width:70px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--q1),var(--q3),var(--q5))}
+.sw.ols{height:0;width:18px;border-top:2.5px solid var(--s2);border-radius:0}
+.sw.ghost{height:0;width:18px;border-top:2px dashed var(--muted);border-radius:0}
+/* filled equation */
+.terms{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;margin-top:6px}
+.term{display:grid;justify-items:center;gap:4px;text-align:center}
+.term .t{font-size:17px;font-weight:600;padding:3px 8px;border-radius:6px;border:2px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.term .t.b1{border-color:var(--s2);color:var(--s2-ink)} .term .t.b2{border-color:var(--s1-ink);color:var(--s1-ink)} .term .t.v{border-color:var(--ink)} .term .t.op{border:0;padding:3px 0;color:var(--ink-2)}
+.term .n{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);line-height:1.2;max-width:14ch}
+/* OVB */
+.ovb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:center}
+@media (max-width:860px){.ovb{grid-template-columns:1fr}}
+.decomp{font-size:15px;display:grid;gap:8px}
+.decomp .eqn{font-family:var(--font-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.verdict{display:inline-block;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13.5px;background:var(--ink);color:var(--surface)}
+/* model builder */
+.ivlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 14px;margin:6px 0 10px}
+.ivlist label{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+.ivlist input{accent-color:var(--s1-ink);width:16px;height:16px;margin:0}
+.fitbars{display:grid;gap:10px;margin-top:6px}
+.fb .lab{font-size:13.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.fb .lab b{color:var(--ink)}
+.track{height:16px;border-radius:4px;background:var(--page);border:1px solid var(--line);position:relative;overflow:hidden}
+.fill{height:100%;background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fill.adj{background:var(--s2)}
+.ghostmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55;transition:left .5s}
+@media (prefers-reduced-motion: reduce){.fill,.ghostmark{transition:none}}
+pre.stata .b1{color:var(--s2-ink);font-weight:600}
+pre.stata .b2{color:var(--s1-ink);font-weight:600}
+pre.stata .ns{color:var(--muted)}
+.modnav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}.modnav a:hover{border-bottom-color:currentColor}.modnav li.home a{font-weight:600;color:var(--ink)}
+
+/* ---- site navigation ---- */
+html{scroll-padding-top:58px}
+.topnav{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);font-size:14px}
+.topnav a{color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--page)}
+.topnav a:hover{border-color:var(--ink-2)}
+.topnav a:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.topnav .here{flex:1 1 auto;min-width:0;text-align:center;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topnav .here b{color:var(--ink);font-weight:600}
+@media (max-width:520px){.topnav .here .lab{display:none}}
+.pager{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:8px 0 0}
+.pager a{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.pager a:hover{border-color:var(--ink-2)}
+.pager .k{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pager .t{display:block;font-weight:600;font-size:15px;margin-top:2px}
+.pager .nx{text-align:right}
+.pager .home{align-self:stretch;display:grid;place-items:center;font-weight:600}
+@media (max-width:620px){.pager{grid-template-columns:1fr 1fr}.pager .home{grid-column:1 / -1;order:-1}}
+@media print{.topnav,.pager{display:none}}
+
+
+:root{--amber:#B07A12;--amber-bg:#FFF1D6;--amber-ink:#6B4A00;--tag:#f5c400}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}}
+:root[data-theme="dark"]{--amber:#D9A53A;--amber-bg:#3A2C0E;--amber-ink:#F2D9A0;--tag:#e0b400}
+
+/* ---- p-value reminder ---- */
+.pnote{margin:0;font-size:14.5px;color:var(--ink-2);border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;max-width:none}
+.pnote b{color:var(--ink)} .pnote a{color:var(--amber-ink);font-weight:600}
+
+.fljump{display:inline-block;font-weight:700;color:#1d1600;background:var(--tag);text-decoration:none;padding:9px 14px;border-radius:7px;border:2px solid var(--amber)}
+.fljumpbox{border:2px solid var(--amber);background:var(--amber-bg);border-radius:10px;padding:14px 16px;display:grid;gap:8px}
+.fljumpbox p{margin:0;font-size:14.5px;color:var(--ink);max-width:75ch}
+/* ---- phone fit ---- */
+main{grid-template-columns:minmax(0,1fr)}
+main > *,main > div > *,.grid2 > *,.two > *,.figs > *,.out > *,.learn > *,.side > *{min-width:0}
+@media (max-width:520px){.fx math{font-size:17px}}
+.publink{margin:0;font-size:14.5px;color:var(--ink-2)}.publink a{font-weight:600;color:var(--s1-ink);text-decoration:none;border-bottom:1px solid currentColor}.publink a:hover{border-bottom-width:2px}
+
+/* site palette: data fills in EIU blue get a cyan edge in dark mode; party fills get a darker outline */
+svg [fill="var(--s1)"]:not(text):not([stroke]),svg [fill="var(--c1)"]:not(text):not([stroke]){stroke:var(--s1-edge);stroke-width:1px}
+svg text[fill="var(--s1)"],svg text[fill="var(--c1)"]{fill:var(--s1-ink)}
+svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-width:1px}
+svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
+section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
+.wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+
+/* split panels and predicted vs. actual */
+.splitp{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:760px){.splitp{grid-template-columns:repeat(3,1fr)}}
+.splitp .pan{border:1px solid var(--line);border-radius:10px;padding:6px 6px 2px;min-width:0}
+.splitp h5{margin:2px 4px 0;font-size:13px;font-weight:600}
+.pvabox{margin-top:14px}
+#cSplitWrap[hidden],#cOne[hidden]{display:none}
+
+.subnav{margin:18px 0 4px;display:grid;gap:12px}
+.subnav .grp{margin:0 0 6px;font:700 12px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.subnav .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.subnav a{display:flex;flex-direction:column;justify-content:center;gap:2px;min-height:52px;padding:8px 11px;border-radius:9px;border:1px solid var(--line);border-left:4px solid var(--s1-line);background:var(--surface);color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:600;line-height:1.3}
+.subnav a:hover,.subnav a:focus-visible{background:color-mix(in srgb,var(--s1) 10%,var(--surface))}
+.subnav a .sy{font:500 12.5px var(--font-mono);color:var(--muted)}
+.subnav .err a{border-left-color:var(--s2)}
+.subnav .prac a{border-left-color:#5a9a3a}
+.part{scroll-margin-top:70px}
+.wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+</style>
+<style>
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
+.dcard{scroll-margin-top:70px}
+.p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+.p b{color:var(--ink)}
+ul.p,ol.p{padding-left:20px;display:grid;gap:6px}
+.dg{width:100%;max-width:460px;display:block;margin:0 auto}
+.dgwrap{background:color-mix(in srgb,var(--page) 60%,var(--surface));border:1px solid var(--line);border-radius:10px;padding:8px}
+.dgcap{margin:6px 0 0;text-align:center;font:600 13px var(--font-mono);color:var(--muted)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btnrow .note{font-size:13.5px;color:var(--muted)}
+.big{font-size:15px;padding:9px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:14.5px}
+.chips button[aria-pressed="true"]{background:var(--selbg,#DCE8F5);color:var(--selink,#003D7A);border-color:var(--s1-line)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chips button[aria-pressed="true"]{--selbg:#1E3550;--selink:#CFE3FA}}
+:root[data-theme="dark"] .chips button[aria-pressed="true"]{--selbg:#1E3550;--selink:#CFE3FA}
+.chips button:disabled{opacity:.55;cursor:not-allowed}
+.chips button.right{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));border-color:#6d9b4e;color:var(--ink)}
+.chips button.wrong{background:color-mix(in srgb,#c2453a 12%,var(--surface));border-color:#c26a63;color:var(--ink)}
+.checks{display:grid;gap:8px}
+.chk{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 10px;align-items:start;text-align:left;padding:10px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-size:15px;line-height:1.5;color:var(--ink);width:100%}
+.chk .lt{grid-row:span 2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--font-body);border:2px solid var(--axis);color:var(--muted);background:var(--page)}
+.chk .nm{font-weight:600}
+.chk .ex{font-size:14.5px;color:var(--ink-2);display:none}
+.chk.open .ex{display:block}
+.chk.pass .lt{background:#2E7D32;border-color:#2E7D32;color:#fff}
+.chk.fail .lt{background:#B3261E;border-color:#B3261E;color:#fff}
+.chk.unk .lt{background:#B5862A;border-color:#B5862A;color:#1d1600}
+.chk .vd{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-left:8px}
+.chk.pass .vd{color:#2E7D32}.chk.fail .vd{color:#C0392B}.chk.unk .vd{color:#9A6B12}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chk.pass .vd{color:#81C784}:root:not([data-theme="light"]) .chk.fail .vd{color:#FF8A80}:root:not([data-theme="light"]) .chk.unk .vd{color:#E8C170}}
+:root[data-theme="dark"] .chk.pass .vd{color:#81C784}:root[data-theme="dark"] .chk.fail .vd{color:#FF8A80}:root[data-theme="dark"] .chk.unk .vd{color:#E8C170}
+.verdict{margin:0;font-size:15px;line-height:1.55;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--ink)}
+.vz{width:100%;display:block}
+.vz text{font-family:var(--font-body)}
+.say2{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.say2 b{color:var(--ink)}
+.drbars{display:grid;gap:8px;margin:4px 0 2px}
+.drbars .r{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 4.2em;gap:8px;align-items:center;font-size:14px;color:var(--ink-2)}
+.drbars .tr{height:18px;border-radius:4px;background:color-mix(in srgb,var(--line) 70%,var(--surface));position:relative;overflow:hidden}
+.drbars .b{position:absolute;left:0;top:0;bottom:0;border-radius:4px;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.drbars .b.hit{background:var(--s1)}.drbars .b.miss{background:var(--s2)}
+.drbars .v{text-align:right;font-weight:600;color:var(--ink)}
+.drbars .cap{font-size:12.5px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:reduce){.drbars .b{transition:none}}
+#dr .rvd .in{min-width:0;max-width:100%}#dr .rvd pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 10px;font-size:13.5px}#dr .rvd p{margin:0 0 8px}
+.kk{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-2)}
+.kk span{display:inline-flex;align-items:center;gap:6px}
+.kk i{display:inline-block;width:12px;height:12px;border-radius:50%}
+.kk i.ln{height:3px;width:16px;border-radius:2px}
+.src{font-size:13px;color:var(--muted)}
+.support{margin:0;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);font-size:14.5px;color:var(--ink-2)}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain .nd{padding:7px 11px;border-radius:8px;border:2px solid var(--axis);background:var(--surface);font-size:14.5px;font-weight:600;color:var(--ink)}
+.chain .nd.x{border-color:var(--s1-line)}.chain .nd.y{border-color:var(--s2)}.chain .nd.z{border-style:dashed;border-color:var(--ink-2)}
+.chain .gap{font:600 12px var(--font-mono);color:#B3261E;border:1px dashed #B3261E;border-radius:6px;padding:4px 6px;text-align:center}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chain .gap{color:#FF8A80;border-color:#FF8A80}}
+:root[data-theme="dark"] .chain .gap{color:#FF8A80;border-color:#FF8A80}
+.chain .ar{color:var(--muted);font-weight:700}
+.dots{display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap}
+.dots i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--s1-line) 22%,var(--surface));border:1px solid color-mix(in srgb,var(--s1-line) 45%,var(--line))}
+.dots i.on{background:var(--s1-line);border-color:var(--s1-line)}
+.dots i.cur{background:var(--s2);border-color:var(--s2);transform:scale(1.25)}
+.claim{margin:0;font-size:17px;line-height:1.5;color:var(--ink);padding:12px 14px;border-left:5px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 7%,var(--surface));border-radius:8px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.tlrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tlrow button{display:block;text-align:left;font:400 13.5px/1.4 var(--font-body);padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--muted);opacity:.5;transition:opacity .25s;min-height:44px}
+.tlrow button.on{opacity:1;color:var(--ink);border-color:var(--s1-line)}.tl .tlrow button[aria-current="step"]{border-width:2px;background:var(--surface);color:var(--ink);border-color:var(--s1-line)}
+.tlrow button b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
+@media (max-width:520px){.tlrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.regs{display:flex;flex-wrap:wrap;gap:6px}
+.regs button{font-size:13.5px;padding:5px 10px}
+.regs button[aria-pressed="true"]{background:var(--s2);color:#fff;border-color:var(--s2)}
+ol.refs{margin:0;padding:4px 16px 14px 36px;font-size:14px;color:var(--ink-2);display:grid;gap:6px}
+details.srcd{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.srcd>summary{cursor:pointer;padding:11px 14px;font:600 15px/1.35 var(--font-body);color:var(--ink);min-height:44px;display:flex;align-items:center;gap:9px;list-style:none}
+details.srcd>summary::-webkit-details-marker{display:none}
+details.srcd>summary::before{content:"";flex:0 0 auto;border-left:6px solid var(--ink-2);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;transition:transform .15s}
+details.srcd[open]>summary::before{transform:rotate(90deg)}
+details.srcd .sp-badge{font:700 11.5px var(--font-mono);letter-spacing:.04em;padding:2px 7px;border-radius:5px;background:var(--ink);color:var(--surface)}
+@media (prefers-reduced-motion:reduce){.loopdot{display:none}}
+p.say2[id],#ceSay,#ceSay2,p.verdict{margin:0;padding:11px 14px;background:#FFF4DC;border:2px solid #B5862A;border-radius:10px;color:#181A1D;font-size:15px;line-height:1.6}
+p.say2[id]:empty{display:none}
+p.say2[id] b,#ceSay b,#ceSay2 b,p.verdict b,#ceSay .say2,#ceSay2 .say2{color:#181A1D}
+p.say2[id] a,#ceSay a{color:#0b3f73;font-weight:600}
+#ceSay[hidden],#ceSay2[hidden]{display:none!important}
+#ceSay2{display:grid;gap:10px}
+.exs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.exs{grid-template-columns:1fr}}
+.ex{display:grid;gap:8px;align-content:start;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--page)}
+.ex h4{margin:0;font-size:16px}
+.exh{display:flex;justify-content:space-between;align-items:center;gap:8px}.exh .rp{font-size:13px;padding:5px 10px}
+</style>
+<style id="toggle-sel">
+button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}}
+:root[data-theme="dark"] :is(button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label){background:#6FA8E8!important;color:#0b0d10!important;border-color:#9CC4F2!important;box-shadow:none!important}
+</style>
+<style id="sec-lines">
+:root{--secline:color-mix(in srgb,#004C97 58%,var(--line));--nxg:#1F8A4C;--nxbg:color-mix(in srgb,#1F8A4C 10%,var(--surface));--nxbg2:color-mix(in srgb,#1F8A4C 20%,var(--surface));--nxk:#17693A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}}
+:root[data-theme="dark"]{--secline:color-mix(in srgb,#6FA8E8 50%,var(--line));--nxg:#46B874;--nxbg:color-mix(in srgb,#46B874 14%,var(--surface));--nxbg2:color-mix(in srgb,#46B874 26%,var(--surface));--nxk:#8FD9AE}
+main figure,main .card,main .dcard,main .hcard,main section.controls,main .learn>section,main .out>div,main figure.tfig,main section.jb{border-color:var(--secline)!important}
+main section.part{border-top:1px solid var(--secline)!important;padding-top:18px!important;margin-top:30px!important}
+main section.part:first-child{margin-top:8px!important}
+main h2.jbh{border-top:1px solid var(--secline);padding-top:18px;margin-top:30px!important}
+.pager a.nx{background:var(--nxbg);border:1.5px solid var(--nxg);animation:nxpulse 2.6s ease-in-out infinite}
+.pager a.nx .k{color:var(--nxk)}
+.pager a.nx:hover{background:var(--nxbg2);border-color:var(--nxg)}
+@keyframes nxpulse{0%,100%{background:var(--nxbg);box-shadow:0 0 0 0 color-mix(in srgb,var(--nxg) 0%,transparent)}50%{background:var(--nxbg2);box-shadow:0 0 0 5px color-mix(in srgb,var(--nxg) 22%,transparent)}}
+@media (prefers-reduced-motion:reduce){.pager a.nx{animation:none}}
+</style>
+<style id="rs">
+[hidden]{display:none!important}
+/* shared styles for the Describing-data drafts */
+main.wrap{display:grid;gap:22px;padding-top:22px;padding-bottom:36px;grid-template-columns:minmax(0,1fr)}
+main > *{min-width:0}
+.draft{background:var(--amber-bg,#FFF4DC);color:#3d2c00;border:2px solid #B5862A;border-radius:10px;padding:10px 14px;font-size:14.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .draft{background:#2a2210;color:#f3dfa6}}
+:root[data-theme="dark"] .draft{background:#2a2210;color:#f3dfa6}
+.part{border-left:4px solid var(--accent);padding:2px 0 2px 14px}
+.part .kick{margin:0;font:600 12.5px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard > *,#spOut,#balOut,#moOut,#rgOut,#raOut{min-width:0}
+details.spss,details.stata-wrap{max-width:100%;min-width:0;overflow:hidden}
+.st-body,.sp-body{min-width:0;overflow-x:auto}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;min-width:0}
+.dcard h3{margin:0;font-size:19px;line-height:1.3}
+.dcard > p,.dcard .p{margin:0;color:var(--ink-2);max-width:78ch}
+.dcard b,.dcard strong{color:var(--ink)}
+.src{font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dbtn{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;cursor:pointer}
+.dbtn:hover{border-color:var(--ink-2)}
+.dbtn.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.dbtn:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 13.5px var(--font-body);color:var(--ink-2);background:var(--page);border:0;border-right:1px solid var(--line);padding:7px 11px;min-height:38px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+/* feedback */
+.fbk{display:none;font-size:15px;line-height:1.55;border-radius:8px;padding:9px 13px;color:var(--ink)}
+.fbk.show{display:block}
+.fbk.ok{background:color-mix(in srgb,#5a9a3a 14%,var(--surface));border:1px solid #6d9b4e}
+.fbk.no{background:color-mix(in srgb,#c2453a 12%,var(--surface));border:1px solid #c26a63}
+.fbk.info{background:color-mix(in srgb,#B5862A 14%,var(--surface));border:2px solid #B5862A}
+.fbk b.k{font-weight:700}
+/* tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;align-items:flex-end}
+.tile{touch-action:none;user-select:none;-webkit-user-select:none;font:600 16px var(--font-mono);color:var(--ink);background:var(--page);border:1.5px solid var(--axis);border-radius:8px;padding:8px 10px;min-width:48px;min-height:44px;text-align:center;cursor:grab;position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.tile small{font:500 11px var(--font-body);color:var(--muted);margin-top:2px;white-space:nowrap}
+.tile.sel{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.tile.drag{z-index:20;cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:.95}
+.tile.mid{background:var(--s1);box-shadow:inset 0 0 0 1px var(--s1-edge);color:#fff;border-color:var(--s1-ink)}
+.tile.mid small{color:#e8f0fb}
+.tile.lo,.tile.hi{opacity:.75}
+.midmark{display:flex;gap:8px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+/* bins */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.bins{grid-template-columns:minmax(0,1fr)}}
+.bin{border:2px dashed var(--axis);border-radius:10px;padding:8px;min-height:96px;display:flex;flex-direction:column;gap:6px;background:var(--page)}
+.bin.over{border-color:var(--s1-ink);background:color-mix(in srgb,var(--s1) 10%,var(--page))}
+.bin h4{margin:0;font-size:15px}
+.bin .hint{font-size:12.5px;color:var(--muted)}
+.bin .tiles{min-height:40px;align-items:flex-start}
+.card-v{font:500 14px var(--font-body);text-align:left;align-items:flex-start;max-width:100%}
+.card-v.right{border-color:#6d9b4e}
+.card-v.wrong{border-color:#c26a63}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{font:600 11.5px var(--font-body);border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.u{background:color-mix(in srgb,#5a9a3a 18%,var(--surface));color:var(--ink);border-color:#6d9b4e}
+.chip.m{background:color-mix(in srgb,#B5862A 18%,var(--surface));color:var(--ink);border-color:#B5862A}
+.chip.x{text-decoration:line-through;opacity:.7}
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font:12px var(--font-body);fill:var(--ink-2)}
+.chart .ttl{font-weight:600;fill:var(--ink)}
+.chart .axis{stroke:var(--axis);stroke-width:1}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .bar{fill:var(--pop)}
+.chart .bar.hl{fill:var(--s1)}
+.chart .bar.tap{cursor:pointer}
+.chart .bar.tap:hover{fill:var(--ink-2)}
+.chart .ncurve{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.chart .meanl{stroke:var(--s2);stroke-width:2.5}
+.chart .medl{stroke:var(--s1-line);stroke-width:2.5}
+.chart .meant{fill:var(--s2-ink);font-weight:600}
+.chart .medt{fill:var(--s1-ink);font-weight:600}
+.chart .shade{fill:var(--s1);opacity:.14}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.stat div{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{font:600 19px var(--font-mono)}
+.stat .mean b{color:var(--s2-ink)} .stat .med b{color:var(--s1-ink)}
+/* SPSS-like tables come from spss.css */
+table.sp tr.flag td{background:#fdecc8 !important}
+.sp-exp:empty{display:none}
+.tblwrap{overflow-x:auto;max-width:100%}
+.qline{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:15.5px}
+.qline input,.qline select{font:500 15px var(--font-mono);padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);min-height:40px;width:7em}
+.qline select{font-family:var(--font-body);width:auto}
+.ph{border:2px dashed var(--axis);border-radius:10px;padding:14px;color:var(--ink-2);background:var(--page)}
+.ph b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--s1-ink);min-height:32px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.tbl{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:right}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl input{font:500 14px var(--font-mono);width:6.2em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:right}
+.tbl input.ok{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 12%,var(--surface))}
+.tbl input.no{border-color:#c26a63;background:color-mix(in srgb,#c2453a 10%,var(--surface))}
+.tbl tr.cur td{background:color-mix(in srgb,var(--s1) 10%,transparent)}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--page);display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard h4{margin:0;font-size:16px}
+.pcard.ghost{opacity:.8}
+.pcard.picked{border-color:var(--s1-ink);box-shadow:0 0 0 2px var(--s1)}
+.pcard .bq{align-self:flex-end;margin-top:auto;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-2);cursor:pointer;width:max-content;max-width:100%}.pcard .bq input{width:16px;height:16px;margin:0;accent-color:var(--s1);cursor:pointer}
+.pcard svg a.egg{cursor:pointer}
+.pcard .nums{font:13px var(--font-mono);color:var(--ink-2)}
+
+/* coding scales: one code per line, number first, left aligned */
+.dcard{grid-template-columns:minmax(0,1fr)}.dcard>*{min-width:0}
+.codes{display:grid;grid-template-columns:max-content minmax(0,1fr);min-width:0;gap:3px 14px;margin:2px 0;padding:10px 14px;background:var(--page);border:1px solid var(--line);border-radius:8px;width:max-content;max-width:100%;font-size:15.5px;line-height:1.35}
+.codes dt{font:600 15.5px var(--font-mono);color:var(--ink);text-align:right;margin:0}
+.codes dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.codes .miss{color:var(--muted)}
+.codes-h{margin:0 0 2px;font:600 14px var(--font-body);color:var(--ink-2)}
+/* party colors (light blue and light red, with a darker outline) */
+:root{--dem:#5B9BD5;--dem-ink:#2F6FA8;--rep:#E06666;--rep-ink:#B03A3A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}}
+:root[data-theme="dark"]{--dem:#5E97D8;--dem-ink:#9CC0EA;--rep:#DB6E6E;--rep-ink:#F0A3A3}
+
+/* dataset download buttons */
+.dshead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 14px}
+.dshead>h3{flex:1 1 16em;margin:0}
+.dsbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;margin-left:auto}
+.dsbtn{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-body);padding:6px 11px;border-radius:7px;background:#1b2330;color:#fff;text-decoration:none;border:1px solid #1b2330;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.dsbtn:hover{background:var(--s1);border-color:var(--s1)}
+.dsbtn:focus-visible{outline:2px solid var(--s1-line);outline-offset:2px}
+.dsbtn.held{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}:root:not([data-theme="light"]) .dsbtn:not(.held):hover{background:#fff}}
+:root[data-theme="dark"] .dsbtn:not(.held){background:#e9edf3;color:#111;border-color:#e9edf3}
+
+.dcard .sp-exp,.dcard .sp-exp b{color:#181A1D}.dcard .sp-exp .sp-hint2{color:#5c5440}
+
+/* Research skills drafts (questions, lit search, lit review, paper structure) */
+.dcard .p + .p{margin-top:0}
+.lede{max-width:78ch}
+.note{font-size:14px;color:var(--ink-2);margin:0}
+.rsdraft{margin:10px 0 0;padding:8px 12px;border-left:4px solid #b4572b;background:color-mix(in srgb,#b4572b 10%,transparent);font-size:14.5px;color:var(--ink)}
+/* worksheet fields */
+.ws{display:grid;gap:14px}
+.wstep{display:grid;gap:8px;padding-top:4px}
+.wstep > h4{margin:0;font-size:16px;color:var(--ink)}
+.wstep > p{margin:0;color:var(--ink-2);font-size:15px;max-width:78ch}
+.wf{display:grid;gap:4px;font-size:14px;color:var(--ink-2)}
+.wf > span{font-weight:600;color:var(--ink)}
+.wf input,.wf textarea,.rsin{font:400 16px/1.45 var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box}
+.wf textarea{min-height:84px;resize:vertical}
+.wf input:focus,.wf textarea:focus,.rsin:focus{outline:2px solid var(--s1-line);outline-offset:1px;border-color:transparent}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
+.wbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.wbar .msg{font-size:13.5px;color:var(--ink-2)}
+.wsave{font-size:13px;color:var(--muted);margin:0}
+/* reveal lists */
+.reveal{margin:0;padding:10px 14px 10px 30px;background:var(--page);border:1px solid var(--line);border-radius:8px;display:grid;gap:6px;font-size:15px;color:var(--ink)}
+.linkbtn{background:none;border:0;padding:0;font:600 14.5px var(--font-body);color:var(--s1-ink,var(--ink));text-decoration:underline;text-underline-offset:2px;cursor:pointer;justify-self:start}
+/* question check */
+.qchk{font-size:13.5px;line-height:1.5;margin:0;padding:6px 10px;border-radius:6px;border-left:3px solid var(--line);color:var(--ink-2)}
+.qchk:empty{display:none}
+.qchk.ok{border-left-color:#5a9a3a;background:color-mix(in srgb,#5a9a3a 10%,transparent);color:var(--ink)}
+.qchk.no{border-left-color:#B5862A;background:color-mix(in srgb,#B5862A 12%,transparent);color:var(--ink)}
+.qrow{display:grid;gap:4px}
+.qstar{display:flex;gap:6px;align-items:center;font-size:13.5px;color:var(--ink-2)}
+.qstar input{width:18px;height:18px;accent-color:var(--s1-ink,var(--s1))}
+/* observation cards */
+.obs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.ob{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:10px;background:var(--page);align-content:start}
+.ob p{margin:0;font-size:15px;color:var(--ink)}
+.ob .src2{font-size:12.5px;color:var(--muted)}
+.ob .seg button{white-space:nowrap}
+.ob .fbk{font-size:14.5px}
+/* rebuilt screenshots */
+figure.shot{margin:0;display:grid;gap:6px}
+.shotf{border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 1px 0 var(--line);overflow:hidden;font:400 14.5px/1.45 var(--font-body);color:var(--ink)}
+.shotbar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--page);border-bottom:1px solid var(--line);font:600 12px var(--font-mono);letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.shotbar i{width:8px;height:8px;border-radius:50%;background:var(--line);display:inline-block}
+.shotb{padding:12px 14px;display:grid;gap:10px}
+.shot figcaption{font-size:13px;color:var(--muted)}
+.sbox{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.sbox .q{flex:1 1 200px;border:1px solid var(--axis,var(--line));border-radius:6px;padding:6px 10px;font-family:var(--font-mono);font-size:14px;background:var(--page)}
+.sbox .go{border-radius:6px;padding:6px 14px;background:var(--ink);color:var(--surface);font-weight:700;font-size:13px;letter-spacing:.04em;display:flex;align-items:center}
+.shotcount{font-size:18px;font-weight:600}
+.shotchk{display:flex;gap:6px;align-items:center;font-size:13.5px;font-weight:600}
+.shotchk i{width:14px;height:14px;border:1.5px solid var(--ink-2);border-radius:3px;display:inline-grid;place-items:center;font-style:normal;font-size:11px;line-height:1}
+.shotres{border-top:1px solid var(--line);padding-top:10px;display:grid;gap:2px}
+.shotres .t{color:var(--s1-ink,var(--ink));font-weight:600}
+.shotres .m{font-size:13px;color:var(--ink-2)}
+.shotres .l{font-size:13px;color:var(--s1-ink,var(--ink));text-decoration:underline}
+.shotres.hi{background:color-mix(in srgb,#B5862A 12%,transparent);border-radius:6px;padding:8px 10px;border:2px solid #B5862A}
+.shotref{font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.55}
+.shotref mark{background:color-mix(in srgb,#B5862A 30%,transparent);color:inherit;padding:0 2px;border-radius:2px}
+.shotmenu{border:1px solid var(--line);border-radius:6px;padding:6px 0;display:grid;font-size:13.5px;max-width:200px;justify-self:end;background:var(--page)}
+.shotmenu span{padding:3px 12px}
+.shotmenu span.on{color:var(--ink);font-weight:700;text-decoration:underline}
+/* link-out buttons */
+.outs{display:flex;flex-wrap:wrap;gap:8px}
+.outs a{font:600 14.5px var(--font-body);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.outs a:hover{border-color:var(--ink-2)}
+.outs a::after{content:'↗';font-size:13px;color:var(--muted)}
+.qstr{font-family:var(--font-mono);font-size:14px;background:var(--page);border:1px solid var(--line);border-radius:6px;padding:6px 10px;color:var(--ink);overflow-wrap:anywhere}
+/* tables */
+.rstbl{border-collapse:collapse;font-size:14.5px;width:100%}
+.rstbl th,.rstbl td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+.rstbl th{background:var(--page);font-weight:600;color:var(--ink)}
+.rstbl td{color:var(--ink)}
+.rstbl td.n{text-align:right;font-family:var(--font-mono)}
+.tw{overflow-x:auto}
+/* sorter (lit review camps) */
+.camps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.camp{border:1.5px dashed var(--line);border-radius:10px;padding:10px;display:grid;gap:8px;align-content:start;min-height:90px}
+.camp h5{margin:0;font-size:14px;color:var(--ink)}
+.camp.ok{border-style:solid;border-color:#6d9b4e}
+.wk{border:1px solid var(--line);border-radius:8px;background:var(--page);padding:8px 10px;display:grid;gap:4px;font-size:14px;color:var(--ink);text-align:left;font-family:var(--font-body);cursor:pointer}
+.wk b{font-size:14px}
+.wk .a{color:var(--ink-2);font-size:13.5px}
+.wk[aria-pressed="true"]{outline:2px solid var(--s1-line);outline-offset:1px}
+.wk.right{border-color:#6d9b4e;background:color-mix(in srgb,#5a9a3a 10%,var(--page))}
+.wk.wrong{border-color:#c26a63}
+.pool{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px}
+.campbtns{display:flex;flex-wrap:wrap;gap:6px}
+/* margin comments on example passages */
+.ex{border:1px solid var(--line);border-radius:10px;background:var(--page);padding:12px 14px;display:grid;gap:10px;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.6;color:var(--ink)}
+.ex p{margin:0;color:var(--ink)}
+.ex h5{margin:0;font:700 15px var(--font-body);color:var(--ink)}
+.cm{background:color-mix(in srgb,#B5862A 18%,transparent);border-bottom:2px solid #B5862A;cursor:pointer;border-radius:2px;padding:0 1px;color:inherit;font:inherit;text-align:inherit}
+.cm sup{font:700 11px var(--font-mono);color:#6b4500;margin-left:2px}
+.cm[aria-expanded="true"]{background:color-mix(in srgb,#B5862A 34%,transparent)}
+.cmnote{font:400 14.5px/1.5 var(--font-body);background:var(--surface);border:2px solid #B5862A;border-radius:8px;padding:8px 12px;color:var(--ink);margin:2px 0}
+.cmnote b{font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cm sup{color:#f2d9a0}}
+:root[data-theme="dark"] .cm sup{color:#f2d9a0}
+.guide{border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;padding:10px 14px;font-size:15px;line-height:1.55;color:var(--ink);display:grid;gap:8px}
+.guide p{margin:0;color:var(--ink)}
+.guide .who{font:600 12px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+/* paper map */
+.pmap{display:flex;flex-wrap:wrap;gap:6px}
+.pmap a{font:600 13px var(--font-body);padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--page)}
+/* paragraph sorter */
+.slots{display:grid;gap:8px}
+.slot{border:1.5px dashed var(--line);border-radius:10px;padding:8px 10px;display:grid;gap:6px}
+.slot .sl{font:600 13px var(--font-body);color:var(--ink)}
+.slot.ok{border-style:solid;border-color:#6d9b4e}
+.slot.no{border-style:solid;border-color:#c26a63}
+.para{border:1px solid var(--line);border-radius:8px;background:var(--page);padding:8px 10px;font:400 14.5px/1.5 Georgia,'Times New Roman',serif;color:var(--ink);text-align:left;cursor:pointer}
+.para[aria-pressed="true"]{outline:2px solid var(--s1-line);outline-offset:1px}
+.slot .para{cursor:default}
+@media print{.topnav,.mast,.pager,.wbar,details.srcs{display:none!important}}
+figure.shot{border:0!important;padding:0!important;background:none!important;box-shadow:none!important}
+.cites{display:grid;gap:10px}
+.cite{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:8px;background:var(--page)}
+.cite.ex1{background:color-mix(in srgb,#B5862A 10%,var(--page))}
+.cgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cite .rate{font-size:14px;color:var(--ink-2)}
+.cite .rate a{color:var(--s1-ink,var(--ink))}
+.rank{margin:6px 0 0;padding-left:22px;display:grid;gap:4px;font-size:14.5px;color:var(--ink)}
+.evgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px}
+.evg{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:8px;align-content:start}
+.evg h5{margin:0;font-size:15px;color:var(--ink)}
+.evw{display:grid;gap:2px;font-size:14px;color:var(--ink);border-top:1px solid var(--line);padding-top:6px}
+.evw .k{font:600 11.5px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+#campBtns{padding:2px 0 6px}
+.cm{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.cm:focus-visible{outline:2px solid var(--s1-line);outline-offset:1px}
+</style>
+<style id="polish">
+/* polish: shared section bands, data bars and axis titles */
+:root{--databar:#7890AA;--databar-hl:var(--s1);--partbg:color-mix(in srgb,var(--s1-line) 6%,var(--surface))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}}
+:root[data-theme="dark"]{--databar:#5A7593;--databar-hl:var(--s1-line);--partbg:color-mix(in srgb,var(--s1-line) 11%,var(--surface))}
+.part{background:var(--partbg)!important;border:1px solid color-mix(in srgb,var(--s1-line) 20%,var(--line))!important;border-left:5px solid var(--s1-line)!important;border-radius:4px 12px 12px 4px!important;padding:14px 16px 15px 15px!important;margin-top:34px!important}
+.part:first-child{margin-top:10px!important}
+.part .kick{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.part h2{margin:2px 0 4px;font-size:clamp(22px,3.2vw,28px);line-height:1.2}
+.part h2{text-wrap:pretty}
+.part+.cb,.part+.jb{margin-top:4px!important}
+a:not([class]):link,a:not([class]):visited{color:var(--accent-ink)}
+.chart .bar{fill:var(--databar)}
+.chart .bar.hl{fill:var(--databar-hl)}
+.chart .ylab,svg .ylab{font:600 12px var(--font-body);fill:var(--ink-2)}
+svg .halo{paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round}
+</style>
+<style id="presentcss">/* presentation mode */
+.pv-hide{display:none!important}
+.pv-bar{display:none;position:fixed;right:14px;bottom:12px;z-index:80;align-items:center;gap:8px;padding:6px 8px;border-radius:999px;background:var(--surface,#fff);border:1px solid var(--line,#ccc);box-shadow:0 4px 18px rgba(0,0,0,.18);font:600 14px var(--font-body,system-ui)}
+.pv-bar button{min-width:46px;min-height:42px;border-radius:999px;font:700 17px var(--font-body,system-ui);padding:4px 12px}
+.pv-bar .pv-exit{font-size:14px}
+.pv-bar button:disabled{opacity:.35}
+.pv-n{min-width:64px;text-align:center;color:var(--ink-2,#444);font-variant-numeric:tabular-nums}
+html.presenting .pv-bar{display:flex}
+html.presenting .topnav,html.presenting .rule,html.presenting header.mast,html.presenting .modnav{display:none!important}
+html.presenting body{padding-bottom:70px}
+html.presenting main{max-width:min(980px,96vw)!important;margin:0 auto!important;padding-top:14px!important}
+html.presenting main .part{margin-top:0!important}
+.pv-open{margin-left:auto;font:600 14px var(--font-body,system-ui);padding:6px 12px;min-height:36px;border-radius:8px;border:1px solid var(--s1-line,#004C97);background:var(--surface,#fff);color:var(--ink,#111);cursor:pointer}
+.pv-open::before{content:"▶ ";font-size:11px;color:var(--s1-line,#004C97)}
+.pv-open+a{margin-left:0!important}
+@media (max-width:760px){.pv-open{display:none}}
+@media print{.pv-bar,.pv-open{display:none!important}}
+</style>
+<style id="revamp">@font-face{font-family:RvSpine;font-weight:600;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvSerif;font-weight:400;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,d09GMgABAAAAABgYABAAAAAALTQAABe4AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbmDQcegZgP1NUQVRiAIFEEQgKsgiqBQE2AiQDgX4LgQIABCAFhSAHIAwHG5Uno6Kc1SabKKoES8VfHfCG6FN38DatuqEV59TPWqEKX9VKXO3snPEP3/C++sapqeRlfAwOg3R+hCanaIXn37XP+5LMzAfinS4BlxyQrWslyD2+x1eoKrAoHIGyGaBtdv7Qn67MYIo9QY7WBowiTNoCRcouUNdG5SJSl21ursrYXEn0/d5ffc6/D4lKEuEwiiwphIlJGQons3AgHBuikCu3hn++P2jn73t/aYGiZgJPAwrI45hr7qXNXBll6TiItJIM4QeAbe4npSflQ5VJlyolIBgCdP/nRDahAWo+L6q7v8ig/v/nerO55zcF/CjLKBSgBnKAQiZ5ybzcuedNMvAhVJrSlDglTJkkSUAJOG0XmJReodivEJKEXCHNGrvqhrj0U/k5Q8m0q3m5bZV1eilNcpM0IoWIeCG/bhldhzdXLSzo9KeJgAgAUITSIgSEdIxTaxuHETZe7Xc2w0YGYFcJkMvj9mZYCwQIIyhAi8ioEAoUCAW9Q4mC+SCOQUDLLTHSlJR2GZZjudWxulJ36nWrd3Mbtk3D26Mpva35ndLyS2lYGd+9t0/0eD/qF/1+tgUbBLG/83Y3+L1ilPujCdqg12laDDT7w29ch+Qyle28vBfKojCIpl2MEs+IREOSjUg1L90eGZDtmRzIg0Kjio0qNaLcIZVGVRtV67l69zSa0uyqVs+18wbLmyXo1WeheYvNW2recvNWmidEDqpiOPcH/Ji4xG0+CFA0oQZXFi2ns8AQOODmPBCYMIgXHgJhSZF8E8018eyRqE8SfrpHoRoAS2HTapPq0IAmtHLtHHVoXq8MazJ1LvD1OUq5n1cxdEg3s8VacZxwavCuyRWCETEIgX87JhtJSyksE6ygUvCfOY/pGT61fY8PJJhiMpjzUg9HVbUWpJ4ljjlHWZVb0W41EhPKgpj0tCEw+NOsBgfqWscnITTfym7LxI1g5XCUKiu6A1kTmeadjAB0wTA+fYTtpYtWbzRBgJdfwsmyPgwb8kE8dyW6JTk1TfdJCcvAqjO/1jfdiJUwhXNv5h5RY0DIsEMsEp8ro+TFWKeo18Fb1gcWrHB4JDcoEA7H+oQy6jkqs99oH8uaovupSbfPaVA5RWecIXBybq4KTBjECw8n3Pr425BXUt2W6als9+QQztel0H1F5Mo9U8Ebq4JaM+pNanRZsx6tjmo3rYOmC922CEuwDCtLlkhecnNcfUIQRHR8g5hqltXuHxy9XrIAisiYKggwDbc+q8dajWuDDujK84gzOq7UQBN0D7xnGzfK6M9Ho6aPDNx5lWo1Rdh3ALvUKQDYtv4emQXYL+PSsK876eJl2Fed7S/sS4AlVG821f7DulbYtd/3sdNJOz4Y/WhyssAu2gqRKHnQzpLHkGcvodbdHhmTt5RM1Sa/kX+ObNuTXkMggWftOxL9quLh+UO1l/vbb+fRpfOTEfs+ZmUYWoeo+88DInVLFgaPqr26m0ltYfNJGr+E/CyAnU6RJwgTP0CoiPl4RVufE7CXutPfKkZNlqQA7MWW6sOZofA8cdVd1Vj3/a3FjK1P0vq3NhLjjI/Vdi/1oblmMvZBSRVNWiftdVHM1GeY64mw9clQ9cV/sAdj2D9dy6OJ1m0IQFev+WQ0bfXfsAv9gtjxp+okzi3X0p6NBNhVHXbt6V72t1c9YgiiaSKX5vyI13AmwnvM3WwKWXF2L7rCvdEiUrL3Y9nPxdTWEw3c814iJ7Gc6SU8et2ctvnSvqTEYdBeXNwvfIXlDaRtbEkllwtDLhxONgJIYnXCKcLmktjQSk1py+Ere15rhG50fkBvmpffiY+vbnep70E4U8CR6A+6eAzALqA2uv+6FGd4SRrAXm6ljzg9FrxLWivSnEewbzXBQsPnE7v693rWMmZZJ/ZWvfH7g/xiwuo96nH/SrC9g3mdZp/vU0/iMT4hoinD57DPygLY8V601BBtFO6Ez30gnifvY5Z/eQqsX61+Ve7gq6Gi8e/wF/zMqD2QVWfQEowme0WJuq03Uz/DuYBQeaDoFQD5uLjQvY1KoBuCHg6FFYfQAHh3C2pwtXTVPm8LW0QFVD/KPIgIA4gKSQlQCmJKjLI4j6MowzPMX5CQlOXKgaD0GDIVoPOl8loHwYJTIF6YvsKIeUEmDGao7aiYuAAleEQFvIJQ38pb0Yet/+Uw/NV5zQUyop0AMU04vyLu3uJbpqVkrVDTvCUKF2pR1iLlg76cFDOgVcmBszD2gVfclnrzspaipv61V3S6e2w3nNPwbjrz/zOCS60F2BS9N7kUNmh2VajB1i9lkLq96+hnSgBPT2s7GYD81/4tsvWA4irpUUCVGpAAcTAKq7ZVQZQqgcqZuAHAUxvjPiTiuzLeAF+DEdDQZ9CwOWvIvAWiCcXExpUgSbpsR7MKfY3RMorgdqOJpcj8/SQ/+9ePllvpfGc70/GOdbSD3eh6o4003FCJlEzdCMmquNqrXttzcBPgPSL8DmbB6ZCnqDRIpH4VlXmSYo5HtI5LY6ReVg8mmQ5GLpmvRm0O9cWAqiqJYuWxo72xYqHYyG+f954V89bO4VPW+ZY/zrXcwHWd8eOccZ63crS7ZlJsrDve8/jk0VaC88CzZq/zFyyzty8Ppszg4/mUYHxRcPca5kJGgcVMv+ylhUjSpd8qYfvy9QPC7b9oefPPr15mUprZfRSJCP1wW5OTmd1Z5TDX4WmmMftidenrXMzt6efrjA28hF/mIBf9m3iqKD/3QginQnG1FLIXq92XJ+VuHyVfiRaCcC/SwHuuiBg7z64sJK1cVrtKs8fbCQNWISv2LlWm6L+QFBZ3pS5dKvU5QZe0oZ7a8VFXCkIuKtJhK1tnd0ztkexUBA2FEVR8fyaJdTcKTHpvTirtI+LqpJkLWLe3wc50bQQ6JdqjCrcMhBJTekDpSutPjYgsNZItECWz9UJFiIQy3LPpPLgfDo/lr9JhsFsaiXtNcgiXtaxiUZkI6TFPBevZJyweTJNW0hNbMs8sOg52Oq9/bMlnNiadyKgYQ2CggMKpLX4Ao0NYzNV9Bz4IoNGAQkfuUsoxLVha+gPKmzSsTus1M2tsrPWGSOLOfnNd2JlGxQrreGJuaiZY4F4kCPxNzILnHYRyHiep34iJ8Zl0Hujx9HK6qNG0q+SZhe63mKi//MVbv63ikKC4KIaYZ12uyOMqRJPqZTBG3Y0PFQHwOpZVfZxTLZjMxZg6V1zGTir6RENrL5rTsunbpomcutgU+bsJjN3ocyDRUgJGCizlF311cBrID301cauMEJaKaUaqyCFbpnyfHjt5eU6NXs9eqlOcN4gJ2BVyc+n5gBJa3fW32XuRG3UT2qil0nfyF2sWw8zatyeqyP9gH7wvj4Ucza61j/oajAQ0NtYY4S/b8rn8VmVaswrs0/EXESs7osAv2Svq19WK/i9LnhENsk7Q1csurP6TzSzAyl1JzbacX9mCIvHeCNsqKTYALUXCVTlz7q9Z6PGMPyc5xd0CUCyN5lUfgLekLJOQVmSD1UdtUJ/FbIolga/tIiW1kVI7mz/LizjLLSl1fmWF5BfAYWRkelRM15Q7bbM/6rpdASuN26Ah2oq3Ho4rv5r/n+3lq2SOn0lQf5gCfoxIXIHDTMp0LvUNBowugG9T0ufsCnSOpfUwMlTbtIP4sOPkqgqLDxa+5TWtbu99DEVOKhd6BS0gUBqPCvNxlG9iA3snS9RoN/Y/qXaycAkceEJ524FxiAfJL5AzplQYWZ8bTy3GiMfbHSsgyQ3IbYz+dEXrVLiA9sh63P29NoHVtUEpmwjLVAcdtkaWrjRpmtad1u5koe5+LNpWmbxFsjO5oVSfj/RLXEfc14omNLgKKqDxIs/DkH6Y/SB4HGwBodo/QoCgC0cMQzYh9YWBkIjtI0aPXk648QamA4WoU9rZjWt8ka/BXrCgFwQpgLIvQLDoVfk/VPvevHBe++7sE2Ps/tf1znlmi8LKTS8ZxYLAywJI51ytE1wkwicllmd4DfBY/5cUgAp8S8A/fnK/OxgBLopAesQ+EDwHdoMLobje6yZp3z4nwDGdU/+Tf/hYzN/mpujVw7/Lgvq6FcGhY7H/Gptj/h06+YOvuuSNPKtI/T16JV97rrqh8WlFWv0JXy7QnasCXGuusgPz9ns0O6rFZx6djOYPimXxh56L9uWrxbcwyt2D8pBThP8Yt0/ldxUVBfsmDzlXQZTi+UM3mdymKEbA1mq2RP1/0powe2eWQQBDWdezpd2ByFVOhhDNbf0ooX8NqHCGN8xdqBRfKpT7p4W/rFppkRpujrow34qMDpOZEeXVaUISlhnlmruFrEvSqcAmBZNLYhR5BybZtfwWgxAone8/HTOaSrUttApK7sAFJzMDSfwU93I4SZekl4nn0NDpocmirqvhWzlt1gCsbt1w/wAIroD9oGVa7powHYX1G4fj5iUMrvoyV72EYe5w/I3cGlCFzNWjQG1wEByN6eRFi/2fyFNgA9hU97YHBL+DPeAMkAchtHyDDkw4HuppQ6b7eqCCEUgKXEgNYnAsgtXpMW7HPp5eBMqwQn2oq3eCu9zaNzIVjxZTr2+2DTXWc2/FtPJsbUFfB8sI94ibvpwEtLu0PE3mjIjKDnkRCLwKi2mOUTWZ/njzsydUZoqi66kNPHZx4iaiKIzcCM/eFJlPY3EQw0WixbNuCzqQgGSa0TbBSvYL2SfyU7yPl8j3+SSgonWjHQCLiwpmvPWEsWnehKnB06NHVozdpERSRUIWdayWE++UsiUbZyeipFh6ph9K5F8uEnjszSs56g8gNaMY6UlZ3GIGsScpyaepJIhBrXb0Bj0pjmJXipnnOovi/ULmybyMgONlJXvJsegodb75TgZu/tSz7OvGxgF6aoO0ijWp0u/QhQA9vR7A9KVCUs8NPbC2qBCgaGt5WilTHJLoLq7+0kDnWllaWE9HuNSeqh1k5YRzSqRkWhJzTyWLJuSK2IfH8wF1lFr5mKnlKbeDpRvjtEbG4IiXiCa4a3nYueqsw4QoAlXdJFzXXm5ndnpglz0pkUAuSwFOqcS3mYmcMQyCja0v03U7IlodryfYkE5AUB3xTkG51jH8KhSFhbPWCYLJtWIhsZCizb5oY6IVuYCbqh0cV2yvr8uRaXIgXEiNqcAJy/ZkpNdOMlVT1wr76NxKXhS3qo8mpJbCo8OwaT5RvKoeWlQQIy4nKVOqiIoQZidnyMqez1t4eKxNUuKpUdWgUIi19UUzQxvyZokBkA1vhs8QHKhsOy/KVswS9GQMhQFna6GLc1sHXrbAEffK7yKa4eKb/1ahMlOQrr9uoLIFDmjIu/HeZAzGm4zHe5ExGC+ytbHKaE4zHHEH0QSPHja5+Q62mQbYv9pUeiQfjmhHRFsTYnazD61G5JaoMlQxTOdECxwh/5QAk/tvsmxcXF1g4v0PXfWCkfSNVxL06T8RVXDEOUQ1/AvOwS/UwplUhLivnMnyC7UP1USGCUmIRHjGn5ZNuNbFZwLcJxTmRG7ngUoG2z/ELUxsxpeae7xbpR0SkfVmCHC/SBU9OkqtH/V9wCHTc/3ITZklxD05rHB6jp9XU1YRcV8uk8qQX02W3lBsTb1/LbNUcSVFdq3sy5cFYJMPDrXvK3USaUVatQUdFCLZZpQNm0v3C9kn81qLZx9ll+AFhlHIl34Low6Il4hmB98bAyeCSCm7i39zdmUlIgOG3IfQA9iWFoJKto4MuCElH6rHDqemfBWQQ+yJ2hsOizvgiEcOJW8cRZDU/gkBgwWFM1/no8ZXZ/5CcMQIxcg+lOPpghmLtE1rp9uQnG0iPMPDMhtcBG5ijQX7n+4lf7PptCSIQUJaYKDDkK9VqGlhBMMZHR0YRJVsJwBev31CiDRY2IaN2HE23E/DgixwxMf4GmX7GJ5Vnzs4LrAec/YB4hLXxwEBlq7mviFmvuQixEvdcpY/1T5YA1mY2dQ0X+uCJKxXyzBcMNA/HFn9KSuuWBM7SD8/gFKqr7BE0VBS2Kb7Dr62s/vs5nzVSeZFCNQQqsxuPM3e5rWL3awNgI2KzUOg+lC5tjOwHOOkfAf6X+j1dTk4xlrnLBiKjhLByBmHlizTLVBBzX8FZCQQWRlxQK/HsQiB2o8qs4M8NCT4OGOMfHS1tJI69Qz6K5BCFdukj7kKS1QYSgzT7/nikBomj8QBeBuuf0gBxjRjS64OgeTr6hIYTEUbxbrExYr9XIH5D3hvbyzG2weP8/HBYH28AdUaPvIw/BwcdRg49xu3YIxmAChPGdAAE8vS/csg+PO3K/z+HWmwex/clR4SyN+x+rf/A70zMwTSp1H/fDgLc/d+pvPknsaaFyM5mDv3s10mxwAwoQTh359t8/s34rsOBj2JBsCoosoVtEedebzRxS1lF6JkkkEHhUtOxa5MqhwTW2icRF5nf/v714OyAQa3S+ZqlOJTWNLGF2bkGjMyAZJc23+3TXckMZUUIcxMkDVkb97huU43WzLQFyaJ3+0VkBvi511UIeDD4gvWH/DjNScVN93QyNzPTjR3MrehW+s8hdWTDGxCdweyGmQiprx7i8wIQFoyl0dQCBXEMVRUmIXt63KdM0bYwXVYm5AKwEaLLYUZbt6SDNV5AlF46luxm4I4DTKSY2YB9x3hmEp3QBbEyvks8VJu+6b4xrWTuLqQcKlloZ8ofH978WNvAHM5q7Dc/rakviJqyOFm/naPh/LseFa+n0d55O7SpiJHnjbDmoJb0HDzSomSEBIM8XGddE5XVpF4/HJqWc31KtFKUyrirujEvu7VPNXevbTYZZTqNhOZ0W8t08uYUxaQ22aAxTwnY5jG2sXNOry/x3Zzrn3+NqkPTiJxo2ZtL4ykBcblEeux9S55rMAdkvT8gRvMLPkdWkazjO6eL+PuIlF033HM09jYAibdJ0PuwYmWE71S/IMDRHletbg617ywAIVAENd2kgU8RRQq3G/k1ZRz2+zPZOwgPlZkCxi5fu5yVjQ5P9MpwJ6pEW5ORUNAD+90rhjH10WKesPZvWl5kpPjwoq68Sr+zyaJ4wXxvrHuX00AOlWNPEutVXP7gZbB/6M5o+qlbh27OQRHTM9YTwziGHeZmrS8MTabGt9lS0xqKtK44CcqQs9szejAB9HzjG7x1mR7Tf465lOTpUw0xTfLybcsTW/bxrhcvS4JMOP/BHD5ocd2ZR105rkLdSPseJJSrHe2h3dIkbdvhaByCH762TOu7C1NktYsWtBMVcQewTIuNjFpvmpsOnm0wM7zAK9p7B61o4IXxFo+0DJYas72GdYCr7hqED6cSswoMzwg7S8ceWyi/B4j2Xcp4qlZAm1WZHTiA4NzgVtTT0133ojO1LDmD8IyDhbEjXHTwfN1BfB0JE8oFRNvcO3Jz9pTf7Wnv2rPvNee/a4993rj8x8AqJUfeFbeldEeovJqlZU5CvNxnrewJszexCR1Z63cRCUwd8/JUhY2XZ74ZPhXziXkzrx/vRMlIL48tD/aG+m6/ONK/98B/Pkb3Ht2h7ct/q+oHJ3qgdRWfMHf0bb7qdRs7UmI6YWszFsP6hqc+/y8y26PTpIO55lTBm7Nabg3Lrg9qQUYNoVdDN+IrEyD+8bJWRwR2mCgz1qc9gGDMy2/MfQfjhaXgLCh8rPI3GYTGifCQuajbW6A1BsbMb5I1XtLcLasvHqiNWnu3PC4dlq+T551lQ9do7tS/gRDEAWFoAlSKIFykL3RhEGwPf4D9kYG3flmeBHuze6Z2zAxw1ZwKwxSzatc8/lcrWEBqwQgjEroDmPvM0W9pslQBeAt9rQUvrctlZj/LbV9H1saswfb0lE6shauyVPRkRJApE61VAIKZ5wgxjq1VAMCNYPrU/Lbt7YBCNWiDYmSZEuRIJ5QGqhxoyun4dIHAR5zLlOqlOZE46NpCqhTJ5HIo9jhJ69Jl0YoUYpUUL7p3dMkcTJixGMJqieliwF3XyIphCdWJXzpTRMkkmF2eGoBhP/u2EJdfMy0J9LkL3EwgXjpJKKlQBo2atSEBaeCUZE5GxpX/GonDrRtIHYGvaZwvUiNGoFibXsUKYJXR1SdkyA2bioBdWHmGDfw/KSxpqPg/FPResWm0Vkldyz+vlYVP5CdAAAA) format("woff2")}
+@font-face{font-family:RvSerif;font-weight:400;font-style:italic;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvMono;font-weight:500;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+@font-face{font-family:RvSans;font-weight:600;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+:root{--mc:#091737;--mci:#091737;--page:#F5F2E9;--surface:#FFFEFA;--rvboard1:#d9c9ab;--rvboard2:#bba882;--rvend1:#9c917f;--rvend2:#7a705f;--rvshadow:rgba(80,60,30,.25);--gold:linear-gradient(100deg,#7d5f1c 0%,#b98d2f 14%,#e9cf86 30%,#fbefc6 38%,#d4ae55 50%,#a47a24 66%,#d9bb6a 84%,#8f6c22 100%);--goldink:#2a1c05}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#15171A;--surface:#1C1F22;--mci:#5984e4;--rvboard1:#3a332c;--rvboard2:#241f1a;--rvend1:#55504a;--rvend2:#2e2b28;--rvshadow:rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--page:#15171A;--surface:#1C1F22;--mci:#5984e4;--rvboard1:#3a332c;--rvboard2:#241f1a;--rvend1:#55504a;--rvend2:#2e2b28;--rvshadow:rgba(0,0,0,.45)}
+
+.shelf2{position:relative;display:flex;align-items:flex-end;gap:2px;padding:0 6px;--sh:370px;--bh:calc(var(--sh) - 36px);height:var(--sh);z-index:1}
+.board{height:15px;margin:0 -8px 8px;border-radius:2px;background:linear-gradient(var(--rvboard1),var(--rvboard2));box-shadow:0 10px 18px var(--rvshadow),inset 0 2px 0 rgba(255,255,255,.3)}
+.bk{position:relative;flex:0 1 var(--w);min-width:44px;height:var(--h);background:var(--c);color:var(--k);border-radius:4px 4px 1px 1px;text-decoration:none!important;
+ display:flex;flex-direction:column;align-items:center;overflow:hidden;box-shadow:inset 0 3px 0 rgba(255,255,255,.18),0 0 0 1px rgba(0,0,0,.18);transform:rotate(var(--rot,0deg));transform-origin:bottom left;transition:transform .15s ease}
+.bk::before{content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(90deg,rgba(0,0,0,.34) 0,rgba(0,0,0,.08) 6%,rgba(255,255,255,.22) 18%,rgba(255,255,255,.06) 34%,rgba(0,0,0,0) 55%,rgba(0,0,0,.10) 80%,rgba(0,0,0,.38) 100%)}
+.bk:hover,.bk:focus-visible{transform:rotate(var(--rot,0deg)) translateY(-8px)}
+.bk.lean-r{transform-origin:bottom right}
+.bk.din{filter:brightness(.82) saturate(.92);box-shadow:inset 7px 0 8px -3px rgba(0,0,0,.5),inset -7px 0 8px -3px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.22)}
+.bk.dout{z-index:2;margin-bottom:-5px;filter:brightness(1.05);box-shadow:inset 0 3px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2),6px 2px 9px -2px rgba(0,0,0,.42),-6px 2px 9px -2px rgba(0,0,0,.42)}
+.bk:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.bk.gild{background:var(--gold)}
+.bk .bands{position:absolute;left:0;right:0;height:12px;border-top:2px solid var(--band);border-bottom:2px solid var(--band);opacity:.85}
+.bk .bands.t{top:16px}.bk .bands.b{bottom:30px}
+.bk .plate{position:relative;margin-top:38px;min-width:58%;max-width:88%;padding:2px 4px;text-align:center;font:500 var(--pfs,11px)/1.3 RvMono,var(--font-mono);letter-spacing:.03em;border:1.5px solid var(--k);border-radius:2px;color:var(--k);background:rgba(255,255,255,.08);white-space:nowrap}
+.bk .ti{position:relative;writing-mode:vertical-rl;transform:rotate(180deg);flex:1;margin:12px 0 60px;font:600 var(--fs,15px)/1.12 RvSpine,Georgia,serif;letter-spacing:.012em;color:var(--k);overflow:hidden;white-space:nowrap;max-height:calc(100% - 116px)}
+.bk .ti small{font:500 11.5px/1.5 RvMono,var(--font-mono);letter-spacing:.04em;opacity:.85}
+.bk .mk{position:absolute;bottom:9px;font:500 9px RvMono,var(--font-mono);letter-spacing:.08em;color:var(--k);opacity:.7}
+.bk.cloth::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(0deg,rgba(0,0,0,.6) 0 1px,transparent 1px 3px)}
+.bookend{flex:0 0 13px;height:56%;align-self:flex-end;background:linear-gradient(90deg,var(--rvend1),var(--rvend2));border-radius:2px 2px 0 0;margin:0 9px;box-shadow:2px 0 6px rgba(0,0,0,.3)}
+.shelf2 .bookend{margin:0 7px}
+.face{flex:0 0 196px;height:100%;border-radius:3px 7px 1px 1px;padding:18px 16px 14px;align-items:flex-start;box-shadow:0 18px 40px var(--rvshadow),inset 6px 0 0 rgba(0,0,0,.18)}
+.face::before{background:linear-gradient(90deg,rgba(0,0,0,.25) 0,rgba(0,0,0,.05) 4%,rgba(255,255,255,.10) 10%,rgba(0,0,0,0) 30%,rgba(0,0,0,.08) 100%)}
+.face .fn{position:relative;font:500 11.5px RvMono,var(--font-mono);letter-spacing:.1em;color:var(--k)}
+.face .ft{position:relative;font:600 26px/1.04 RvSans,Inter,system-ui,sans-serif;letter-spacing:-.02em;margin-top:10px;color:var(--k);text-wrap:balance}
+.face .fs2{position:relative;font:500 10.5px RvMono,var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-top:8px;opacity:.82;color:var(--k)}
+.face .cov{position:relative;margin-top:auto;width:100%}
+.gbox{display:flex;flex-direction:column;height:100%;flex:0 1 auto}
+.gbooks{flex:1;display:flex;align-items:flex-end;gap:2px;min-height:0}
+.gbooks .bk:not(.face){flex:0 1 var(--w);min-width:56px}
+.gbooks .face{flex:0 1 196px;min-width:168px}
+.gl{box-sizing:border-box;height:24px;margin:0 0 12px;padding-top:8px;border-top:2px solid var(--mc);font:500 11px RvMono,var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+body{background:var(--page)}
+.topnav.rv{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:8px;padding:10px max(20px,calc((100% - 1040px)/2));background:color-mix(in srgb,var(--page) 90%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);font:500 12px/1 RvMono,var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+.topnav.rv .brand{border:0!important;background:none!important;box-shadow:none!important;display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0;padding:6px 0;color:var(--ink);text-decoration:none;font-weight:500}
+.topnav.rv .brand span:not(.dot){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topnav.rv .brand .short{display:none}
+.topnav.rv .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--mc)}
+.topnav.rv .pill,.topnav.rv .pv-open{display:inline-flex;align-items:center;min-height:36px;margin:0;border:1px solid var(--ink);border-radius:999px;padding:0 14px;color:var(--ink);background:none;font:500 12px/1 RvMono,var(--font-mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
+.topnav.rv .pill.f{background:var(--ink);color:var(--page)}
+.topnav.rv .pv-open::before{content:"▶";font-size:10px;margin-right:8px;color:var(--ink)}
+.topnav.rv .pill:hover,.topnav.rv .pv-open:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)}.topnav.rv .pill.f:hover{background:var(--ink-2)}
+.rule{display:none}
+header.mast.rv{background:none;border:0}
+header.mast.rv .wrap{display:block;padding-top:2px;padding-bottom:22px}
+.rv .mhd{display:flex;justify-content:space-between;gap:12px;font:500 11.5px RvMono,var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:22px 0 9px}
+.rv .mhd a{color:inherit;text-decoration:none}.rv .mhd a:hover{color:var(--ink)}
+.sitestrip{display:flex;gap:3px}
+.sitestrip .tab{flex:1 1 0;min-width:0;height:30px;display:flex;align-items:center;justify-content:center;border-radius:3px;background:var(--c);color:var(--k)!important;font:500 10.5px/1 RvMono,var(--font-mono);text-decoration:none;overflow:hidden;white-space:nowrap;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.sitestrip .tab span{overflow:hidden;text-overflow:ellipsis}
+.sitestrip .tab.gild{background:var(--gold);color:var(--goldink)!important}
+.sitestrip .tab[aria-current]{flex:0 1 auto;justify-content:flex-start;padding:0 12px;font-size:11.5px;letter-spacing:.03em;box-shadow:0 0 0 2px var(--ink),inset 0 -3px 0 rgba(0,0,0,.18)}
+.sitestrip .tab:hover{filter:brightness(1.07)}
+.mtitle{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;padding:44px 0 30px}
+.mtitle .kicker{font:500 12px/1.4 RvMono,var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mci);margin:0 0 16px}
+.mtitle h1{font:600 clamp(40px,5.6vw,64px)/1.02 RvSans,Inter,system-ui,sans-serif;letter-spacing:-.035em;margin:0;text-wrap:balance;color:var(--ink)}
+.mtitle h1 em{font:italic 400 1.07em/1 RvSerif,Georgia,serif;letter-spacing:-.02em}
+.mtitle .dek{font:400 19.5px/1.5 RvSerif,Georgia,serif;color:var(--ink-2);margin:0;max-width:none}
+.rv .mhd.sh{margin-top:4px}
+.mpic{display:flex;flex-direction:column;align-items:center;margin:6px 0 30px}
+.mset{display:flex;align-items:flex-end;justify-content:center;gap:14px;width:100%;max-width:600px}
+.mpic .mtbl{width:min(100%,600px);height:24px;position:relative;border-radius:3px 3px 14px 14px/3px 3px 12px 12px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px,rgba(255,255,255,.04) 9px 11px,transparent 11px 23px),linear-gradient(180deg,#d9ab76 0,#c08a55 3px,#8d5a30 4px,#9c6638 6px,#7e4c26 55%,#5a3418 82%,#3f2410 100%);box-shadow:0 10px 14px -6px var(--rvshadow),inset 0 1px 0 rgba(255,236,200,.55)}
+.mpic .mtbl::after{content:"";position:absolute;left:10px;right:10px;bottom:3px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(1.5px)}
+.cup{flex:0 0 112px;width:112px;height:auto;margin-bottom:0;filter:drop-shadow(0 12px 10px var(--rvshadow));overflow:visible}
+.cup .steam path{stroke:var(--ink-2);stroke-width:2.2;opacity:.4;animation:cupsteam 5.5s ease-in-out infinite}
+.cup .steam path:nth-child(2){animation-delay:-2.4s}
+@keyframes cupsteam{0%,100%{opacity:.12;transform:translateY(3px)}50%{opacity:.5;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.cup .steam path{animation:none;opacity:.35}}
+@media (max-width:520px){.mset{gap:6px}.cup{flex-basis:88px;width:88px}.mpic .hb .mk{display:none}.mpic .hb{gap:8px}.mpic .hb .tt{font-size:11.5px}.mpic .hb .pl{font-size:8.5px;padding:1px 4px}}
+.hstack{min-width:0;width:min(100%,420px);display:flex;flex-direction:column;filter:drop-shadow(0 14px 12px var(--rvshadow))}
+.hb{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--c);color:var(--k);border-radius:3px;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 0 0 1px rgba(0,0,0,.2);overflow:hidden;margin-top:-1px}
+.hb.gild{background:var(--gold)}
+.hb::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.26) 0,rgba(255,255,255,.06) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.34) 100%)}
+.hb::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,rgba(0,0,0,.6) 0 1px,transparent 1px 3px)}
+.hb .bd{position:absolute;top:0;bottom:0;width:11px;border-left:2px solid var(--band);border-right:2px solid var(--band);opacity:.85}
+.hb .bd.l{left:9%}.hb .bd.r{right:9%}
+.hb .pl{position:relative;padding:1px 6px;border:1.5px solid var(--k);border-radius:2px;font:500 10px/1.3 RvMono,var(--font-mono);letter-spacing:.04em;background:rgba(255,255,255,.08)}
+.hb .tt{position:relative;font:600 15px/1.1 RvSpine,Georgia,serif;letter-spacing:.012em;white-space:nowrap}
+.hb .mk{position:absolute;right:calc(9% + 20px);font:500 8.5px RvMono,var(--font-mono);letter-spacing:.08em;opacity:.7}
+.hp.sheet{background:linear-gradient(180deg,#f4ecd8,#e2d6b6);border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.18);margin-top:-1px;position:relative}
+.hp.sheet::after{content:"";position:absolute;left:6px;right:6px;top:3px;height:1px;background:rgba(0,0,0,.18)}
+.hp.folder{background:linear-gradient(180deg,#d9b873,#b8934a);border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.25);margin-top:-1px;position:relative}
+.hp.folder i{position:absolute;right:14%;top:-6px;width:70px;height:8px;border-radius:3px 3px 0 0;background:#d9b873;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.mextra{margin:-10px 0 26px;font:400 17px/1.5 RvSerif,Georgia,serif;color:var(--ink-2)}.mextra p{margin:0!important;font-size:inherit!important}
+main [id]{scroll-margin-top:72px}
+.part{border-color:color-mix(in srgb,var(--mc) 26%,var(--line))!important;border-left:6px solid var(--mc)!important;background:color-mix(in srgb,var(--mc) 8%,var(--surface))!important;border-radius:3px 12px 12px 3px!important}
+.part .kick{font:500 12px/1.4 RvMono,var(--font-mono)!important;letter-spacing:.1em!important;text-transform:uppercase;color:var(--mci)!important}
+.part h2{font:600 clamp(25px,3.4vw,34px)/1.1 RvSans,Inter,system-ui,sans-serif!important;letter-spacing:-.025em!important}
+.pager .k{font:500 11px/1.4 RvMono,var(--font-mono);letter-spacing:.08em}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .part{background:color-mix(in srgb,var(--mc) 12%,var(--surface))!important}}
+:root[data-theme="dark"] .part{background:color-mix(in srgb,var(--mc) 12%,var(--surface))!important}
+@media (max-width:760px){
+ .topnav.rv .pv-open{display:none!important}
+ .topnav.rv .brand .long{display:none}.topnav.rv .brand .short{display:inline}
+ .mtitle{grid-template-columns:1fr;gap:16px;padding:28px 0 22px}
+ .mtitle .dek{font-size:18px}
+}
+@media (max-width:560px){
+ .topnav.rv{padding:8px 16px}.topnav.rv .pill.ghost{display:none}
+ .sitestrip{gap:2px}.sitestrip .tab{height:22px;font-size:0}.sitestrip .tab[aria-current]{flex:0 0 auto;max-width:62%;font-size:10.5px}
+ .shelf2{--sh:320px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+ .board{margin:0 -16px 8px}.shelf2::-webkit-scrollbar{display:none}
+ .gbooks .bk:not(.face){flex:0 0 58px}.bk .ti{font-size:calc(var(--fs) * .8)!important;margin-bottom:54px;max-height:calc(100% - 106px)}.bk .plate{font-size:9.5px;margin-top:32px}
+ .face{flex:0 0 150px!important;padding:12px 11px}.face .ft{font-size:19px}
+ .gbox{flex:none;min-width:0!important}.rv .mhd.sh>span:first-child{display:none}
+ .mtitle h1{font-size:40px}
+}
+
+.rv .mhd.sh .rt{display:inline-flex;align-items:center;gap:10px}
+.swipehint{display:none;letter-spacing:.09em}
+.mhd.sh.swipe .swipehint{display:inline-block}
+.mhd.sh.swipe.swiped .swipehint{animation:none}
+/* one amber pulse for everything that asks to be tapped: the swipe hint, tappable terms and the Start here pill */
+.swipehint,.amberpill,button.tapterm{padding:4px 11px;border-radius:999px;color:#5c3d00;background:#FBE3A6;border:1px solid #E8B64A;animation:amberpulse 2s ease-in-out infinite}
+.amberpill{display:inline-block;font:600 14px/1.2 RvSans,Inter,system-ui,sans-serif;letter-spacing:.01em}
+@keyframes amberpulse{0%{box-shadow:0 0 0 0 rgba(232,182,74,.7)}70%{box-shadow:0 0 0 10px rgba(232,182,74,0)}100%{box-shadow:0 0 0 0 rgba(232,182,74,0)}}
+@media (prefers-reduced-motion:reduce){.swipehint,.amberpill,button.tapterm{animation:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.swipehint,.amberpill,button.tapterm){color:#FBE3A6;background:#4a3508;border-color:#C9962E}}
+:root[data-theme="dark"] :is(.swipehint,.amberpill,button.tapterm){color:#FBE3A6;background:#4a3508;border-color:#C9962E}
+.shelf2.scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.shelf2.scroll::-webkit-scrollbar{display:none}
+
+/* the math in the lessons: larger and at full contrast so students rely on it */
+.calc,.spcalc{font-size:16px!important;line-height:1.75!important;color:var(--ink)!important}
+.calc .off{color:var(--ink-2)!important}
+.steps{font-size:16px!important;color:var(--ink)!important}
+.fm,.steps .fm{font-size:15.5px!important;font-weight:600;color:var(--ink)!important}
+.math{font-size:17px!important;color:var(--ink)!important}
+.eqn{font-size:16px!important}
+.form2{font-size:16px!important;color:var(--ink)!important}
+.cbty{font-size:16px!important}
+.eq p,.interp,.result .says,.pbox,.pnote,table.kv{font-size:15.5px!important}
+.interp .card,.pbox{color:var(--ink)!important}
+.say{font-size:15.5px!important}
+.why{font-size:15px!important;color:var(--ink-2)!important}
+.fx p{font-size:15px!important}
+.keyfx{display:inline-block;margin:2px 0;padding:3px 9px;border-radius:6px;background:var(--code-bg);font:600 17px/1.4 var(--font-mono);color:var(--ink)}
+.chips .chip,.status .chip{font-size:14.5px!important}
+@media (max-width:560px){.calc,.spcalc,.eqn{white-space:normal!important;overflow-wrap:anywhere}}
+
+/* drawers added in the November review: one look on every page */
+details.rvd{margin:14px 0 0;border:1px solid var(--line);border-left:4px solid var(--mc);border-radius:10px;background:var(--surface)}
+details.rvd>summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:16px;line-height:1.35;min-height:44px;display:flex;align-items:center;gap:10px;list-style:none;color:var(--ink)}
+details.rvd>summary::-webkit-details-marker{display:none}
+details.rvd>summary::before{content:"";flex:0 0 auto;border-left:7px solid var(--mci);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+details.rvd[open]>summary::before{transform:rotate(90deg)}
+details.rvd .in{padding:0 16px 14px;display:grid;gap:9px;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:78ch}
+details.rvd .in p{margin:0}
+details.rvd .in b{color:var(--ink)}
+details.rvd .in a{color:var(--mci);font-weight:600}
+footer.src details.srcdrawer,details.srcdrawer{margin:0;font-size:14px}
+details.srcdrawer .in{font-size:14px;color:var(--ink-2);display:block;overflow-wrap:anywhere}
+.srcdrawer .in>p+p,.srcdrawer .in>p+ul,.srcdrawer .in>ul+p,.srcdrawer .in>div+p,.srcdrawer .in>p+div{margin-top:9px}
+details.srcdrawer .in ul{margin:0;padding-left:18px}
+.jumpto{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
+.jumpto a{color:var(--mci);font-weight:600}
+/* a term that opens a note: pulses from white to amber so it reads as tappable */
+button.tapterm{font:inherit;font-weight:700;padding:0 8px;margin:0 1px;cursor:pointer}
+button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
+.tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
+.tapnote a{color:var(--mci);font-weight:600}
+</style>
+<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
+<body>
+<nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="index.html">Done ✓</a></nav>
+<header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Research skills · Draft</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion"><span>4</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²"><span>5</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means"><span>8</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables"><span>11</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-airports.html" style="--c:#183951;--k:#f8f5ec" title="Don&#x27;t Get Left Behind: Who Got America&#x27;s First Airports?"><span>P2</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P3</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P4</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P5</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P6</span></a><a class="tab" href="practice-news-deserts.html" style="--c:#a2472b;--k:#f8f5ec" title="Do news deserts vote less?"><span>P7</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P8</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data"><span>Viz</span></a><a class="tab" href="research-questions.html" style="--c:#163431;--k:#f8f5ec" title="Asking research questions"><span>Ask</span></a><a class="tab" href="lit-search.html" style="--c:#38484f;--k:#f8f5ec" title="Finding the scholarly debate"><span>Find</span></a><a class="tab" href="lit-review.html" style="--c:#2a3527;--k:#f8f5ec" title="Organizing a literature review"><span>Review</span></a><a class="tab" href="paper-structure.html" style="--c:#091737;--k:#f8f5ec" title="Anatomy of a research paper" aria-current="page"><span>Paper · Anatomy of a research paper</span></a></nav><div class="mtitle"><div><p class="kicker">● Research skills · Draft</p><h1>Anatomy of a research <em>paper.</em></h1></div><p class="dek">A research paper follows a structure that readers in political science expect, and it runs from the abstract through the works cited. This page walks through each section with the course research paper template, in the template's own words, along with its example passages and the margin notes that explain what each passage is doing. Tap any highlighted passage to read its note.</p></div><div class="mextra"><p class="rsdraft"><b>[DRAFT ONLY]</b> This page is adapted from the PLS2033 research paper template and its margin comments, and its parts may still change.</p></div></div></header>
+
+<main class="wrap">
+
+  <section class="dcard" id="map">
+    <h3>The sections, in order</h3>
+    <nav class="pmap" aria-label="Sections of a research paper">
+      <a href="#s-abs">Title and abstract</a><a href="#s-intro">Introduction</a><a href="#s-q">Question and argument</a><a href="#s-lit">What we know</a><a href="#s-bg">Background</a><a href="#s-hyp">Hypotheses</a><a href="#s-data">Cases, data and measures</a><a href="#s-an">Model and analysis</a><a href="#s-dis">Discussion and conclusion</a><a href="#s-wc">Works cited</a>
+    </nav>
+    <p class="note">The template speaks in the voice of each section, so “I” below is the section describing its own job. The example passages are the template's own. One is about why states condemn human rights violators, and the other comes from Paul Danyi's study of the first municipal airports and shows how cities got them.</p>
+  </section>
+
+  <section class="part" id="s-abs"><p class="kick">Section 1</p><h2>Title and abstract</h2>
+    <p class="lede">The title can be clever or it can be clear and precise, and either way is fine. Under it come your name, the university and the department, and then the abstract.</p></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">The abstract, in its own words</span>
+      <p>I accomplish the following, generally in this order. I state the interesting question I am answering first, and I may even pose it as a puzzle, something we don't know the answer to yet. I then paint a big picture of what research knows on this question in about one sentence. Next I say clearly, in one or two lines, how my work adds something to what we know, if at all possible, or at least that I tried to add to what we know. Then I briefly state the data or cases I draw on and how I go about answering the question. Finally, I clearly state my conclusions based on the research I have done, in one or maybe two sentences.</p>
+      <p>Write me first as a draft, since I help map the paper out for you, especially if you hate making outlines (and if you like outlines, make one too). Once the paper is done, come back and revise me. Sentences from the paper can often be pasted in here with minor changes, so look for them. And I work in reverse too, since I make a great paragraph at the end of your introduction.</p>
+    </div>
+    <p class="p">The template's own abstract runs about 230 words, and yours should be roughly that long and no more than 1.5 times that length. The builder at the end of this page lays out the five parts in order.</p>
+  </section>
+
+  <section class="part" id="s-intro"><p class="kick">Section 2</p><h2>Introduction</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">The introduction, in its own words</span>
+      <p>It is my job to take the research and generate some interest on the part of the audience, so I take a step back and drive home how the research relates to problems or issues in the real world. I am your only hope of converting a skeptical audience into willing readers. Creating me is a bit of an art form, so practice a few versions. Write me as a draft, and then, once the paper is nearly done, come back and revise me after you've explained why your research matters to your friends and relatives. If you convinced them it matters, put whatever convinced them here.</p>
+    </div>
+    <p class="p">Here is an example of generating some interest in a work that otherwise would make most readers glaze over and fall asleep.</p>
+    <div class="ex note-ex">
+      <p><span class="cm" role="button" tabindex="0" data-n="1" data-note="Justification here. This should matter to most people unless fully coldhearted.">How states respond when other states violate human rights standards can be the determining factor in whether the lives of thousands are spared or lost, whether atrocities continue or cease.<sup>1</sup></span> <span class="cm" role="button" tabindex="0" data-n="2" data-note="Context. Bring the reader along with you so they “know some stuff” the way you do.">Over the past six decades much progress has been made in improving human rights around the world. Among the most important has been the dismantling and eventual reversal of the “conspiracy of mutual state silence that prevailed until the second half of the twentieth century” (Simmons 2009, 4).<sup>2</sup></span> Prior to this dismantling, states could disregard the violence and repression that other states imposed on their populations with relative impunity, due to strong sovereignty norms including non-interference. At the beginning of the 21st century many states do still remain silent, but doing so places them in a shrinking minority, and remaining silent carries potential political costs both domestic and international. Now, 60 years after the emergence of human rights norms and international institutions, there is an expectation among states that they should lend their diplomatic voices in support of victims of state-led violations of their rights, predominantly when those violations include widespread physical violence. <span class="cm" role="button" tabindex="0" data-n="3" data-note="Super clearly stated justification for how your new knowledge can maybe help a little bit. Don't bury this, be bold, it'll be ok. Just don't claim to cure cancer with your opinion survey.">Understanding how this expectation among states came to be and how it remains stable can tell us about the emergence and stability of norms in international society, and more importantly it can warn us of conditions that may lead to the collapse of this expectation, a development that would be a major setback to those struggling to realize their human rights.<sup>3</sup></span></p>
+    </div>
+  </section>
+
+  <section class="part" id="s-q"><p class="kick">Section 3</p><h2>Statement of the question and argument in brief</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">This section, in its own words</span>
+      <p>I am the brief statement of the research question, and I also provide a condensed version of the argument. It is just fine to lead right off with the question, so don't hide it.</p>
+    </div>
+    <div class="ex note-ex">
+      <p><span class="cm" role="button" tabindex="0" data-n="4" data-note="Clear and right up top. If a reader misses it here, it isn't your fault.">“Why do states decide to condemn or sanction human rights violators in the absence of direct pressure from human rights organizations and activists?”<sup>4</sup></span> <span class="cm" role="button" tabindex="0" data-n="5" data-note="This is just another restatement of the question, which reminds readers that there is a puzzle to be solved. You don't need to do this, but if you can, go for it.">Why do states not free-ride and leave norm enforcement behaviors to other states when many face little pressure from human rights NGOs?<sup>5</sup></span></p>
+      <p><span class="cm" role="button" tabindex="0" data-n="6" data-note="Tell me what you argue from your data, but in condensed form. Have something to say here, and that is okay, just be sure your data backs it up.">I argue that …<sup>6</sup></span></p>
+    </div>
+  </section>
+
+  <section class="part" id="s-lit"><p class="kick">Section 4</p><h2>What we know about this topic</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">The literature review, in its own words</span>
+      <p>I am the literature review, also known as “what we know.” You need to look at some existing research on the topic, at least four or five recent articles or books, and summarize what others have said here. You don't need to read each whole work, since the key argument it makes is what you're after. There's no need to use me to revolutionize our understanding of the research agenda your question relates to, so keep it simple and clearly tell us what work on your exact question says. Be brief, be clear, be relevant to your question and be explicit about how each work is relevant. Key quotes are where scholars often go overboard, so pick the right quotes and be sure to cite them properly.</p>
+    </div>
+    <div class="ex note-ex">
+      <h5><span class="cm" role="button" tabindex="0" data-n="7" data-note="Hopefully obvious, but often overlooked, key point here. You NEED TO KNOW SOME STUFF about your topic to do research on it. So step one on your project should be “knowing some stuff” from general research, and also what scholars have to say. Recent textbooks are useful here, and so are professors.">What We Know About This Topic<sup>7</sup></span></h5>
+      <p><span class="cm" role="button" tabindex="0" data-n="8" data-note="This sentence takes three major works, hundreds of pages, and distills the single big thing they argue in common.">Much of the research on human rights and transnational networks argues that third party state condemnations – or other forms of pressure – are a political outcome of the lobbying efforts of activist networks including NGOs and INGOs (Keck and Sikkink 1998; Risse and Sikkink 1999; Murdie and Davis 2012).<sup>8</sup></span> <span class="cm" role="button" tabindex="0" data-n="9" data-note="These next parts just explain to the reader what was just said. They expand a bit on “what we know,” and always with an eye to showing the reader where your work can teach us something new.">Domestic activists facing repression “link up with transnational networks and INGOs who then convince… great powers to pressure norm violating states” (Risse and Sikkink 1999, 18).<sup>9</sup></span> By “[searching] out international allies to… bring back pressure on their states from outside” (Keck and Sikkink 1998, 12) activists are able to amplify their voices and exert greater political influence than they could alone.</p>
+      <p>In many cases of human rights violations, large numbers of third-party states do not face substantial pressure from activist networks or human rights NGOs, yet many of these states still pressure violators to halt. <span class="cm" role="button" tabindex="0" data-n="10" data-note="Now that you've told them what we know, you can drop in where you think you can add new knowledge.">While these theories of transnational activism are correct in that condemning and sanctioning behavior is often the outcome of direct and selective activist pressure, they offer less insight into why many, even a majority, of states act to condemn or sanction violators who face no pressure.<sup>10</sup></span></p>
+    </div>
+    <p class="p">The page on <a href="lit-review.html">organizing a literature review</a> works through how to build these camps from your own sources.</p>
+  </section>
+
+  <section class="part" id="s-bg"><p class="kick">Section 5</p><h2>Empirical, historical or process background</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">The background, in its own words</span>
+      <p>I am the selective background about your topic, and I do several useful things. In some papers I give the history of something, but I give only the directly relevant contextual history rather than all of it. So if your question is about student voting, give the reader some context on how student voting has evolved wherever you are studying it. I may also offer contemporary evidence about the question, such as recent turnout and the barriers students face. I help your reader be on the same page as you, and by describing things like barriers to voting I begin to explain your concepts.</p>
+      <p>I often take the shape of illustrative cases and examples for the more formal analysis later. In the voting-barriers case, you might include an in-depth interview in which a student clearly described how one of the barriers made the difference in voting or not voting. That helps flesh out, and convince the reader of, the mechanisms you will later suggest caused something.</p>
+      <p>I vary in length, and I typically end up longer than you planned when you started typing me. Keep in mind that you want only what gets your reader on the same page as you, clarifies concepts a bit, gives key context and illustrates mechanisms. I shouldn't read like an untargeted book report that leaves the reader wondering why you are talking about this.</p>
+    </div>
+    <p class="p">Here is a clip from a paper on how elites mobilized to build a network of airports in the United States in the early 1900s. The paper goes on to use statistical methods to link elites and their organizations to airports getting built, but since that is a big inferential leap, it is best to show that the mechanism is plausible first.</p>
+    <div class="ex note-ex">
+      <p>Frequently mobilization for an airport in the community took the form of raising capital. For example, in <span class="cm" role="button" tabindex="0" data-n="11" data-note="There's the mechanism, and some reference to where the information came from. Seems plausible.">Milwaukee in 1926 the Association of Commerce air service, an association of businesses and residents, held a meeting where funds were pledged by “the citizens to buy the airport site and later sell it to the city” (The Milwaukee Journal, April 14, 1929).<sup>11</sup></span> Civic groups were so determined to jump on the bandwagon of progress that even when their city, or the federal government, could not offer funds, they were able to raise the funds themselves in order to present the airport to the city or sell it at a reduced price or more opportune moment. In <span class="cm" role="button" tabindex="0" data-n="12" data-note="Ah, so the mechanism popped up again somewhere else around the same time. Okay…">1930 a small group of property owners in Dallas, Texas, “sensing the importance of commercial aviation” offered the city of Dallas 230 acres for the development of a commercial airport (Airport News Supplement Oct. 1930, 47).<sup>12</sup></span> <span class="cm" role="button" tabindex="0" data-n="13" data-note="Okay, I give up. I believe the mechanism is plausible, just stop making me read about airport building in the early 20th century US.">In Dayton, civic elites went so far as to buy a location north of the city in Vandalia, and named it Dayton Airport even though “… Dayton city officials felt no special relationship to it” (Bednarek 1997, 131).<sup>13</sup></span></p>
+    </div>
+  </section>
+
+  <section class="part" id="s-hyp"><p class="kick">Section 6</p><h2>State your hypotheses and how you'll test them</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">This section, in its own words</span>
+      <p>I am the signal that your writing is about to get much easier, so breathe a sigh of relief on arriving here. State your hypotheses very clearly and accurately, and use only the most cursory writing to lead into them. I need no conclusion or transition, so just end me, and people get it.</p>
+    </div>
+    <p class="p">After all the context above about airports, here is this section from that paper in its entirety.</p>
+    <div class="ex note-ex">
+      <p>The above <span class="cm" role="button" tabindex="0" data-n="14" data-note="That's the never-ending newspaper reports the readers were bored with above.">qualitative evidence of city siting processes<sup>14</sup></span> leads <span class="cm" role="button" tabindex="0" data-n="15" data-note="The real human being version of my hypothesis, the “explain it to friends and relatives” version.">me to expect that economic elites and civic groups will have facilitated mobilization for airports systematically across the United States during the 1920s.<sup>15</sup></span> <span class="cm" role="button" tabindex="0" data-n="16" data-note="Here is the method used. Yours may look very different, but it would still go right here.">To test the hypothesis that regimes of elites, civic groups, and officials were increasing the likelihood that their city could “get things done” when it came to building an airport, I employ a logistic regression model which explains variations in mobilization for airports within U.S. counties.<sup>16</sup></span> <span class="cm" role="button" tabindex="0" data-n="17" data-note="A fancy way of having your reader imagine a world where you are correct, and then stating what the empirical evidence should look like if that's true. Ask “if I am correct, what do I expect to see?” It's useful for clarifying your own thinking, so you'll have had this line in mind long before typing it.">If regime theory is correct, and regimes do facilitate “getting things done” in cities, then I should observe variables associated with elites, civic groups such as business societies, and a general capacity to engage in collective action vary systematically with the successful siting of municipal airports.<sup>17</sup></span></p>
+      <p><span class="cm" role="button" tabindex="0" data-n="18" data-note="And a nice formal hypothesis statement. That is it, and the section is done. Don't underline yours, since it's only underlined in the template so you can see it clearly. You can italicize yours if you like, but no research paper should ever have anything underlined in it.">H1: all else equal, cities with the increased presence of urban regimes will be more likely to have successfully built an airport relative to cities with fewer elites.<sup>18</sup></span></p>
+    </div>
+  </section>
+
+  <section class="part" id="s-data"><p class="kick">Section 7</p><h2>Cases, data sources, measures and controls</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">This section, in its own words</span>
+      <p>I am the section where you explain, in an often boring and straightforward manner, how you decided to measure things, how you generated your key data and how you collected information about potential confounding influences, or controls. I can be medium in length depending on the number of key variables and the research method. Heavily quantitative research generally has shorter, more straightforward sections. In a case-study or qualitative design, you'd discuss case selection here and how it controls for alternative explanations. In a quantitative project, tell the reader how you turned concepts into operationalized variables and then into measures, and where the data come from, for every variable and control. The responsible researcher is transparent and honest here.</p>
+    </div>
+    <div class="ex note-ex">
+      <p>The demographic and land data used comes from the 1920 U.S. Census data files. <span class="cm" role="button" tabindex="0" data-n="19" data-note="This is the key outcome variable and the original data collection effort, so a bit more discussion of it was warranted. Compare it with the mention of the Census above. Researchers know what the Census is and can follow the web link, but if this part said only that “the NY Times had some old list of airports,” it would be insufficiently transparent, and that would be bad research practice.">Airport data is taken from a compiled list of “principal” airports as of 1927 in the New York Times.<sup>19</sup></span> <span class="cm" role="button" tabindex="0" data-n="20" data-note="Clever sources of data can often be the best! Think creatively, and odds are it'll help your work be original and interesting.">There are competing contentions in the historical records as to how many airports there were by the end of the 1920s. For example, MacDonald (1930, 226) indicates as many as 1000 airports in U.S. cities according to the Department of Commerce.<sup>20</sup></span> However, not all airports involved city governments in their construction, and making the political decision and having the ability to build a municipal airport is the question at hand.</p>
+      <p>I <span class="cm" role="button" tabindex="0" data-n="21" data-note="All the way from operationalization to measurement. The data part is covered above, where it said this came from the Census.">operationalize regimes as the presence of a business community and the elites that operate those businesses. Given that an increase in the business community is likely to correlate highly with business associations and elites, I use a proxy measure for regimes as the number of manufacturing establishments located in the county.<sup>21</sup></span> Education level is <span class="cm" role="button" tabindex="0" data-n="22" data-note="Clearly state those measures. Authors sometimes hide them, but not good authors.">measured as the total number of 18-20 year-old individuals that were attending school in 1920.<sup>22</sup></span> I further <span class="cm" role="button" tabindex="0" data-n="23" data-note="Use these terms. It'll help you practice and think clearly.">operationalize<sup>23</sup></span> the capacity to mobilize in a population as the degree of informal connections among them, a precursor to forming urban regimes. I measure this by the <span class="cm" role="button" tabindex="0" data-n="24" data-note="This should have caught your attention! This measure seems a bit weird relative to the concept. Transparency also includes defending your measures against potential critique and telling the reader why you used the measure you did. If it's likely to strike the audience as odd, pre-empt the critique, as the paper's footnote does. Including minority churches in a measure of elite “connectedness” would have counted churches that really weren't connected to elites, so the measure would have been inaccurate. Recall that the setting is 1900 to 1920, and context matters for accurate measures.">proportion of the population that reported attending an identifiably non-minority church in the year 1920.<sup>24</sup></span></p>
+    </div>
+  </section>
+
+  <section class="part" id="s-an"><p class="kick">Section 8</p><h2>Model and analysis</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">This section, in its own words</span>
+      <p>I am the section in which you present the model for your analysis, or simply the analysis itself, by selecting the relevant statistical, qualitative or case-study evidence to show the reader. In quantitative work that is very straightforward, since it includes many of the measures of association we cover. In qualitative work it is a bit different and likely includes a clear explanation of the important variables across the selected cases, or a discussion of the patterns in something like interview data. Either way, I describe those patterns and associations in clear, sober detail. I am the least readable section, and I can be tedious, but intellectually I should be fairly simple, since the hard work is done by a statistics program or by your careful notes and comparisons.</p>
+      <p>It is not enough to report coefficients and numbers and blast them at your audience, so offer useful interpretations of them. In a regression, a coefficient of 2.5 means a one-unit increase in the independent variable goes with a 2.5-unit increase in the dependent variable, so pick some meaningful common values of the independent variable and tell the reader how much change in the dependent variable we expect when we move from one to the other. This principle holds for every method we use, and not just for regression. If your interviews showed that students respond differently to barriers that require dealing with local officials than to barriers that require documents, tell the reader what you'd expect if a town changed registration to require that students hand in forms in person to a clerk downtown. That is speculative extrapolation, but such thought experiments illustrate what your data lead us to expect. Be thorough and interpret all your results, and if you have four controls, at least briefly mention whether each one matters.</p>
+    </div>
+  </section>
+
+  <section class="part" id="s-dis"><p class="kick">Section 9</p><h2>Discussion and conclusion</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">This section, in its own words</span>
+      <p>I am the discussion and conclusion, and you can break me into two parts if you want. Either way, I talk about your results, but instead of strictly interpreting them from the data, I comment on what they mean for the bigger picture, the big question and the research you mentioned in the opening sections. Did your conclusions undermine what other authors have said about student voting and voting barriers? Then talk here about how they did, and about what that means for the real world. If you followed good research practice, does your finding mean a state could add barriers to voting without affecting students much, or that such barriers would be inconsistent with students' right to participate in democracy? Now is the time to say so.</p>
+    </div>
+  </section>
+
+  <section class="part" id="s-wc"><p class="kick">Section 10</p><h2>Works cited</h2></section>
+  <section class="dcard">
+    <div class="guide"><span class="who">From the template</span>
+      <p>Add a page break and insert a properly formatted list of citations that includes every work cited, even those in the footnotes. It should be in APSA format. Format matters, and not in a petty way, since it bears on the transparency of your work and on how you are received as a professional when you write. Citation software helps.</p>
+    </div>
+    <div class="ex">
+      <p>Bednarek, Janet R. Daly. 1997. “False Beacon: Regional Planning and the Location of Dayton's Municipal Airport.” <i>Ohio History</i> 106: 125–45.</p>
+      <p>Corn, Joseph J. 1983. <i>The Winged Gospel: America's Romance with Aviation, 1900–1950</i>. New York: Oxford University Press.</p>
+      <p>Dahl, Robert A. 1961. <i>Who Governs? Democracy and Power in an American City</i>. New Haven, CT: Yale University Press.</p>
+      <p>Simmons, Beth A. 2009. <i>Mobilizing for Human Rights: International Law in Domestic Politics</i>. Cambridge: Cambridge University Press.</p>
+    </div>
+    <p class="note">A few entries from the template's list, set in APSA style: author and year, then the title, then the journal with its volume and pages or the book's place and publisher.</p>
+  </section>
+
+  <section class="part" id="p-try"><p class="kick">Practice</p><h2>Put the paper back together</h2>
+    <p class="lede">Each passage below comes from the examples above. Tap a passage, then tap the section where it belongs, and the page tells you whether it fits.</p></section>
+  <section class="dcard" id="rebuild">
+    <div class="pool" id="paraPool"></div>
+    <div class="slots" id="slots"></div>
+    <div class="fbk" id="rbSay" aria-live="polite"></div>
+    <div class="row"><button type="button" class="dbtn" id="rbShow">Show me</button><button type="button" class="dbtn" id="rbReset">Start over</button></div>
+  </section>
+
+  <section class="part" id="p-abs"><p class="kick">Practice</p><h2>Draft your abstract</h2>
+    <p class="lede">Write each part of your abstract in the order the template gives, and the preview joins them into one paragraph. Write it first as a draft that maps out your paper, and revise it once the paper is done.</p></section>
+  <section class="dcard" id="absb">
+    <div class="ws" data-ws="p-abs" data-file="my-abstract" data-title="My abstract">
+      <label class="wf"><span>Working title</span><input data-f="title" data-label="Title"></label>
+      <label class="wf"><span>1 · The interesting question, perhaps posed as a puzzle</span><textarea data-f="a1" data-label="Question" rows="2"></textarea></label>
+      <label class="wf"><span>2 · What research knows on this question, in about one sentence</span><textarea data-f="a2" data-label="What research knows" rows="2"></textarea></label>
+      <label class="wf"><span>3 · How your work adds to what we know, in one or two lines</span><textarea data-f="a3" data-label="Contribution" rows="2"></textarea></label>
+      <label class="wf"><span>4 · The data or cases you draw on, and how you answer the question</span><textarea data-f="a4" data-label="Data and approach" rows="2"></textarea></label>
+      <label class="wf"><span>5 · Your conclusions, in one or maybe two sentences</span><textarea data-f="a5" data-label="Conclusions" rows="2"></textarea></label>
+      <div class="guide"><span class="who" id="absCount">Preview</span><p id="absPrev"></p></div>
+      <div class="wbar"><button type="button" class="dbtn pri" data-rs="dl">Download my abstract</button><button type="button" class="dbtn" data-rs="clear">Clear my answers</button><span class="msg" aria-live="polite"></span></div>
+      <p class="wsave">Your answers stay in this browser on this device and are never sent anywhere. Download a copy to keep them or to share them.</p>
+    </div>
+  </section>
+
+  <!-- SOURCES -->
+  <details class="srcs" id="src">
+    <summary>Sources and data</summary>
+    <ol>
+      <li>Danyi, Paul. PLS2033 research paper template, with its margin comments. Eastern Illinois University. The section descriptions, the example passages and the notes on this page come from the template, lightly edited.</li>
+      <li>The airports example comes from Paul Danyi's study of the first municipal airports, which is the same study behind the practice set on America's first airports.</li>
+      <li>Bednarek, Janet R. Daly. 1997. “False Beacon: Regional Planning and the Location of Dayton's Municipal Airport.” <i>Ohio History</i> 106: 125–45.</li>
+      <li>Keck, Margaret E., and Kathryn Sikkink. 1998. <i>Activists beyond Borders: Advocacy Networks in International Politics</i>. Ithaca, NY: Cornell University Press.</li>
+      <li>Simmons, Beth A. 2009. <i>Mobilizing for Human Rights: International Law in Domestic Politics</i>. Cambridge: Cambridge University Press.</li>
+    </ol>
+  </details>
+
+  <!-- WHAT WE LEARNED -->
+  <section class="part" id="wwl"><p class="kick">Wrap-up</p><h2>What we learned</h2></section>
+  <section class="dcard wwl">
+    <ul>
+      <li>A research paper moves from the question and why it matters, through what we know and the background, to hypotheses, data, analysis and what the results mean.</li>
+      <li>The abstract gives the question, what we know, the contribution, the data and the conclusions, in that order.</li>
+      <li>The literature review tells readers what work on the exact question says and then shows where our work adds something new.</li>
+      <li>The data section is about transparency, so we say where every measure comes from and defend any that might strike a reader as odd.</li>
+      <li>An analysis interprets its results in real-world terms instead of only reporting numbers.</li>
+    </ul>
+  </section>
+
+  <nav class="pager" aria-label="Previous and next"><a href="lit-review.html"><span class="k">← Previous · Research skills</span><span class="t">Organizing a literature review</span></a><a class="home" href="index.html">All modules</a><span></span></nav>
+</main>
+<script>
+/* Shared helpers for the research-skills drafts. Answers stay in this browser only. */
+window.RS = window.RS || (() => {
+  const $ = s => document.querySelector(s), $$ = (s, r) => [...(r || document).querySelectorAll(s)];
+  const get = k => { try { return JSON.parse(localStorage.getItem('rs:' + k) || '{}'); } catch (e) { return {}; } };
+  const put = (k, v) => { try { localStorage.setItem('rs:' + k, JSON.stringify(v)); } catch (e) {} };
+  function download(name, text) {
+    const url = URL.createObjectURL(new Blob([text], {type: 'text/plain;charset=utf-8'}));
+    const a = document.createElement('a'); a.href = url; a.download = name; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+  }
+  /* A worksheet is any .ws[data-ws] block. Fields carry data-f (key) and data-label (for the download). */
+  function worksheet(ws, onChange) {
+    const key = ws.dataset.ws, st = get(key);
+    $$('[data-f]', ws).forEach(el => {
+      const k = el.dataset.f;
+      if (el.type === 'radio') el.checked = st[k] === el.value; else if (el.type === 'checkbox') el.checked = !!st[k]; else if (st[k] != null) el.value = st[k];
+      el.addEventListener(el.type === 'radio' || el.type === 'checkbox' ? 'change' : 'input', () => {
+        const s = get(key);
+        if (el.type === 'radio') s[k] = el.value; else if (el.type === 'checkbox') s[k] = el.checked; else s[k] = el.value;
+        put(key, s); if (onChange) onChange(el);
+      });
+    });
+    const bar = ws.querySelector('.wbar');
+    if (bar) bar.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const msg = bar.querySelector('.msg');
+      if (b.dataset.rs === 'dl') { download((ws.dataset.file || key) + '.txt', text(ws)); if (msg) msg.textContent = 'Your answers were saved as a text file.'; }
+      if (b.dataset.rs === 'clear') {
+        if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Tap again to clear every answer'; return; }
+        b.dataset.sure = ''; b.textContent = 'Clear my answers'; put(key, {});
+        $$('[data-f]', ws).forEach(el => { if (el.type === 'radio' || el.type === 'checkbox') el.checked = false; else el.value = ''; });
+        if (msg) msg.textContent = 'Your answers were cleared.'; if (onChange) onChange(null);
+      }
+    });
+    if (onChange) onChange(null);
+  }
+  function text(ws) {
+    const out = [ws.dataset.title || document.title, ''];
+    $$('[data-f]', ws).forEach(el => {
+      if (el.type === 'radio') { if (el.checked) out.push((el.dataset.label || '') + ': ' + el.value); return; }
+      if (el.type === 'checkbox') { if (el.checked) out.push(el.dataset.label || ''); return; }
+      out.push((el.dataset.label || el.dataset.f) + ':'); out.push(el.value.trim() || '(blank)'); out.push('');
+    });
+    return out.join('\n');
+  }
+  /* A "see some examples" button that opens the list after it */
+  function reveals() {
+    $$('[data-reveal]').forEach(b => {
+      const t = document.getElementById(b.dataset.reveal); if (!t) return;
+      const a = b.textContent, c = b.dataset.close || 'Hide these';
+      b.setAttribute('aria-expanded', 'false'); b.setAttribute('aria-controls', t.id);
+      b.addEventListener('click', () => { const o = t.hidden; t.hidden = !o; b.setAttribute('aria-expanded', String(o)); b.textContent = o ? c : a; });
+    });
+  }
+  /* Highlighted passages that open a margin note below their paragraph */
+  function notes(root) {
+    $$('.cm', root).forEach(b => {
+      b.setAttribute('aria-expanded', 'false');
+      b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } });
+      b.addEventListener('click', () => {
+        const p = b.closest('p,li,h5'), id = 'cm-' + b.dataset.n;
+        let n = document.getElementById(id);
+        if (n) { n.remove(); b.setAttribute('aria-expanded', 'false'); return; }
+        n = document.createElement('div'); n.className = 'cmnote'; n.id = id; n.setAttribute('role', 'note');
+        n.innerHTML = '<b>Note ' + b.dataset.n + '.</b> ' + b.dataset.note;
+        p.after(n); b.setAttribute('aria-expanded', 'true'); b.setAttribute('aria-controls', id);
+      });
+    });
+  }
+  return {$, $$, get, put, download, worksheet, reveals, notes};
+})();
+(() => {
+const {$, $$, worksheet, notes} = RS;
+$$('.note-ex').forEach(n => notes(n));
+/* ---------- put the paper back together ---------- */
+const S = [['intro', 'Introduction'], ['q', 'Question and argument'], ['lit', 'What we know'], ['bg', 'Background'], ['hyp', 'Hypotheses'], ['data', 'Cases, data and measures']];
+const P = [
+  {id: 'a', s: 'hyp', t: 'H1: all else equal, cities with the increased presence of urban regimes will be more likely to have successfully built an airport relative to cities with fewer elites.'},
+  {id: 'b', s: 'intro', t: 'How states respond when other states violate human rights standards can be the determining factor in whether the lives of thousands are spared or lost, whether atrocities continue or cease.'},
+  {id: 'c', s: 'data', t: 'Education level is measured as the total number of 18-20 year-old individuals that were attending school in 1920.'},
+  {id: 'd', s: 'lit', t: 'Much of the research on human rights and transnational networks argues that third party state condemnations are a political outcome of the lobbying efforts of activist networks including NGOs and INGOs (Keck and Sikkink 1998; Risse and Sikkink 1999; Murdie and Davis 2012).'},
+  {id: 'e', s: 'bg', t: 'In 1930 a small group of property owners in Dallas, Texas, “sensing the importance of commercial aviation” offered the city of Dallas 230 acres for the development of a commercial airport (Airport News Supplement Oct. 1930, 47).'},
+  {id: 'f', s: 'q', t: '“Why do states decide to condemn or sanction human rights violators in the absence of direct pressure from human rights organizations and activists?”'}
+];
+const WHY = {intro: 'it tells the reader why the research matters for people’s lives', q: 'it states the question plainly, right up top', lit: 'it distills what a group of works argues in common', bg: 'it illustrates the mechanism with a concrete case', hyp: 'it is the formal statement of what the paper expects to find', data: 'it says exactly how a concept is measured'};
+let sel = null; const at = {};
+const pool = $('#paraPool'), slots = $('#slots'), say = $('#rbSay');
+const para = p => `<button type="button" class="para" data-p="${p.id}" aria-pressed="${sel === p.id}">${p.t}</button>`;
+function draw() {
+  pool.innerHTML = P.filter(p => !at[p.id]).map(para).join('') || '<p class="note">Every passage is placed.</p>';
+  slots.innerHTML = S.map(([k, l]) => { const p = P.find(x => at[x.id] === k); const cls = p ? (p.s === k ? ' ok' : ' no') : '';
+    return `<div class="slot${cls}"><button type="button" class="dbtn" data-s="${k}" ${sel ? '' : 'disabled'}>${l}</button>${p ? para(p) : ''}</div>`; }).join('');
+  const placed = P.filter(p => at[p.id]), right = placed.filter(p => at[p.id] === p.s);
+  if (!placed.length) { say.className = 'fbk'; return; }
+  say.className = 'fbk show ' + (right.length === P.length ? 'ok' : 'info');
+  say.textContent = right.length === P.length ? 'The paper is back in order. Each passage does the job of its section, which is why a reader can find it there.'
+    : `Of the ${placed.length} ${placed.length === 1 ? 'passage' : 'passages'} you placed, ${right.length} ${right.length === 1 ? 'is' : 'are'} in the right section. A red box means that passage belongs elsewhere, so tap it to take it back out.`;
+}
+pool.addEventListener('click', e => { const b = e.target.closest('.para'); if (!b) return; sel = sel === b.dataset.p ? null : b.dataset.p; draw(); });
+slots.addEventListener('click', e => {
+  const s = e.target.closest('[data-s]'), pp = e.target.closest('.para');
+  if (pp) { delete at[pp.dataset.p]; sel = null; draw(); return; }
+  if (!s || !sel) return;
+  P.forEach(p => { if (at[p.id] === s.dataset.s) delete at[p.id]; });
+  at[sel] = s.dataset.s; const p = P.find(x => x.id === sel); sel = null; draw();
+  if (p.s === at[p.id]) { say.className = 'fbk show ok'; say.textContent = 'That fits, since ' + WHY[p.s] + '.'; }
+});
+$('#rbShow').addEventListener('click', () => { P.forEach(p => at[p.id] = p.s); sel = null; draw(); });
+$('#rbReset').addEventListener('click', () => { Object.keys(at).forEach(k => delete at[k]); sel = null; draw(); });
+draw();
+/* ---------- abstract builder ---------- */
+function prev() {
+  const parts = ['a1', 'a2', 'a3', 'a4', 'a5'].map(k => ($(`[data-f="${k}"]`).value || '').trim()).filter(Boolean);
+  const text = parts.join(' '), n = text ? text.split(/\s+/).length : 0;
+  $('#absPrev').textContent = text || 'Your abstract appears here as you write each part.';
+  $('#absCount').textContent = n ? `Preview · ${n} words` + (n > 350 ? ', which is longer than 1.5 times the template’s abstract' : n < 120 ? ', still short of the template’s length of about 230' : '') : 'Preview';
+}
+$$('.ws[data-ws]').forEach(ws => worksheet(ws, prev));
+})();
+</script>
+<script id="presentjs">/* Presentation mode: the same page, one projector-sized slide at a time.
+   Injected into every module page by scripts/present.py. */
+(function () {
+  const SKIP = 'nav.pager, footer.src, details.srcd, script, style, noscript, template';
+  const main = document.querySelector('main');
+  if (!main) return;
+  let slides = [], cur = 0, on = false, bar, btn;
+
+  const kids = el => [...el.children].filter(c => !c.matches(SKIP) && !c.hidden && getComputedStyle(c).display !== 'none');
+  const avail = () => window.innerHeight - (bar ? bar.offsetHeight : 56) - 28;
+
+  function unhideAll() {
+    document.querySelectorAll('.pv-hide').forEach(e => e.classList.remove('pv-hide'));
+    main.style.zoom = '';
+  }
+  const unit = (el, parent, h) => ({el, parent, h, part:el.classList.contains('part'), brk:el.matches('[data-pv="break"]'),
+    glue:!el.classList.contains('part') && (el.matches('[data-pv="prev"], .btnrow, .controls-row') || h < 64),
+    lead:!el.matches('[data-pv="prev"], .btnrow, .controls-row, .part') && h >= 64 && (el.matches('.controls, [data-pv="next"]') || (h < 170 && !!el.querySelector('button, input, select') && !el.querySelector('svg, canvas, table')))});
+  function build() {
+    unhideAll();
+    const H = avail(), units = [];
+    kids(main).forEach(el => {
+      const h = el.getBoundingClientRect().height;
+      if (h <= 1) return;
+      const parts = el.matches('section, div, figure') ? kids(el).filter(c => c.getBoundingClientRect().height > 1) : [];
+      if (h > H * 1.15 && parts.length > 1) parts.forEach(c => units.push(unit(c, el, c.getBoundingClientRect().height + 12)));
+      else units.push(unit(el, null, h + 16));
+    });
+    slides = [];
+    let s = null, used = 0, sticky = null;
+    units.forEach(u => {
+      if (u.part) sticky = null;
+      const led = s && s.units[s.units.length - 1].lead;
+      if (!s || u.part || u.brk || (!u.glue && !led && used + u.h > H)) {
+        s = {units:[], sticky:u.lead ? null : sticky}; slides.push(s); used = s.sticky ? s.sticky.h : 0;
+      }
+      s.units.push(u); used += u.h;
+      if (u.lead) sticky = u;
+    });
+  }
+  function fit() {
+    if (!on) return;
+    main.style.zoom = 1;
+    const H = avail(), r = main.getBoundingClientRect();
+    const zh = H / Math.max(r.height, 1), zw = (window.innerWidth * 0.97) / Math.max(r.width, 1);
+    const z = Math.max(0.78, Math.min(1.8, zh, zw));
+    main.style.zoom = z.toFixed(3);
+    main.classList.toggle('pv-scroll', r.height * z > H + 2);
+  }
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    unhideAll();
+    const s = slides[cur], us = s.sticky ? [s.sticky].concat(s.units) : s.units;
+    const keep = new Set(us.map(u => u.parent || u.el)), inside = new Set(us.map(u => u.el));
+    [...main.children].forEach(el => { if (!keep.has(el)) el.classList.add('pv-hide'); });
+    new Set(us.filter(u => u.parent).map(u => u.parent)).forEach(par => [...par.children].forEach(c => { if (!inside.has(c) && !c.matches('script, style')) c.classList.add('pv-hide'); }));
+    bar.querySelector('.pv-n').textContent = `${cur + 1} / ${slides.length}`;
+    bar.querySelector('.pv-prev').disabled = cur === 0;
+    bar.querySelector('.pv-next').disabled = cur === slides.length - 1;
+    window.scrollTo(0, 0);
+    fit();
+    window.dispatchEvent(new Event('resize'));
+    setTimeout(fit, 60);
+  }
+  function enter(at) {
+    on = true;
+    document.documentElement.classList.add('presenting');
+    build();
+    let i = 0;
+    if (at !== undefined) i = at;
+    else { const y = window.scrollY; slides.forEach((s, k) => { const top = (s.units[0].el).getBoundingClientRect().top + y; if (top <= y + 80) i = k; }); }
+    if (location.hash !== '#present') history.replaceState(null, '', '#present');
+    show(i);
+    bar.querySelector('.pv-next').focus();
+  }
+  function exit() {
+    const target = slides[cur] && slides[cur].units[0].el;
+    on = false;
+    unhideAll();
+    main.classList.remove('pv-scroll');
+    document.documentElement.classList.remove('presenting');
+    if (location.hash === '#present') history.replaceState(null, '', location.pathname + location.search);
+    window.dispatchEvent(new Event('resize'));
+    if (target) setTimeout(() => target.scrollIntoView({block:'start'}), 30);
+    btn && btn.focus();
+  }
+
+  bar = document.createElement('div');
+  bar.className = 'pv-bar';
+  bar.innerHTML = `<button class="pv-prev" aria-label="Previous slide">←</button><span class="pv-n" aria-live="polite"></span><button class="pv-next" aria-label="Next slide">→</button><button class="pv-exit">Exit</button>`;
+  document.body.appendChild(bar);
+  bar.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.classList.contains('pv-prev')) show(cur - 1);
+    else if (b.classList.contains('pv-next')) show(cur + 1);
+    else if (b.classList.contains('pv-exit')) exit();
+  });
+
+  const nav = document.querySelector('nav.topnav');
+  if (nav) {
+    btn = document.createElement('button');
+    btn.className = 'pv-open';
+    btn.type = 'button';
+    btn.textContent = 'Present';
+    btn.title = 'Show this page as slides for the classroom';
+    btn.addEventListener('click', () => enter());
+    const last = nav.lastElementChild;
+    nav.insertBefore(btn, last && last.tagName === 'A' && last !== nav.firstElementChild ? last : null);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!on) return;
+    const t = e.target, tag = t.tagName;
+    const typing = tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && !['button','checkbox','radio','submit'].includes(t.type));
+    if (e.key === 'Escape') { e.preventDefault(); exit(); return; }
+    if (typing) return;
+    const fwd = e.key === 'PageDown' || e.key === 'ArrowRight' || (e.key === ' ' && tag !== 'BUTTON');
+    const back = e.key === 'PageUp' || e.key === 'ArrowLeft';
+    if (fwd) { e.preventDefault(); show(cur + 1); }
+    else if (back) { e.preventDefault(); show(cur - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+  let rt;
+  window.addEventListener('resize', e => { if (!on || !e.isTrusted) return; clearTimeout(rt); rt = setTimeout(() => { const k = cur; build(); show(Math.min(k, slides.length - 1)); }, 200); });
+  main.addEventListener('click', e => {
+    if (!on) return;
+    const t = e.target;
+    setTimeout(() => {
+      main.style.zoom = 1;
+      if (main.getBoundingClientRect().height > avail() * 1.3) {
+        build();
+        const k = slides.findIndex(sl => sl.units.some(u => u.el.contains(t)));
+        show(k >= 0 ? k : cur);
+      } else fit();
+    }, 120);
+  });
+  main.addEventListener('input', () => { if (on) setTimeout(fit, 80); });
+  if (location.hash === '#present') window.addEventListener('load', () => setTimeout(() => enter(0), 300));
+})();
+</script>
+<script id="a11y">(function(){
+function txt(n){const c=n.cloneNode(true);c.querySelectorAll('select,option,input,button,script,style,svg').forEach(x=>x.remove());return c.textContent.replace(/\s+/g,' ').trim();}
+function named(e){return e.getAttribute('aria-label')||e.getAttribute('aria-labelledby')||(e.labels&&e.labels.length)||e.querySelector&&e.querySelector(':scope > title');}
+function fix(){
+ const d=document.getElementById('drawer');if(d){const h=d.getAttribute('aria-hidden')==='true';if(h)d.setAttribute('inert','');else d.removeAttribute('inert');}
+ document.querySelectorAll('main input:not([type=hidden]),main select,main textarea').forEach(e=>{if(named(e))return;const row=e.closest('li,tr,p,label,dd,.row,.ctl,.q,div');let t=row?txt(row):'';if(!t&&e.placeholder)t=e.placeholder;e.setAttribute('aria-label',(t||'Answer').slice(0,90));});
+ document.querySelectorAll('svg[role=img]').forEach(s=>{if(s.querySelector('a,button,[tabindex]:not([tabindex="-1"])'))s.setAttribute('role','group');if(named(s))return;const box=s.closest('figure,.dcard,section,.card,.ov');const h=box&&box.querySelector('h3,h2,figcaption,.ovh');s.setAttribute('aria-label','Chart'+(h?': '+txt(h).slice(0,80):''));});
+ document.querySelectorAll('div[aria-label]:not([role]),span[aria-label]:not([role])').forEach(e=>e.setAttribute('role','group'));
+ document.querySelectorAll('[tabindex]:not([tabindex="-1"]),[role=button]').forEach(e=>{if(e instanceof SVGElement&&!named(e)&&!e.textContent.trim()){e.setAttribute('aria-label',e.getAttribute('data-label')||e.getAttribute('title')||'Chart segment');}});
+ document.querySelectorAll('[role=tablist]').forEach(t=>{if(!t.querySelector('[role=tab]'))t.setAttribute('role','group');});
+ document.querySelectorAll('main .sp-sheet,main .xt-wrap,main .agewrap,main .ovb,main .specs,main .tbl-wrap').forEach(e=>{if(e.scrollWidth>e.clientWidth+2&&!e.hasAttribute('tabindex')){e.setAttribute('tabindex','0');if(!e.getAttribute('aria-label'))e.setAttribute('aria-label','Scrollable content');}});
+}
+let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
+if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
+window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
+})();</script></body>
+</html>
