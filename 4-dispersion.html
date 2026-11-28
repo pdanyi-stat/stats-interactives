@@ -739,7 +739,89 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 .tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
 .tapnote a{color:var(--mci);font-weight:600}
 </style>
-<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
+<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style><style id="tryit">
+/* Try it puzzles (shared). Injected by scripts/tryit.py on pages that hold a details.tryit box. */
+:root{--pz-a:#B07A12;--pz-abg:#FFF1D6;--pz-aink:#6B4A00;--pz-tag:#f5c400;--pz-ok:#2c6b1f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}}
+:root[data-theme="dark"]{--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}
+details.tryit{border:2px solid var(--pz-a);background:var(--pz-abg);border-radius:10px;margin:18px 0 6px;box-shadow:0 0 0 4px color-mix(in srgb,var(--pz-a) 18%,transparent)}
+details.tryit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;font-weight:600}
+details.tryit>summary::-webkit-details-marker{display:none}
+details.tryit>summary::after{content:'+';margin-left:auto;font:600 20px/1 var(--font-mono,monospace);color:var(--pz-aink)}
+details.tryit[open]>summary::after{content:'−'}
+details.tryit .tag{background:var(--pz-tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+details.tryit .tt{font-size:17px;color:var(--ink)}
+details.tryit .hint{font-size:13px;font-weight:400;color:var(--ink-2)}
+.pzin{padding:0 16px 16px}
+.pzgoal{margin:0 0 8px;color:var(--ink);font-size:15px}
+.pzchart{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pzchart svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzchart circle.cty{cursor:grab}
+.pzchart circle.cty:focus{outline:none;stroke:var(--ink);stroke-width:3}
+.pzkey{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.pzkey i{display:inline-block;vertical-align:middle;margin-right:6px}
+.pzkey i.dot{width:11px;height:11px;border-radius:50%}
+.pzkey i.dot.gv{background:var(--s1)}.pzkey i.dot.sn{background:var(--s2)}
+.pzkey i.ln{width:22px;height:0}
+.pzkey i.ln.pool{border-top:2px dashed var(--muted)}.pzkey i.ln.ctl{border-top:3px solid var(--ink-2)}
+.pzstats{display:flex;flex-wrap:wrap;gap:8px}
+.pzstat{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.pzstat .lab{font-size:13px;color:var(--ink-2)}
+.pzstat .num{font:600 22px/1.3 var(--font-mono,monospace);color:var(--ink)}
+.pzstat .goal{font-size:13px;color:var(--ink-2)}
+.pzstat .goal.met{color:var(--pz-ok);font-weight:600}
+.pzinfo{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.pzmsg{margin:4px 0 0;font-size:14.5px;min-height:22px;color:var(--ink)}
+.pzbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pzex{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--pz-a) 45%,transparent)}
+.pzex h4{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.pzex p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink);max-width:75ch}
+.pzex p.st{font-size:13px;font-weight:600;color:var(--pz-aink);margin:0 0 2px}
+.pzlock{color:var(--ink-2)!important}
+.pzbody{opacity:.28;pointer-events:none;transition:opacity .5s}
+.pzbody.open{opacity:1;pointer-events:auto}
+.pzfoot{font-size:13px!important;color:var(--ink-2)!important}
+@media (prefers-reduced-motion:reduce){.pzbody{transition:none}}
+details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var(--ink));text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+.pzset{margin:0 0 6px;color:var(--ink-2);font-size:14.5px;line-height:1.55}
+.pzchart text{font-family:inherit}
+.pzkey i.ovsw{width:14px;height:11px;background:color-mix(in srgb,var(--pz-a) 35%,transparent);border:1px solid var(--pz-a)}
+.ovzsay{font-size:13.5px!important;color:var(--ink-2)!important}
+.lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.lmh{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:0 2px}
+.lmcell{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.lmcell.mode{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.lmlab{font-size:13px;color:var(--ink-2);margin-bottom:6px;min-height:18px}
+.lmlab b{color:var(--ink)}
+.lmtag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--s1-ink,var(--ink))}
+.lmtag.tie{color:var(--ink-2)}
+.lmsqs{display:grid;grid-template-columns:repeat(5,minmax(0,28px));gap:4px;min-height:60px;align-content:start}
+.lmsq{width:100%;aspect-ratio:1;min-width:24px;padding:0;border-radius:5px;border:1.5px solid;font:700 12px/1 var(--font-mono,monospace);color:#0b0d10;cursor:pointer;display:grid;place-items:center;transition:opacity .3s}
+.lmsq.d{background:var(--dem);border-color:var(--dem-ink,var(--dem))}
+.lmsq.r{background:var(--rep);border-color:var(--rep-ink,var(--rep))}
+.lmsq.wrong{opacity:.3}
+.lmsq:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.pzkey i.lmsq{display:inline-grid;width:16px;height:16px;min-width:0;font-size:10px;aspect-ratio:auto;cursor:default}
+.pzkey i.lmmode{width:16px;height:12px;border:2px solid var(--s1-ink,var(--ink));border-radius:3px;background:color-mix(in srgb,var(--s1) 9%,transparent)}
+@media (prefers-reduced-motion:reduce){.lmsq{transition:none!important}}
+.pzkey i.ln.r2l{border-top:2.5px solid var(--s2)}
+.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:8px;margin:6px 0 10px}
+.cscard{display:grid;gap:2px;text-align:left;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .35s,box-shadow .35s,background-color .35s}
+.cscard.on{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1.5px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.cscard:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.csn{font-weight:700;font-size:15px;margin-bottom:2px}
+@media (max-width:480px){.cscard{padding:7px 8px}.csr{font-size:12px}.csr>span{min-width:0;width:100%}}
+.csr{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;font-size:12.5px;color:var(--ink-2);border-radius:4px;padding:0 3px;margin:0 -3px}
+.csr>span{min-width:78px}.csr b{color:var(--ink);font-weight:600}.csr i{font-style:normal;font-size:11.5px;color:var(--muted)}
+.csr.cst{background:color-mix(in srgb,var(--pz-a) 18%,transparent)}
+.csr.bad{background:color-mix(in srgb,var(--bad,#B3261E) 14%,transparent)}
+.csr.bad b{color:var(--badink,var(--ink))}
+.csr.csturn{display:none}.csgrid.turn .csr.csturn{display:flex}
+.pzstat .num.cssm{font-size:17px;line-height:1.4;white-space:normal}
+@media (prefers-reduced-motion:reduce){.cscard{transition:none}}
+.pzkey i.sdsw{width:16px;height:11px;background:color-mix(in srgb,var(--s1) 22%,transparent)}
+</style>
+</head>
 <body>
 <nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="crosstabs.html" aria-label="Next: Crosstabs">Next →</a></nav>
 <header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Module 4 of 11</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion" aria-current="page"><span>4 · Measures of dispersion</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²"><span>5</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means"><span>8</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables"><span>11</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-airports.html" style="--c:#183951;--k:#f8f5ec" title="Don&#x27;t Get Left Behind: Who Got America&#x27;s First Airports?"><span>P2</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P3</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P4</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P5</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P6</span></a><a class="tab" href="practice-news-deserts.html" style="--c:#a2472b;--k:#f8f5ec" title="Do news deserts vote less?"><span>P7</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P8</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data"><span>Viz</span></a></nav><div class="mtitle"><div><p class="kicker">● Module 4 · Describing data</p><h1>Measures of <em>dispersion.</em></h1></div><p class="dek">How spread out are the observations? The variance and the standard deviation (SD) measure the typical distance of the observations from the mean. The examples use the Massachusetts counties and the Titanic passenger list.</p></div><div class="mhd sh"><span>In this module · tap a book to open it</span><span class="rt"><span class="cnt">7 sections</span><span class="swipehint" aria-hidden="true">Swipe →</span></span></div><nav class="shelf2" aria-label="Sections on this page"><div class="gbox" style="min-width:284px"><p class="gl">Variance and SD</p><div class="gbooks"><a class="bk cloth din" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:90%;--w:84px;--fs:17px" href="#sec-variance-is-the-average-squa" aria-label="Part 1: Variance"><span class="bands t"></span><span class="plate">1</span><span class="ti">Variance<br><small>squared distances</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#5cab80;--k:#1b1813;--band:#376c4f;--h:90%;--w:72px;--fs:16px" href="#sec-compute-the-sd-for-your-clas" aria-label="Part 2: SD for your class"><span class="bands t"></span><span class="plate">2</span><span class="ti">SD for your class</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk face" style="--c:#a44856;--k:#f8f5ec;--ink:#f8f5ec;--h:100%;flex-basis:196px" href="#sec-what-the-sd-tells-you-about-" aria-label="Part 3: Where observations fall"><span class="fn">PART 3</span><span class="ft">Where observations fall</span><span class="fs2">the 68/95 rule</span><svg class="cov" viewBox="0 0 170 124" aria-hidden="true"><g fill="var(--ink)" opacity=".88"><circle cx="69.6" cy="102.0" r="2.6"/><circle cx="92.7" cy="102.0" r="2.6"/><circle cx="108.1" cy="102.0" r="2.6"/><circle cx="115.8" cy="102.0" r="2.6"/><circle cx="108.1" cy="96.0" r="2.6"/><circle cx="85.0" cy="102.0" r="2.6"/><circle cx="92.7" cy="96.0" r="2.6"/><circle cx="77.3" cy="102.0" r="2.6"/><circle cx="61.9" cy="102.0" r="2.6"/><circle cx="77.3" cy="96.0" r="2.6"/><circle cx="100.4" cy="102.0" r="2.6"/><circle cx="92.7" cy="90.0" r="2.6"/><circle cx="77.3" cy="90.0" r="2.6"/><circle cx="61.9" cy="96.0" r="2.6"/><circle cx="85.0" cy="96.0" r="2.6"/><circle cx="69.6" cy="96.0" r="2.6"/><circle cx="85.0" cy="90.0" r="2.6"/><circle cx="92.7" cy="84.0" r="2.6"/><circle cx="38.8" cy="102.0" r="2.6"/><circle cx="85.0" cy="84.0" r="2.6"/><circle cx="54.2" cy="102.0" r="2.6"/><circle cx="69.6" cy="90.0" r="2.6"/><circle cx="61.9" cy="90.0" r="2.6"/><circle cx="108.1" cy="90.0" r="2.6"/><circle cx="100.4" cy="96.0" r="2.6"/><circle cx="92.7" cy="78.0" r="2.6"/><circle cx="69.6" cy="84.0" r="2.6"/><circle cx="54.2" cy="96.0" r="2.6"/><circle cx="77.3" cy="84.0" r="2.6"/><circle cx="92.7" cy="72.0" r="2.6"/><circle cx="85.0" cy="78.0" r="2.6"/><circle cx="100.4" cy="90.0" r="2.6"/><circle cx="77.3" cy="78.0" r="2.6"/><circle cx="123.5" cy="102.0" r="2.6"/><circle cx="100.4" cy="84.0" r="2.6"/><circle cx="123.5" cy="96.0" r="2.6"/><circle cx="92.7" cy="66.0" r="2.6"/><circle cx="77.3" cy="72.0" r="2.6"/><circle cx="69.6" cy="78.0" r="2.6"/><circle cx="100.4" cy="78.0" r="2.6"/><circle cx="108.1" cy="84.0" r="2.6"/><circle cx="85.0" cy="72.0" r="2.6"/><circle cx="92.7" cy="60.0" r="2.6"/><circle cx="77.3" cy="66.0" r="2.6"/><circle cx="77.3" cy="60.0" r="2.6"/><circle cx="77.3" cy="54.0" r="2.6"/><circle cx="46.5" cy="102.0" r="2.6"/><circle cx="61.9" cy="84.0" r="2.6"/><circle cx="85.0" cy="66.0" r="2.6"/><circle cx="85.0" cy="60.0" r="2.6"/><circle cx="108.1" cy="78.0" r="2.6"/><circle cx="100.4" cy="72.0" r="2.6"/><circle cx="92.7" cy="54.0" r="2.6"/><circle cx="85.0" cy="54.0" r="2.6"/><circle cx="38.8" cy="96.0" r="2.6"/><circle cx="85.0" cy="48.0" r="2.6"/><circle cx="69.6" cy="72.0" r="2.6"/><circle cx="92.7" cy="48.0" r="2.6"/><circle cx="77.3" cy="48.0" r="2.6"/><circle cx="77.3" cy="42.0" r="2.6"/><circle cx="77.3" cy="36.0" r="2.6"/><circle cx="77.3" cy="30.0" r="2.6"/><circle cx="46.5" cy="96.0" r="2.6"/><circle cx="54.2" cy="90.0" r="2.6"/><circle cx="108.1" cy="72.0" r="2.6"/><circle cx="92.7" cy="42.0" r="2.6"/><circle cx="77.3" cy="24.0" r="2.6"/><circle cx="77.3" cy="18.0" r="2.6"/><circle cx="77.3" cy="12.0" r="2.6"/><circle cx="146.6" cy="102.0" r="2.6"/><circle cx="92.7" cy="36.0" r="2.6"/><circle cx="85.0" cy="42.0" r="2.6"/><circle cx="69.6" cy="66.0" r="2.6"/><circle cx="38.8" cy="90.0" r="2.6"/><circle cx="85.0" cy="36.0" r="2.6"/><circle cx="115.8" cy="96.0" r="2.6"/><circle cx="100.4" cy="66.0" r="2.6"/><circle cx="92.7" cy="30.0" r="2.6"/><circle cx="69.6" cy="60.0" r="2.6"/><circle cx="61.9" cy="78.0" r="2.6"/><circle cx="85.0" cy="30.0" r="2.6"/><circle cx="77.3" cy="6.0" r="2.6"/><circle cx="61.9" cy="72.0" r="2.6"/><circle cx="115.8" cy="90.0" r="2.6"/><circle cx="69.6" cy="54.0" r="2.6"/><circle cx="77.3" cy="0.0" r="2.6"/><circle cx="38.8" cy="84.0" r="2.6"/><circle cx="115.8" cy="84.0" r="2.6"/><circle cx="85.0" cy="24.0" r="2.6"/><circle cx="85.0" cy="18.0" r="2.6"/><circle cx="92.7" cy="24.0" r="2.6"/><circle cx="69.6" cy="48.0" r="2.6"/><circle cx="69.6" cy="42.0" r="2.6"/><circle cx="92.7" cy="18.0" r="2.6"/><circle cx="69.6" cy="36.0" r="2.6"/><circle cx="92.7" cy="12.0" r="2.6"/><circle cx="108.1" cy="66.0" r="2.6"/><circle cx="100.4" cy="60.0" r="2.6"/><circle cx="115.8" cy="78.0" r="2.6"/><circle cx="108.1" cy="60.0" r="2.6"/><circle cx="115.8" cy="72.0" r="2.6"/><circle cx="92.7" cy="6.0" r="2.6"/><circle cx="92.7" cy="0.0" r="2.6"/><circle cx="61.9" cy="66.0" r="2.6"/><circle cx="85.0" cy="12.0" r="2.6"/><circle cx="69.6" cy="30.0" r="2.6"/><circle cx="85.0" cy="6.0" r="2.6"/><circle cx="61.9" cy="60.0" r="2.6"/><circle cx="92.7" cy="-6.0" r="2.6"/><circle cx="138.9" cy="102.0" r="2.6"/><circle cx="69.6" cy="24.0" r="2.6"/><circle cx="92.7" cy="-12.0" r="2.6"/><circle cx="100.4" cy="54.0" r="2.6"/><circle cx="69.6" cy="18.0" r="2.6"/><circle cx="77.3" cy="-6.0" r="2.6"/><circle cx="77.3" cy="-12.0" r="2.6"/><circle cx="92.7" cy="-18.0" r="2.6"/><circle cx="69.6" cy="12.0" r="2.6"/><circle cx="138.9" cy="96.0" r="2.6"/><circle cx="100.4" cy="48.0" r="2.6"/><line x1="65.0" y1="20.0" x2="65.0" y2="112.0" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 3" opacity="1"/><line x1="105.0" y1="20.0" x2="105.0" y2="112.0" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 3" opacity="1"/><line x1="4.0" y1="112.0" x2="166.0" y2="112.0" stroke="var(--ink)" stroke-width="1.4" opacity="1"/><text x="85" y="14" text-anchor="middle" font-family="RvMono,ui-monospace,monospace" font-size="10" letter-spacing=".06em" fill="var(--ink)">±1 SD</text></g></svg></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:218px"><p class="gl">Using the SD</p><div class="gbooks"><a class="bk cloth lean-r" style="--c:#76b894;--k:#1b1813;--band:#407b5b;--h:86%;--w:80px;--fs:16px;--rot:3.2deg;margin-right:calc(var(--bh) * 0.0480 - 2px)" href="#sec-compare-two-variables-on-the" aria-label="Part 4: Compare two SDs"><span class="bands t"></span><span class="plate">4</span><span class="ti">Compare two SDs</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#376a4e;--k:#f8f5ec;--band:#8cc3a5;--h:86%;--w:72px;--fs:12px" href="#sec-codes-in-order-before-you-de" aria-label="Part 5: Codes in order first"><span class="bands t"></span><span class="plate">5</span><span class="ti">Codes in order first</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth lean-l" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:90%;--w:84px;--fs:13px;--rot:-5.2deg;margin-left:calc(var(--bh) * 0.0782 - 2px)" href="#sec-settle-the-thanksgiving-argu" aria-label="Part 6: Thanksgiving argument"><span class="bands t"></span><span class="plate">6</span><span class="ti">Thanksgiving argument</span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:61px"><p class="gl">Wrap-up</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:93%;--w:76px;--fs:17px" href="#wwl" aria-label="Part ✓: What we learned"><span class="bands t"></span><span class="plate">✓</span><span class="ti">What we learned<br><small>the main ideas</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div></nav><div class="board" aria-hidden="true"></div></div></header>
@@ -781,7 +863,41 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <div class="stat"><div class="mean"><span>Mean</span><b id="clM"></b></div><div><span>Variance</span><b id="clV"></b></div><div><span>SD</span><b id="clS"></b></div></div>
   </section>
 
-  <!-- 3 68/95 -->
+  <!-- pz:m4 -->
+<section class="dcard" style="padding:0;border:0;background:none;box-shadow:none">
+  <details class="tryit" id="pzSd">
+    <summary><span class="tag">Try it</span><span class="tt">Twice the spread with the same mean</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">Two classes start with the same eleven example ages from Part 2, so both have a mean of 21.73 and an SD of 2.00. Drag a dot to change that person's age, which moves in whole years.</p>
+      <p class="pzgoal">Make the two classes keep exactly the same mean while one class's SD becomes at least twice the other's.</p>
+      <div class="pzchart" id="sdChart"></div>
+      <div class="pzkey"><span><i class="dot gv"></i>One person</span><span><i class="ln r2l"></i>The class mean</span><span id="sdBandKey" hidden><i class="sdsw"></i>One SD on each side of the mean</span></div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Means, class A and class B</div><div class="num cssm" id="sdM"></div><div class="goal" id="sdGa"></div></div>
+        <div class="pzstat"><div class="lab">SDs, class A and class B</div><div class="num cssm" id="sdS"></div><div class="goal" id="sdGb"></div></div>
+      </div>
+      <p class="pzinfo" id="sdInfo" aria-live="polite">Tap near a dot and drag it left or right.</p>
+      <p class="pzmsg" id="sdMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="sdShow">Show me</button><button type="button" id="sdReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="sdLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="sdBody" aria-hidden="true">
+          <p class="st">1 · The mean only sees the total</p>
+          <p>Both classes add up to the same total, <b id="sdTot"></b> years spread over 11 people, so both have a mean of <b id="sdMn"></b>. The mean doesn't care whether those years come from people bunched close together or from people spread out between <span id="sdRg"></span>.</p>
+          <p><button type="button" class="linkish" id="sdBand">Mark one SD on each side of each mean</button></p>
+          <p class="st">2 · The SD sees the spread</p>
+          <p>In your version the SD of class <span id="sdW"></span> is <b id="sdS1"></b> and the SD of class <span id="sdN"></span> is <b id="sdS2"></b>, so the wider class's SD is <b id="sdX"></b> times as large. Two groups with the same average can be very different groups, and the SD is the number that tells them apart.</p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>Whenever we compare groups by their means, as we will with t tests in Module 8, we report the SDs too. The means tell us where each group's center sits, and the SDs tell us how far the people in each group typically are from that center.</p>
+          <p class="pzfoot">The starting ages are the example ages from Part 2. An age you move becomes your own version, so it no longer matches the example.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+<!-- /pz:m4 -->
+<!-- 3 68/95 -->
   <section class="part" id="sec-what-the-sd-tells-you-about-"><p class="kick">Part 3</p><h2>What the SD tells you about where observations fall</h2>
     <p>If a variable is roughly normal, about 68% of observations fall within one SD of the mean and about 95% within two. The SD is in the same units as the variable, which is what makes this useful.</p></section>
   <section class="dcard" id="nr" data-ds="titanic.sav">
@@ -1493,5 +1609,102 @@ function fix(){
 let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
 if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
-})();</script></body>
+})();</script><script id="pzlib">
+window.PZ=window.PZ||(()=>{
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mk(t,a,par,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;if(par)par.appendChild(e);return e;}
+/* Eased move, only on a press. Reduced motion jumps straight to the end. */
+function tween(ms,f,done){if(reduce()){f(1);if(done)done();return;}const t0=performance.now();(function s(t){const u=Math.min(1,(t-t0)/ms),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;f(e);if(u<1)requestAnimationFrame(s);else if(done)done();})(t0);}
+/* Build the chart the first time the box opens, and again when the width or theme changes. */
+function lazy(box,build){let built=false,w=innerWidth;box.addEventListener('toggle',()=>{if(box.open&&!built){built=true;build();}});
+  let rt=0;addEventListener('resize',()=>{if(!built||innerWidth===w)return;w=innerWidth;clearTimeout(rt);rt=setTimeout(build,150);});
+  const rb=()=>{if(built)build();};const mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',rb);
+  new MutationObserver(rb).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}
+/* The explanation stays faded until the goal is met or Show me is pressed. */
+function opener(lock,body){let o=false;const f=()=>{if(o)return;o=true;lock.style.display='none';body.classList.add('open');body.setAttribute('aria-hidden','false');};f.isOpen=()=>o;return f;}
+function goal(el,ok,label){el.textContent='Goal: '+label+'. '+(ok?'Met.':'Not yet.');el.classList.toggle('met',!!ok);}
+/* Pointer dragging: grab the nearest handle within 30 px, keep the grab offset. */
+function drag(svg,o){const R=o.radius||30;let cur=null,off=[0,0];
+  const pt=e=>{const r=svg.getBoundingClientRect(),k=(+svg.getAttribute('width'))/r.width;return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  svg.addEventListener('pointerdown',e=>{if(o.busy&&o.busy())return;const [a,b]=pt(e),H=o.handles();let best=-1,bd=R;H.forEach((h,i)=>{if(!h)return;const d=Math.hypot(h[0]-a,h[1]-b);if(d<bd){bd=d;best=i;}});
+    if(best<0)return;cur=best;off=[H[best][0]-a,H[best][1]-b];svg.setPointerCapture(e.pointerId);if(o.start)o.start(best);e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(cur===null)return;const [a,b]=pt(e);o.move(cur,a+off[0],b+off[1]);});
+  const up=()=>{if(cur!==null&&o.end)o.end(cur);cur=null;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  return {active:()=>cur};}
+/* Student's t distribution */
+function lgam(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(const k of c)s+=k/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function bcf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;let h=d;for(let m=1;m<=200;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgam(a+b)-lgam(a)-lgam(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*bcf(a,b,x)/a:1-bt*bcf(b,a,1-x)/b;}
+function p2(t,df){return ibeta(df/(df+t*t),df/2,.5);}           /* two-sided p */
+function tcrit(df,conf){conf=conf||.95;let lo=0,hi=50;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(p2(m,df)>1-conf)lo=m;else hi=m;}return (lo+hi)/2;}
+function fp(p){return p<.001?'p < .001':'p = '+p.toFixed(3).replace(/^0/,'');}
+const sgn=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
+return {$,css,cl,reduce,mk,tween,lazy,opener,goal,drag,p2,tcrit,fp,sgn};
+})();
+</script>
+<!-- pz:m4js --><script id="pz-m4">
+(()=>{
+const box=document.getElementById('pzSd');if(!box||!window.PZ)return;
+const {$,css,cl,mk,tween,lazy,opener,goal,drag}=PZ;
+const A0=[19,20,20,21,21,21,22,22,23,24,26], LO=14, HI=42, NM=['A','B'];
+let V=[A0.slice(),A0.slice()], anim=false, keep=false, bandOn=false, G=null, cur=null;
+const openEx=opener($('sdLock'),$('sdBody'));
+const sum=a=>a.reduce((s,v)=>s+v,0), mean=a=>sum(a)/a.length, sd=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/(a.length-1));};
+function ev(W){W=W||V;const s=W.map(sd),m=W.map(mean),w=s[1]>=s[0]?1:0;return {s,m,w,okA:sum(W[0])===sum(W[1]),okB:s[w]>=2*s[1-w]-1e-9};}
+/* Stack people of the same age so every dot stays visible. */
+function slots(a){const c={};return a.map(v=>{const k=Math.round(v);c[k]=(c[k]||0)+1;return c[k]-1;});}
+function build(){
+  const host=$('sdChart');host.innerHTML='';const W=Math.max(300,host.clientWidth||600),RH=118,m={l:16,r:16,t:10,b:40},H=m.t+2*RH+m.b;
+  const sx=v=>m.l+(v-LO)/(HI-LO)*(W-m.l-m.r), ix=p=>LO+(p-m.l)/(W-m.l-m.r)*(HI-LO), base=g=>m.t+RH*(g+1)-14;
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'img','aria-label':'Ages of the eleven people in class A and class B on one age axis. Drag a dot to change an age.'},host);
+  const gg=mk('g',{},svg),grid=css('--grid')||css('--line');
+  for(let v=15;v<=40;v+=5){mk('line',{x1:sx(v),x2:sx(v),y1:m.t,y2:H-m.b,stroke:grid},gg);mk('text',{x:sx(v),y:H-m.b+16,'text-anchor':'middle','font-size':12,fill:css('--ink-2')},gg,v);}
+  mk('text',{x:W-m.r,y:H-6,'text-anchor':'end','font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,'Age (years) →');
+  const R=[0,1].map(g=>{const y=base(g);mk('line',{x1:m.l,x2:W-m.r,y1:y+10,y2:y+10,stroke:css('--line')},svg);
+    mk('text',{x:m.l,y:m.t+RH*g+16,'font-size':12.5,'font-weight':600,fill:css('--ink-2')},svg,'Class '+NM[g]);
+    const band=mk('rect',{y:m.t+RH*g+24,height:RH-28,fill:css('--s1'),'fill-opacity':.14,opacity:bandOn?1:0,style:'transition:opacity .4s'},svg);
+    const ml=mk('line',{y1:m.t+RH*g+22,y2:y+10,stroke:css('--s2'),'stroke-width':2.5},svg);
+    const C=V[g].map((v,i)=>{const c=mk('circle',{r:9,fill:css('--s1'),stroke:css('--surface'),'stroke-width':1.5,tabindex:0,role:'button','aria-label':'Class '+NM[g]+', person '+(i+1)+'. Use the left and right arrow keys to change the age.'},svg);
+      c.addEventListener('keydown',e=>{const s={ArrowLeft:-1,ArrowRight:1}[e.key];if(s==null||anim)return;e.preventDefault();set(g,i,V[g][i]+s);});c.addEventListener('focus',()=>info(g,i));return c;});
+    return {band,ml,C};});
+  G={svg,sx,ix,base,R,W};
+  drag(svg,{busy:()=>anim,handles:()=>{const H=[];[0,1].forEach(g=>{const st=slots(V[g]);V[g].forEach((v,i)=>H.push([sx(v),base(g)-st[i]*17]));});return H;},
+    start:k=>{cur=[k>=11?1:0,k%11];R[cur[0]].C[cur[1]].setAttribute('r',12);info(cur[0],cur[1]);},move:(k,x)=>set(k>=11?1:0,k%11,ix(x)),end:k=>{R[k>=11?1:0].C[k%11].setAttribute('r',9);cur=null;draw();}});
+  draw();}
+function set(g,i,v){keep=false;V[g][i]=cl(Math.round(v),15,40);draw();info(g,i);}
+function info(g,i){$('sdInfo').textContent='Class '+NM[g]+', person '+(i+1)+': age '+Math.round(V[g][i])+'.';}
+function draw(){if(!G)return;const e=ev(),{sx,base,R}=G;
+  [0,1].forEach(g=>{const st=slots(V[g]),m=e.m[g],s=e.s[g];V[g].forEach((v,i)=>{const c=R[g].C[i];c.setAttribute('cx',sx(v));c.setAttribute('cy',base(g)-st[i]*17);c.setAttribute('fill',cur&&cur[0]===g&&cur[1]===i?css('--s2'):css('--s1'));});
+    R[g].ml.setAttribute('x1',sx(m));R[g].ml.setAttribute('x2',sx(m));const x1=sx(cl(m-s,LO,HI)),x2=sx(cl(m+s,LO,HI));R[g].band.setAttribute('x',x1);R[g].band.setAttribute('width',Math.max(0,x2-x1));});
+  $('sdM').textContent=e.m.map(v=>v.toFixed(2)).join(' and ');$('sdS').textContent=e.s.map(v=>v.toFixed(2)).join(' and ');
+  goal($('sdGa'),e.okA,'exactly the same');goal($('sdGb'),e.okB,'one at least twice the other');
+  const w=e.w,all=V[0].concat(V[1]).map(Math.round);
+  $('sdTot').textContent=sum(V[w]).toFixed(0);$('sdMn').textContent=e.m[w].toFixed(2);$('sdRg').textContent=Math.min(...all)+' and '+Math.max(...all);
+  $('sdW').textContent=NM[w];$('sdN').textContent=NM[1-w];$('sdS1').textContent=e.s[w].toFixed(2);$('sdS2').textContent=e.s[1-w].toFixed(2);$('sdX').textContent=(e.s[w]/e.s[1-w]).toFixed(1);
+  if(!anim&&!keep)$('sdMsg').textContent=e.okA&&e.okB?'Both goals are met, so read what just happened below.':'';
+  if(e.okA&&e.okB)openEx();}
+/* Start from the student's ages and make the smallest whole-year moves, one person or one pair at a time, in the wider class only. */
+function near(){const w=sd(V[1])>=sd(V[0])?1:0,o=V[1-w].map(Math.round),T=V[w].map(Math.round),so=sum(o),s2=2*sd(o)+.01;
+  const pen=a=>3*Math.abs(sum(a)-so)+10*Math.max(0,s2-sd(a));
+  for(let step=0;step<400&&pen(T)>0;step++){let best=null;const p0=pen(T);
+    for(let i=0;i<11;i++)for(const d of [-1,1]){const a=T.slice();a[i]=cl(a[i]+d,15,40);const p=pen(a);if(p<p0-1e-9&&(!best||p<best.p))best={a,p};
+      for(let j=0;j<11;j++){if(j===i)continue;const b=a.slice();b[j]=cl(b[j]-d,15,40);const q=pen(b);if(q<p0-1e-9&&(!best||q<best.p-1e-9))best={a:b,p:q};}}
+    if(!best)break;T.splice(0,11,...best.a);}
+  return pen(T)===0?{w,T}:null;}
+function setBand(on){bandOn=on;if(G)G.R.forEach(r=>r.band.setAttribute('opacity',on?1:0));$('sdBandKey').hidden=!on;$('sdBand').textContent=on?'Hide the SD bands':'Mark one SD on each side of each mean';}
+$('sdBand').addEventListener('click',()=>setBand(!bandOn));
+$('sdReset').addEventListener('click',()=>{if(anim)return;keep=false;V=[A0.slice(),A0.slice()];setBand(false);$('sdInfo').textContent='Tap near a dot and drag it left or right.';$('sdMsg').textContent='';draw();});
+$('sdShow').addEventListener('click',()=>{if(anim)return;const e=ev(),ms=$('sdMsg');
+  if(e.okA&&e.okB){ms.textContent='Your version already works, so nothing moves. Read what just happened below.';openEx();return;}
+  const R=near();if(!R)return;openEx();const s=V[R.w].slice(),n=R.T.filter((v,i)=>v!==Math.round(s[i])).length;
+  ms.textContent='One answer close to yours. It changes the ages of '+n+' people in class '+NM[R.w]+', moving each one as little as it can, and leaves class '+NM[1-R.w]+' as you had it.';
+  V[1-R.w]=V[1-R.w].map(Math.round);anim=true;tween(900,t=>{V[R.w]=s.map((v,i)=>v+(R.T[i]-v)*t);draw();},()=>{V[R.w]=R.T.slice();anim=false;keep=true;draw();});});
+lazy(box,build);
+})();
+</script><!-- /pz:m4js -->
+</body>
 </html>
