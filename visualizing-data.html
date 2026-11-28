@@ -993,7 +993,99 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
 .tapnote{display:block;margin:8px 0 0;padding:10px 12px;border-radius:8px;border:1px solid #E8B64A;background:color-mix(in srgb,#FBE3A6 35%,var(--surface));color:var(--ink);font-size:15px;line-height:1.5}
 .tapnote a{color:var(--mci);font-weight:600}
 </style>
-<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style></head>
+<style id="a11y">.track .val{color:var(--surface)!important;background:color-mix(in srgb,var(--ink) 84%,transparent);padding:0 6px;border-radius:3px;top:2px!important;line-height:18px!important;text-shadow:none!important}.pcard.ghost{opacity:1!important}.tapnote a{color:inherit!important}.tlrow button:not(.on){opacity:1!important;color:var(--muted)!important;border-style:dashed}.tlrow button:not(.on) b{color:var(--muted)!important}.line.dim{opacity:1!important}.line.dim,.line.dim *{color:var(--muted)!important}.guess.dem{color:#0b0d10!important}.modal .p{color:var(--ink)!important}.st.live{background:color-mix(in srgb,var(--live) 84%,#000)!important}.st.good{background:color-mix(in srgb,var(--good) 88%,#000)!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.steady em){color:#2c6b1f!important}}:root[data-theme=light] :is(.steady em){color:#2c6b1f!important}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}}:root[data-theme=light] :is(.pcard .nums,.pcard .seg button:not([aria-pressed=true]),.pcard .bq){color:#4f5357!important}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}}:root[data-theme=dark] :is(.srow.live .cell small,.srow .cell small){color:#b4b8bd!important}.tapnote a{color:inherit;text-decoration:underline}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}}:root[data-theme=dark] main .part .kick{color:color-mix(in srgb,var(--mci,var(--accent-ink)) 78%,#fff)!important}</style><style id="tryit">
+/* Try it puzzles (shared). Injected by scripts/tryit.py on pages that hold a details.tryit box. */
+:root{--pz-a:#B07A12;--pz-abg:#FFF1D6;--pz-aink:#6B4A00;--pz-tag:#f5c400;--pz-ok:#2c6b1f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}}
+:root[data-theme="dark"]{--pz-a:#D9A53A;--pz-abg:#3A2C0E;--pz-aink:#F2D9A0;--pz-tag:#e0b400;--pz-ok:#8fd08a}
+details.tryit{border:2px solid var(--pz-a);background:var(--pz-abg);border-radius:10px;margin:18px 0 6px;box-shadow:0 0 0 4px color-mix(in srgb,var(--pz-a) 18%,transparent)}
+details.tryit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;font-weight:600}
+details.tryit>summary::-webkit-details-marker{display:none}
+details.tryit>summary::after{content:'+';margin-left:auto;font:600 20px/1 var(--font-mono,monospace);color:var(--pz-aink)}
+details.tryit[open]>summary::after{content:'−'}
+details.tryit .tag{background:var(--pz-tag);color:#1d1600;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+details.tryit .tt{font-size:17px;color:var(--ink)}
+details.tryit .hint{font-size:13px;font-weight:400;color:var(--ink-2)}
+.pzin{padding:0 16px 16px}
+.pzgoal{margin:0 0 8px;color:var(--ink);font-size:15px}
+.pzchart{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pzchart svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzchart circle.cty{cursor:grab}
+.pzchart circle.cty:focus{outline:none;stroke:var(--ink);stroke-width:3}
+.pzkey{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.pzkey i{display:inline-block;vertical-align:middle;margin-right:6px}
+.pzkey i.dot{width:11px;height:11px;border-radius:50%}
+.pzkey i.dot.gv{background:var(--s1)}.pzkey i.dot.sn{background:var(--s2)}
+.pzkey i.ln{width:22px;height:0}
+.pzkey i.ln.pool{border-top:2px dashed var(--muted)}.pzkey i.ln.ctl{border-top:3px solid var(--ink-2)}
+.pzstats{display:flex;flex-wrap:wrap;gap:8px}
+.pzstat{flex:1 1 170px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.pzstat .lab{font-size:13px;color:var(--ink-2)}
+.pzstat .num{font:600 22px/1.3 var(--font-mono,monospace);color:var(--ink)}
+.pzstat .goal{font-size:13px;color:var(--ink-2)}
+.pzstat .goal.met{color:var(--pz-ok);font-weight:600}
+.pzinfo{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.pzmsg{margin:4px 0 0;font-size:14.5px;min-height:22px;color:var(--ink)}
+.pzbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pzex{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--pz-a) 45%,transparent)}
+.pzex h4{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.pzex p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink);max-width:75ch}
+.pzex p.st{font-size:13px;font-weight:600;color:var(--pz-aink);margin:0 0 2px}
+.pzlock{color:var(--ink-2)!important}
+.pzbody{opacity:.28;pointer-events:none;transition:opacity .5s}
+.pzbody.open{opacity:1;pointer-events:auto}
+.pzfoot{font-size:13px!important;color:var(--ink-2)!important}
+@media (prefers-reduced-motion:reduce){.pzbody{transition:none}}
+details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var(--ink));text-decoration:underline;text-underline-offset:2px;font:inherit;cursor:pointer}
+.pzset{margin:0 0 6px;color:var(--ink-2);font-size:14.5px;line-height:1.55}
+.pzchart text{font-family:inherit}
+.pzkey i.ovsw{width:14px;height:11px;background:color-mix(in srgb,var(--pz-a) 35%,transparent);border:1px solid var(--pz-a)}
+.ovzsay{font-size:13.5px!important;color:var(--ink-2)!important}
+.lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.lmh{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:0 2px}
+.lmcell{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.lmcell.mode{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.lmlab{font-size:13px;color:var(--ink-2);margin-bottom:6px;min-height:18px}
+.lmlab b{color:var(--ink)}
+.lmtag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--s1-ink,var(--ink))}
+.lmtag.tie{color:var(--ink-2)}
+.lmsqs{display:grid;grid-template-columns:repeat(5,minmax(0,28px));gap:4px;min-height:60px;align-content:start}
+.lmsq{width:100%;aspect-ratio:1;min-width:24px;padding:0;border-radius:5px;border:1.5px solid;font:700 12px/1 var(--font-mono,monospace);color:#0b0d10;cursor:pointer;display:grid;place-items:center;transition:opacity .3s}
+.lmsq.d{background:var(--dem);border-color:var(--dem-ink,var(--dem))}
+.lmsq.r{background:var(--rep);border-color:var(--rep-ink,var(--rep))}
+.lmsq.wrong{opacity:.3}
+.lmsq:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.pzkey i.lmsq{display:inline-grid;width:16px;height:16px;min-width:0;font-size:10px;aspect-ratio:auto;cursor:default}
+.pzkey i.lmmode{width:16px;height:12px;border:2px solid var(--s1-ink,var(--ink));border-radius:3px;background:color-mix(in srgb,var(--s1) 9%,transparent)}
+@media (prefers-reduced-motion:reduce){.lmsq{transition:none!important}}
+.pzkey i.ln.r2l{border-top:2.5px solid var(--s2)}
+.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:8px;margin:6px 0 10px}
+.cscard{display:grid;gap:2px;text-align:left;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .35s,box-shadow .35s,background-color .35s}
+.cscard.on{border-color:var(--s1-ink,var(--ink));box-shadow:inset 0 0 0 1.5px var(--s1-ink,var(--ink));background:color-mix(in srgb,var(--s1) 9%,var(--surface))}
+.cscard:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.csn{font-weight:700;font-size:15px;margin-bottom:2px}
+@media (max-width:480px){.cscard{padding:7px 8px}.csr{font-size:12px}.csr>span{min-width:0;width:100%}}
+.csr{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;font-size:12.5px;color:var(--ink-2);border-radius:4px;padding:0 3px;margin:0 -3px}
+.csr>span{min-width:78px}.csr b{color:var(--ink);font-weight:600}.csr i{font-style:normal;font-size:11.5px;color:var(--muted)}
+.csr.cst{background:color-mix(in srgb,var(--pz-a) 18%,transparent)}
+.csr.bad{background:color-mix(in srgb,var(--bad,#B3261E) 14%,transparent)}
+.csr.bad b{color:var(--badink,var(--ink))}
+.csr.csturn{display:none}.csgrid.turn .csr.csturn{display:flex}
+.pzstat .num.cssm{font-size:17px;line-height:1.4;white-space:normal}
+@media (prefers-reduced-motion:reduce){.cscard{transition:none}}
+.pzkey i.sdsw{width:16px;height:11px;background:color-mix(in srgb,var(--s1) 22%,transparent)}
+.pzkey i.skbar{width:12px;height:12px;background:color-mix(in srgb,var(--pop,var(--muted)) 55%,transparent)}
+.pzkey i.ln.skmd{border-top:2.5px dashed var(--s1-line,var(--ink))}
+.pzkey i.ln.dmref{border-top:2px dashed var(--ink)}
+.pzkey i.dmbar{width:10px;height:14px;background:var(--s2);opacity:.75}
+.pzkey i.dot.dmdot{background:var(--ink)}
+.axctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px 14px;margin:4px 0 8px}
+.axctl label{display:grid;gap:0;font-size:13.5px;color:var(--ink-2)}
+.axctl b{color:var(--ink);font-family:var(--font-mono,monospace)}
+.axctl input[type=range]{width:100%;accent-color:var(--s1-ink,var(--s1));min-height:32px}
+#axOrigC{margin-top:8px}
+</style>
+</head>
 <body>
 <nav class="topnav rv" aria-label="Site navigation"><a class="brand" href="index.html"><span class="dot"></span><span class="long">Intro to Political Science Research Methods</span><span class="short">Research methods</span></a><a class="pill ghost" href="index.html">← All modules</a><a class="pill f" href="index.html">Done ✓</a></nav>
 <header class="mast rv"><div class="wrap"><div class="mhd"><a href="index.html">All modules</a><span>Draft</span></div><nav class="sitestrip" aria-label="All modules"><a class="tab" href="hypotheses-and-variables.html" style="--c:#e5cfa1;--k:#1b1813" title="Hypotheses and variables"><span>Start</span></a><a class="tab" href="1-problems-of-causation.html" style="--c:#cd717d;--k:#1b1813" title="Problems of causation"><span>1</span></a><a class="tab" href="2-levels-and-central-tendency.html" style="--c:#cdaf47;--k:#1b1813" title="Levels of measurement and central tendency"><span>2</span></a><a class="tab" href="3-skew-and-kurtosis.html" style="--c:#c66933;--k:#1b1813" title="Skew and kurtosis"><span>3</span></a><a class="tab" href="4-dispersion.html" style="--c:#4e976f;--k:#1b1813" title="Measures of dispersion"><span>4</span></a><a class="tab" href="crosstabs.html" style="--c:#67c0b9;--k:#1b1813" title="Crosstabs"><span>4b</span></a><a class="tab" href="5-pre-measures.html" style="--c:#6587b1;--k:#1b1813" title="PRE measures: lambda, gamma, r²"><span>5</span></a><a class="tab" href="6-sampling-distributions.html" style="--c:#b34e43;--k:#f8f5ec" title="Sampling distributions"><span>6</span></a><a class="tab" href="7-confidence-intervals.html" style="--c:#9875a6;--k:#1b1813" title="Confidence intervals"><span>7</span></a><a class="tab" href="8-difference-in-means.html" style="--c:#149a9f;--k:#1b1813" title="Difference in means"><span>8</span></a><a class="tab" href="9-bivariate-regression.html" style="--c:#c593a7;--k:#1b1813" title="Bivariate regression"><span>9</span></a><a class="tab" href="9b-partisans-and-the-first-lady.html" style="--c:#beac93;--k:#1b1813" title="Partisans and the First Lady"><span>9b</span></a><a class="tab" href="10-multiple-regression.html" style="--c:#234684;--k:#f8f5ec" title="Multiple regression"><span>10</span></a><a class="tab" href="11-dummy-variables.html" style="--c:#808f3e;--k:#1b1813" title="Dummy variables"><span>11</span></a><a class="tab" href="practice-direction.html" style="--c:#936251;--k:#f8f5ec" title="Which way does it run?"><span>P1</span></a><a class="tab" href="practice-airports.html" style="--c:#183951;--k:#f8f5ec" title="Don&#x27;t Get Left Behind: Who Got America&#x27;s First Airports?"><span>P2</span></a><a class="tab" href="practice-titanic.html" style="--c:#577076;--k:#f8f5ec" title="Who survived the Titanic?"><span>P3</span></a><a class="tab" href="practice-waiting.html" style="--c:#6b7145;--k:#f8f5ec" title="Who waited in line to vote?"><span>P4</span></a><a class="tab" href="practice-services.html" style="--c:#654e24;--k:#f8f5ec" title="Who wants the government to do more?"><span>P5</span></a><a class="tab" href="practice-leaners.html" style="--c:#b4bea8;--k:#1b1813" title="Are leaners partisans?"><span>P6</span></a><a class="tab" href="practice-news-deserts.html" style="--c:#a2472b;--k:#f8f5ec" title="Do news deserts vote less?"><span>P7</span></a><a class="tab" href="practice-published-tables.html" style="--c:#938652;--k:#1b1813" title="What would it look like published?"><span>P8</span></a><a class="tab gild" href="exam-prep.html" style="--c:#C9A245;--k:#2a1c05" title="Exam prep"><span>Exam</span></a><a class="tab" href="case-selection.html" style="--c:#835a5e;--k:#f8f5ec" title="Choosing cases to compare"><span>Cases</span></a><a class="tab" href="visualizing-data.html" style="--c:#704759;--k:#f8f5ec" title="Visualizing data" aria-current="page"><span>Viz · Visualizing data</span></a></nav><div class="mtitle"><div><p class="kicker">● Draft · Visualizing data</p><h1>Visualizing <em>data.</em></h1></div><p class="dek">A chart lets a reader see a pattern before reading a single number, so it is often the first thing people look at in our work and sometimes the only thing they remember. This module walks through charts built in SPSS. The first path covers which kind of chart fits which kind of variable and test, and the second covers how to edit a chart down to its data and how to build panels that compare groups side by side.</p></div><div class="mextra"><p class="draft"><b>[DRAFT ONLY]</b> <span>This module is still being written, so its parts and examples may change or move.</span></p></div><div class="mhd sh"><span>In this module · tap a book to open it</span><span class="rt"><span class="cnt">10 sections</span><span class="swipehint" aria-hidden="true">Swipe →</span></span></div><nav class="shelf2" aria-label="Sections on this page"><div class="gbox" style="min-width:364px"><p class="gl">Path A · Choosing the form</p><div class="gbooks"><a class="bk cloth lean-r" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:93%;--w:76px;--fs:13px;--rot:3.5deg;margin-right:calc(var(--bh) * 0.0520 - 2px);--pfs:8.5px" href="#p0" aria-label="Part Start: Three jobs for a chart"><span class="bands t"></span><span class="plate">Start</span><span class="ti">Three jobs for a chart</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#88566c;--k:#f8f5ec;--band:#c7a7b5;--h:86%;--w:80px;--fs:12px" href="#pathA" aria-label="Part 1: Counts across cases"><span class="bands t"></span><span class="plate">1</span><span class="ti">Counts across cases<br><small>bars and lines</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk face" style="--c:#faeaab;--k:#1b1813;--ink:#1b1813;--h:100%;flex-basis:196px" href="#pa2" aria-label="Part 2: One variable"><span class="fn">PART 2</span><span class="ft">One variable</span><span class="fs2">level of measurement</span><svg class="cov" viewBox="0 0 170 124" aria-hidden="true"><g fill="var(--ink)" opacity=".88"><line x1="14.0" y1="104.0" x2="160.0" y2="104.0" stroke="var(--ink)" stroke-width="1.4" opacity="1"/><line x1="14.0" y1="14.0" x2="14.0" y2="104.0" stroke="var(--ink)" stroke-width="1.4" opacity="1"/><line x1="14.0" y1="34.0" x2="160.0" y2="34.0" stroke="var(--ink)" stroke-width="0.8" stroke-dasharray="2 4" opacity="0.45"/><line x1="14.0" y1="59.0" x2="160.0" y2="59.0" stroke="var(--ink)" stroke-width="0.8" stroke-dasharray="2 4" opacity="0.45"/><line x1="14.0" y1="84.0" x2="160.0" y2="84.0" stroke="var(--ink)" stroke-width="0.8" stroke-dasharray="2 4" opacity="0.45"/><polyline points="20.0,70.0 29.2,58.0 38.4,48.0 47.6,40.0 56.8,30.0 66.0,44.0 75.2,22.0 84.4,46.0 93.6,52.0 102.8,60.0 112.0,74.0 121.2,82.0 130.4,86.0 139.6,84.0 148.8,62.0 158.0,58.0" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/><circle cx="20.0" cy="70.0" r="2.6"/><circle cx="29.2" cy="58.0" r="2.6"/><circle cx="38.4" cy="48.0" r="2.6"/><circle cx="47.6" cy="40.0" r="2.6"/><circle cx="56.8" cy="30.0" r="2.6"/><circle cx="66.0" cy="44.0" r="2.6"/><circle cx="75.2" cy="22.0" r="2.6"/><circle cx="84.4" cy="46.0" r="2.6"/><circle cx="93.6" cy="52.0" r="2.6"/><circle cx="102.8" cy="60.0" r="2.6"/><circle cx="112.0" cy="74.0" r="2.6"/><circle cx="121.2" cy="82.0" r="2.6"/><circle cx="130.4" cy="86.0" r="2.6"/><circle cx="139.6" cy="84.0" r="2.6"/><circle cx="148.8" cy="62.0" r="2.6"/><circle cx="158.0" cy="58.0" r="2.6"/><text x="20" y="120" text-anchor="start" font-family="RvMono,ui-monospace,monospace" font-size="8.5" letter-spacing=".06em" fill="var(--ink)">1945</text><text x="160" y="120" text-anchor="end" font-family="RvMono,ui-monospace,monospace" font-size="8.5" letter-spacing=".06em" fill="var(--ink)">2024</text></g></svg></a><a class="bk cloth" style="--c:#a9778d;--k:#1b1813;--band:#6d4557;--h:93%;--w:80px;--fs:12px" href="#pa3" aria-label="Part 3: A chart for each test"><span class="bands t"></span><span class="plate">3</span><span class="ti">A chart for each test<br><small>see the result</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:232px"><p class="gl">Path B · Editing the ink</p><div class="gbooks"><a class="bk cloth" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:100%;--w:80px;--fs:17px" href="#pathB" aria-label="Part 4: Strip the ink"><span class="bands t"></span><span class="plate">4</span><span class="ti">Strip the ink<br><small>data-ink ratio</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#7a4d61;--k:#f8f5ec;--band:#c3a0af;--h:93%;--w:80px;--fs:16px" href="#pb1b" aria-label="Part 4b: Four more charts"><span class="bands t"></span><span class="plate">4b</span><span class="ti">Four more charts<br><small>to strip</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth" style="--c:#674152;--k:#f8f5ec;--band:#bd96a7;--h:96%;--w:80px;--fs:17px" href="#pb2" aria-label="Part 5: Honest scales"><span class="bands t"></span><span class="plate">5</span><span class="ti">Honest scales<br><small>lie factor</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth din" style="--c:#f2eac5;--k:#1b1813;--band:#d3b93d;--h:96%;--w:84px;--fs:17px" href="#pb3" aria-label="Part 6: Panels"><span class="bands t"></span><span class="plate">6</span><span class="ti">Panels<br><small>columns or rows</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div><span class="bookend" aria-hidden="true"></span><div class="gbox" style="min-width:138px"><p class="gl">Wrap-up</p><div class="gbooks"><a class="bk cloth" style="--c:#5c3a49;--k:#f8f5ec;--band:#b991a3;--h:90%;--w:76px;--fs:17px" href="#try" aria-label="Try this"><span class="bands t"></span><span class="plate">Try</span><span class="ti">Try this</span><span class="bands b"></span><span class="mk">P.D.D</span></a><a class="bk cloth lean-l" style="--c:#34454c;--k:#f8f5ec;--band:#8ea7b1;--h:90%;--w:80px;--fs:16px;--rot:-5.1deg;margin-left:calc(var(--bh) * 0.0796 - 2px)" href="#wwl" aria-label="Part ✓: What we learned"><span class="bands t"></span><span class="plate">✓</span><span class="ti">What we learned<br><small>the main ideas</small></span><span class="bands b"></span><span class="mk">P.D.D</span></a></div></div></nav><div class="board" aria-hidden="true"></div></div></header>
@@ -1093,7 +1185,45 @@ button.tapterm:focus-visible{outline:2px solid var(--mci);outline-offset:2px}
     <p class="p menuline" id="b2m"></p>
   </section>
 
-  <section class="part" id="pb3"><p class="kick">Path B · Part 6</p><h2>Panels for side-by-side comparison</h2>
+  <!-- pz:viz -->
+<section class="dcard" style="padding:0;border:0;background:none;box-shadow:none">
+  <details class="tryit" id="pzAx">
+    <summary><span class="tag">Try it</span><span class="tt">Make the rise look twice as steep</span><span class="hint">Optional puzzle</span></summary>
+    <div class="pzin">
+      <p class="pzset">We start from the coups-per-year line in Path A, which plots the Cline Center's count of coup events each year from 1945 to 2024. The count jumped from 3 coups in 2020 to 16 in 2021. The chart starts with the Y axis running from 0 to 40 and the X axis from 1945 to 2024.</p>
+      <p class="pzgoal">Change only the axis ranges so the climb from 2020 to 2021 looks at least twice as steep as it does now, while the 2020 and 2021 points stay on the chart.</p>
+      <div class="pzchart" id="axChart"></div>
+      <div class="axctl">
+        <label><span>Y axis from <b id="axLoV"></b></span><input type="range" id="axLo" min="0" max="14" step="1" value="0"></label>
+        <label><span>Y axis to <b id="axHiV"></b></span><input type="range" id="axHi" min="17" max="40" step="1" value="40"></label>
+        <label><span>X axis starts in <b id="axX0V"></b></span><input type="range" id="axX0" min="1945" max="2015" step="5" value="1945"></label>
+      </div>
+      <div class="pzstats">
+        <div class="pzstat"><div class="lab">Steepness of the 2020–21 climb, compared with the original chart</div><div class="num" id="axR"></div><div class="goal" id="axGa"></div></div>
+        <div class="pzstat"><div class="lab">2020 and 2021 points on the chart?</div><div class="num" id="axV"></div><div class="goal" id="axGb"></div></div>
+      </div>
+      <p class="pzmsg" id="axMsg" aria-live="polite"></p>
+      <div class="pzbtns"><button type="button" id="axShow">Show me</button><button type="button" id="axReset">Start over</button></div>
+      <div class="pzex">
+        <h4>What just happened</h4>
+        <p class="pzlock" id="axLock">Solve the puzzle, or press Show me, to open the explanation.</p>
+        <div class="pzbody" id="axBody" aria-hidden="true">
+          <p class="st">1 · Steepness lives in the axes</p>
+          <p>The counts never changed, and in every version coups jump from 3 to 16 between 2020 and 2021. Your Y axis now spans <b id="axSp"></b> coups instead of 40, so the same jump of 13 fills <b id="axFill"></b> of the chart's height instead of a third of it.</p>
+          <p><button type="button" class="linkish" id="axOrig">Show the original chart below yours</button></p>
+          <div class="pzchart" id="axOrigC" hidden></div>
+          <p class="st">2 · A shorter X axis does the opposite</p>
+          <p>Starting the X axis later spreads each year across more of the chart's width, which flattens every line in it. That is why a chart built to make a rise look dramatic usually trims the Y axis and leaves the X axis long. <span id="axXsay"></span></p>
+          <p class="st">3 · Back to the lesson</p>
+          <p>Before you trust a trend in a chart, read both axes. Ask where the Y axis starts and ends and how many years the X axis covers, since the same jump of 13 coups can look like a cliff or a bump depending on those choices alone.</p>
+          <p class="pzfoot">The counts come from the Cline Center Coup d'État Project Dataset, v2.2.0, as in Path A.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+<!-- /pz:viz -->
+<section class="part" id="pb3"><p class="kick">Path B · Part 6</p><h2>Panels for side-by-side comparison</h2>
     <p class="lede">A panel chart draws the same chart once for each group of a third variable and lines the copies up on shared axes. In SPSS, every legacy dialog has a <span class="menu">Panel by</span> box with two slots, <span class="menu">Rows</span> and <span class="menu">Columns</span>. Columns are usually the better choice when we compare groups, as with box plots or error bars for a test, because the panels then share one Y axis and the eye compares them straight across. Switch each chart below between columns and rows, and then strip it one step at a time.</p></section>
   <div id="pnl"></div>
 
@@ -1862,5 +1992,86 @@ function fix(){
 let t=0;const run=()=>{clearTimeout(t);t=setTimeout(fix,120);};
 if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 window.addEventListener('load',run);new MutationObserver(run).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-hidden']});
-})();</script></body>
+})();</script><script id="pzlib">
+window.PZ=window.PZ||(()=>{
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mk(t,a,par,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;if(par)par.appendChild(e);return e;}
+/* Eased move, only on a press. Reduced motion jumps straight to the end. */
+function tween(ms,f,done){if(reduce()){f(1);if(done)done();return;}const t0=performance.now();(function s(t){const u=Math.min(1,(t-t0)/ms),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;f(e);if(u<1)requestAnimationFrame(s);else if(done)done();})(t0);}
+/* Build the chart the first time the box opens, and again when the width or theme changes. */
+function lazy(box,build){let built=false,w=innerWidth;box.addEventListener('toggle',()=>{if(box.open&&!built){built=true;build();}});
+  let rt=0;addEventListener('resize',()=>{if(!built||innerWidth===w)return;w=innerWidth;clearTimeout(rt);rt=setTimeout(build,150);});
+  const rb=()=>{if(built)build();};const mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',rb);
+  new MutationObserver(rb).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}
+/* The explanation stays faded until the goal is met or Show me is pressed. */
+function opener(lock,body){let o=false;const f=()=>{if(o)return;o=true;lock.style.display='none';body.classList.add('open');body.setAttribute('aria-hidden','false');};f.isOpen=()=>o;return f;}
+function goal(el,ok,label){el.textContent='Goal: '+label+'. '+(ok?'Met.':'Not yet.');el.classList.toggle('met',!!ok);}
+/* Pointer dragging: grab the nearest handle within 30 px, keep the grab offset. */
+function drag(svg,o){const R=o.radius||30;let cur=null,off=[0,0];
+  const pt=e=>{const r=svg.getBoundingClientRect(),k=(+svg.getAttribute('width'))/r.width;return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];};
+  svg.addEventListener('pointerdown',e=>{if(o.busy&&o.busy())return;const [a,b]=pt(e),H=o.handles();let best=-1,bd=R;H.forEach((h,i)=>{if(!h)return;const d=Math.hypot(h[0]-a,h[1]-b);if(d<bd){bd=d;best=i;}});
+    if(best<0)return;cur=best;off=[H[best][0]-a,H[best][1]-b];svg.setPointerCapture(e.pointerId);if(o.start)o.start(best);e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(cur===null)return;const [a,b]=pt(e);o.move(cur,a+off[0],b+off[1]);});
+  const up=()=>{if(cur!==null&&o.end)o.end(cur);cur=null;};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  return {active:()=>cur};}
+/* Student's t distribution */
+function lgam(x){const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(const k of c)s+=k/++y;return -t+Math.log(2.5066282746310005*s/x);}
+function bcf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;let h=d;for(let m=1;m<=200;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break;}return h;}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgam(a+b)-lgam(a)-lgam(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*bcf(a,b,x)/a:1-bt*bcf(b,a,1-x)/b;}
+function p2(t,df){return ibeta(df/(df+t*t),df/2,.5);}           /* two-sided p */
+function tcrit(df,conf){conf=conf||.95;let lo=0,hi=50;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(p2(m,df)>1-conf)lo=m;else hi=m;}return (lo+hi)/2;}
+function fp(p){return p<.001?'p < .001':'p = '+p.toFixed(3).replace(/^0/,'');}
+const sgn=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
+return {$,css,cl,reduce,mk,tween,lazy,opener,goal,drag,p2,tcrit,fp,sgn};
+})();
+</script>
+<!-- pz:vizjs --><script id="pz-viz">
+(()=>{
+const box=document.getElementById('pzAx');if(!box||!window.PZ)return;
+const {$,css,cl,mk,tween,lazy,opener,goal}=PZ;
+const YR=[1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024], N=[1, 8, 15, 14, 14, 15, 12, 13, 11, 12, 12, 12, 18, 19, 14, 21, 20, 24, 27, 17, 21, 24, 15, 15, 21, 21, 21, 18, 16, 17, 34, 13, 16, 17, 24, 27, 20, 20, 16, 13, 11, 15, 13, 11, 16, 24, 25, 21, 12, 11, 12, 13, 8, 5, 8, 11, 12, 8, 8, 8, 9, 10, 4, 6, 6, 5, 6, 9, 6, 6, 7, 6, 2, 1, 7, 3, 16, 16, 14, 15], X1=2024, R0=(X1-1945)/40, A0={lo:0,hi:40,x0:1945};
+let A={...A0}, anim=false, keep=false, origOn=false, built=false;
+const openEx=opener($('axLock'),$('axBody'));
+const k20=YR.indexOf(2020), k21=YR.indexOf(2021);
+function ev(a){a=a||A;const r=((X1-a.x0)/(a.hi-a.lo))/R0,vis=N[k20]>=a.lo&&N[k20]<=a.hi&&N[k21]>=a.lo&&N[k21]<=a.hi;return {r,vis,okA:r>=2-1e-9,okB:vis};}
+function chart(host,a,tag){host.innerHTML='';const W=Math.max(300,host.clientWidth||600),H=Math.round(Math.min(320,Math.max(240,W*.56))),m={l:36,r:14,t:24,b:36};
+  const sx=v=>m.l+(v-a.x0)/(X1-a.x0)*(W-m.l-m.r), sy=v=>H-m.b-(v-a.lo)/(a.hi-a.lo)*(H-m.t-m.b);
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'img','aria-label':tag+' Coup events per year from '+a.x0+' to 2024, with the Y axis running from '+a.lo+' to '+a.hi+'.'},host);
+  const grid=css('--grid')||css('--line'),span=a.hi-a.lo,st=span>24?10:span>10?5:2;
+  for(let v=Math.ceil(a.lo/st)*st;v<=a.hi;v+=st){mk('line',{x1:m.l,x2:W-m.r,y1:sy(v),y2:sy(v),stroke:grid},svg);mk('text',{x:m.l-6,y:sy(v)+4,'text-anchor':'end','font-size':11.5,fill:css('--ink-2')},svg,v);}
+  const xs=(X1-a.x0)>40?20:(X1-a.x0)>15?5:2;for(let v=Math.ceil(a.x0/xs)*xs;v<=X1;v+=xs)mk('text',{x:sx(v),y:H-m.b+15,'text-anchor':'middle','font-size':11.5,fill:css('--ink-2')},svg,v);
+  mk('text',{x:4,y:14,'font-size':12,'font-weight':600,fill:css('--ink-2')},svg,'↑ Coup events per year');
+  const id='axclip'+tag.length;mk('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b},mk('clipPath',{id},mk('defs',{},svg)));const g=mk('g',{'clip-path':`url(#${id})`},svg);
+  let d='';YR.forEach((y,k)=>{if(y<a.x0-1)return;d+=(d?'L':'M')+sx(y).toFixed(1)+','+sy(N[k]).toFixed(1);});mk('path',{d,fill:'none',stroke:css('--s1'),'stroke-width':2,'stroke-linejoin':'round'},g);
+  mk('line',{x1:sx(2020),y1:sy(N[k20]),x2:sx(2021),y2:sy(N[k21]),stroke:css('--s2'),'stroke-width':4,'stroke-linecap':'round'},g);
+  [k20,k21].forEach(k=>{const v=N[k];if(v>=a.lo&&v<=a.hi)mk('circle',{cx:sx(YR[k]),cy:sy(v),r:4.5,fill:css('--s2'),stroke:css('--surface'),'stroke-width':1.5},svg);});
+  mk('rect',{x:m.l,y:m.t,width:W-m.l-m.r,height:H-m.t-m.b,fill:'none',stroke:css('--line')},svg);}
+function draw(){if(!built)return;const e=ev();chart($('axChart'),A,'Your chart.');if(origOn)chart($('axOrigC'),A0,'The original chart.');
+  $('axLo').value=Math.round(A.lo);$('axHi').value=Math.round(A.hi);$('axX0').value=Math.round(A.x0);$('axLoV').textContent=Math.round(A.lo);$('axHiV').textContent=Math.round(A.hi);$('axX0V').textContent=Math.round(A.x0);
+  $('axR').textContent=e.r.toFixed(1)+'×';$('axV').textContent=e.vis?'Yes':'No';goal($('axGa'),e.okA,'2.0× or more');goal($('axGb'),e.okB,'both on the chart');
+  const sp=A.hi-A.lo;$('axSp').textContent=Math.round(sp);$('axFill').textContent=Math.round(100*Math.min(1,13/sp))+'%';
+  $('axXsay').textContent=A.x0>1945?'Your X axis starts in '+Math.round(A.x0)+', which works against the goal, so your Y axis had to be trimmed even further.':'Your X axis still starts in 1945, so all of the extra steepness came from the Y axis.';
+  if(!anim&&!keep)$('axMsg').textContent=e.okA&&e.okB?'Both goals are met, so read what just happened below.':'';
+  if(e.okA&&e.okB)openEx();}
+['axLo','axHi','axX0'].forEach((id,j)=>$(id).addEventListener('input',e=>{if(anim)return;keep=false;const v=+e.target.value;A[['lo','hi','x0'][j]]=v;draw();}));
+/* Keep the student's X axis if it allows a solution and move the Y limits as little as possible. */
+function near(){let x0=Math.round(A.x0);const best=x=>{const span=Math.floor((X1-x)/(2*R0));if(span<13)return null;let lo=Math.round(A.lo),hi=lo+span;
+    if(hi<16){hi=16;lo=hi-span;}if(lo>3){lo=3;hi=lo+span;}if(Math.abs(A.hi-hi)>Math.abs(A.hi-Math.min(40,Math.max(16,Math.round(A.hi))))&&Math.round(A.hi)-span>=0&&Math.round(A.hi)-span<=3&&Math.round(A.hi)>=16){hi=Math.round(A.hi);lo=hi-span;}
+    lo=cl(lo,0,14);hi=lo+span;if(hi<17||hi>40)return null;const T={lo,hi,x0:x};return ev(T).okA&&ev(T).okB?T:null;};
+  let T=best(x0);while(!T&&x0>1945){x0-=5;T=best(x0);}return T;}
+function setOrig(on){origOn=on;$('axOrigC').hidden=!on;$('axOrig').textContent=on?'Hide the original chart':'Show the original chart below yours';draw();}
+$('axOrig').addEventListener('click',()=>setOrig(!origOn));
+$('axReset').addEventListener('click',()=>{if(anim)return;keep=false;A={...A0};setOrig(false);$('axMsg').textContent='';draw();});
+$('axShow').addEventListener('click',()=>{if(anim)return;const e=ev(),ms=$('axMsg');
+  if(e.okA&&e.okB){ms.textContent='Your version already works, so nothing changes. Read what just happened below.';openEx();return;}
+  const T=near();if(!T)return;openEx();ms.textContent='One answer close to yours. '+(T.x0===Math.round(A.x0)?'It keeps your X axis and moves the Y limits as little as it can.':'It moves the X axis back to '+T.x0+' and trims the Y axis as little as it can.');
+  const s={...A};anim=true;tween(900,t=>{A={lo:s.lo+(T.lo-s.lo)*t,hi:s.hi+(T.hi-s.hi)*t,x0:s.x0+(T.x0-s.x0)*t};draw();},()=>{A={...T};anim=false;keep=true;draw();});});
+lazy(box,()=>{built=true;draw();});
+})();
+</script><!-- /pz:vizjs -->
+</body>
 </html>
