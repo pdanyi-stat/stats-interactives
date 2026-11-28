@@ -295,6 +295,8 @@ svg [fill="var(--dem)"]:not(text):not([stroke]){stroke:var(--dem-ink);stroke-wid
 svg [fill="var(--rep)"]:not(text):not([stroke]){stroke:var(--rep-ink);stroke-width:1px}
 section.wwl{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--surface);margin:12px 0}
 .wwl ul{margin:0;padding-left:20px;display:grid;gap:10px;font-size:16px;line-height:1.5}.wwl li::marker{color:var(--accent)}.wwl b{color:var(--ink)}
+p.say.dverdict{margin:4px 0 10px;padding:10px 14px;border-left:4px solid var(--s1-line);background:color-mix(in srgb,var(--s1) 8%,transparent);border-radius:0 8px 8px 0;font-size:15.5px;line-height:1.55;color:var(--ink)}
+p.say.dverdict b{color:var(--ink)}
 </style>
 <style id="toggle-sel">
 button[aria-pressed="true"]:not(.dsbtn),[role="radio"][aria-checked="true"],.seg input[type=radio]:checked+label,[role="radiogroup"] input[type=radio]:checked+label{background:var(--s1)!important;color:#fff!important;border-color:var(--s1-ink)!important;box-shadow:inset 0 0 0 1px var(--s1-edge)!important;font-weight:600}
@@ -1102,7 +1104,7 @@ details.tryit .linkish{background:none;border:0;padding:0;color:var(--s1-ink,var
     </div>
     <div class="key"><span><i class="sw ols"></i>real least-squares line</span><span><i class="sw null"></i>lines from shuffled data</span><span><i class="sw crit"></i>critical slopes (±t*·SE)</span><span><i class="sw" style="background:var(--muted)"></i>chance slopes, stacked sideways</span></div>
     <div class="chips" id="dChips"></div>
-    <p class="say" id="dSay" style="margin:0 0 8px"></p>
+    <p class="say dverdict" id="dSay"></p>
     <div class="chart" id="dChart"></div>
     <div class="trk" id="dTrack" aria-live="polite"></div>
     <figcaption id="dCap"></figcaption>
@@ -1529,7 +1531,7 @@ function renderD(shufY,shufP){
   const ge=st.shuf.filter(b=>Math.abs(b)>=Math.abs(f.b1)).length;
   const sig=f.p1<0.05;
   $('#dChips').innerHTML=`<span class="chip">real slope <b class="k-slope">${sgn(f.b1)}</b></span><span class="chip">SE = <b>${cf(f.se1)}</b></span><span class="chip">critical slopes ±${cf(crit)} (t* = ${f.tc.toFixed(2)}, df = ${f.df})</span><span class="chip">t = <b>${f.t1.toFixed(2)}</b></span><span class="chip ${sig?'strong':''}">p ${f.p1<0.0001?'&lt; .0001':'= '+f.p1.toFixed(4).replace(/^0/,'')}</span>`;
-  $('#dSay').innerHTML=(sig?`The real slope falls outside the wedge, so it is significant at the .05 level and we reject H₀.`:`The real slope falls inside the wedge, so it is not significant at the .05 level and we fail to reject H₀.`)+
+  $('#dSay').innerHTML=(sig?`The real slope falls outside the wedge, so it is significant at the .05 level and <b>we reject H₀</b>.`:`The real slope falls inside the wedge, so it is not significant at the .05 level and <b>we fail to reject H₀</b>.`)+
     (M?(ge===0?` None of your ${M.toLocaleString('en-US')} shuffled slopes was as steep as the real one.`:` In your ${M.toLocaleString('en-US')} shuffles, a slope as steep as the real one turned up ${ge.toLocaleString('en-US')} ${ge===1?'time':'times'}.`):'');
   // tracker: how many chance slopes would pass p < .05 on their own t test
   const rPer=(f.b1!==0)?Math.sign(f.b1)*Math.sqrt(f.r2)/f.b1:0, nn=f.df+2;
